@@ -1,0 +1,9 @@
+﻿<Application x:Class="MicrowaveMonitor.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:MicrowaveMonitor"
+             StartupUri="MonitoringWindow.xaml">
+    <Application.Resources>
+         
+    </Application.Resources>
+</Application>
