@@ -17,6 +17,8 @@ namespace MicrowaveMonitor.Interface
         public MainWindow MonitorGui { get => _monitorGui; set => _monitorGui = value; }
         public Link MonitoredLink { get => _monitoredLink; set => _monitoredLink = value; }
 
+        string tempStoreSignalData, tempStoreSignalQData, tempStoreTxData, tempStoreRxData = String.Empty;
+
         public LinkView(MainWindow monitorGui, Link monitoredLink)
         {
             MonitorGui = monitorGui;
@@ -24,6 +26,7 @@ namespace MicrowaveMonitor.Interface
 
             SetLinkName();
             StartUptimeUpdater();
+            StartLogWindowCleaner();          
 
             MonitoredLink.BaseDevice.DataSignalLevel.CollectionChanged += BaseSignalDataChanged;
             MonitoredLink.BaseDevice.DataSignalQuality.CollectionChanged += BaseSignalQDataChanged;
@@ -73,82 +76,106 @@ namespace MicrowaveMonitor.Interface
             });
         }
 
-        private void BaseSignalDataChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        private string LogWindowUpdate(System.Windows.Controls.TextBox logWindow, string newMessage, string tempMessage)
         {
-            string msg = String.Format("{0}    {1} dBm\n", MonitoredLink.BaseDevice.DataSignalLevel.Last().TimeMark.ToLongTimeString(), MonitoredLink.BaseDevice.DataSignalLevel.Last().Data.ToString());
-
-            if (!MonitorGui.signalLevel.Dispatcher.CheckAccess())
+            if (!logWindow.Dispatcher.CheckAccess())
             {
-                MonitorGui.signalLevel.Dispatcher.Invoke(() =>
+                logWindow.Dispatcher.Invoke(() =>
                 {
-                    MonitorGui.signalLevel.Text += msg;
-                    MonitorGui.signalLevel.ScrollToEnd();
+                    if (!logWindow.IsFocused)
+                    {
+                        logWindow.Text += tempMessage + newMessage;
+                        tempMessage = String.Empty;
+                        logWindow.ScrollToEnd();
+                    }
+                    else
+                    {
+                        tempMessage += newMessage;
+                    }
                 });
             }
             else
             {
-                MonitorGui.signalLevel.Text += msg;
-                MonitorGui.signalLevel.ScrollToEnd();
+                if (!logWindow.IsFocused)
+                {
+                    logWindow.Text += tempMessage + newMessage;
+                    tempMessage = String.Empty;
+                    logWindow.ScrollToEnd();
+                }
+                else
+                {
+                    tempMessage += newMessage;
+                }
             }
+
+            return tempMessage;
+        }
+
+        private void BaseSignalDataChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            string msg = String.Format("{0}    {1} dBm\n", MonitoredLink.BaseDevice.DataSignalLevel.Last().TimeMark.ToLongTimeString(), MonitoredLink.BaseDevice.DataSignalLevel.Last().Data.ToString());
+            tempStoreSignalData = LogWindowUpdate(MonitorGui.signalLevel, msg, tempStoreSignalData);
         }
 
         private void BaseSignalQDataChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             string msg = String.Format("{0}    {1} dB\n", MonitoredLink.BaseDevice.DataSignalQuality.Last().TimeMark.ToLongTimeString(), MonitoredLink.BaseDevice.DataSignalQuality.Last().Data.ToString());
-
-            if (!MonitorGui.signalQuality.Dispatcher.CheckAccess())
-            {
-                MonitorGui.signalQuality.Dispatcher.Invoke(() =>
-                {
-                    MonitorGui.signalQuality.Text += msg;
-                    MonitorGui.signalQuality.ScrollToEnd();
-                });
-            }
-            else
-            {
-                MonitorGui.signalQuality.Text += msg;
-                MonitorGui.signalQuality.ScrollToEnd();
-            }
+            tempStoreSignalQData = LogWindowUpdate(MonitorGui.signalQuality, msg, tempStoreSignalQData);
         }
 
         private void BaseTxDataChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             double dataRate = MonitoredLink.BaseDevice.DataTx.Last().Data / 1000;
             string msg = String.Format("{0}    {1} kbit/s\n", MonitoredLink.BaseDevice.DataTx.Last().TimeMark.ToLongTimeString(), dataRate.ToString());
-
-            if (!MonitorGui.tx.Dispatcher.CheckAccess())
-            {
-                MonitorGui.tx.Dispatcher.Invoke(() =>
-                {
-                    MonitorGui.tx.Text += msg;
-                    MonitorGui.tx.ScrollToEnd();
-                });
-            }
-            else
-            {
-                MonitorGui.tx.Text += msg;
-                MonitorGui.tx.ScrollToEnd();
-            }
+            tempStoreTxData = LogWindowUpdate(MonitorGui.tx, msg, tempStoreTxData);
         }
 
         private void BaseRxDataChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             double dataRate = MonitoredLink.BaseDevice.DataRx.Last().Data / 1000;
             string msg = String.Format("{0}    {1} kbit/s\n", MonitoredLink.BaseDevice.DataRx.Last().TimeMark.ToLongTimeString(), dataRate.ToString());
+            tempStoreRxData = LogWindowUpdate(MonitorGui.rx, msg, tempStoreRxData);
+        }
 
-            if (!MonitorGui.rx.Dispatcher.CheckAccess())
+        private void LogWindowCleaner(System.Windows.Controls.TextBox logWindow, int permittedLinesCount)
+        {
+            if (!logWindow.Dispatcher.CheckAccess())
             {
-                MonitorGui.rx.Dispatcher.Invoke(() =>
+                logWindow.Dispatcher.Invoke(() =>
                 {
-                    MonitorGui.rx.Text += msg;
-                    MonitorGui.rx.ScrollToEnd();
+                    var splitted = logWindow.Text.Split('\n');
+                    int linesCount = splitted.Length;
+                    if (linesCount > permittedLinesCount)
+                    {
+                        logWindow.Text = String.Join("\n", splitted.Skip(linesCount - permittedLinesCount));
+                    }
                 });
             }
             else
             {
-                MonitorGui.rx.Text += msg;
-                MonitorGui.rx.ScrollToEnd();
+                var splitted = logWindow.Text.Split('\n');
+                int linesCount = splitted.Length;
+                if (linesCount > permittedLinesCount)
+                {
+                    logWindow.Text = String.Join("\n", splitted.Skip(linesCount - permittedLinesCount));
+                }
             }
+        }
+
+        private void StartLogWindowCleaner()
+        {
+            Task.Run(() =>
+            {
+                Thread.Sleep(10000);
+                while (true)
+                {
+                    LogWindowCleaner(MonitorGui.signalLevel, 50);
+                    LogWindowCleaner(MonitorGui.signalQuality, 50);
+                    LogWindowCleaner(MonitorGui.tx, 50);
+                    LogWindowCleaner(MonitorGui.rx, 50);
+                    Thread.Sleep(10000);
+                }
+            });
         }
     }
 }
