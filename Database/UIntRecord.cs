@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MicrowaveMonitor.Database
 {
-    class UIntRecord
+    public class UIntRecord
     {
         DateTime _timeMark;
         UInt32 _data;

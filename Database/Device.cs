@@ -9,8 +9,9 @@ using Lextm.SharpSnmpLib;
 
 namespace MicrowaveMonitor.Database
 {
-    class Device
+    public class Device
     {
+        int _id;
         IPEndPoint _address;
         OctetString _communityString;
         
@@ -32,6 +33,7 @@ namespace MicrowaveMonitor.Database
         ObservableCollection<UIntRecord> _dataTx;
         ObservableCollection<UIntRecord> _dataRx;
 
+        public int Id { get => _id; set => _id = value; }
         public IPEndPoint Address { get => _address; set => _address = value; }
         public OctetString CommunityString { get => _communityString; set => _communityString = value; }
         public ObjectIdentifier OidUptime { get => _oidUptime; set => _oidUptime = value; }
@@ -50,14 +52,15 @@ namespace MicrowaveMonitor.Database
         public ObservableCollection<UIntRecord> DataRx { get => _dataRx; set => _dataRx = value; }
         public static uint UptimeRefresh => _uptimeRefresh;
 
-        public Device(string ipString, int port, string snmpCommunity)
+        public Device(int id, string ipString, int port, string snmpCommunity)
         {
-            _address = new IPEndPoint(IPAddress.Parse(ipString), port);
-            _communityString = new OctetString(snmpCommunity);
-            _dataSignalLevel = new ObservableCollection<UIntRecord>();
-            _dataSignalQuality = new ObservableCollection<UIntRecord>();
-            _dataTx = new ObservableCollection<UIntRecord>();
-            _dataRx = new ObservableCollection<UIntRecord>();
+            Id = id;
+            Address = new IPEndPoint(IPAddress.Parse(ipString), port);
+            CommunityString = new OctetString(snmpCommunity);
+            DataSignalLevel = new ObservableCollection<UIntRecord>();
+            DataSignalQuality = new ObservableCollection<UIntRecord>();
+            DataTx = new ObservableCollection<UIntRecord>();
+            DataRx = new ObservableCollection<UIntRecord>();
         }
     }
 }

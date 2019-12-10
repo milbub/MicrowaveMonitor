@@ -61,7 +61,8 @@
     </ApplicationDefinition>
     <Compile Include="Database\UIntRecord.cs" />
     <Compile Include="Interface\LinkView.cs" />
-    <Compile Include="Managers\EventManager.cs" />
+    <Compile Include="Managers\IncidentManager.cs" />
+    <Compile Include="Managers\LinkManager.cs" />
     <Compile Include="Managers\WorkerManager.cs" />
     <Compile Include="Workers\PingDataCollector.cs" />
     <Compile Include="Workers\SnmpDataCollector.cs" />

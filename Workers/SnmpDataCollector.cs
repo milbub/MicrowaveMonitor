@@ -23,6 +23,7 @@ namespace MicrowaveMonitor.Workers
         public SnmpDataCollector(Device device)
         {
             _device = device;
+            Start();
         }
 
         public void Start()

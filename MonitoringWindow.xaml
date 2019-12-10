@@ -24,10 +24,10 @@
 
             <Grid Background="White">
                 <ListBox>
-                    <ListBoxItem>TEST Summit QAM</ListBoxItem>
-                    <ListBoxItem>TEST Summit Narrow</ListBoxItem>
-                    <ListBoxItem>TEST Summit UNI</ListBoxItem>
-                    <ListBoxItem>TEST Summit SDV17G</ListBoxItem>
+                    <ListBoxItem Margin="0,0,0,1">TEST Summit QAM</ListBoxItem>
+                    <ListBoxItem Margin="0,0,0,1">TEST Summit Narrow</ListBoxItem>
+                    <ListBoxItem Margin="0,0,0,1">TEST Summit UNI</ListBoxItem>
+                    <ListBoxItem Margin="0,0,0,1">TEST Summit SDV17G</ListBoxItem>
                 </ListBox>
             </Grid>
             <GridSplitter x:Name="monitorAreaSplitter" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="5"/>

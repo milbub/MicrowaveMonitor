@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace MicrowaveMonitor.Database
 {
-    class Link
+    public class Link
     {
+        int _id;
         byte _hopCount;
         string _name;
         string _note;
@@ -18,6 +19,7 @@ namespace MicrowaveMonitor.Database
         Device _relayThree;
         Device _relayFour;
 
+        public int Id { get => _id; set => _id = value; }
         public byte HopCount { get => _hopCount; set => _hopCount = value; }
         public string Name { get => _name; set => _name = value; }
         public string Note { get => _note; set => _note = value; }
@@ -28,19 +30,21 @@ namespace MicrowaveMonitor.Database
         internal Device RelayThree { get => _relayThree; set => _relayThree = value; }
         internal Device RelayFour { get => _relayFour; set => _relayFour = value; }
 
-        public Link(string linkName, Device baseDev)
+        public Link(string linkName, int id, Device baseDev)
         {
-            _name = linkName;
-            _hopCount = 0;
-            _baseDevice = baseDev;
+            Name = linkName;
+            Id = id;
+            HopCount = 0;
+            BaseDevice = baseDev;
         }
 
-        public Link(string linkName, Device baseDev, Device endDev)
+        public Link(string linkName, int id, Device baseDev, Device endDev)
         {
-            _name = linkName;
-            _hopCount = 1;
-            _baseDevice = baseDev;
-            _endDevice = endDev;
+            Name = linkName;
+            Id = id;
+            HopCount = 1;
+            BaseDevice = baseDev;
+            EndDevice = endDev;
         }
     }
 }
