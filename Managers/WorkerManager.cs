@@ -12,9 +12,7 @@ namespace MicrowaveMonitor.Managers
 {
     class WorkerManager
     {
-        List<SnmpDataCollector> workers = new List<SnmpDataCollector>();
-
-        public void StartWorkers(Dictionary<string, Link> linkDatabase)
+        public void InitWorkers(Dictionary<string, Link> linkDatabase)
         {
             Task.Run(() =>
             {
@@ -25,46 +23,22 @@ namespace MicrowaveMonitor.Managers
                     switch (link.HopCount)
                     {
                         case 0:
-                            workers.Add(new SnmpDataUptime(link.BaseDevice));
-                            workers.Add(new SnmpDataSignal(link.BaseDevice));
-                            workers.Add(new SnmpDataSignalQ(link.BaseDevice));
-                            workers.Add(new SnmpDataTx(link.BaseDevice));
-                            workers.Add(new SnmpDataRx(link.BaseDevice));
+                            InitDeviceWorkers(link.BaseDevice);
                             break;
                         case 1:
-                            workers.Add(new SnmpDataUptime(link.EndDevice));
-                            workers.Add(new SnmpDataSignal(link.EndDevice));
-                            workers.Add(new SnmpDataSignalQ(link.EndDevice));
-                            workers.Add(new SnmpDataTx(link.EndDevice));
-                            workers.Add(new SnmpDataRx(link.EndDevice));
+                            InitDeviceWorkers(link.EndDevice);
                             goto case 0;
                         case 2:
-                            workers.Add(new SnmpDataUptime(link.RelayOne));
-                            workers.Add(new SnmpDataSignal(link.RelayOne));
-                            workers.Add(new SnmpDataSignalQ(link.RelayOne));
-                            workers.Add(new SnmpDataTx(link.RelayOne));
-                            workers.Add(new SnmpDataRx(link.RelayOne));
+                            InitDeviceWorkers(link.RelayOne);
                             goto case 1;
                         case 3:
-                            workers.Add(new SnmpDataUptime(link.RelayTwo));
-                            workers.Add(new SnmpDataSignal(link.RelayTwo));
-                            workers.Add(new SnmpDataSignalQ(link.RelayTwo));
-                            workers.Add(new SnmpDataTx(link.RelayTwo));
-                            workers.Add(new SnmpDataRx(link.RelayTwo));
+                            InitDeviceWorkers(link.RelayTwo);
                             goto case 2;
                         case 4:
-                            workers.Add(new SnmpDataUptime(link.RelayThree));
-                            workers.Add(new SnmpDataSignal(link.RelayThree));
-                            workers.Add(new SnmpDataSignalQ(link.RelayThree));
-                            workers.Add(new SnmpDataTx(link.RelayThree));
-                            workers.Add(new SnmpDataRx(link.RelayThree));
+                            InitDeviceWorkers(link.RelayThree);
                             goto case 3;
                         case 5:
-                            workers.Add(new SnmpDataUptime(link.RelayFour));
-                            workers.Add(new SnmpDataSignal(link.RelayFour));
-                            workers.Add(new SnmpDataSignalQ(link.RelayFour));
-                            workers.Add(new SnmpDataTx(link.RelayFour));
-                            workers.Add(new SnmpDataRx(link.RelayFour));
+                            InitDeviceWorkers(link.RelayFour);
                             goto case 4;
                         default:
                             throw new NotSupportedException();
@@ -75,15 +49,68 @@ namespace MicrowaveMonitor.Managers
             });
         }
 
-        public void StopWorkers()
+        public void StopWorkers(Dictionary<string, Link> linkDatabase)
         {
             Task.Run(() =>
             {
-                foreach (SnmpDataCollector collector in workers)
+                Random randomizer = new Random();
+
+                foreach (Link link in linkDatabase.Values)
                 {
-                    collector.Stop();
+                    switch (link.HopCount)
+                    {
+                        case 0:
+                            InitDeviceWorkers(link.BaseDevice);
+                            break;
+                        case 1:
+                            InitDeviceWorkers(link.EndDevice);
+                            goto case 0;
+                        case 2:
+                            InitDeviceWorkers(link.RelayOne);
+                            goto case 1;
+                        case 3:
+                            InitDeviceWorkers(link.RelayTwo);
+                            goto case 2;
+                        case 4:
+                            InitDeviceWorkers(link.RelayThree);
+                            goto case 3;
+                        case 5:
+                            InitDeviceWorkers(link.RelayFour);
+                            goto case 4;
+                        default:
+                            throw new NotSupportedException();
+                    }
+
+                    Thread.Sleep(randomizer.Next(10));
                 }
             });
+        }
+
+        public void InitDeviceWorkers(Device device)
+        {
+            device.CollectorUptime = new SnmpUptime(device);
+            device.CollectorSignal = new SnmpSignal(device);
+            device.CollectorSignalQ = new SnmpSignalQ(device);
+            device.CollectorTx = new SnmpTx(device);
+            device.CollectorRx = new SnmpRx(device);
+        }
+
+        public void StartDeviceWorkers(Device device)
+        {
+            device.CollectorUptime.Start();
+            device.CollectorSignal.Start();
+            device.CollectorSignalQ.Start();
+            device.CollectorTx.Start();
+            device.CollectorRx.Start();
+        }
+
+        public void StopDeviceWorkers(Device device)
+        {
+            device.CollectorUptime.Stop();
+            device.CollectorSignal.Stop();
+            device.CollectorSignalQ.Stop();
+            device.CollectorTx.Stop();
+            device.CollectorRx.Stop();
         }
     }
 }

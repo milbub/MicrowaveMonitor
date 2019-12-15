@@ -33,24 +33,24 @@ namespace MicrowaveMonitor.Managers
             Device test2 = new Device(2, "10.248.16.65", 161, "public");
 
             test1.OidUptime = new ObjectIdentifier("1.3.6.1.2.1.1.3.0");
-            test1.OidSignalLevel = new ObjectIdentifier("1.3.6.1.4.1.23688.1.1.5.0");
-            test1.SignalLevelRefresh = 1000;
-            test1.OidSignalQuality = new ObjectIdentifier("1.3.6.1.4.1.23688.1.1.6.0");
-            test1.SignalQualityRefresh = 1000;
+            test1.OidSignal = new ObjectIdentifier("1.3.6.1.4.1.23688.1.1.5.0");
+            test1.RefreshSignal = 1000;
+            test1.OidSignalQ = new ObjectIdentifier("1.3.6.1.4.1.23688.1.1.6.0");
+            test1.RefreshSignalQ = 1000;
             test1.OidTxDataRate = new ObjectIdentifier("1.3.6.1.4.1.23688.1.1.14.0");
-            test1.TxRefresh = 1000;
+            test1.RefreshTx = 1000;
             test1.OidRxDataRate = new ObjectIdentifier("1.3.6.1.4.1.23688.1.1.15.0");
-            test1.RxRefresh = 1000;
+            test1.RefreshRx = 1000;
 
             test2.OidUptime = new ObjectIdentifier("1.3.6.1.2.1.1.3.0");
-            test2.OidSignalLevel = new ObjectIdentifier("1.3.6.1.4.1.23688.1.1.5.0");
-            test2.SignalLevelRefresh = 1000;
-            test2.OidSignalQuality = new ObjectIdentifier("1.3.6.1.4.1.23688.1.1.6.0");
-            test2.SignalQualityRefresh = 1000;
+            test2.OidSignal = new ObjectIdentifier("1.3.6.1.4.1.23688.1.1.5.0");
+            test2.RefreshSignal = 1000;
+            test2.OidSignalQ = new ObjectIdentifier("1.3.6.1.4.1.23688.1.1.6.0");
+            test2.RefreshSignalQ = 1000;
             test2.OidTxDataRate = new ObjectIdentifier("1.3.6.1.4.1.23688.1.1.14.0");
-            test2.TxRefresh = 1000;
+            test2.RefreshTx = 1000;
             test2.OidRxDataRate = new ObjectIdentifier("1.3.6.1.4.1.23688.1.1.15.0");
-            test2.RxRefresh = 1000;
+            test2.RefreshRx = 1000;
 
             if (deviceId == 1)
                 return test1;

@@ -11,15 +11,15 @@ using MicrowaveMonitor.Database;
 
 namespace MicrowaveMonitor.Workers
 {
-    class SnmpDataSignal : SnmpDataCollector
+    public class SnmpTx : SnmpCollector
     {
         ObservableCollection<UIntRecord> _collectedData;
 
-        public SnmpDataSignal(Device device) : base(device)
+        public SnmpTx(Device device) : base(device)
         {
-            _collectedOid = Device.OidSignalLevel;
-            _refreshInterval = Device.SignalLevelRefresh;
-            _collectedData = Device.DataSignalLevel;
+            _collectedOid = Device.OidTxDataRate;
+            _refreshInterval = Device.RefreshTx;
+            _collectedData = Device.DataTx;
         }
 
         public override void Record(IList<Variable> result, DateTime resultTime)

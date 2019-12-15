@@ -17,7 +17,7 @@ namespace MicrowaveMonitor.Interface
         public MainWindow MonitorGui { get => _monitorGui; set => _monitorGui = value; }
         public Link MonitoredLink { get => _monitoredLink; set => _monitoredLink = value; }
 
-        string tempStoreSignalData, tempStoreSignalQData, tempStoreTxData, tempStoreRxData = String.Empty;
+        private string tempStoreSignalData, tempStoreSignalQData, tempStoreTxData, tempStoreRxData = String.Empty;
 
         public LinkView(MainWindow monitorGui, Link monitoredLink)
         {
@@ -28,8 +28,8 @@ namespace MicrowaveMonitor.Interface
             StartUptimeUpdater();
             StartLogWindowCleaner();          
 
-            MonitoredLink.BaseDevice.DataSignalLevel.CollectionChanged += BaseSignalDataChanged;
-            MonitoredLink.BaseDevice.DataSignalQuality.CollectionChanged += BaseSignalQDataChanged;
+            MonitoredLink.BaseDevice.DataSignal.CollectionChanged += BaseSignalDataChanged;
+            MonitoredLink.BaseDevice.DataSignalQ.CollectionChanged += BaseSignalQDataChanged;
             MonitoredLink.BaseDevice.DataTx.CollectionChanged += BaseTxDataChanged;
             MonitoredLink.BaseDevice.DataRx.CollectionChanged += BaseRxDataChanged;
         }
@@ -113,13 +113,13 @@ namespace MicrowaveMonitor.Interface
 
         private void BaseSignalDataChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
-            string msg = String.Format("{0}    {1} dBm\n", MonitoredLink.BaseDevice.DataSignalLevel.Last().TimeMark.ToLongTimeString(), MonitoredLink.BaseDevice.DataSignalLevel.Last().Data.ToString());
+            string msg = String.Format("{0}    {1} dBm\n", MonitoredLink.BaseDevice.DataSignal.Last().TimeMark.ToLongTimeString(), MonitoredLink.BaseDevice.DataSignal.Last().Data.ToString());
             tempStoreSignalData = LogWindowUpdate(MonitorGui.signalLevel, msg, tempStoreSignalData);
         }
 
         private void BaseSignalQDataChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
-            string msg = String.Format("{0}    {1} dB\n", MonitoredLink.BaseDevice.DataSignalQuality.Last().TimeMark.ToLongTimeString(), MonitoredLink.BaseDevice.DataSignalQuality.Last().Data.ToString());
+            string msg = String.Format("{0}    {1} dB\n", MonitoredLink.BaseDevice.DataSignalQ.Last().TimeMark.ToLongTimeString(), MonitoredLink.BaseDevice.DataSignalQ.Last().Data.ToString());
             tempStoreSignalQData = LogWindowUpdate(MonitorGui.signalQuality, msg, tempStoreSignalQData);
         }
 

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MicrowaveMonitor.Workers
 {
-    class PingDataCollector
+    class PingCollector
     {
     }
 }

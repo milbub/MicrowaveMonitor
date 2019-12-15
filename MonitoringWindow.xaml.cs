@@ -34,7 +34,7 @@ namespace MicrowaveMonitor
             IncidentManager incidentManager = new IncidentManager();
             
             linkManager.LoadLinks();
-            workerManager.StartWorkers(linkManager.LinkDatabase);
+            workerManager.InitWorkers(linkManager.LinkDatabase);
             incidentManager.StartWatchers(linkManager.LinkDatabase);
 
             InitializeComponent();

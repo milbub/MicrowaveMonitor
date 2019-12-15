@@ -10,7 +10,7 @@ using MicrowaveMonitor.Database;
 
 namespace MicrowaveMonitor.Workers
 {
-    class SnmpDataCollector
+    public class SnmpCollector
     {
         protected Device _device;
         protected ObjectIdentifier _collectedOid;
@@ -20,7 +20,7 @@ namespace MicrowaveMonitor.Workers
         public Device Device { get => _device; }
         public bool IsRunning { get => _isRunning; }
 
-        public SnmpDataCollector(Device device)
+        public SnmpCollector(Device device)
         {
             _device = device;
             Start();
@@ -28,16 +28,16 @@ namespace MicrowaveMonitor.Workers
 
         public void Start()
         {
-            DateTime _beginTime;
-            DateTime _finishTime;
-            TimeSpan _diffTime;
+            DateTime beginTime;
+            DateTime finishTime;
+            TimeSpan diffTime;
 
             _isRunning = true;
             Task.Run(() =>
             {
                 while (_isRunning)
                 {
-                    _beginTime = DateTime.Now;
+                    beginTime = DateTime.Now;
                     try
                     {
                         var result = Messenger.Get
@@ -49,13 +49,13 @@ namespace MicrowaveMonitor.Workers
                             (int)(_refreshInterval * 2)
                         );
 
-                        _finishTime = DateTime.Now;
+                        finishTime = DateTime.Now;
 
-                        Record(result, _finishTime);
+                        Record(result, finishTime);
 
-                        _diffTime = _finishTime - _beginTime;
-                        if (_diffTime.TotalMilliseconds < _refreshInterval)
-                            Thread.Sleep((int)(_refreshInterval - _diffTime.TotalMilliseconds));
+                        diffTime = finishTime - beginTime;
+                        if (diffTime.TotalMilliseconds < _refreshInterval)
+                            Thread.Sleep((int)(_refreshInterval - diffTime.TotalMilliseconds));
                     } catch (Lextm.SharpSnmpLib.Messaging.TimeoutException e)
                     {
                         /* TODO timeout log to events */

@@ -46,5 +46,51 @@ namespace MicrowaveMonitor.Database
             BaseDevice = baseDev;
             EndDevice = endDev;
         }
+
+        public Link(string linkName, int id, Device baseDev, Device endDev, Device relayOne)
+        {
+            Name = linkName;
+            Id = id;
+            HopCount = 1;
+            BaseDevice = baseDev;
+            EndDevice = endDev;
+            RelayOne = relayOne;
+        }
+
+        public Link(string linkName, int id, Device baseDev, Device endDev, Device relayOne, Device relayTwo)
+        {
+            Name = linkName;
+            Id = id;
+            HopCount = 1;
+            BaseDevice = baseDev;
+            EndDevice = endDev;
+            RelayOne = relayOne;
+            RelayTwo = relayTwo;
+        }
+
+        public Link(string linkName, int id, Device baseDev, Device endDev, Device relayOne, Device relayTwo, Device relayThree)
+        {
+            Name = linkName;
+            Id = id;
+            HopCount = 1;
+            BaseDevice = baseDev;
+            EndDevice = endDev;
+            RelayOne = relayOne;
+            RelayTwo = relayTwo;
+            RelayThree = relayThree;
+        }
+
+        public Link(string linkName, int id, Device baseDev, Device endDev, Device relayOne, Device relayTwo, Device relayThree, Device relayFour)
+        {
+            Name = linkName;
+            Id = id;
+            HopCount = 1;
+            BaseDevice = baseDev;
+            EndDevice = endDev;
+            RelayOne = relayOne;
+            RelayTwo = relayTwo;
+            RelayThree = relayThree;
+            RelayFour = relayFour;
+        }
     }
 }

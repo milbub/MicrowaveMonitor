@@ -10,12 +10,12 @@ using MicrowaveMonitor.Database;
 
 namespace MicrowaveMonitor.Workers
 {
-    class SnmpDataUptime : SnmpDataCollector
+    public class SnmpUptime : SnmpCollector
     {
-        public SnmpDataUptime(Device device) : base(device)
+        public SnmpUptime(Device device) : base(device)
         {
             _collectedOid = _device.OidUptime;
-            _refreshInterval = Device.UptimeRefresh;
+            _refreshInterval = Device.RefreshUptime;
         }
 
         public override void Record(IList<Variable> result, DateTime resultTime)
