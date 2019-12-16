@@ -20,9 +20,14 @@ namespace MicrowaveMonitor.Managers
 
             Device baseDevice = LoadDevice(1);
             Device endDevice = LoadDevice(2);
-            Link testLinka = new Link("TEST Summit QAM - 10.248.16.64 <-> 10.248.16.65", 1, baseDevice, endDevice);
+            Link testLinka = new Link("TEST Summit QAM - Ostrava", 1, baseDevice, endDevice);
+
+            baseDevice = LoadDevice(3);
+            endDevice = LoadDevice(4);
+            Link testLinka2 = new Link("TEST Summit UNI", 2, baseDevice, endDevice);
 
             LinkDatabase.Add(testLinka.Name, testLinka);
+            LinkDatabase.Add(testLinka2.Name, testLinka2);
         }
 
         private Device LoadDevice(int deviceId)
@@ -31,6 +36,8 @@ namespace MicrowaveMonitor.Managers
 
             Device test1 = new Device(1, "10.248.16.64", 161, "public");
             Device test2 = new Device(2, "10.248.16.65", 161, "public");
+            Device test3 = new Device(1, "10.248.17.3", 161, "public");
+            Device test4 = new Device(2, "10.248.17.4", 161, "public");
 
             test1.OidSysName = new ObjectIdentifier("1.3.6.1.2.1.1.5.0");
             test1.OidUptime = new ObjectIdentifier("1.3.6.1.2.1.1.3.0");
@@ -54,10 +61,36 @@ namespace MicrowaveMonitor.Managers
             test2.OidRxDataRate = new ObjectIdentifier("1.3.6.1.4.1.23688.1.1.15.0");
             test2.RefreshRx = 1000;
 
+            test3.OidSysName = new ObjectIdentifier("1.3.6.1.2.1.1.5.0");
+            test3.OidUptime = new ObjectIdentifier("1.3.6.1.2.1.1.3.0");
+            test3.OidSignal = new ObjectIdentifier("1.3.6.1.4.1.23688.1.1.5.0");
+            test3.RefreshSignal = 1000;
+            test3.OidSignalQ = new ObjectIdentifier("1.3.6.1.4.1.23688.1.1.6.0");
+            test3.RefreshSignalQ = 1000;
+            test3.OidTxDataRate = new ObjectIdentifier("1.3.6.1.4.1.23688.1.1.14.0");
+            test3.RefreshTx = 1000;
+            test3.OidRxDataRate = new ObjectIdentifier("1.3.6.1.4.1.23688.1.1.15.0");
+            test3.RefreshRx = 1000;
+                
+            test4.OidSysName = new ObjectIdentifier("1.3.6.1.2.1.1.5.0");
+            test4.OidUptime = new ObjectIdentifier("1.3.6.1.2.1.1.3.0");
+            test4.OidSignal = new ObjectIdentifier("1.3.6.1.4.1.23688.1.1.5.0");
+            test4.RefreshSignal = 1000;
+            test4.OidSignalQ = new ObjectIdentifier("1.3.6.1.4.1.23688.1.1.6.0");
+            test4.RefreshSignalQ = 1000;
+            test4.OidTxDataRate = new ObjectIdentifier("1.3.6.1.4.1.23688.1.1.14.0");
+            test4.RefreshTx = 1000;
+            test4.OidRxDataRate = new ObjectIdentifier("1.3.6.1.4.1.23688.1.1.15.0");
+            test4.RefreshRx = 1000;
+
             if (deviceId == 1)
                 return test1;
-            else
+            else if (deviceId == 2)
                 return test2;
+            else if (deviceId == 3)
+                return test3;
+            else
+                return test4;
         }
     }
 }

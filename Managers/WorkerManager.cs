@@ -44,7 +44,7 @@ namespace MicrowaveMonitor.Managers
                             throw new NotSupportedException();
                     }
 
-                    //Thread.Sleep(randomizer.Next(10));
+                    Thread.Sleep(randomizer.Next(10));
                 }
             });
         }

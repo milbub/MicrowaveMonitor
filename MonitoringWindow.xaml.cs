@@ -37,6 +37,8 @@ namespace MicrowaveMonitor
 
             InitializeComponent();
 
+            LinksList.ItemsSource = linkManager.LinkDatabase.Keys;
+
             siteA.Checked += SiteChoosed;
             siteB.Checked += SiteChoosed;
             siteR1.Checked += SiteChoosed;

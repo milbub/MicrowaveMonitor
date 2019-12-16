@@ -180,7 +180,7 @@ namespace MicrowaveMonitor.Interface
 
         private string MsgTx(int position)
         {
-            double dataRate = ViewedDevice.DataTx.Last().Data / 1000;
+            double dataRate = ViewedDevice.DataTx.ElementAt(position).Data / 1000;
             string msg = String.Format("{0}    {1} kbit/s\n", ViewedDevice.DataTx.ElementAt(position).TimeMark.ToLongTimeString(), dataRate.ToString());
             return msg;
         }
@@ -192,7 +192,7 @@ namespace MicrowaveMonitor.Interface
 
         private string MsgRx(int position)
         {
-            double dataRate = ViewedDevice.DataRx.Last().Data / 1000;
+            double dataRate = ViewedDevice.DataRx.ElementAt(position).Data / 1000;
             string msg = String.Format("{0}    {1} kbit/s\n", ViewedDevice.DataRx.ElementAt(position).TimeMark.ToLongTimeString(), dataRate.ToString());
             return msg;
         }
