@@ -23,7 +23,6 @@ namespace MicrowaveMonitor.Workers
         public SnmpCollector(Device device)
         {
             _device = device;
-            Start();
         }
 
         public void Start()
@@ -31,6 +30,12 @@ namespace MicrowaveMonitor.Workers
             DateTime beginTime;
             DateTime finishTime;
             TimeSpan diffTime;
+
+            uint timeout;
+            if (_refreshInterval > 10000)
+                timeout = 10000;
+            else
+                timeout = _refreshInterval * 2;
 
             _isRunning = true;
             Task.Run(() =>
@@ -46,7 +51,7 @@ namespace MicrowaveMonitor.Workers
                             _device.Address,
                             _device.CommunityString,
                             new List<Variable> { new Variable(_collectedOid) },
-                            (int)(_refreshInterval * 2)
+                            (int)timeout
                         );
 
                         finishTime = DateTime.Now;

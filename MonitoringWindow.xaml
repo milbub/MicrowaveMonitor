@@ -34,6 +34,8 @@
             <Grid Grid.Column="3">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="30"></RowDefinition>
+                    <RowDefinition Height="30"></RowDefinition>
+                    <RowDefinition Height="26"></RowDefinition>
                     <RowDefinition></RowDefinition>
                 </Grid.RowDefinitions>
 
@@ -42,7 +44,24 @@
                 <Button x:Name="buttonDelete" Content="D" HorizontalAlignment="Right" Width="25" Height="25" Margin="0,0,70,0"/>
                 <Button x:Name="buttonSettings" Content="S" HorizontalAlignment="Right" Width="25" Height="25" Margin="0,0,40,0"/>
                 <Button x:Name="buttonInfo" Content="I" HorizontalAlignment="Right" Width="25" Height="25" Margin="0,0,10,0"/>
-                <TabControl x:Name="monitorTabControl" Grid.Row="1">
+
+                <Label x:Name="siteLabel" Grid.Row="1" Content="Site:" VerticalAlignment="Center" HorizontalAlignment="Left"></Label>
+                <RadioButton x:Name="siteA" Grid.Row="1" Content="A" VerticalAlignment="Center" Margin="35,0,0,0" FontWeight="Bold" IsChecked="True"/>
+                <RadioButton x:Name="siteR1" Grid.Row="1" Content="R1" Click="SiteChoosed" VerticalAlignment="Center" Margin="75,0,0,0" IsEnabled="False"/>
+                <RadioButton x:Name="siteR2" Grid.Row="1" Content="R2" Click="SiteChoosed" VerticalAlignment="Center" Margin="120,0,0,0" IsEnabled="False"/>
+                <RadioButton x:Name="siteR3" Grid.Row="1" Content="R3" Click="SiteChoosed" VerticalAlignment="Center" Margin="165,0,0,0" IsEnabled="False"/>
+                <RadioButton x:Name="siteR4" Grid.Row="1" Content="R4" Click="SiteChoosed" VerticalAlignment="Center" Margin="210,0,0,0" IsEnabled="False"/>
+                <RadioButton x:Name="siteB" Grid.Row="1" Content="B" VerticalAlignment="Center" Margin="255,0,0,0" FontWeight="Bold"/>
+                <Label x:Name="ipLabel" Grid.Row="2" Content="IP:" Grid.Column="1" VerticalAlignment="Top" HorizontalAlignment="Left"></Label>
+                <Label x:Name="ip" Grid.Row="2" Grid.Column="1" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="20,0,0,0"></Label>
+                <Label x:Name="pingLabel" Grid.Row="2" Content="Ping:" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="130,0,0,0"></Label>
+                <Label x:Name="ping" Grid.Row="2" VerticalAlignment="Center" Margin="160,0,0,0"/>
+                <Label x:Name="unitnameLabel" Grid.Row="2" Content="Unit Name:" Grid.Column="1" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="220,0,0,0"></Label>
+                <Label x:Name="unitname" Grid.Row="2" Grid.Column="1" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="285,0,0,0" FontWeight="Bold"></Label>
+                <Label x:Name="uptimeLabel" Grid.Row="2" Content="Uptime:" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,80,0"></Label>
+                <Label x:Name="uptime" Grid.Row="2" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,5,0"></Label>
+
+                <TabControl x:Name="monitorTabControl" Grid.Row="3">
                     <TabItem Header="Monitoring">
                         <Grid>
                             <Grid.ColumnDefinitions>
@@ -50,34 +69,23 @@
                                 <ColumnDefinition></ColumnDefinition>
                             </Grid.ColumnDefinitions>
                             <Grid.RowDefinitions>
-                                <RowDefinition Height="30"></RowDefinition>
                                 <RowDefinition></RowDefinition>
                                 <RowDefinition></RowDefinition>
                             </Grid.RowDefinitions>
 
-                            <Label x:Name="siteLabel"  Content="Site:" VerticalAlignment="Center" HorizontalAlignment="Left"></Label>
-                            <RadioButton x:Name="siteA" Content="A" VerticalAlignment="Center" Margin="40,0,0,0" FontWeight="Bold" IsChecked="True"/>
-                            <RadioButton x:Name="siteR1" Content="R1" VerticalAlignment="Center" Margin="90,0,0,0" IsEnabled="False"/>
-                            <RadioButton x:Name="siteR2" Content="R2" VerticalAlignment="Center" Margin="140,0,0,0" IsEnabled="False"/>
-                            <RadioButton x:Name="siteR3" Content="R3" VerticalAlignment="Center" Margin="190,0,0,0" IsEnabled="False"/>
-                            <RadioButton x:Name="siteR4" Content="R4" VerticalAlignment="Center" Margin="240,0,0,0" IsEnabled="False"/>
-                            <RadioButton x:Name="siteB" Content="B" VerticalAlignment="Center" Margin="290,0,0,0" FontWeight="Bold"/>
-                            <Label x:Name="pingLabel" Content="Ping:" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left"></Label>
-                            <Label x:Name="ping" Content="not implemented" Grid.Column="1" VerticalAlignment="Center" Margin="30,0,0,0"></Label>
-                            <Label x:Name="uptimeLabel" Content="Uptime:" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,80,0"></Label>
-                            <Label x:Name="uptime" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Right"></Label>
-                            <Label x:Name="signalLevelLabel" Grid.Row="1" Content="Signal Strength" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-                            <TextBox x:Name="signalLevel" Grid.Row="1" Margin="5,25,5,5" IsReadOnly="True" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Visible" ScrollViewer.CanContentScroll="True"/>
-                            <Label x:Name="signalQualityLabel" Grid.Column="1" Grid.Row="1" Content="Signal Quality" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-                            <TextBox x:Name="signalQuality" Grid.Column="1" Grid.Row="1" Margin="5,25,5,5" IsReadOnly="True" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Visible" ScrollViewer.CanContentScroll="True"/>
-                            <Label x:Name="txLabel" Grid.Row="2" Content="Transmit Rate" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-                            <TextBox x:Name="tx" Grid.Row="2" Margin="5,25,5,5" IsReadOnly="True" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Visible" ScrollViewer.CanContentScroll="True"/>
-                            <Label x:Name="rxLabel" Grid.Column="1" Grid.Row="2" Content="Receive Rate" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-                            <TextBox x:Name="rx" Grid.Column="1" Grid.Row="2" Margin="5,25,5,5" IsReadOnly="True" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Visible" ScrollViewer.CanContentScroll="True"/>
+
+                            <Label x:Name="signalLevelLabel" Grid.Row="0" Content="Signal Strength" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                            <TextBox x:Name="signalLevel" Grid.Row="0" Margin="5,25,5,5" IsReadOnly="True" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Visible" ScrollViewer.CanContentScroll="True"/>
+                            <Label x:Name="signalQualityLabel" Grid.Column="1" Grid.Row="0" Content="Signal Quality" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                            <TextBox x:Name="signalQuality" Grid.Column="1" Grid.Row="0" Margin="5,25,5,5" IsReadOnly="True" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Visible" ScrollViewer.CanContentScroll="True"/>
+                            <Label x:Name="txLabel" Grid.Row="1" Content="Transmit Rate" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                            <TextBox x:Name="tx" Grid.Row="1" Margin="5,25,5,5" IsReadOnly="True" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Visible" ScrollViewer.CanContentScroll="True"/>
+                            <Label x:Name="rxLabel" Grid.Column="1" Grid.Row="1" Content="Receive Rate" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                            <TextBox x:Name="rx" Grid.Column="1" Grid.Row="1" Margin="5,25,5,5" IsReadOnly="True" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Visible" ScrollViewer.CanContentScroll="True"/>
                         </Grid>
                     </TabItem>
                     <TabItem Header="Traffic Monitor">
-                        
+
                     </TabItem>
                     <TabItem Header="Historical Data">
 
@@ -100,13 +108,13 @@
             <GridSplitter x:Name="notificationAreaSplitter" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="5"/>
             <TabControl x:Name="warningsTabControl" Grid.Column="2">
                 <TabItem Header="Current">
-                    
+
                 </TabItem>
                 <TabItem Header="Acknowledged">
-                    
+
                 </TabItem>
                 <TabItem Header="Suspended">
-                    
+
                 </TabItem>
             </TabControl>
 

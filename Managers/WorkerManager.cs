@@ -44,7 +44,7 @@ namespace MicrowaveMonitor.Managers
                             throw new NotSupportedException();
                     }
 
-                    Thread.Sleep(randomizer.Next(10));
+                    //Thread.Sleep(randomizer.Next(10));
                 }
             });
         }
@@ -88,15 +88,18 @@ namespace MicrowaveMonitor.Managers
 
         public void InitDeviceWorkers(Device device)
         {
+            device.CollectorSysName = new SnmpSysName(device);
             device.CollectorUptime = new SnmpUptime(device);
             device.CollectorSignal = new SnmpSignal(device);
             device.CollectorSignalQ = new SnmpSignalQ(device);
             device.CollectorTx = new SnmpTx(device);
             device.CollectorRx = new SnmpRx(device);
+            StartDeviceWorkers(device);
         }
 
         public void StartDeviceWorkers(Device device)
         {
+            device.CollectorSysName.Start();
             device.CollectorUptime.Start();
             device.CollectorSignal.Start();
             device.CollectorSignalQ.Start();
@@ -106,6 +109,7 @@ namespace MicrowaveMonitor.Managers
 
         public void StopDeviceWorkers(Device device)
         {
+            device.CollectorSysName.Stop();
             device.CollectorUptime.Stop();
             device.CollectorSignal.Stop();
             device.CollectorSignalQ.Stop();

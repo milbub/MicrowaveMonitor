@@ -70,6 +70,7 @@
     <Compile Include="Workers\SnmpRx.cs" />
     <Compile Include="Workers\SnmpSignal.cs" />
     <Compile Include="Workers\SnmpSignalQ.cs" />
+    <Compile Include="Workers\SnmpSysName.cs" />
     <Compile Include="Workers\SnmpTx.cs" />
     <Compile Include="Workers\SnmpUptime.cs" />
     <Page Include="MonitoringWindow.xaml">

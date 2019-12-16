@@ -32,6 +32,7 @@ namespace MicrowaveMonitor.Managers
             Device test1 = new Device(1, "10.248.16.64", 161, "public");
             Device test2 = new Device(2, "10.248.16.65", 161, "public");
 
+            test1.OidSysName = new ObjectIdentifier("1.3.6.1.2.1.1.5.0");
             test1.OidUptime = new ObjectIdentifier("1.3.6.1.2.1.1.3.0");
             test1.OidSignal = new ObjectIdentifier("1.3.6.1.4.1.23688.1.1.5.0");
             test1.RefreshSignal = 1000;
@@ -42,6 +43,7 @@ namespace MicrowaveMonitor.Managers
             test1.OidRxDataRate = new ObjectIdentifier("1.3.6.1.4.1.23688.1.1.15.0");
             test1.RefreshRx = 1000;
 
+            test2.OidSysName = new ObjectIdentifier("1.3.6.1.2.1.1.5.0");
             test2.OidUptime = new ObjectIdentifier("1.3.6.1.2.1.1.3.0");
             test2.OidSignal = new ObjectIdentifier("1.3.6.1.4.1.23688.1.1.5.0");
             test2.RefreshSignal = 1000;

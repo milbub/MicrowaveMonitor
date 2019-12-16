@@ -26,9 +26,7 @@ namespace MicrowaveMonitor
         private LinkView view;
 
         public MainWindow()
-        {
-            InitializeComponent();
-            
+        {          
             LinkManager linkManager = new LinkManager();
             WorkerManager workerManager = new WorkerManager();
             IncidentManager incidentManager = new IncidentManager();
@@ -39,7 +37,33 @@ namespace MicrowaveMonitor
 
             InitializeComponent();
 
+            siteA.Checked += SiteChoosed;
+            siteB.Checked += SiteChoosed;
+            siteR1.Checked += SiteChoosed;
+            siteR2.Checked += SiteChoosed;
+            siteR3.Checked += SiteChoosed;
+            siteR4.Checked += SiteChoosed;
+
             view = new LinkView(this, linkManager.LinkDatabase.First().Value);
+        }
+
+        public void ResetView()
+        {
+            ip.Content = String.Empty;
+            unitname.Content = String.Empty;
+            ping.Content = String.Empty;
+            uptime.Content = String.Empty;
+            signalLevel.Text = String.Empty;
+            signalQuality.Text = String.Empty;
+            tx.Text = String.Empty;
+            rx.Text = String.Empty;
+        }
+
+        private void SiteChoosed(object sender, RoutedEventArgs e)
+        {
+            RadioButton rb = sender as RadioButton;
+            if (rb.IsChecked.Value)
+                view.ChangeDevice(rb.Content.ToString());
         }
     }
 }

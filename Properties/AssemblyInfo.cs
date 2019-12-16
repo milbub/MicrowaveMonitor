@@ -12,7 +12,7 @@ using System.Windows;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("VUT")]
 [assembly: AssemblyProduct("Microwave Monitor")]
-[assembly: AssemblyCopyright("Copyright © 2019")]
+[assembly: AssemblyCopyright("Milan Bubniak")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
