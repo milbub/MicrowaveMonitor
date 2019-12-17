@@ -10,5 +10,6 @@ namespace MicrowaveMonitor
 {
     public partial class App : Application
     {
+
     }
 }

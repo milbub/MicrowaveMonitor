@@ -12,21 +12,20 @@ namespace MicrowaveMonitor.Interface
 {
     class LinkView
     {
-        MainWindow _monitorGui;
+        MonitoringWindow _monitorGui;
         Link _viewedLink;
         Device _viewedDevice;
 
-        public MainWindow MonitorGui { get => _monitorGui; }
+        public MonitoringWindow MonitorGui { get => _monitorGui; }
         public Link ViewedLink { get => _viewedLink; set => _viewedLink = value; }
         public Device ViewedDevice { get => _viewedDevice; }
 
         private string tempStoreSignalData, tempStoreSignalQData, tempStoreTxData, tempStoreRxData = String.Empty;
 
-        public LinkView(MainWindow monitorGui, Link viewedLink)
+        public LinkView(MonitoringWindow monitorGui, Link viewedLink)
         {
             _monitorGui = monitorGui;
             ChangeLink(viewedLink);
-            StartLogWindowCleaner();
         }
 
         public void ChangeLink(Link viewedLink)
@@ -160,32 +159,39 @@ namespace MicrowaveMonitor.Interface
 
         private void StaticsChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == "sysName")
+            try
             {
-                if (!MonitorGui.unitname.Dispatcher.CheckAccess())
+                if (e.PropertyName == "sysName")
                 {
-                    MonitorGui.unitname.Dispatcher.Invoke(() =>
+                    if (!MonitorGui.unitname.Dispatcher.CheckAccess())
+                    {
+                        MonitorGui.unitname.Dispatcher.Invoke(() =>
+                        {
+                            MonitorGui.unitname.Content = ViewedDevice.DataSysName;
+                        });
+                    }
+                    else
                     {
                         MonitorGui.unitname.Content = ViewedDevice.DataSysName;
-                    });
+                    }
                 }
-                else
+                else if (e.PropertyName == "uptime")
                 {
-                    MonitorGui.unitname.Content = ViewedDevice.DataSysName;
-                }
-            } else if (e.PropertyName == "uptime")
-            {
-                if (!MonitorGui.uptime.Dispatcher.CheckAccess())
-                {
-                    MonitorGui.uptime.Dispatcher.Invoke(() =>
+                    if (!MonitorGui.uptime.Dispatcher.CheckAccess())
+                    {
+                        MonitorGui.uptime.Dispatcher.Invoke(() =>
+                        {
+                            MonitorGui.uptime.Content = ViewedDevice.DataUptime;
+                        });
+                    }
+                    else
                     {
                         MonitorGui.uptime.Content = ViewedDevice.DataUptime;
-                    });
+                    }
                 }
-                else
-                {
-                    MonitorGui.uptime.Content = ViewedDevice.DataUptime;
-                }
+            } catch(TaskCanceledException ex)
+            {
+                Console.WriteLine(ex.Message);
             }
         }
 
@@ -296,7 +302,7 @@ namespace MicrowaveMonitor.Interface
                 {
                     logWindow.Dispatcher.Invoke(() =>
                     {
-                        if (!logWindow.IsFocused)
+                        if (!logWindow.IsMouseOver)
                         {
                             logWindow.Text += tempMessage + newMessage;
                             tempMessage = String.Empty;
@@ -310,7 +316,7 @@ namespace MicrowaveMonitor.Interface
                 }
                 else
                 {
-                    if (!logWindow.IsFocused)
+                    if (!logWindow.IsMouseOver)
                     {
                         logWindow.Text += tempMessage + newMessage;
                         tempMessage = String.Empty;
@@ -326,14 +332,27 @@ namespace MicrowaveMonitor.Interface
                 Console.WriteLine(e.Message);
             }
 
+            LogWindowCleaner(logWindow, 50);
             return tempMessage;
         }
 
         private void LogWindowCleaner(System.Windows.Controls.TextBox logWindow, int permittedLinesCount)
         {
-            if (!logWindow.Dispatcher.CheckAccess())
+            try
             {
-                logWindow.Dispatcher.Invoke(() =>
+                if (!logWindow.Dispatcher.CheckAccess())
+                {
+                    logWindow.Dispatcher.Invoke(() =>
+                    {
+                        var splitted = logWindow.Text.Split('\n');
+                        int linesCount = splitted.Length;
+                        if (linesCount > permittedLinesCount)
+                        {
+                            logWindow.Text = String.Join("\n", splitted.Skip(linesCount - permittedLinesCount));
+                        }
+                    });
+                }
+                else
                 {
                     var splitted = logWindow.Text.Split('\n');
                     int linesCount = splitted.Length;
@@ -341,33 +360,11 @@ namespace MicrowaveMonitor.Interface
                     {
                         logWindow.Text = String.Join("\n", splitted.Skip(linesCount - permittedLinesCount));
                     }
-                });
-            }
-            else
-            {
-                var splitted = logWindow.Text.Split('\n');
-                int linesCount = splitted.Length;
-                if (linesCount > permittedLinesCount)
-                {
-                    logWindow.Text = String.Join("\n", splitted.Skip(linesCount - permittedLinesCount));
                 }
-            }
-        }
-
-        private void StartLogWindowCleaner()
-        {
-            Task.Run(() =>
+            } catch(TaskCanceledException e)
             {
-                Thread.Sleep(10000);
-                while (true)
-                {
-                    LogWindowCleaner(MonitorGui.signalLevel, 50);
-                    LogWindowCleaner(MonitorGui.signalQuality, 50);
-                    LogWindowCleaner(MonitorGui.tx, 50);
-                    LogWindowCleaner(MonitorGui.rx, 50);
-                    Thread.Sleep(10000);
-                }
-            });
+                Console.WriteLine(e.Message);
+            }
         }
     }
 }

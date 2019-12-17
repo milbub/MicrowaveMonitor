@@ -18,18 +18,19 @@ using MicrowaveMonitor.Managers;
 using MicrowaveMonitor.Workers;
 using MicrowaveMonitor.Interface;
 using Lextm.SharpSnmpLib;
+using System.ComponentModel;
 
 namespace MicrowaveMonitor
 {
-    public partial class MainWindow : Window
+    public partial class MonitoringWindow : Window
     {
         private LinkManager linkManager = new LinkManager();
         private WorkerManager workerManager = new WorkerManager();
         private IncidentManager incidentManager = new IncidentManager();
         private LinkView view;
 
-        public MainWindow()
-        {                  
+        public MonitoringWindow()
+        {
             linkManager.LoadLinks();
             workerManager.InitWorkers(linkManager.LinkDatabase);
             incidentManager.StartWatchers(linkManager.LinkDatabase);
@@ -77,6 +78,11 @@ namespace MicrowaveMonitor
         public void SiteChooserEnabler(bool state, RadioButton rb)
         {
             rb.IsEnabled = state;
+        }
+
+        private void MonitorClosing(object sender, CancelEventArgs e)
+        {
+            workerManager.StopWorkers(linkManager.LinkDatabase);
         }
     }
 }

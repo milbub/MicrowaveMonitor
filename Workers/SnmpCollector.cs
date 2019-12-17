@@ -16,9 +16,15 @@ namespace MicrowaveMonitor.Workers
         protected ObjectIdentifier _collectedOid;
         protected uint _refreshInterval;
         protected bool _isRunning = false;
+        const uint _maxTimeout = 5000;
 
         public Device Device { get => _device; }
+        public ObjectIdentifier CollectedOid { get => _collectedOid; }
+        public uint RefreshInterval { get => _refreshInterval; }
         public bool IsRunning { get => _isRunning; }
+        static public uint MaxTimeout { get => _maxTimeout; }
+
+        private Thread tCollector;
 
         public SnmpCollector(Device device)
         {
@@ -32,13 +38,14 @@ namespace MicrowaveMonitor.Workers
             TimeSpan diffTime;
 
             uint timeout;
-            if (_refreshInterval > 10000)
-                timeout = 10000;
+            if (_refreshInterval > MaxTimeout)
+                timeout = MaxTimeout;
             else
                 timeout = _refreshInterval * 2;
 
             _isRunning = true;
-            Task.Run(() =>
+
+            tCollector = new Thread (() =>
             {
                 while (_isRunning)
                 {
@@ -66,8 +73,9 @@ namespace MicrowaveMonitor.Workers
                         /* TODO timeout log to events */
                         // Console.WriteLine(e.Message);
                     }
-                }
+                }             
             });
+            tCollector.Start();
         }
 
         public virtual void Record(IList<Variable> result, DateTime resultTime)
@@ -82,6 +90,8 @@ namespace MicrowaveMonitor.Workers
         public void Stop()
         {
             _isRunning = false;
+            if (RefreshInterval > MaxTimeout)
+                tCollector.Abort();
         }
     }
 }

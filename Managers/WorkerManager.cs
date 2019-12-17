@@ -88,8 +88,6 @@ namespace MicrowaveMonitor.Managers
 
         public void StopWorkers(Dictionary<string, Link> linkDatabase)
         {
-            Task.Run(() =>
-            {
                 foreach (Link link in linkDatabase.Values)
                 {
                     switch (link.HopCount)
@@ -116,7 +114,6 @@ namespace MicrowaveMonitor.Managers
                             throw new NotSupportedException();
                     }
                 }
-            });
         }
 
         public void InitDeviceWorkers(Device device)
