@@ -25,11 +25,16 @@ namespace MicrowaveMonitor.Interface
         public LinkView(MainWindow monitorGui, Link viewedLink)
         {
             _monitorGui = monitorGui;
-            _viewedLink = viewedLink;
-
-            ShowLinkName();
+            ChangeLink(viewedLink);
             StartLogWindowCleaner();
+        }
 
+        public void ChangeLink(Link viewedLink)
+        {
+            if ((ViewedLink != null) && (ViewedLink.HopCount != viewedLink.HopCount))
+                ChangeDevicesConstellation();
+            ViewedLink = viewedLink;
+            ShowLinkName();
             ChangeDevice("A");
         }
 
@@ -68,8 +73,8 @@ namespace MicrowaveMonitor.Interface
             RegisterCharts();
             ShowIp();
             ShowLastData();
-            ShowStatics(_viewedDevice, new PropertyChangedEventArgs("sysName"));
-            ShowStatics(_viewedDevice, new PropertyChangedEventArgs("uptime"));
+            StaticsChanged(_viewedDevice, new PropertyChangedEventArgs("sysName"));
+            StaticsChanged(_viewedDevice, new PropertyChangedEventArgs("uptime"));
         }
 
         private void UnregisterCharts()
@@ -78,7 +83,7 @@ namespace MicrowaveMonitor.Interface
             _viewedDevice.DataSignalQ.CollectionChanged -= SignalQDataChanged;
             _viewedDevice.DataTx.CollectionChanged -= TxDataChanged;
             _viewedDevice.DataRx.CollectionChanged -= RxDataChanged;
-            _viewedDevice.PropertyChanged -= ShowStatics;
+            _viewedDevice.PropertyChanged -= StaticsChanged;
         }
 
         private void RegisterCharts()
@@ -87,7 +92,40 @@ namespace MicrowaveMonitor.Interface
             _viewedDevice.DataSignalQ.CollectionChanged += SignalQDataChanged;
             _viewedDevice.DataTx.CollectionChanged += TxDataChanged;
             _viewedDevice.DataRx.CollectionChanged += RxDataChanged;
-            _viewedDevice.PropertyChanged += ShowStatics;
+            _viewedDevice.PropertyChanged += StaticsChanged;
+        }
+
+        public void ChangeDevicesConstellation()
+        {
+            ConstellationChanger(false, 5);
+            ConstellationChanger(true, ViewedLink.HopCount);
+        }
+
+        private void ConstellationChanger(bool state, byte selector)
+        {
+            switch (selector)
+            {
+                case 0:
+                    MonitorGui.SiteChooserEnabler(state, MonitorGui.siteA);
+                    break;
+                case 1:
+                    MonitorGui.SiteChooserEnabler(state, MonitorGui.siteB);
+                    goto case 0;
+                case 2:
+                    MonitorGui.SiteChooserEnabler(state, MonitorGui.siteR1);
+                    goto case 1;
+                case 3:
+                    MonitorGui.SiteChooserEnabler(state, MonitorGui.siteR2);
+                    goto case 2;
+                case 4:
+                    MonitorGui.SiteChooserEnabler(state, MonitorGui.siteR3);
+                    goto case 3;
+                case 5:
+                    MonitorGui.SiteChooserEnabler(state, MonitorGui.siteR4);
+                    goto case 4;
+                default:
+                    throw new NotSupportedException();
+            }
         }
 
         private void ShowLinkName()
@@ -120,7 +158,7 @@ namespace MicrowaveMonitor.Interface
             }
         }
 
-        private void ShowStatics(object sender, PropertyChangedEventArgs e)
+        private void StaticsChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == "sysName")
             {

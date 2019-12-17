@@ -20,11 +20,11 @@ namespace MicrowaveMonitor.Managers
 
             Device baseDevice = LoadDevice(1);
             Device endDevice = LoadDevice(2);
-            Link testLinka = new Link("TEST Summit QAM - Ostrava", 1, baseDevice, endDevice);
+            Link testLinka = new Link("TEST Summit - Ostrava", 1, baseDevice, endDevice);
 
             baseDevice = LoadDevice(3);
             endDevice = LoadDevice(4);
-            Link testLinka2 = new Link("TEST Summit UNI", 2, baseDevice, endDevice);
+            Link testLinka2 = new Link("TEST Summit - Praha", 2, baseDevice, endDevice);
 
             LinkDatabase.Add(testLinka.Name, testLinka);
             LinkDatabase.Add(testLinka2.Name, testLinka2);

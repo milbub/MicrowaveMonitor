@@ -6,6 +6,13 @@
         xmlns:local="clr-namespace:MicrowaveMonitor"
         mc:Ignorable="d"
         Title="Microwave Monitor" Height="750" Width="1000" MinHeight="750" MinWidth="1000">
+
+    <Window.Resources>
+        <Style TargetType="{x:Type ListBoxItem}">
+            <Setter Property="Margin" Value="0,0,0,1" />
+        </Style>
+    </Window.Resources>
+
     <Grid Background="#FFF0F0F0">
         <Grid.RowDefinitions>
             <RowDefinition Height="500" MinHeight="500"></RowDefinition>
@@ -23,7 +30,7 @@
             </Grid.ColumnDefinitions>
 
             <Grid Background="White">
-                <ListBox Name="LinksList">
+                <ListBox x:Name="LinksList">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal">

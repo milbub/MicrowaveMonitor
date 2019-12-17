@@ -23,21 +23,18 @@ namespace MicrowaveMonitor
 {
     public partial class MainWindow : Window
     {
+        private LinkManager linkManager = new LinkManager();
+        private WorkerManager workerManager = new WorkerManager();
+        private IncidentManager incidentManager = new IncidentManager();
         private LinkView view;
 
         public MainWindow()
-        {          
-            LinkManager linkManager = new LinkManager();
-            WorkerManager workerManager = new WorkerManager();
-            IncidentManager incidentManager = new IncidentManager();
-            
+        {                  
             linkManager.LoadLinks();
             workerManager.InitWorkers(linkManager.LinkDatabase);
             incidentManager.StartWatchers(linkManager.LinkDatabase);
 
             InitializeComponent();
-
-            LinksList.ItemsSource = linkManager.LinkDatabase.Keys;
 
             siteA.Checked += SiteChoosed;
             siteB.Checked += SiteChoosed;
@@ -46,7 +43,23 @@ namespace MicrowaveMonitor
             siteR3.Checked += SiteChoosed;
             siteR4.Checked += SiteChoosed;
 
+            LinksList.ItemsSource = linkManager.LinkDatabase.Keys;
+            LinksList.SelectedItem = linkManager.LinkDatabase.First().Key;
+            LinksList.SelectionChanged += LinkChoosed;
+
             view = new LinkView(this, linkManager.LinkDatabase.First().Value);
+        }
+
+        private void SiteChoosed(object sender, RoutedEventArgs e)
+        {
+            RadioButton rb = sender as RadioButton;
+            if (rb.IsChecked.Value)
+                view.ChangeDevice(rb.Content.ToString());
+        }
+
+        void LinkChoosed(object sender, SelectionChangedEventArgs e)
+        {
+            view.ChangeLink(linkManager.LinkDatabase[(string)LinksList.SelectedItem]);
         }
 
         public void ResetView()
@@ -61,11 +74,9 @@ namespace MicrowaveMonitor
             rx.Text = String.Empty;
         }
 
-        private void SiteChoosed(object sender, RoutedEventArgs e)
+        public void SiteChooserEnabler(bool state, RadioButton rb)
         {
-            RadioButton rb = sender as RadioButton;
-            if (rb.IsChecked.Value)
-                view.ChangeDevice(rb.Content.ToString());
+            rb.IsEnabled = state;
         }
     }
 }

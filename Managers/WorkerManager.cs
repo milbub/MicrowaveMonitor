@@ -49,7 +49,7 @@ namespace MicrowaveMonitor.Managers
             });
         }
 
-        public void StopWorkers(Dictionary<string, Link> linkDatabase)
+        public void StartWorkers(Dictionary<string, Link> linkDatabase)
         {
             Task.Run(() =>
             {
@@ -60,28 +60,61 @@ namespace MicrowaveMonitor.Managers
                     switch (link.HopCount)
                     {
                         case 0:
-                            InitDeviceWorkers(link.BaseDevice);
+                            StartDeviceWorkers(link.BaseDevice);
                             break;
                         case 1:
-                            InitDeviceWorkers(link.EndDevice);
+                            StartDeviceWorkers(link.EndDevice);
                             goto case 0;
                         case 2:
-                            InitDeviceWorkers(link.RelayOne);
+                            StartDeviceWorkers(link.RelayOne);
                             goto case 1;
                         case 3:
-                            InitDeviceWorkers(link.RelayTwo);
+                            StartDeviceWorkers(link.RelayTwo);
                             goto case 2;
                         case 4:
-                            InitDeviceWorkers(link.RelayThree);
+                            StartDeviceWorkers(link.RelayThree);
                             goto case 3;
                         case 5:
-                            InitDeviceWorkers(link.RelayFour);
+                            StartDeviceWorkers(link.RelayFour);
                             goto case 4;
                         default:
                             throw new NotSupportedException();
                     }
 
                     Thread.Sleep(randomizer.Next(10));
+                }
+            });
+        }
+
+        public void StopWorkers(Dictionary<string, Link> linkDatabase)
+        {
+            Task.Run(() =>
+            {
+                foreach (Link link in linkDatabase.Values)
+                {
+                    switch (link.HopCount)
+                    {
+                        case 0:
+                            StopDeviceWorkers(link.BaseDevice);
+                            break;
+                        case 1:
+                            StopDeviceWorkers(link.EndDevice);
+                            goto case 0;
+                        case 2:
+                            StopDeviceWorkers(link.RelayOne);
+                            goto case 1;
+                        case 3:
+                            StopDeviceWorkers(link.RelayTwo);
+                            goto case 2;
+                        case 4:
+                            StopDeviceWorkers(link.RelayThree);
+                            goto case 3;
+                        case 5:
+                            StopDeviceWorkers(link.RelayFour);
+                            goto case 4;
+                        default:
+                            throw new NotSupportedException();
+                    }
                 }
             });
         }
