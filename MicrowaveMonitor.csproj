@@ -83,10 +83,12 @@
     </ApplicationDefinition>
     <Compile Include="Database\DoubleRecord.cs" />
     <Compile Include="Database\UIntRecord.cs" />
+    <Compile Include="Interface\LinkSettings.cs" />
     <Compile Include="Interface\LinkView.cs" />
     <Compile Include="Managers\IncidentManager.cs" />
     <Compile Include="Managers\LinkManager.cs" />
     <Compile Include="Managers\WorkerManager.cs" />
+    <Compile Include="Workers\Collector.cs" />
     <Compile Include="Workers\PingCollector.cs" />
     <Compile Include="Workers\SnmpCollector.cs" />
     <Compile Include="Workers\SnmpRx.cs" />

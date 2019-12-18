@@ -124,6 +124,7 @@ namespace MicrowaveMonitor.Managers
             device.CollectorSignalQ = new SnmpSignalQ(device);
             device.CollectorTx = new SnmpTx(device);
             device.CollectorRx = new SnmpRx(device);
+            device.CollectorPing = new PingCollector(device);
             StartDeviceWorkers(device);
         }
 
@@ -135,6 +136,7 @@ namespace MicrowaveMonitor.Managers
             device.CollectorSignalQ.Start();
             device.CollectorTx.Start();
             device.CollectorRx.Start();
+            device.CollectorPing.Start();
         }
 
         public void StopDeviceWorkers(Device device)
@@ -145,6 +147,7 @@ namespace MicrowaveMonitor.Managers
             device.CollectorSignalQ.Stop();
             device.CollectorTx.Stop();
             device.CollectorRx.Stop();
+            device.CollectorPing.Stop();
         }
     }
 }

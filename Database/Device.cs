@@ -38,19 +38,21 @@ namespace MicrowaveMonitor.Database
         public ObjectIdentifier OidRxDataRate { get => _oidRxDataRate; set => _oidRxDataRate = value; }
 
         /* Refresh interval constants */
-        const uint _refreshSysName = 600000;
-        const uint _refreshUptime = 10000;
-        uint _refreshSignal;
-        uint _refreshSignalQ;
-        uint _refreshTx;
-        uint _refreshRx;
+        const int _refreshSysName = 600000;
+        const int _refreshUptime = 10000;
+        int _refreshSignal;
+        int _refreshSignalQ;
+        int _refreshTx;
+        int _refreshRx;
+        int _refreshPing;
 
-        public static uint RefreshSysName => _refreshSysName;
-        public static uint RefreshUptime => _refreshUptime;
-        public uint RefreshSignal { get => _refreshSignal; set => _refreshSignal = value; }
-        public uint RefreshSignalQ { get => _refreshSignalQ; set => _refreshSignalQ = value; }
-        public uint RefreshTx { get => _refreshTx; set => _refreshTx = value; }
-        public uint RefreshRx { get => _refreshRx; set => _refreshRx = value; }
+        public static int RefreshSysName => _refreshSysName;
+        public static int RefreshUptime => _refreshUptime;
+        public int RefreshSignal { get => _refreshSignal; set => _refreshSignal = value; }
+        public int RefreshSignalQ { get => _refreshSignalQ; set => _refreshSignalQ = value; }
+        public int RefreshTx { get => _refreshTx; set => _refreshTx = value; }
+        public int RefreshRx { get => _refreshRx; set => _refreshRx = value; }
+        public int RefreshPing { get => _refreshPing; set => _refreshPing = value; }
 
         /* Collected data storages */
         string _dataSysName;
@@ -59,6 +61,7 @@ namespace MicrowaveMonitor.Database
         ObservableCollection<DoubleRecord> _dataSignalQ;
         ObservableCollection<UIntRecord> _dataTx;
         ObservableCollection<UIntRecord> _dataRx;
+        ObservableCollection<DoubleRecord> _dataPing;
 
         public string DataSysName
         {
@@ -88,6 +91,8 @@ namespace MicrowaveMonitor.Database
         public ObservableCollection<DoubleRecord> DataSignalQ { get => _dataSignalQ; set => _dataSignalQ = value; }
         public ObservableCollection<UIntRecord> DataTx { get => _dataTx; set => _dataTx = value; }
         public ObservableCollection<UIntRecord> DataRx { get => _dataRx; set => _dataRx = value; }
+        public ObservableCollection<DoubleRecord> DataPing { get => _dataPing; set => _dataPing = value; }
+
 
         /* Workers */
         SnmpSysName _collectorSysName;
@@ -96,6 +101,7 @@ namespace MicrowaveMonitor.Database
         SnmpSignalQ _collectorSignalQ;
         SnmpTx _collectorTx;
         SnmpRx _collectorRx;
+        PingCollector _collectorPing;
 
         public SnmpSysName CollectorSysName { get => _collectorSysName; set => _collectorSysName = value; }
         public SnmpUptime CollectorUptime { get => _collectorUptime; set => _collectorUptime = value; }
@@ -103,6 +109,7 @@ namespace MicrowaveMonitor.Database
         public SnmpSignalQ CollectorSignalQ { get => _collectorSignalQ; set => _collectorSignalQ = value; }
         public SnmpTx CollectorTx { get => _collectorTx; set => _collectorTx = value; }
         public SnmpRx CollectorRx { get => _collectorRx; set => _collectorRx = value; }
+        public PingCollector CollectorPing { get => _collectorPing; set => _collectorPing = value; }
 
         public Device(int id, string ipString, int port, string snmpCommunity)
         {
@@ -113,6 +120,7 @@ namespace MicrowaveMonitor.Database
             DataSignalQ = new ObservableCollection<DoubleRecord>();
             DataTx = new ObservableCollection<UIntRecord>();
             DataRx = new ObservableCollection<UIntRecord>();
+            DataPing = new ObservableCollection<DoubleRecord>();
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

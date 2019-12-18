@@ -20,7 +20,7 @@ namespace MicrowaveMonitor.Interface
         public Link ViewedLink { get => _viewedLink; set => _viewedLink = value; }
         public Device ViewedDevice { get => _viewedDevice; }
 
-        private string tempStoreSignalData, tempStoreSignalQData, tempStoreTxData, tempStoreRxData = String.Empty;
+        private string tempStoreSignalData, tempStoreSignalQData, tempStoreTxData, tempStoreRxData, tempStorePingData = String.Empty;
 
         public LinkView(MonitoringWindow monitorGui, Link viewedLink)
         {
@@ -82,6 +82,7 @@ namespace MicrowaveMonitor.Interface
             _viewedDevice.DataSignalQ.CollectionChanged -= SignalQDataChanged;
             _viewedDevice.DataTx.CollectionChanged -= TxDataChanged;
             _viewedDevice.DataRx.CollectionChanged -= RxDataChanged;
+            _viewedDevice.DataPing.CollectionChanged -= PingDataChanged;
             _viewedDevice.PropertyChanged -= StaticsChanged;
         }
 
@@ -91,6 +92,7 @@ namespace MicrowaveMonitor.Interface
             _viewedDevice.DataSignalQ.CollectionChanged += SignalQDataChanged;
             _viewedDevice.DataTx.CollectionChanged += TxDataChanged;
             _viewedDevice.DataRx.CollectionChanged += RxDataChanged;
+            _viewedDevice.DataPing.CollectionChanged += PingDataChanged;
             _viewedDevice.PropertyChanged += StaticsChanged;
         }
 
@@ -157,6 +159,21 @@ namespace MicrowaveMonitor.Interface
             }
         }
 
+        private void ShowPing(string pingValue)
+        {
+            if (!MonitorGui.ip.Dispatcher.CheckAccess())
+            {
+                MonitorGui.ip.Dispatcher.Invoke(() =>
+                {
+                    MonitorGui.ping.Content = pingValue;
+                });
+            }
+            else
+            {
+                MonitorGui.ping.Content = pingValue;
+            }
+        }
+
         private void StaticsChanged(object sender, PropertyChangedEventArgs e)
         {
             try
@@ -202,7 +219,7 @@ namespace MicrowaveMonitor.Interface
 
         private string MsgSignal(int position)
         {
-            string msg = String.Format("{0}    {1} dBm\n", ViewedDevice.DataSignal.ElementAt(position).TimeMark.ToLongTimeString(), ViewedDevice.DataSignal.Last().Data.ToString());
+            string msg = String.Format("{0}      {1} dBm\n", ViewedDevice.DataSignal.ElementAt(position).TimeMark.ToLongTimeString(), ViewedDevice.DataSignal.ElementAt(position).Data.ToString());
             return msg;
         }
 
@@ -213,7 +230,7 @@ namespace MicrowaveMonitor.Interface
 
         private string MsgSignalQ(int position)
         {
-            string msg = String.Format("{0}    {1} dB\n", ViewedDevice.DataSignalQ.ElementAt(position).TimeMark.ToLongTimeString(), ViewedDevice.DataSignalQ.Last().Data.ToString());
+            string msg = String.Format("{0}      {1} dB\n", ViewedDevice.DataSignalQ.ElementAt(position).TimeMark.ToLongTimeString(), ViewedDevice.DataSignalQ.ElementAt(position).Data.ToString());
             return msg;
         }
 
@@ -225,7 +242,7 @@ namespace MicrowaveMonitor.Interface
         private string MsgTx(int position)
         {
             double dataRate = ViewedDevice.DataTx.ElementAt(position).Data / 1000;
-            string msg = String.Format("{0}    {1} kbit/s\n", ViewedDevice.DataTx.ElementAt(position).TimeMark.ToLongTimeString(), dataRate.ToString());
+            string msg = String.Format("{0}      {1} kbit/s\n", ViewedDevice.DataTx.ElementAt(position).TimeMark.ToLongTimeString(), dataRate.ToString());
             return msg;
         }
 
@@ -237,7 +254,20 @@ namespace MicrowaveMonitor.Interface
         private string MsgRx(int position)
         {
             double dataRate = ViewedDevice.DataRx.ElementAt(position).Data / 1000;
-            string msg = String.Format("{0}    {1} kbit/s\n", ViewedDevice.DataRx.ElementAt(position).TimeMark.ToLongTimeString(), dataRate.ToString());
+            string msg = String.Format("{0}      {1} kbit/s\n", ViewedDevice.DataRx.ElementAt(position).TimeMark.ToLongTimeString(), dataRate.ToString());
+            return msg;
+        }
+
+        private void PingDataChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            string msg = MsgPing(e.NewStartingIndex);
+            tempStorePingData = LogWindowUpdate(MonitorGui.pingwin, msg, tempStorePingData);
+            ShowPing(msg.Remove(0, 14));
+        }
+
+        private string MsgPing(int position)
+        {
+            string msg = String.Format("{0}      {1} ms\n", ViewedDevice.DataPing.ElementAt(position).TimeMark.ToLongTimeString(), ViewedDevice.DataPing.ElementAt(position).Data.ToString());
             return msg;
         }
 
@@ -247,11 +277,13 @@ namespace MicrowaveMonitor.Interface
             string msgSQ = String.Empty;
             string msgTx = String.Empty;
             string msgRx = String.Empty;
+            string msgPg = String.Empty;
 
             int countS = ViewedDevice.DataSignal.Count;
             int countSQ = ViewedDevice.DataSignalQ.Count;
             int countTx = ViewedDevice.DataTx.Count;
             int countRx = ViewedDevice.DataRx.Count;
+            int countPg = ViewedDevice.DataPing.Count;
             int position;
 
             position = LastDataPosition(countS);
@@ -278,10 +310,17 @@ namespace MicrowaveMonitor.Interface
                 msgRx += MsgRx(position);
             }
 
+            position = LastDataPosition(countPg);
+            for (; position < countPg; position++)
+            {
+                msgPg += MsgPing(position);
+            }
+
             tempStoreSignalData = LogWindowUpdate(MonitorGui.signalLevel, msgS, tempStoreRxData);
             tempStoreSignalQData = LogWindowUpdate(MonitorGui.signalQuality, msgSQ, tempStoreRxData);
             tempStoreTxData = LogWindowUpdate(MonitorGui.tx, msgTx, tempStoreRxData);
             tempStoreRxData = LogWindowUpdate(MonitorGui.rx, msgRx, tempStoreRxData);
+            tempStorePingData = LogWindowUpdate(MonitorGui.pingwin, msgPg, tempStorePingData);
         }
 
         private int LastDataPosition(int count)
@@ -302,29 +341,29 @@ namespace MicrowaveMonitor.Interface
                 {
                     logWindow.Dispatcher.Invoke(() =>
                     {
-                        if (!logWindow.IsMouseOver)
+                        if (logWindow.IsSelectionActive)
+                        {
+                            tempMessage += newMessage;
+                        }
+                        else
                         {
                             logWindow.Text += tempMessage + newMessage;
                             tempMessage = String.Empty;
                             logWindow.ScrollToEnd();
                         }
-                        else
-                        {
-                            tempMessage += newMessage;
-                        }
                     });
                 }
                 else
                 {
-                    if (!logWindow.IsMouseOver)
+                    if (logWindow.IsSelectionActive)
+                    {
+                        tempMessage += newMessage;
+                    }
+                    else
                     {
                         logWindow.Text += tempMessage + newMessage;
                         tempMessage = String.Empty;
                         logWindow.ScrollToEnd();
-                    }
-                    else
-                    {
-                        tempMessage += newMessage;
                     }
                 }
             } catch (TaskCanceledException e)

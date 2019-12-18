@@ -10,26 +10,17 @@ using MicrowaveMonitor.Database;
 
 namespace MicrowaveMonitor.Workers
 {
-    public class SnmpCollector
+    public abstract class SnmpCollector : Collector
     {
-        protected Device _device;
         protected ObjectIdentifier _collectedOid;
-        protected uint _refreshInterval;
-        protected bool _isRunning = false;
-        const uint _maxTimeout = 5000;
+        protected int _refreshInterval;
 
-        public Device Device { get => _device; }
         public ObjectIdentifier CollectedOid { get => _collectedOid; }
-        public uint RefreshInterval { get => _refreshInterval; }
-        public bool IsRunning { get => _isRunning; }
-        static public uint MaxTimeout { get => _maxTimeout; }
+        public int RefreshInterval { get => _refreshInterval; }
 
         private Thread tCollector;
 
-        public SnmpCollector(Device device)
-        {
-            _device = device;
-        }
+        public SnmpCollector(Device device) : base(device){}
 
         public void Start()
         {
@@ -37,17 +28,17 @@ namespace MicrowaveMonitor.Workers
             DateTime finishTime;
             TimeSpan diffTime;
 
-            uint timeout;
-            if (_refreshInterval > MaxTimeout)
+            int timeout;
+            if (RefreshInterval > MaxTimeout)
                 timeout = MaxTimeout;
             else
-                timeout = _refreshInterval * 2;
+                timeout = RefreshInterval * 2;
 
             _isRunning = true;
 
             tCollector = new Thread (() =>
             {
-                while (_isRunning)
+                while (IsRunning)
                 {
                     beginTime = DateTime.Now;
                     try
@@ -55,10 +46,10 @@ namespace MicrowaveMonitor.Workers
                         var result = Messenger.Get
                         (
                             VersionCode.V1,
-                            _device.Address,
-                            _device.CommunityString,
-                            new List<Variable> { new Variable(_collectedOid) },
-                            (int)timeout
+                            Device.Address,
+                            Device.CommunityString,
+                            new List<Variable> { new Variable(CollectedOid) },
+                            timeout
                         );
 
                         finishTime = DateTime.Now;
@@ -66,8 +57,8 @@ namespace MicrowaveMonitor.Workers
                         Record(result, finishTime);
 
                         diffTime = finishTime - beginTime;
-                        if (diffTime.TotalMilliseconds < _refreshInterval)
-                            Thread.Sleep((int)(_refreshInterval - diffTime.TotalMilliseconds));
+                        if (diffTime.TotalMilliseconds < RefreshInterval)
+                            Thread.Sleep((int)(RefreshInterval - diffTime.TotalMilliseconds));
                     } catch (Lextm.SharpSnmpLib.Messaging.TimeoutException e)
                     {
                         /* TODO timeout log to events */
@@ -87,7 +78,7 @@ namespace MicrowaveMonitor.Workers
             }
         }
 
-        public void Stop()
+        public override void Stop()
         {
             _isRunning = false;
             if (RefreshInterval > MaxTimeout)

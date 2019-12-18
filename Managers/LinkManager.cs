@@ -49,6 +49,7 @@ namespace MicrowaveMonitor.Managers
             test1.RefreshTx = 1000;
             test1.OidRxDataRate = new ObjectIdentifier("1.3.6.1.4.1.23688.1.1.15.0");
             test1.RefreshRx = 1000;
+            test1.RefreshPing = 1000;
 
             test2.OidSysName = new ObjectIdentifier("1.3.6.1.2.1.1.5.0");
             test2.OidUptime = new ObjectIdentifier("1.3.6.1.2.1.1.3.0");
@@ -60,6 +61,7 @@ namespace MicrowaveMonitor.Managers
             test2.RefreshTx = 1000;
             test2.OidRxDataRate = new ObjectIdentifier("1.3.6.1.4.1.23688.1.1.15.0");
             test2.RefreshRx = 1000;
+            test2.RefreshPing = 1000;
 
             test3.OidSysName = new ObjectIdentifier("1.3.6.1.2.1.1.5.0");
             test3.OidUptime = new ObjectIdentifier("1.3.6.1.2.1.1.3.0");
@@ -71,7 +73,8 @@ namespace MicrowaveMonitor.Managers
             test3.RefreshTx = 1000;
             test3.OidRxDataRate = new ObjectIdentifier("1.3.6.1.4.1.23688.1.1.15.0");
             test3.RefreshRx = 1000;
-                
+            test3.RefreshPing = 1000;
+
             test4.OidSysName = new ObjectIdentifier("1.3.6.1.2.1.1.5.0");
             test4.OidUptime = new ObjectIdentifier("1.3.6.1.2.1.1.3.0");
             test4.OidSignal = new ObjectIdentifier("1.3.6.1.4.1.23688.1.1.5.0");
@@ -82,6 +85,7 @@ namespace MicrowaveMonitor.Managers
             test4.RefreshTx = 1000;
             test4.OidRxDataRate = new ObjectIdentifier("1.3.6.1.4.1.23688.1.1.15.0");
             test4.RefreshRx = 1000;
+            test4.RefreshPing = 1000;
 
             if (deviceId == 1)
                 return test1;
