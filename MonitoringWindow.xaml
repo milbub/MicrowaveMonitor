@@ -5,8 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MicrowaveMonitor"
         mc:Ignorable="d"
-        Title="Microwave Monitor" Height="720" Width="1000" MinHeight="720" MinWidth="1000"
-        Closing="MonitorClosing">
+        Title="Microwave Monitor" Height="720" Width="1000" MinHeight="720" MinWidth="1000">
 
     <Window.Resources>
         <Style TargetType="{x:Type ListBoxItem}">

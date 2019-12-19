@@ -24,16 +24,16 @@ namespace MicrowaveMonitor
 {
     public partial class MonitoringWindow : Window
     {
-        private LinkManager linkManager = new LinkManager();
-        private WorkerManager workerManager = new WorkerManager();
-        private IncidentManager incidentManager = new IncidentManager();
+        private LinkManager linkManager;
+        private WorkerManager workerManager;
+        private IncidentManager incidentManager;
         private LinkView view;
 
-        public MonitoringWindow()
+        public MonitoringWindow(LinkManager linkManager, WorkerManager workerManager, IncidentManager incidentManager)
         {
-            linkManager.LoadLinks();
-            workerManager.InitWorkers(linkManager.LinkDatabase);
-            incidentManager.StartWatchers(linkManager.LinkDatabase);
+            this.linkManager = linkManager;
+            this.workerManager = workerManager;
+            this.incidentManager = incidentManager;
 
             InitializeComponent();
 
@@ -78,11 +78,6 @@ namespace MicrowaveMonitor
         public void SiteChooserEnabler(bool state, RadioButton rb)
         {
             rb.IsEnabled = state;
-        }
-
-        private void MonitorClosing(object sender, CancelEventArgs e)
-        {
-            workerManager.StopWorkers(linkManager.LinkDatabase);
         }
     }
 }

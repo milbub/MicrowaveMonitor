@@ -8,7 +8,7 @@ using Lextm.SharpSnmpLib;
 
 namespace MicrowaveMonitor.Managers
 {
-    class LinkManager
+    public class LinkManager
     {
         Dictionary<string, Link> _linkDatabase = new Dictionary<string, Link>();
 

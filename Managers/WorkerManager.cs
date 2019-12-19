@@ -10,7 +10,7 @@ using MicrowaveMonitor.Database;
 
 namespace MicrowaveMonitor.Managers
 {
-    class WorkerManager
+    public class WorkerManager
     {
         public void InitWorkers(Dictionary<string, Link> linkDatabase)
         {

@@ -7,7 +7,7 @@ using MicrowaveMonitor.Database;
 
 namespace MicrowaveMonitor.Managers
 {
-    class IncidentManager
+    public class IncidentManager
     {
         public void StartWatchers(Dictionary<string, Link> linkDatabase)
         {
