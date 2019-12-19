@@ -72,8 +72,15 @@ namespace MicrowaveMonitor.Interface
             RegisterCharts();
             ShowIp();
             ShowLastData();
-            StaticsChanged(_viewedDevice, new PropertyChangedEventArgs("sysName"));
-            StaticsChanged(_viewedDevice, new PropertyChangedEventArgs("uptime"));
+            try
+            {
+                StaticsChanged(_viewedDevice, new PropertyChangedEventArgs("sysName"));
+                StaticsChanged(_viewedDevice, new PropertyChangedEventArgs("uptime"));
+                ShowPing(String.Format("{0} ms", _viewedDevice.DataPing.Last().Data));
+            } catch(InvalidOperationException e)
+            {
+                Console.WriteLine(e.Message);
+            }
         }
 
         private void UnregisterCharts()
@@ -131,84 +138,49 @@ namespace MicrowaveMonitor.Interface
 
         private void ShowLinkName()
         {
-            if (!MonitorGui.linkCaption.Dispatcher.CheckAccess())
-            {
-                MonitorGui.linkCaption.Dispatcher.Invoke(() =>
-                {
-                    MonitorGui.linkCaption.Content = ViewedLink.Name;
-                });
-            }
-            else
-            {
-                MonitorGui.linkCaption.Content = ViewedLink.Name;
-            }
+            updateElement(MonitorGui.linkCaption, ViewedLink.Name);
         }
 
         private void ShowIp()
         {
-            if (!MonitorGui.ip.Dispatcher.CheckAccess())
-            {
-                MonitorGui.ip.Dispatcher.Invoke(() =>
-                {
-                    MonitorGui.ip.Content = ViewedDevice.Address.Address;
-                });
-            }
-            else
-            {
-                MonitorGui.ip.Content = ViewedDevice.Address.Address;
-            }
+            updateElement(MonitorGui.ip, ViewedDevice.Address.Address.ToString());
         }
 
         private void ShowPing(string pingValue)
         {
-            if (!MonitorGui.ip.Dispatcher.CheckAccess())
-            {
-                MonitorGui.ip.Dispatcher.Invoke(() =>
-                {
-                    MonitorGui.ping.Content = pingValue;
-                });
-            }
-            else
-            {
-                MonitorGui.ping.Content = pingValue;
-            }
+            updateElement(MonitorGui.ping, pingValue);
         }
 
         private void StaticsChanged(object sender, PropertyChangedEventArgs e)
         {
+            if (e.PropertyName == "sysName")
+            {
+                updateElement(MonitorGui.unitname, ViewedDevice.DataSysName);
+            }
+            else if (e.PropertyName == "uptime")
+            {
+                updateElement(MonitorGui.uptime, ViewedDevice.DataUptime);
+            }
+        }
+
+        private void updateElement(System.Windows.Controls.ContentControl element, string value)
+        {
             try
             {
-                if (e.PropertyName == "sysName")
+                if (!element.Dispatcher.CheckAccess())
                 {
-                    if (!MonitorGui.unitname.Dispatcher.CheckAccess())
+                    element.Dispatcher.Invoke(() =>
                     {
-                        MonitorGui.unitname.Dispatcher.Invoke(() =>
-                        {
-                            MonitorGui.unitname.Content = ViewedDevice.DataSysName;
-                        });
-                    }
-                    else
-                    {
-                        MonitorGui.unitname.Content = ViewedDevice.DataSysName;
-                    }
+                        element.Content = value;
+                    });
                 }
-                else if (e.PropertyName == "uptime")
+                else
                 {
-                    if (!MonitorGui.uptime.Dispatcher.CheckAccess())
-                    {
-                        MonitorGui.uptime.Dispatcher.Invoke(() =>
-                        {
-                            MonitorGui.uptime.Content = ViewedDevice.DataUptime;
-                        });
-                    }
-                    else
-                    {
-                        MonitorGui.uptime.Content = ViewedDevice.DataUptime;
-                    }
+                    element.Content = value;
                 }
-            } catch(TaskCanceledException ex)
+            } catch(TaskCanceledException e)
             {
-                Console.WriteLine(ex.Message);
+                Console.WriteLine(e.Message);
             }
         }
 
@@ -262,7 +234,7 @@ namespace MicrowaveMonitor.Interface
         {
             string msg = MsgPing(e.NewStartingIndex);
             tempStorePingData = LogWindowUpdate(MonitorGui.pingwin, msg, tempStorePingData);
-            ShowPing(msg.Remove(0, 14));
+            ShowPing(msg.Remove(0, 13));
         }
 
         private string MsgPing(int position)
