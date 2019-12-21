@@ -24,7 +24,7 @@ namespace MicrowaveMonitor.Workers
 
         public override void Record(IList<Variable> result, DateTime resultTime)
         {
-            _collectedData.Add(new UIntRecord(resultTime, UInt32.Parse(result.First().Data.ToString())));
+            _collectedData.Add(new UIntRecord(resultTime, (uint)(Math.Abs(int.Parse(result.First().Data.ToString())))));
         }
     }
 }

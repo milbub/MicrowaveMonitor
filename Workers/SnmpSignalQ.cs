@@ -24,7 +24,7 @@ namespace MicrowaveMonitor.Workers
 
         public override void Record(IList<Variable> result, DateTime resultTime)
         {
-            _collectedData.Add(new DoubleRecord(resultTime, (double)UInt32.Parse(result.First().Data.ToString()) / 10));
+            _collectedData.Add(new DoubleRecord(resultTime, Math.Abs(double.Parse(result.First().Data.ToString()) / Device.SignalQDivider)));
         }
     }
 }

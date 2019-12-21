@@ -14,7 +14,7 @@ namespace MicrowaveMonitor.Workers
     {
         public SnmpUptime(Device device) : base(device)
         {
-            _collectedOid = _device.OidUptime;
+            _collectedOid = Device.OidUptime;
             _refreshInterval = Device.RefreshUptime;
         }
 

@@ -22,16 +22,28 @@ namespace MicrowaveMonitor.Database
         public IPEndPoint Address { get => _address; set => _address = value; }
         public OctetString CommunityString { get => _communityString; set => _communityString = value; }
 
+        /* Statuses */
+        bool _enableTx = false;
+        bool _enableRx = false;
+
+        public bool IsEnabledTx { get => _enableTx; set => _enableTx = value; }
+        public bool IsEnabledRx { get => _enableRx; set => _enableRx = value; }
+
+        /* Model Specific */
+        int _signalQDivider = 10;
+
+        public int SignalQDivider { get => _signalQDivider; set => _signalQDivider = value; }
+
         /* OIDs */
-        ObjectIdentifier _oidSysName;
-        ObjectIdentifier _oidUptime;
+        static ObjectIdentifier _oidSysName = new ObjectIdentifier("1.3.6.1.2.1.1.5.0");
+        static ObjectIdentifier _oidUptime = new ObjectIdentifier("1.3.6.1.2.1.1.3.0");
         ObjectIdentifier _oidSignal;
         ObjectIdentifier _oidSignalQ;
         ObjectIdentifier _oidTxDataRate;
         ObjectIdentifier _oidRxDataRate;
 
-        public ObjectIdentifier OidSysName { get => _oidSysName; set => _oidSysName = value; }
-        public ObjectIdentifier OidUptime { get => _oidUptime; set => _oidUptime = value; }
+        public static ObjectIdentifier OidSysName { get => _oidSysName; }
+        public static ObjectIdentifier OidUptime { get => _oidUptime; }
         public ObjectIdentifier OidSignal { get => _oidSignal; set => _oidSignal = value; }
         public ObjectIdentifier OidSignalQ { get => _oidSignalQ; set => _oidSignalQ = value; }
         public ObjectIdentifier OidTxDataRate { get => _oidTxDataRate; set => _oidTxDataRate = value; }
@@ -121,6 +133,27 @@ namespace MicrowaveMonitor.Database
             DataTx = new ObservableCollection<UIntRecord>();
             DataRx = new ObservableCollection<UIntRecord>();
             DataPing = new ObservableCollection<DoubleRecord>();
+        }
+
+        public Device(int id, string ipString, int port, string snmpCommunity, ObjectIdentifier oidSignal, int refreshSig, ObjectIdentifier oidSignalQ, int resfreshSigQ, int refreshPing)
+            : this(id, ipString, port, snmpCommunity)
+        {
+            OidSignal = oidSignal;
+            RefreshSignal = refreshSig;
+            OidSignalQ = oidSignalQ;
+            RefreshSignalQ = resfreshSigQ;
+            RefreshPing = refreshPing;
+        }
+
+        public Device(int id, string ipString, int port, string snmpCommunity, ObjectIdentifier oidSignal, int refreshSig, ObjectIdentifier oidSignalQ, int resfreshSigQ, ObjectIdentifier oidTx, int refreshTx, ObjectIdentifier oidRx, int refreshRx, int refreshPing)
+            : this(id, ipString, port, snmpCommunity, oidSignal, refreshSig, oidSignalQ, resfreshSigQ, refreshPing)
+        {
+            OidTxDataRate = oidTx;
+            RefreshTx = refreshTx;
+            OidRxDataRate = oidRx;
+            RefreshRx = refreshRx;
+            IsEnabledTx = true;
+            IsEnabledRx = true;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

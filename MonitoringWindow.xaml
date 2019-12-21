@@ -72,25 +72,10 @@
                 <Label x:Name="uptime" Grid.Row="2" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,5,0"></Label>
 
                 <TabControl x:Name="monitorTabControl" Grid.Row="3">
-                    <TabItem Header="Traffic">
+                    <TabItem Header="Radio">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition></ColumnDefinition>
-                                <ColumnDefinition></ColumnDefinition>
-                                <ColumnDefinition></ColumnDefinition>
-                            </Grid.ColumnDefinitions>
-
-                            <Label Grid.Row="1" Content="Radio Transmit" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-                            <TextBox x:Name="tx" Grid.Row="1" Margin="5,25,5,5" IsReadOnly="True" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Visible" ScrollViewer.CanContentScroll="True"/>
-                            <Label Grid.Column="1" Grid.Row="1" Content="Radio Receive" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-                            <TextBox x:Name="rx" Grid.Column="1" Grid.Row="1" Margin="5,25,5,5" IsReadOnly="True" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Visible" ScrollViewer.CanContentScroll="True"/>
-                            <Label Grid.Column="2" Grid.Row="1" Content="Ping" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-                            <TextBox x:Name="pingwin" Grid.Column="2" Grid.Row="1" Margin="5,25,5,5" IsReadOnly="True" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Visible" ScrollViewer.CanContentScroll="True"/>
-                        </Grid>
-                    </TabItem>
-                    <TabItem Header="Signal">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
                                 <ColumnDefinition></ColumnDefinition>
                                 <ColumnDefinition></ColumnDefinition>
                             </Grid.ColumnDefinitions>
@@ -99,8 +84,22 @@
                             <TextBox x:Name="signalLevel" Grid.Row="0" Margin="5,25,5,5" IsReadOnly="True" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Visible" ScrollViewer.CanContentScroll="True"/>
                             <Label Grid.Column="1" Grid.Row="0" Content="Signal Quality" HorizontalAlignment="Left" VerticalAlignment="Top"/>
                             <TextBox x:Name="signalQuality" Grid.Column="1" Grid.Row="0" Margin="5,25,5,5" IsReadOnly="True" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Visible" ScrollViewer.CanContentScroll="True"/>
+                            <Label Grid.Column="2" Grid.Row="1" Content="Ping" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                            <TextBox x:Name="pingwin" Grid.Column="2" Grid.Row="1" Margin="5,25,5,5" IsReadOnly="True" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Visible" ScrollViewer.CanContentScroll="True"/>
                         </Grid>
+                    </TabItem>
+                    <TabItem Header="Traffic">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition></ColumnDefinition>
+                                <ColumnDefinition></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
 
+                            <Label Grid.Row="1" Content="Radio Transmit" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                            <TextBox x:Name="tx" Grid.Row="1" Margin="5,25,5,5" IsReadOnly="True" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Visible" ScrollViewer.CanContentScroll="True"/>
+                            <Label Grid.Column="1" Grid.Row="1" Content="Radio Receive" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                            <TextBox x:Name="rx" Grid.Column="1" Grid.Row="1" Margin="5,25,5,5" IsReadOnly="True" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Visible" ScrollViewer.CanContentScroll="True"/>
+                        </Grid>
                     </TabItem>
                     <TabItem Header="Unit">
 

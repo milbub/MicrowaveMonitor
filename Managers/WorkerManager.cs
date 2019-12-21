@@ -88,32 +88,32 @@ namespace MicrowaveMonitor.Managers
 
         public void StopWorkers(Dictionary<string, Link> linkDatabase)
         {
-                foreach (Link link in linkDatabase.Values)
+            foreach (Link link in linkDatabase.Values)
+            {
+                switch (link.HopCount)
                 {
-                    switch (link.HopCount)
-                    {
-                        case 0:
-                            StopDeviceWorkers(link.BaseDevice);
-                            break;
-                        case 1:
-                            StopDeviceWorkers(link.EndDevice);
-                            goto case 0;
-                        case 2:
-                            StopDeviceWorkers(link.RelayOne);
-                            goto case 1;
-                        case 3:
-                            StopDeviceWorkers(link.RelayTwo);
-                            goto case 2;
-                        case 4:
-                            StopDeviceWorkers(link.RelayThree);
-                            goto case 3;
-                        case 5:
-                            StopDeviceWorkers(link.RelayFour);
-                            goto case 4;
-                        default:
-                            throw new NotSupportedException();
-                    }
+                    case 0:
+                        StopDeviceWorkers(link.BaseDevice);
+                        break;
+                    case 1:
+                        StopDeviceWorkers(link.EndDevice);
+                        goto case 0;
+                    case 2:
+                        StopDeviceWorkers(link.RelayOne);
+                        goto case 1;
+                    case 3:
+                        StopDeviceWorkers(link.RelayTwo);
+                        goto case 2;
+                    case 4:
+                        StopDeviceWorkers(link.RelayThree);
+                        goto case 3;
+                    case 5:
+                        StopDeviceWorkers(link.RelayFour);
+                        goto case 4;
+                    default:
+                        throw new NotSupportedException();
                 }
+            }
         }
 
         public void InitDeviceWorkers(Device device)
@@ -122,8 +122,10 @@ namespace MicrowaveMonitor.Managers
             device.CollectorUptime = new SnmpUptime(device);
             device.CollectorSignal = new SnmpSignal(device);
             device.CollectorSignalQ = new SnmpSignalQ(device);
-            device.CollectorTx = new SnmpTx(device);
-            device.CollectorRx = new SnmpRx(device);
+            if (device.IsEnabledTx)
+                device.CollectorTx = new SnmpTx(device);
+            if (device.IsEnabledRx)
+                device.CollectorRx = new SnmpRx(device);
             device.CollectorPing = new PingCollector(device);
             StartDeviceWorkers(device);
         }
@@ -134,8 +136,10 @@ namespace MicrowaveMonitor.Managers
             device.CollectorUptime.Start();
             device.CollectorSignal.Start();
             device.CollectorSignalQ.Start();
-            device.CollectorTx.Start();
-            device.CollectorRx.Start();
+            if (device.IsEnabledTx)
+                device.CollectorTx.Start();
+            if (device.IsEnabledRx)
+                device.CollectorRx.Start();
             device.CollectorPing.Start();
         }
 
@@ -145,8 +149,10 @@ namespace MicrowaveMonitor.Managers
             device.CollectorUptime.Stop();
             device.CollectorSignal.Stop();
             device.CollectorSignalQ.Stop();
-            device.CollectorTx.Stop();
-            device.CollectorRx.Stop();
+            if (device.IsEnabledRx)
+                device.CollectorTx.Stop();
+            if (device.IsEnabledRx)
+                device.CollectorRx.Stop();
             device.CollectorPing.Stop();
         }
     }

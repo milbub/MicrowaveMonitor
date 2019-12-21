@@ -14,7 +14,7 @@ namespace MicrowaveMonitor.Workers
     {
         public SnmpSysName(Device device) : base(device)
         {
-            _collectedOid = _device.OidSysName;
+            _collectedOid = Device.OidSysName;
             _refreshInterval = Device.RefreshSysName;
         }
 
