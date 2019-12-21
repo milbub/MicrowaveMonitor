@@ -85,7 +85,7 @@
     <Compile Include="Database\UIntRecord.cs" />
     <Compile Include="Interface\LinkSettings.cs" />
     <Compile Include="Interface\LinkView.cs" />
-    <Compile Include="Managers\IncidentManager.cs" />
+    <Compile Include="Managers\AlarmManager.cs" />
     <Compile Include="Managers\LinkManager.cs" />
     <Compile Include="Managers\WorkerManager.cs" />
     <Compile Include="Workers\Collector.cs" />

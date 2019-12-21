@@ -1,20 +1,17 @@
-﻿using System;
+﻿using MicrowaveMonitor.Database;
+using System;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Threading;
-using MicrowaveMonitor.Database;
 
 namespace MicrowaveMonitor.Interface
 {
-    class LinkView
+    internal class LinkView
     {
-        MonitoringWindow _monitorGui;
-        Link _viewedLink;
-        Device _viewedDevice;
+        private MonitoringWindow _monitorGui;
+        private Link _viewedLink;
+        private Device _viewedDevice;
 
         public MonitoringWindow MonitorGui { get => _monitorGui; }
         public Link ViewedLink { get => _viewedLink; set => _viewedLink = value; }
@@ -44,7 +41,7 @@ namespace MicrowaveMonitor.Interface
                 MonitorGui.ResetView();
                 UnregisterCharts();
             }
-            
+
             switch (deviceLabel)
             {
                 case "A":
@@ -77,10 +74,17 @@ namespace MicrowaveMonitor.Interface
                 StaticsChanged(_viewedDevice, new PropertyChangedEventArgs("sysName"));
                 StaticsChanged(_viewedDevice, new PropertyChangedEventArgs("uptime"));
                 ShowPing(String.Format("{0} ms", _viewedDevice.DataPing.Last().Data));
-            } catch(InvalidOperationException e)
+            }
+            catch (InvalidOperationException e)
             {
                 Console.WriteLine(e.Message);
             }
+            updateElement(MonitorGui.avgSig, String.Format("{0:0.00} dBm", ViewedDevice.AvgSig));
+            updateElement(MonitorGui.diffSig, String.Format("{0:0.0000} dBm", ViewedDevice.DiffSig));
+            updateElement(MonitorGui.avgSigQ, String.Format("{0:0.00} dB", ViewedDevice.AvgSigQ));
+            updateElement(MonitorGui.diffSigQ, String.Format("{0:0.0000} dB", ViewedDevice.DiffSigQ));
+            updateElement(MonitorGui.avgPing, String.Format("{0:0.00} ms", ViewedDevice.AvgPing));
+            updateElement(MonitorGui.diffPing, String.Format("{0:0.0000} ms", ViewedDevice.DiffPing));
         }
 
         private void UnregisterCharts()
@@ -178,7 +182,8 @@ namespace MicrowaveMonitor.Interface
                 {
                     element.Content = value;
                 }
-            } catch(TaskCanceledException e)
+            }
+            catch (TaskCanceledException e)
             {
                 Console.WriteLine(e.Message);
             }
@@ -187,6 +192,8 @@ namespace MicrowaveMonitor.Interface
         private void SignalDataChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             tempStoreSignalData = LogWindowUpdate(MonitorGui.signalLevel, MsgSignal(e.NewStartingIndex), tempStoreSignalData);
+            updateElement(MonitorGui.avgSig, String.Format("{0:0.00} dBm", ViewedDevice.AvgSig));
+            updateElement(MonitorGui.diffSig, String.Format("{0:0.0000} dBm", ViewedDevice.DiffSig));
         }
 
         private string MsgSignal(int position)
@@ -198,6 +205,8 @@ namespace MicrowaveMonitor.Interface
         private void SignalQDataChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             tempStoreSignalQData = LogWindowUpdate(MonitorGui.signalQuality, MsgSignalQ(e.NewStartingIndex), tempStoreSignalQData);
+            updateElement(MonitorGui.avgSigQ, String.Format("{0:0.00} dB", ViewedDevice.AvgSigQ));
+            updateElement(MonitorGui.diffSigQ, String.Format("{0:0.0000} dB", ViewedDevice.DiffSigQ));
         }
 
         private string MsgSignalQ(int position)
@@ -235,6 +244,8 @@ namespace MicrowaveMonitor.Interface
             string msg = MsgPing(e.NewStartingIndex);
             tempStorePingData = LogWindowUpdate(MonitorGui.pingwin, msg, tempStorePingData);
             ShowPing(msg.Remove(0, 13));
+            updateElement(MonitorGui.avgPing, String.Format("{0:0.00} ms", ViewedDevice.AvgPing));
+            updateElement(MonitorGui.diffPing, String.Format("{0:0.0000} ms", ViewedDevice.DiffPing));
         }
 
         private string MsgPing(int position)
@@ -261,7 +272,7 @@ namespace MicrowaveMonitor.Interface
             position = LastDataPosition(countS);
             for (; position < countS; position++)
             {
-                msgS += MsgSignal(position);              
+                msgS += MsgSignal(position);
             }
 
             position = LastDataPosition(countSQ);
@@ -338,7 +349,8 @@ namespace MicrowaveMonitor.Interface
                         logWindow.ScrollToEnd();
                     }
                 }
-            } catch (TaskCanceledException e)
+            }
+            catch (TaskCanceledException e)
             {
                 Console.WriteLine(e.Message);
             }
@@ -372,7 +384,8 @@ namespace MicrowaveMonitor.Interface
                         logWindow.Text = String.Join("\n", splitted.Skip(linesCount - permittedLinesCount));
                     }
                 }
-            } catch(TaskCanceledException e)
+            }
+            catch (TaskCanceledException e)
             {
                 Console.WriteLine(e.Message);
             }

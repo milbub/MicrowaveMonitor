@@ -1,12 +1,8 @@
-﻿using System;
+﻿using Lextm.SharpSnmpLib;
+using MicrowaveMonitor.Database;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using Lextm.SharpSnmpLib;
-using Lextm.SharpSnmpLib.Messaging;
-using MicrowaveMonitor.Database;
 
 namespace MicrowaveMonitor.Workers
 {

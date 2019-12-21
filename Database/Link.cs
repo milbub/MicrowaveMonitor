@@ -1,23 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace MicrowaveMonitor.Database
+﻿namespace MicrowaveMonitor.Database
 {
     public class Link
     {
-        int _id;
-        byte _hopCount;
-        string _name;
-        string _note;
-        Device _baseDevice;
-        Device _endDevice;
-        Device _relayOne;
-        Device _relayTwo;
-        Device _relayThree;
-        Device _relayFour;
+        private int _id;
+        private byte _hopCount;
+        private string _name;
+        private string _note;
+        private Device _baseDevice;
+        private Device _endDevice;
+        private Device _relayOne;
+        private Device _relayTwo;
+        private Device _relayThree;
+        private Device _relayFour;
 
         public int Id { get => _id; set => _id = value; }
         public byte HopCount { get => _hopCount; set => _hopCount = value; }

@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using Lextm.SharpSnmpLib;
+﻿using Lextm.SharpSnmpLib;
 using Lextm.SharpSnmpLib.Messaging;
 using MicrowaveMonitor.Database;
+using System;
+using System.Collections.Generic;
+using System.Threading;
 
 namespace MicrowaveMonitor.Workers
 {
@@ -20,9 +17,9 @@ namespace MicrowaveMonitor.Workers
 
         private Thread tCollector;
 
-        public SnmpCollector(Device device) : base(device){}
+        public SnmpCollector(Device device) : base(device) { }
 
-        public void Start()
+        public override void Start()
         {
             DateTime beginTime;
             DateTime finishTime;
@@ -36,47 +33,41 @@ namespace MicrowaveMonitor.Workers
 
             _isRunning = true;
 
-            tCollector = new Thread (() =>
-            {
-                while (IsRunning)
-                {
-                    beginTime = DateTime.Now;
-                    try
-                    {
-                        var result = Messenger.Get
-                        (
-                            VersionCode.V1,
-                            Device.Address,
-                            Device.CommunityString,
-                            new List<Variable> { new Variable(CollectedOid) },
-                            timeout
-                        );
+            tCollector = new Thread(() =>
+           {
+               while (IsRunning)
+               {
+                   beginTime = DateTime.Now;
+                   try
+                   {
+                       var result = Messenger.Get
+                       (
+                           VersionCode.V1,
+                           Device.Address,
+                           Device.CommunityString,
+                           new List<Variable> { new Variable(CollectedOid) },
+                           timeout
+                       );
 
-                        finishTime = DateTime.Now;
+                       finishTime = DateTime.Now;
 
-                        Record(result, finishTime);
+                       Record(result, finishTime);
 
-                        diffTime = finishTime - beginTime;
-                        if (diffTime.TotalMilliseconds < RefreshInterval)
-                            Thread.Sleep((int)(RefreshInterval - diffTime.TotalMilliseconds));
-                    } catch (Lextm.SharpSnmpLib.Messaging.TimeoutException e)
-                    {
+                       diffTime = finishTime - beginTime;
+                       if (diffTime.TotalMilliseconds < RefreshInterval)
+                           Thread.Sleep((int)(RefreshInterval - diffTime.TotalMilliseconds));
+                   }
+                   catch (Lextm.SharpSnmpLib.Messaging.TimeoutException e)
+                   {
                         /* TODO timeout log to events */
                         // Console.WriteLine(e.Message);
                     }
-                }             
-            });
+               }
+           });
             tCollector.Start();
         }
 
-        public virtual void Record(IList<Variable> result, DateTime resultTime)
-        {
-            foreach (var item in result)
-            {
-                /* TODO default log to events */
-                Console.WriteLine(item.Data.ToString());
-            }
-        }
+        public abstract void Record(IList<Variable> result, DateTime resultTime);
 
         public override void Stop()
         {

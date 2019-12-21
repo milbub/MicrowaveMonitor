@@ -1,24 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using MicrowaveMonitor.Interface;
+using MicrowaveMonitor.Managers;
+using System;
 using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using MicrowaveMonitor.Database;
-using MicrowaveMonitor.Managers;
-using MicrowaveMonitor.Workers;
-using MicrowaveMonitor.Interface;
-using Lextm.SharpSnmpLib;
-using System.ComponentModel;
 
 namespace MicrowaveMonitor
 {
@@ -26,14 +11,14 @@ namespace MicrowaveMonitor
     {
         private LinkManager linkManager;
         private WorkerManager workerManager;
-        private IncidentManager incidentManager;
+        private AlarmManager alarmManager;
         private LinkView view;
 
-        public MonitoringWindow(LinkManager linkManager, WorkerManager workerManager, IncidentManager incidentManager)
+        public MonitoringWindow(LinkManager linkManager, WorkerManager workerManager, AlarmManager incidentManager)
         {
             this.linkManager = linkManager;
             this.workerManager = workerManager;
-            this.incidentManager = incidentManager;
+            this.alarmManager = incidentManager;
 
             InitializeComponent();
 
@@ -47,6 +32,7 @@ namespace MicrowaveMonitor
             LinksList.ItemsSource = linkManager.LinkDatabase.Keys;
             LinksList.SelectedItem = linkManager.LinkDatabase.First().Key;
             LinksList.SelectionChanged += LinkChoosed;
+            AlarmsList.ItemsSource = alarmManager.Alarms;
 
             view = new LinkView(this, linkManager.LinkDatabase.First().Value);
         }
@@ -58,7 +44,7 @@ namespace MicrowaveMonitor
                 view.ChangeDevice(rb.Content.ToString());
         }
 
-        void LinkChoosed(object sender, SelectionChangedEventArgs e)
+        private void LinkChoosed(object sender, SelectionChangedEventArgs e)
         {
             view.ChangeLink(linkManager.LinkDatabase[(string)LinksList.SelectedItem]);
         }
@@ -73,6 +59,7 @@ namespace MicrowaveMonitor
             signalQuality.Text = String.Empty;
             tx.Text = String.Empty;
             rx.Text = String.Empty;
+            pingwin.Text = String.Empty;
         }
 
         public void SiteChooserEnabler(bool state, RadioButton rb)

@@ -1,46 +1,41 @@
-﻿using System;
-using System.Collections.ObjectModel;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Net;
-using Lextm.SharpSnmpLib;
+﻿using Lextm.SharpSnmpLib;
 using MicrowaveMonitor.Workers;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Net;
 
 namespace MicrowaveMonitor.Database
 {
     public class Device : INotifyPropertyChanged
     {
         /* Basic parameters */
-        int _id;
-        IPEndPoint _address;
-        OctetString _communityString;
+        private int _id;
+        private IPEndPoint _address;
+        private OctetString _communityString;
 
         public int Id { get => _id; set => _id = value; }
         public IPEndPoint Address { get => _address; set => _address = value; }
         public OctetString CommunityString { get => _communityString; set => _communityString = value; }
 
         /* Statuses */
-        bool _enableTx = false;
-        bool _enableRx = false;
+        private bool _enableTx = false;
+        private bool _enableRx = false;
 
         public bool IsEnabledTx { get => _enableTx; set => _enableTx = value; }
         public bool IsEnabledRx { get => _enableRx; set => _enableRx = value; }
 
         /* Model Specific */
-        int _signalQDivider = 10;
+        private int _signalQDivider = 10;
 
         public int SignalQDivider { get => _signalQDivider; set => _signalQDivider = value; }
 
         /* OIDs */
-        static ObjectIdentifier _oidSysName = new ObjectIdentifier("1.3.6.1.2.1.1.5.0");
-        static ObjectIdentifier _oidUptime = new ObjectIdentifier("1.3.6.1.2.1.1.3.0");
-        ObjectIdentifier _oidSignal;
-        ObjectIdentifier _oidSignalQ;
-        ObjectIdentifier _oidTxDataRate;
-        ObjectIdentifier _oidRxDataRate;
+        private static ObjectIdentifier _oidSysName = new ObjectIdentifier("1.3.6.1.2.1.1.5.0");
+        private static ObjectIdentifier _oidUptime = new ObjectIdentifier("1.3.6.1.2.1.1.3.0");
+        private ObjectIdentifier _oidSignal;
+        private ObjectIdentifier _oidSignalQ;
+        private ObjectIdentifier _oidTxDataRate;
+        private ObjectIdentifier _oidRxDataRate;
 
         public static ObjectIdentifier OidSysName { get => _oidSysName; }
         public static ObjectIdentifier OidUptime { get => _oidUptime; }
@@ -50,13 +45,13 @@ namespace MicrowaveMonitor.Database
         public ObjectIdentifier OidRxDataRate { get => _oidRxDataRate; set => _oidRxDataRate = value; }
 
         /* Refresh interval constants */
-        const int _refreshSysName = 600000;
-        const int _refreshUptime = 10000;
-        int _refreshSignal;
-        int _refreshSignalQ;
-        int _refreshTx;
-        int _refreshRx;
-        int _refreshPing;
+        private const int _refreshSysName = 600000;
+        private const int _refreshUptime = 10000;
+        private int _refreshSignal;
+        private int _refreshSignalQ;
+        private int _refreshTx;
+        private int _refreshRx;
+        private int _refreshPing;
 
         public static int RefreshSysName => _refreshSysName;
         public static int RefreshUptime => _refreshUptime;
@@ -67,13 +62,25 @@ namespace MicrowaveMonitor.Database
         public int RefreshPing { get => _refreshPing; set => _refreshPing = value; }
 
         /* Collected data storages */
-        string _dataSysName;
-        string _dataUptime;
-        ObservableCollection<UIntRecord> _dataSignal;
-        ObservableCollection<DoubleRecord> _dataSignalQ;
-        ObservableCollection<UIntRecord> _dataTx;
-        ObservableCollection<UIntRecord> _dataRx;
-        ObservableCollection<DoubleRecord> _dataPing;
+        private string _dataSysName;
+        private string _dataUptime;
+        private ObservableCollection<DoubleRecord> _dataSignal;
+        private ObservableCollection<DoubleRecord> _dataSignalQ;
+        private ObservableCollection<UIntRecord> _dataTx;
+        private ObservableCollection<UIntRecord> _dataRx;
+        private ObservableCollection<DoubleRecord> _dataPing;
+
+        /* Statistic data */
+        private double _avgSig, _diffSig = 0;
+        private double _avgSigQ, _diffSigQ = 0;
+        private double _avgPing, _diffPing = 0;
+
+        public double AvgSig { get => _avgSig; set => _avgSig = value; }
+        public double DiffSig { get => _diffSig; set => _diffSig = value; }
+        public double AvgSigQ { get => _avgSigQ; set => _avgSigQ = value; }
+        public double DiffSigQ { get => _diffSigQ; set => _diffSigQ = value; }
+        public double AvgPing { get => _avgPing; set => _avgPing = value; }
+        public double DiffPing { get => _diffPing; set => _diffPing = value; }
 
         public string DataSysName
         {
@@ -99,7 +106,7 @@ namespace MicrowaveMonitor.Database
                 }
             }
         }
-        public ObservableCollection<UIntRecord> DataSignal { get => _dataSignal; set => _dataSignal = value; }
+        public ObservableCollection<DoubleRecord> DataSignal { get => _dataSignal; set => _dataSignal = value; }
         public ObservableCollection<DoubleRecord> DataSignalQ { get => _dataSignalQ; set => _dataSignalQ = value; }
         public ObservableCollection<UIntRecord> DataTx { get => _dataTx; set => _dataTx = value; }
         public ObservableCollection<UIntRecord> DataRx { get => _dataRx; set => _dataRx = value; }
@@ -107,13 +114,13 @@ namespace MicrowaveMonitor.Database
 
 
         /* Workers */
-        SnmpSysName _collectorSysName;
-        SnmpUptime _collectorUptime;
-        SnmpSignal _collectorSignal;
-        SnmpSignalQ _collectorSignalQ;
-        SnmpTx _collectorTx;
-        SnmpRx _collectorRx;
-        PingCollector _collectorPing;
+        private SnmpSysName _collectorSysName;
+        private SnmpUptime _collectorUptime;
+        private SnmpSignal _collectorSignal;
+        private SnmpSignalQ _collectorSignalQ;
+        private SnmpTx _collectorTx;
+        private SnmpRx _collectorRx;
+        private PingCollector _collectorPing;
 
         public SnmpSysName CollectorSysName { get => _collectorSysName; set => _collectorSysName = value; }
         public SnmpUptime CollectorUptime { get => _collectorUptime; set => _collectorUptime = value; }
@@ -128,7 +135,7 @@ namespace MicrowaveMonitor.Database
             Id = id;
             Address = new IPEndPoint(IPAddress.Parse(ipString), port);
             CommunityString = new OctetString(snmpCommunity);
-            DataSignal = new ObservableCollection<UIntRecord>();
+            DataSignal = new ObservableCollection<DoubleRecord>();
             DataSignalQ = new ObservableCollection<DoubleRecord>();
             DataTx = new ObservableCollection<UIntRecord>();
             DataRx = new ObservableCollection<UIntRecord>();

@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using MicrowaveMonitor.Managers;
 using System.Windows;
-using MicrowaveMonitor.Managers;
 
 namespace MicrowaveMonitor
 {
@@ -13,21 +7,22 @@ namespace MicrowaveMonitor
     {
         private LinkManager linkManager = new LinkManager();
         private WorkerManager workerManager = new WorkerManager();
-        private IncidentManager incidentManager = new IncidentManager();
+        private AlarmManager alarmManager = new AlarmManager();
 
         private void Application_Startup(object sender, StartupEventArgs e)
         {
             linkManager.LoadLinks();
             workerManager.InitWorkers(linkManager.LinkDatabase);
-            incidentManager.StartWatchers(linkManager.LinkDatabase);
+            alarmManager.StartWatcher(linkManager.LinkDatabase);
 
-            MonitoringWindow monitoringWindow = new MonitoringWindow(linkManager, workerManager, incidentManager);
+            MonitoringWindow monitoringWindow = new MonitoringWindow(linkManager, workerManager, alarmManager);
             monitoringWindow.Show();
         }
 
         private void Application_Exit(object sender, ExitEventArgs e)
         {
             workerManager.StopWorkers(linkManager.LinkDatabase);
+            alarmManager.StopWatcher();
         }
     }
 }

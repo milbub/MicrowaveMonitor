@@ -1,12 +1,9 @@
-﻿using System;
+﻿using MicrowaveMonitor.Database;
+using MicrowaveMonitor.Workers;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using MicrowaveMonitor.Workers;
-using Lextm.SharpSnmpLib;
-using MicrowaveMonitor.Database;
 
 namespace MicrowaveMonitor.Managers
 {
@@ -141,6 +138,10 @@ namespace MicrowaveMonitor.Managers
             if (device.IsEnabledRx)
                 device.CollectorRx.Start();
             device.CollectorPing.Start();
+
+            device.CollectorSignal.StartStatistic();
+            device.CollectorSignalQ.StartStatistic();
+            device.CollectorPing.StartStatistic();
         }
 
         public void StopDeviceWorkers(Device device)
