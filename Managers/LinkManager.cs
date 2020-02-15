@@ -83,10 +83,12 @@ namespace MicrowaveMonitor.Managers
             Device test10 = new Device(2, "10.248.12.41", 161, "public", new ObjectIdentifier("1.3.6.1.4.1.23688.1.1.5.0"), 1000, new ObjectIdentifier("1.3.6.1.4.1.23688.1.1.6.0"), 1000, 1000);
             Device test11 = new Device(1, "10.248.25.28", 161, "public", new ObjectIdentifier("1.3.6.1.4.1.23688.1.1.5.0"), 1000, new ObjectIdentifier("1.3.6.1.4.1.23688.1.1.6.0"), 1000, 1000);
             Device test12 = new Device(2, "10.248.25.29", 161, "public", new ObjectIdentifier("1.3.6.1.4.1.23688.1.1.5.0"), 1000, new ObjectIdentifier("1.3.6.1.4.1.23688.1.1.6.0"), 1000, 1000);
-            Device test13 = new Device(1, "10.248.35.76", 161, "public", new ObjectIdentifier("1.3.6.1.4.1.23688.1.1.5.0"), 1000, new ObjectIdentifier("1.3.6.1.4.1.23688.1.1.6.0"), 1000, 1000);
-            Device test14 = new Device(2, "10.248.35.77", 161, "public", new ObjectIdentifier("1.3.6.1.4.1.23688.1.1.5.0"), 1000, new ObjectIdentifier("1.3.6.1.4.1.23688.1.1.6.0"), 1000, 1000);
 
             // Ceragon
+            Device test13 = new Device(1, "10.248.35.76", 161, "public", new ObjectIdentifier("1.3.6.1.4.1.2281.10.5.1.1.2.268451969"), 1000, new ObjectIdentifier("1.3.6.1.4.1.2281.10.7.1.1.2.268451969"), 1000, 1000);
+            test13.SignalQDivider = 100;
+            Device test14 = new Device(2, "10.248.35.77", 161, "public", new ObjectIdentifier("1.3.6.1.4.1.2281.10.5.1.1.2.268451969"), 1000, new ObjectIdentifier("1.3.6.1.4.1.2281.10.7.1.1.2.268451969"), 1000, 1000);
+            test14.SignalQDivider = 100;
             Device test15 = new Device(1, "10.248.15.186", 161, "public", new ObjectIdentifier("1.3.6.1.4.1.2281.10.5.1.1.2.1"), 1000, new ObjectIdentifier("1.3.6.1.4.1.2281.10.7.1.1.2.1"), 1000, 1000);
             test15.SignalQDivider = 100;
             Device test16 = new Device(2, "10.248.15.187", 161, "public", new ObjectIdentifier("1.3.6.1.4.1.2281.10.5.1.1.2.1"), 1000, new ObjectIdentifier("1.3.6.1.4.1.2281.10.7.1.1.2.1"), 1000, 1000);

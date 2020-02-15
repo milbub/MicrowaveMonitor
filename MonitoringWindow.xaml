@@ -50,6 +50,8 @@
                 </Grid.RowDefinitions>
 
                 <Label x:Name="linkCaption" HorizontalAlignment="Left" FontSize="16" Margin="0,0,150,0"/>
+                <Button x:Name="buttonStart" Content="▶" HorizontalAlignment="Right" Width="25" Height="25" Margin="0,0,160,0"/>
+                <Button x:Name="buttonPause" Content="⏸" HorizontalAlignment="Right" Width="25" Height="25" Margin="0,0,130,0"/>
                 <Button x:Name="buttonAdd" Content="A" HorizontalAlignment="Right" Width="25" Height="25" Margin="0,0,100,0"/>
                 <Button x:Name="buttonDelete" Content="D" HorizontalAlignment="Right" Width="25" Height="25" Margin="0,0,70,0"/>
                 <Button x:Name="buttonSettings" Content="S" HorizontalAlignment="Right" Width="25" Height="25" Margin="0,0,40,0"/>
@@ -68,7 +70,7 @@
                 <Label x:Name="ping" Grid.Row="2" VerticalAlignment="Center" HorizontalContentAlignment="Left" Margin="160,0,0,0"/>
                 <Label Grid.Row="2" Content="Unit Name:" Grid.Column="1" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="220,0,0,0"></Label>
                 <Label x:Name="unitname" Grid.Row="2" Grid.Column="1" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="285,0,0,0" FontWeight="Bold"></Label>
-                <Label Grid.Row="2" Content="Uptime:" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,80,0"></Label>
+                <Label Grid.Row="2" Content="Uptime:" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,110,0"></Label>
                 <Label x:Name="uptime" Grid.Row="2" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,5,0"></Label>
 
                 <TabControl x:Name="monitorTabControl" Grid.Row="3">
@@ -142,7 +144,7 @@
                                 <Label Content="Active link endpoints or retranslation sites:"></Label>
                                 <StackPanel Orientation="Horizontal">
                                     <CheckBox x:Name="checkA" Content="A" Margin="10,0,0,0" IsEnabled="False" IsChecked="True"/>
-                                    <CheckBox x:Name="checkB" Content="B" Margin="10,0,0,0"/>
+                                    <CheckBox x:Name="checkB" Content="B" Margin="10,0,0,0" IsChecked="True"/>
                                     <CheckBox x:Name="checkR1" Content="R1" Margin="10,0,0,0"/>
                                     <CheckBox x:Name="checkR2" Content="R2" Margin="10,0,0,0"/>
                                     <CheckBox x:Name="checkR3" Content="R3" Margin="10,0,0,0"/>
@@ -188,15 +190,15 @@
                                                 
                                                 <Label Content="Ping:"/>
                                                 <CheckBox Grid.Column="1" IsChecked="True" IsEnabled="False" Content="Enabled" x:Name="enaPing_A" Margin="5,6,0,0"/>
-                                                <CheckBox Grid.Column="1" Content="Watch" x:Name="monPing_A" Margin="80,6,0,0"/>
+                                                <CheckBox Grid.Column="1" IsChecked="True" Content="Watch" x:Name="monPing_A" Margin="80,6,0,0"/>
                                                 <Label Content="Refresh rate:" Grid.Column="2"/>
                                                 <TextBox Grid.Column="2" x:Name="refPing_A" Width="50" Height="20" VerticalContentAlignment="Center" HorizontalAlignment="Left" Margin="78,1,0,0"></TextBox>
                                                 <Label Content="seconds" Grid.Column="2" Margin="127,0,0,0"/>
 
                                                 <Separator Grid.Row="1" Grid.ColumnSpan="3" Margin="0,8,0,8"/>
                                                 <Label Grid.Row="2" Content="Signal strength:" Grid.RowSpan="2" VerticalAlignment="Center"/>
-                                                <CheckBox Grid.Column="1" Grid.Row="2" Content="Enabled" x:Name="enaSignalStr_A" Margin="5,6,0,0"/>
-                                                <CheckBox Grid.Column="1" Grid.Row="2" Content="Watch" x:Name="monSignalStr_A" Margin="80,6,0,0"/>
+                                                <CheckBox Grid.Column="1" IsChecked="True" Grid.Row="2" Content="Enabled" x:Name="enaSignalStr_A" Margin="5,6,0,0"/>
+                                                <CheckBox Grid.Column="1" IsChecked="True" Grid.Row="2" Content="Watch" x:Name="monSignalStr_A" Margin="80,6,0,0"/>
                                                 <Label Content="Refresh rate:" Grid.Row="2" Grid.Column="2"/>
                                                 <TextBox Grid.Column="2" Grid.Row="2" x:Name="refSignalStr_A" Width="50" Height="20" VerticalContentAlignment="Center" HorizontalAlignment="Left" Margin="78,1,0,0"></TextBox>
                                                 <Label Content="seconds" Grid.Row="2" Grid.Column="2" Margin="127,0,0,0"/>
@@ -205,8 +207,8 @@
 
                                                 <Separator Grid.Row="4" Grid.ColumnSpan="3" Margin="0,13,0,8"/>
                                                 <Label Grid.Row="5" Content="Signal quality:" Grid.RowSpan="2" VerticalAlignment="Center"/>
-                                                <CheckBox Grid.Column="1" Grid.Row="5" Content="Enabled" x:Name="enaSignalQ_A" Margin="5,6,0,0"/>
-                                                <CheckBox Grid.Column="1" Grid.Row="5" Content="Watch" x:Name="monSignalQ_A" Margin="80,6,0,0"/>
+                                                <CheckBox Grid.Column="1" IsChecked="True" Grid.Row="5" Content="Enabled" x:Name="enaSignalQ_A" Margin="5,6,0,0"/>
+                                                <CheckBox Grid.Column="1" IsChecked="True" Grid.Row="5" Content="Watch" x:Name="monSignalQ_A" Margin="80,6,0,0"/>
                                                 <Label Content="Refresh rate:" Grid.Row="5" Grid.Column="2"/>
                                                 <TextBox Grid.Column="2" Grid.Row="5" x:Name="refSignalQ_A" Width="50" Height="20" VerticalContentAlignment="Center" HorizontalAlignment="Left" Margin="78,1,0,0"></TextBox>
                                                 <Label Content="seconds" Grid.Row="5" Grid.Column="2" Margin="127,0,0,0"/>
@@ -215,8 +217,8 @@
 
                                                 <Separator Grid.Row="7" Grid.ColumnSpan="3" Margin="0,13,0,8"/>
                                                 <Label Grid.Row="8" Content="Radio Tx data rate:" Grid.RowSpan="2" VerticalAlignment="Center"/>
-                                                <CheckBox Grid.Column="1" Grid.Row="8" Content="Enabled" x:Name="enaTx_A" Margin="5,6,0,0"/>
-                                                <CheckBox Grid.Column="1" Grid.Row="8" Content="Watch" x:Name="monTx_A" Margin="80,6,0,0"/>
+                                                <CheckBox Grid.Column="1" IsChecked="True" Grid.Row="8" Content="Enabled" x:Name="enaTx_A" Margin="5,6,0,0"/>
+                                                <CheckBox Grid.Column="1" IsChecked="True" Grid.Row="8" Content="Watch" x:Name="monTx_A" Margin="80,6,0,0"/>
                                                 <Label Content="Refresh rate:" Grid.Row="8" Grid.Column="2"/>
                                                 <TextBox Grid.Column="2" Grid.Row="8" x:Name="refTx_A" Width="50" Height="20" VerticalContentAlignment="Center" HorizontalAlignment="Left" Margin="78,1,0,0"></TextBox>
                                                 <Label Content="seconds" Grid.Row="8" Grid.Column="2" Margin="127,0,0,0"/>
@@ -225,8 +227,8 @@
 
                                                 <Separator Grid.Row="10" Grid.ColumnSpan="3" Margin="0,13,0,8"/>
                                                 <Label Grid.Row="11" Content="Radio RX data rate:" Grid.RowSpan="2" VerticalAlignment="Center"/>
-                                                <CheckBox Grid.Column="1" Grid.Row="11" Content="Enabled" x:Name="enaRx_A" Margin="5,6,0,0"/>
-                                                <CheckBox Grid.Column="1" Grid.Row="11" Content="Watch" x:Name="monRx_A" Margin="80,6,0,0"/>
+                                                <CheckBox Grid.Column="1" IsChecked="True" Grid.Row="11" Content="Enabled" x:Name="enaRx_A" Margin="5,6,0,0"/>
+                                                <CheckBox Grid.Column="1" IsChecked="True" Grid.Row="11" Content="Watch" x:Name="monRx_A" Margin="80,6,0,0"/>
                                                 <Label Content="Refresh rate:" Grid.Row="11" Grid.Column="2"/>
                                                 <TextBox Grid.Column="2" Grid.Row="11" x:Name="refRx_A" Width="50" Height="20" VerticalContentAlignment="Center" HorizontalAlignment="Left" Margin="78,1,0,0"></TextBox>
                                                 <Label Content="seconds" Grid.Row="11" Grid.Column="2" Margin="127,0,0,0"/>
@@ -235,7 +237,7 @@
                                             </Grid>
                                         </StackPanel>
                                     </TabItem>
-                                    <TabItem x:Name="tabB" Header="B" IsEnabled="False">
+                                    <TabItem x:Name="tabB" Header="B" IsEnabled="True">
                                         <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10,10,10,10">
                                             <Label Content="IP address:"></Label>
                                             <TextBox x:Name="boxIP_B" Height="25" VerticalContentAlignment="Center"></TextBox>
@@ -274,15 +276,15 @@
 
                                                 <Label Content="Ping:"/>
                                                 <CheckBox Grid.Column="1" IsChecked="True" IsEnabled="False" Content="Enabled" x:Name="enaPing_B" Margin="5,6,0,0"/>
-                                                <CheckBox Grid.Column="1" Content="Watch" x:Name="monPing_B" Margin="80,6,0,0"/>
+                                                <CheckBox Grid.Column="1" IsChecked="True" Content="Watch" x:Name="monPing_B" Margin="80,6,0,0"/>
                                                 <Label Content="Refresh rate:" Grid.Column="2"/>
                                                 <TextBox Grid.Column="2" x:Name="refPing_B" Width="50" Height="20" VerticalContentAlignment="Center" HorizontalAlignment="Left" Margin="78,1,0,0"></TextBox>
                                                 <Label Content="seconds" Grid.Column="2" Margin="127,0,0,0"/>
 
                                                 <Separator Grid.Row="1" Grid.ColumnSpan="3" Margin="0,8,0,8"/>
                                                 <Label Grid.Row="2" Content="Signal strength:" Grid.RowSpan="2" VerticalAlignment="Center"/>
-                                                <CheckBox Grid.Column="1" Grid.Row="2" Content="Enabled" x:Name="enaSignalStr_B" Margin="5,6,0,0"/>
-                                                <CheckBox Grid.Column="1" Grid.Row="2" Content="Watch" x:Name="monSignalStr_B" Margin="80,6,0,0"/>
+                                                <CheckBox Grid.Column="1" IsChecked="True" Grid.Row="2" Content="Enabled" x:Name="enaSignalStr_B" Margin="5,6,0,0"/>
+                                                <CheckBox Grid.Column="1" IsChecked="True" Grid.Row="2" Content="Watch" x:Name="monSignalStr_B" Margin="80,6,0,0"/>
                                                 <Label Content="Refresh rate:" Grid.Row="2" Grid.Column="2"/>
                                                 <TextBox Grid.Column="2" Grid.Row="2" x:Name="refSignalStr_B" Width="50" Height="20" VerticalContentAlignment="Center" HorizontalAlignment="Left" Margin="78,1,0,0"></TextBox>
                                                 <Label Content="seconds" Grid.Row="2" Grid.Column="2" Margin="127,0,0,0"/>
@@ -291,8 +293,8 @@
 
                                                 <Separator Grid.Row="4" Grid.ColumnSpan="3" Margin="0,13,0,8"/>
                                                 <Label Grid.Row="5" Content="Signal quality:" Grid.RowSpan="2" VerticalAlignment="Center"/>
-                                                <CheckBox Grid.Column="1" Grid.Row="5" Content="Enabled" x:Name="enaSignalQ_B" Margin="5,6,0,0"/>
-                                                <CheckBox Grid.Column="1" Grid.Row="5" Content="Watch" x:Name="monSignalQ_B" Margin="80,6,0,0"/>
+                                                <CheckBox Grid.Column="1" IsChecked="True" Grid.Row="5" Content="Enabled" x:Name="enaSignalQ_B" Margin="5,6,0,0"/>
+                                                <CheckBox Grid.Column="1" IsChecked="True" Grid.Row="5" Content="Watch" x:Name="monSignalQ_B" Margin="80,6,0,0"/>
                                                 <Label Content="Refresh rate:" Grid.Row="5" Grid.Column="2"/>
                                                 <TextBox Grid.Column="2" Grid.Row="5" x:Name="refSignalQ_B" Width="50" Height="20" VerticalContentAlignment="Center" HorizontalAlignment="Left" Margin="78,1,0,0"></TextBox>
                                                 <Label Content="seconds" Grid.Row="5" Grid.Column="2" Margin="127,0,0,0"/>
@@ -301,8 +303,8 @@
 
                                                 <Separator Grid.Row="7" Grid.ColumnSpan="3" Margin="0,13,0,8"/>
                                                 <Label Grid.Row="8" Content="Radio Tx data rate:" Grid.RowSpan="2" VerticalAlignment="Center"/>
-                                                <CheckBox Grid.Column="1" Grid.Row="8" Content="Enabled" x:Name="enaTx_B" Margin="5,6,0,0"/>
-                                                <CheckBox Grid.Column="1" Grid.Row="8" Content="Watch" x:Name="monTx_B" Margin="80,6,0,0"/>
+                                                <CheckBox Grid.Column="1" IsChecked="True" Grid.Row="8" Content="Enabled" x:Name="enaTx_B" Margin="5,6,0,0"/>
+                                                <CheckBox Grid.Column="1" IsChecked="True" Grid.Row="8" Content="Watch" x:Name="monTx_B" Margin="80,6,0,0"/>
                                                 <Label Content="Refresh rate:" Grid.Row="8" Grid.Column="2"/>
                                                 <TextBox Grid.Column="2" Grid.Row="8" x:Name="refTx_B" Width="50" Height="20" VerticalContentAlignment="Center" HorizontalAlignment="Left" Margin="78,1,0,0"></TextBox>
                                                 <Label Content="seconds" Grid.Row="8" Grid.Column="2" Margin="127,0,0,0"/>
@@ -311,8 +313,8 @@
 
                                                 <Separator Grid.Row="10" Grid.ColumnSpan="3" Margin="0,13,0,8"/>
                                                 <Label Grid.Row="11" Content="Radio RX data rate:" Grid.RowSpan="2" VerticalAlignment="Center"/>
-                                                <CheckBox Grid.Column="1" Grid.Row="11" Content="Enabled" x:Name="enaRx_B" Margin="5,6,0,0"/>
-                                                <CheckBox Grid.Column="1" Grid.Row="11" Content="Watch" x:Name="monRx_B" Margin="80,6,0,0"/>
+                                                <CheckBox Grid.Column="1" IsChecked="True" Grid.Row="11" Content="Enabled" x:Name="enaRx_B" Margin="5,6,0,0"/>
+                                                <CheckBox Grid.Column="1" IsChecked="True" Grid.Row="11" Content="Watch" x:Name="monRx_B" Margin="80,6,0,0"/>
                                                 <Label Content="Refresh rate:" Grid.Row="11" Grid.Column="2"/>
                                                 <TextBox Grid.Column="2" Grid.Row="11" x:Name="refRx_B" Width="50" Height="20" VerticalContentAlignment="Center" HorizontalAlignment="Left" Margin="78,1,0,0"></TextBox>
                                                 <Label Content="seconds" Grid.Row="11" Grid.Column="2" Margin="127,0,0,0"/>
@@ -666,6 +668,7 @@
                                         </StackPanel>
                                     </TabItem>
                                 </TabControl>
+                                <Button x:Name="settingsSave" Content="Save" Width="110" Height="30" Margin="0,0,0,0" HorizontalAlignment="Center"/>
                             </StackPanel>
                         </ScrollViewer>
                     </TabItem>

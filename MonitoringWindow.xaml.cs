@@ -13,12 +13,13 @@ namespace MicrowaveMonitor
         private WorkerManager workerManager;
         private AlarmManager alarmManager;
         private LinkView view;
+        private LinkSettings settings;
 
-        public MonitoringWindow(LinkManager linkManager, WorkerManager workerManager, AlarmManager incidentManager)
+        public MonitoringWindow(LinkManager linkManager, WorkerManager workerManager, AlarmManager alarmManager)
         {
             this.linkManager = linkManager;
             this.workerManager = workerManager;
-            this.alarmManager = incidentManager;
+            this.alarmManager = alarmManager;
 
             InitializeComponent();
 
@@ -35,6 +36,7 @@ namespace MicrowaveMonitor
             AlarmsList.ItemsSource = alarmManager.Alarms;
 
             view = new LinkView(this, linkManager.LinkDatabase.First().Value);
+            settings = new LinkSettings(this, view);
         }
 
         private void SiteChoosed(object sender, RoutedEventArgs e)
@@ -47,6 +49,7 @@ namespace MicrowaveMonitor
         private void LinkChoosed(object sender, SelectionChangedEventArgs e)
         {
             view.ChangeLink(linkManager.LinkDatabase[(string)LinksList.SelectedItem]);
+            settings.ChangeSettings();
         }
 
         public void ResetView()

@@ -16,8 +16,19 @@ namespace MicrowaveMonitor.Workers
 
         public override void Record(IList<Variable> result, DateTime resultTime)
         {
-            string uptime = result.First().Data.ToString();
-            uptime = uptime.Remove(uptime.Length - 8);
+            uint uptime = 0;
+
+            if (result.First().Data.GetType() == typeof(TimeTicks))
+            {
+                TimeTicks uptimeTicks = (TimeTicks)result.First().Data;
+                uptime = uptimeTicks.ToUInt32();
+            }
+            else if (result.First().Data.GetType() == typeof(Integer32))
+            {
+                Integer32 uptimeTicks = (Integer32)result.First().Data;
+                uptime = (uint)uptimeTicks.ToInt32();
+            }
+
             _device.DataUptime = uptime;
         }
     }

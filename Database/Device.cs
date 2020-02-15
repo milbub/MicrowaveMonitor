@@ -63,7 +63,7 @@ namespace MicrowaveMonitor.Database
 
         /* Collected data storages */
         private string _dataSysName;
-        private string _dataUptime;
+        private uint _dataUptime;
         private ObservableCollection<DoubleRecord> _dataSignal;
         private ObservableCollection<DoubleRecord> _dataSignalQ;
         private ObservableCollection<UIntRecord> _dataTx;
@@ -94,7 +94,7 @@ namespace MicrowaveMonitor.Database
                 }
             }
         }
-        public string DataUptime
+        public uint DataUptime
         {
             get => _dataUptime;
             set
