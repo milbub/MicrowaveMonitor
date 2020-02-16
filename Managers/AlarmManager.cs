@@ -95,10 +95,13 @@ namespace MicrowaveMonitor.Managers
             double maxdiff = avg * diffLimit;
             double maxval = avg + diff;
             if (diff > maxdiff)
-                _alarms.Add(String.Format("Device {0} has exceeded maximum ({1} {2}) {3} treshold!", address, maxval, units, meter));
+                App.Current.Dispatcher.Invoke((Action)delegate
+                {
+                    _alarms.Add(String.Format("Device {0} has exceeded maximum ({1} {2}) {3} treshold!", address, maxval, units, meter));
+                });
         }
 
-        private void notRespondAlarm(ObservableCollection<DoubleRecord> collection, IPAddress address)
+        private void notRespondAlarm(ObservableCollection<RecordDouble> collection, IPAddress address)
         {
             if (collection.Count == 0)
             {

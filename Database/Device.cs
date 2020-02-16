@@ -64,11 +64,11 @@ namespace MicrowaveMonitor.Database
         /* Collected data storages */
         private string _dataSysName;
         private uint _dataUptime;
-        private ObservableCollection<DoubleRecord> _dataSignal;
-        private ObservableCollection<DoubleRecord> _dataSignalQ;
-        private ObservableCollection<UIntRecord> _dataTx;
-        private ObservableCollection<UIntRecord> _dataRx;
-        private ObservableCollection<DoubleRecord> _dataPing;
+        private ObservableCollection<RecordDouble> _dataSignal;
+        private ObservableCollection<RecordDouble> _dataSignalQ;
+        private ObservableCollection<RecordUInt> _dataTx;
+        private ObservableCollection<RecordUInt> _dataRx;
+        private ObservableCollection<RecordDouble> _dataPing;
 
         /* Statistic data */
         private double _avgSig, _diffSig = 0;
@@ -106,11 +106,11 @@ namespace MicrowaveMonitor.Database
                 }
             }
         }
-        public ObservableCollection<DoubleRecord> DataSignal { get => _dataSignal; set => _dataSignal = value; }
-        public ObservableCollection<DoubleRecord> DataSignalQ { get => _dataSignalQ; set => _dataSignalQ = value; }
-        public ObservableCollection<UIntRecord> DataTx { get => _dataTx; set => _dataTx = value; }
-        public ObservableCollection<UIntRecord> DataRx { get => _dataRx; set => _dataRx = value; }
-        public ObservableCollection<DoubleRecord> DataPing { get => _dataPing; set => _dataPing = value; }
+        public ObservableCollection<RecordDouble> DataSignal { get => _dataSignal; set => _dataSignal = value; }
+        public ObservableCollection<RecordDouble> DataSignalQ { get => _dataSignalQ; set => _dataSignalQ = value; }
+        public ObservableCollection<RecordUInt> DataTx { get => _dataTx; set => _dataTx = value; }
+        public ObservableCollection<RecordUInt> DataRx { get => _dataRx; set => _dataRx = value; }
+        public ObservableCollection<RecordDouble> DataPing { get => _dataPing; set => _dataPing = value; }
 
 
         /* Workers */
@@ -135,11 +135,11 @@ namespace MicrowaveMonitor.Database
             Id = id;
             Address = new IPEndPoint(IPAddress.Parse(ipString), port);
             CommunityString = new OctetString(snmpCommunity);
-            DataSignal = new ObservableCollection<DoubleRecord>();
-            DataSignalQ = new ObservableCollection<DoubleRecord>();
-            DataTx = new ObservableCollection<UIntRecord>();
-            DataRx = new ObservableCollection<UIntRecord>();
-            DataPing = new ObservableCollection<DoubleRecord>();
+            DataSignal = new ObservableCollection<RecordDouble>();
+            DataSignalQ = new ObservableCollection<RecordDouble>();
+            DataTx = new ObservableCollection<RecordUInt>();
+            DataRx = new ObservableCollection<RecordUInt>();
+            DataPing = new ObservableCollection<RecordDouble>();
         }
 
         public Device(int id, string ipString, int port, string snmpCommunity, ObjectIdentifier oidSignal, int refreshSig, ObjectIdentifier oidSignalQ, int resfreshSigQ, int refreshPing)

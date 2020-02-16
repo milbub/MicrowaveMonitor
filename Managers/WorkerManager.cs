@@ -139,9 +139,16 @@ namespace MicrowaveMonitor.Managers
                 device.CollectorRx.Start();
             device.CollectorPing.Start();
 
-            device.CollectorSignal.StartStatistic();
-            device.CollectorSignalQ.StartStatistic();
-            device.CollectorPing.StartStatistic();
+            Task.Run(() =>
+            {
+                while (device.CollectorSignal.IsRunning && device.CollectorSignalQ.IsRunning && device.CollectorPing.IsRunning)
+                {
+                    Thread.Sleep(Collector.AvgSleep * 1000);
+                    device.CollectorSignal.Average();
+                    device.CollectorSignalQ.Average();
+                    device.CollectorPing.Average();
+                }
+            });
         }
 
         public void StopDeviceWorkers(Device device)

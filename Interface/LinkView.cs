@@ -244,7 +244,7 @@ namespace MicrowaveMonitor.Interface
         {
             string msg = MsgPing(e.NewStartingIndex);
             tempStorePingData = LogWindowUpdate(MonitorGui.pingwin, msg, tempStorePingData);
-            ShowPing(msg.Remove(0, 13));
+            ShowPing(String.Format("{0} ms", _viewedDevice.DataPing.ElementAt(e.NewStartingIndex).Data));
             updateElement(MonitorGui.avgPing, String.Format("{0:0.00} ms", ViewedDevice.AvgPing));
             updateElement(MonitorGui.diffPing, String.Format("{0:0.0000} ms", ViewedDevice.DiffPing));
         }

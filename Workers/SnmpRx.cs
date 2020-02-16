@@ -9,18 +9,19 @@ namespace MicrowaveMonitor.Workers
 {
     public class SnmpRx : SnmpCollector
     {
-        private ObservableCollection<UIntRecord> _collectedData;
+        protected ObservableCollection<RecordUInt> _collectedDataUInt;
+        public ObservableCollection<RecordUInt> CollectedDataUInt { get => _collectedDataUInt; }
 
         public SnmpRx(Device device) : base(device)
         {
             _collectedOid = Device.OidRxDataRate;
             _refreshInterval = Device.RefreshRx;
-            _collectedData = Device.DataRx;
+            _collectedDataUInt = Device.DataRx;
         }
 
-        public override void Record(IList<Variable> result, DateTime resultTime)
+        public override void RecordData(IList<Variable> result, DateTime resultTime)
         {
-            _collectedData.Add(new UIntRecord(resultTime, UInt32.Parse(result.First().Data.ToString())));
+            _collectedDataUInt.Add(new RecordUInt(resultTime, UInt32.Parse(result.First().Data.ToString())));
         }
     }
 }

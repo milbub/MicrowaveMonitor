@@ -2,18 +2,15 @@
 
 namespace MicrowaveMonitor.Database
 {
-    public class UIntRecord
+    public abstract class Record
     {
         private DateTime _timeMark;
-        private UInt32 _data;
 
         public DateTime TimeMark { get => _timeMark; set => _timeMark = value; }
-        public uint Data { get => _data; set => _data = value; }
 
-        public UIntRecord(DateTime timeMark, UInt32 data)
+        public Record(DateTime timeMark)
         {
             TimeMark = timeMark;
-            Data = data;
         }
     }
 }

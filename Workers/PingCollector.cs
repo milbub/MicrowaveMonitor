@@ -10,7 +10,11 @@ namespace MicrowaveMonitor.Workers
     {
         private Thread tCollector;
 
-        public PingCollector(Device device) : base(device) { }
+        public PingCollector(Device device) : base(device)
+        {
+            _refreshInterval = Device.RefreshPing;
+            _collectedData = Device.DataPing;
+        }
 
         public override void Start()
         {
@@ -20,10 +24,10 @@ namespace MicrowaveMonitor.Workers
             Ping pingSender = new Ping();
 
             int timeout;
-            if (Device.RefreshPing > MaxTimeout)
+            if (RefreshInterval > MaxTimeout)
                 timeout = MaxTimeout;
             else
-                timeout = Device.RefreshPing * 2;
+                timeout = RefreshInterval * 2;
 
             _isRunning = true;
 
@@ -36,82 +40,38 @@ namespace MicrowaveMonitor.Workers
                     finishTime = DateTime.Now;
 
                     if (reply.Status == IPStatus.Success)
-                        Record(reply);
+                        RecordData(reply);
 
                     diffTime = finishTime - beginTime;
-                    if (diffTime.TotalMilliseconds < Device.RefreshPing)
-                        Thread.Sleep((int)(Device.RefreshPing - diffTime.TotalMilliseconds));
+                    if (diffTime.TotalMilliseconds < RefreshInterval)
+                        Thread.Sleep((int)(RefreshInterval - diffTime.TotalMilliseconds));
                 }
             });
             tCollector.Start();
         }
 
-        public virtual void Record(PingReply result)
+        public virtual void RecordData(PingReply result)
         {
-            Device.DataPing.Add(new DoubleRecord(DateTime.Now, result.RoundtripTime));
+            _collectedData.Add(new RecordDouble(DateTime.Now, result.RoundtripTime));
+            Diff();
+        }
+
+        public override void RecordAvg(double avg)
+        {
+            _device.AvgPing = avg;
+        }
+
+        public override void RecordDiff(double sum, int count)
+        {
+            if (_device.AvgPing > 0)
+                _device.DiffPing = sum / count - _device.AvgPing;
         }
 
         public override void Stop()
         {
             _isRunning = false;
-            if (Device.RefreshPing > MaxTimeout)
+            if (RefreshInterval > MaxTimeout)
                 tCollector.Abort();
-        }
-
-        private const int avgAge = 60;
-        private const int diffAge = 30;
-
-        public void StartStatistic()
-        {
-            Task.Run(() =>
-            {
-                while (IsRunning)
-                {
-                    Thread.Sleep(90000);
-                    avg();
-                }
-            });
-        }
-
-        public void avg()
-        {
-            TimeSpan timediff = new TimeSpan(avgAge * 10000000);
-            DateTime old = DateTime.Now - timediff;
-            double sum = 0;
-            int i;
-
-            for (i = 0; i < _device.DataPing.Count; i++)
-            {
-                if (_device.DataPing[i].TimeMark < old)
-                    sum += _device.DataPing[i].Data;
-                else
-                    break;
-            }
-
-            _device.AvgPing = sum / i;
-        }
-
-        public void diff()
-        {
-            TimeSpan timediff = new TimeSpan(diffAge * 10000000);
-            DateTime old = DateTime.Now - timediff;
-            double sum = 0;
-            int x = 0;
-            int i;
-
-            for (i = (_device.DataPing.Count - 1); i >= 0; i--)
-            {
-                if (_device.DataPing[i].TimeMark > old)
-                {
-                    sum += _device.DataPing[i].Data;
-                    x += 1;
-                }
-                else
-                    break;
-            }
-
-            if (_device.AvgPing > 0)
-                _device.DiffPing = sum / x - _device.AvgPing;
         }
     }
 }

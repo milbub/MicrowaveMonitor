@@ -10,14 +10,13 @@ namespace MicrowaveMonitor.Workers
     public abstract class SnmpCollector : Collector
     {
         protected ObjectIdentifier _collectedOid;
-        protected int _refreshInterval;
 
         public ObjectIdentifier CollectedOid { get => _collectedOid; }
-        public int RefreshInterval { get => _refreshInterval; }
 
         private Thread tCollector;
 
-        public SnmpCollector(Device device) : base(device) { }
+        public SnmpCollector(Device device) : base(device)
+        {}
 
         public override void Start()
         {
@@ -34,7 +33,7 @@ namespace MicrowaveMonitor.Workers
             _isRunning = true;
 
             tCollector = new Thread(() =>
-           {
+            {
                while (IsRunning)
                {
                    beginTime = DateTime.Now;
@@ -51,7 +50,7 @@ namespace MicrowaveMonitor.Workers
 
                        finishTime = DateTime.Now;
 
-                       Record(result, finishTime);
+                       RecordData(result, finishTime);
 
                        diffTime = finishTime - beginTime;
                        if (diffTime.TotalMilliseconds < RefreshInterval)
@@ -63,11 +62,9 @@ namespace MicrowaveMonitor.Workers
                         // Console.WriteLine(e.Message);
                     }
                }
-           });
+            });
             tCollector.Start();
         }
-
-        public abstract void Record(IList<Variable> result, DateTime resultTime);
 
         public override void Stop()
         {
@@ -75,5 +72,7 @@ namespace MicrowaveMonitor.Workers
             if (RefreshInterval > MaxTimeout)
                 tCollector.Abort();
         }
+
+        public abstract void RecordData(IList<Variable> result, DateTime resultTime);
     }
 }

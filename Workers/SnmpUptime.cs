@@ -14,7 +14,7 @@ namespace MicrowaveMonitor.Workers
             _refreshInterval = Device.RefreshUptime;
         }
 
-        public override void Record(IList<Variable> result, DateTime resultTime)
+        public override void RecordData(IList<Variable> result, DateTime resultTime)
         {
             uint uptime = 0;
 
