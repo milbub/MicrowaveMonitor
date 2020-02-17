@@ -31,7 +31,10 @@ namespace MicrowaveMonitor.Interface
                 ChangeDevicesConstellation();
             ViewedLink = viewedLink;
             ShowLinkName();
-            ChangeDevice("A");
+            if (MonitorGui.siteA.IsChecked == true)
+                ChangeDevice("A");
+            else
+                MonitorGui.siteA.IsChecked = true;
         }
 
         public void ChangeDevice(string deviceLabel)
@@ -69,6 +72,7 @@ namespace MicrowaveMonitor.Interface
             RegisterCharts();
             ShowIp();
             ShowLastData();
+            
             try
             {
                 StaticsChanged(_viewedDevice, new PropertyChangedEventArgs("sysName"));
@@ -79,6 +83,7 @@ namespace MicrowaveMonitor.Interface
             {
                 Console.WriteLine(e.Message);
             }
+            
             updateElement(MonitorGui.avgSig, String.Format("{0:0.00} dBm", ViewedDevice.AvgSig));
             updateElement(MonitorGui.diffSig, String.Format("{0:0.0000} dBm", ViewedDevice.DiffSig));
             updateElement(MonitorGui.avgSigQ, String.Format("{0:0.00} dB", ViewedDevice.AvgSigQ));
