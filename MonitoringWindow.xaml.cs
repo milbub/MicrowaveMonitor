@@ -82,12 +82,16 @@ namespace MicrowaveMonitor
                 signalLevel.Focusable = true;
                 signalQuality.Focusable = true;
                 pingwin.Focusable = true;
+                tx.Focusable = true;
+                rx.Focusable = true;
             }
             else if (e.RoutedEvent.Name == MouseLeaveEvent.Name)
             {
                 signalLevel.Focusable = false;
                 signalQuality.Focusable = false;
                 pingwin.Focusable = false;
+                tx.Focusable = false;
+                rx.Focusable = false;
             }
         }
     }
