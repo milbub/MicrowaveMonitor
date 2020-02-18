@@ -16,7 +16,7 @@ namespace MicrowaveMonitor.Workers
         private Thread tCollector;
 
         public SnmpCollector(Device device) : base(device)
-        {}
+        { }
 
         public override void Start()
         {
@@ -56,10 +56,22 @@ namespace MicrowaveMonitor.Workers
                        if (diffTime.TotalMilliseconds < RefreshInterval)
                            Thread.Sleep((int)(RefreshInterval - diffTime.TotalMilliseconds));
                    }
-                   catch (Lextm.SharpSnmpLib.Messaging.TimeoutException e)
+                   catch (OperationException e)
                    {
-                        /* TODO timeout log to events */
-                        // Console.WriteLine(e.Message);
+                        if (e is Lextm.SharpSnmpLib.Messaging.TimeoutException)
+                            continue;
+                        if (e is ErrorException)
+                        {
+                            _isRunning = false;
+                            Console.WriteLine("SNMP Error. Collector suspended.");
+                            // TODO - exception handling
+                        }
+                        else
+                        {
+                            Thread.Sleep(RefreshInterval);
+                            Console.WriteLine(e.Message);
+                            // TODO - exception handling
+                        }
                     }
                }
             });
