@@ -37,6 +37,11 @@ namespace MicrowaveMonitor
 
             view = new LinkView(this, linkManager.LinkDatabase.First().Value);
             settings = new LinkSettings(this, view);
+
+            graphsA.MouseEnter += SetBoxActivity;
+            graphsA.MouseLeave += SetBoxActivity;
+            graphsB.MouseEnter += SetBoxActivity;
+            graphsB.MouseLeave += SetBoxActivity;
         }
 
         private void SiteChoosed(object sender, RoutedEventArgs e)
@@ -68,6 +73,22 @@ namespace MicrowaveMonitor
         public void SiteChooserEnabler(bool state, RadioButton rb)
         {
             rb.IsEnabled = state;
+        }
+
+        private void SetBoxActivity(object sender, RoutedEventArgs e)
+        {
+            if (e.RoutedEvent.Name == MouseEnterEvent.Name)
+            {
+                signalLevel.Focusable = true;
+                signalQuality.Focusable = true;
+                pingwin.Focusable = true;
+            }
+            else if (e.RoutedEvent.Name == MouseLeaveEvent.Name)
+            {
+                signalLevel.Focusable = false;
+                signalQuality.Focusable = false;
+                pingwin.Focusable = false;
+            }
         }
     }
 }

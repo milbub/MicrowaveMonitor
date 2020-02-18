@@ -75,7 +75,7 @@
 
                 <TabControl x:Name="monitorTabControl" Grid.Row="3">
                     <TabItem Header="Radio">
-                        <Grid>
+                        <Grid x:Name="graphsA">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition></ColumnDefinition>
                                 <ColumnDefinition></ColumnDefinition>
@@ -115,7 +115,7 @@
                         </Grid>
                     </TabItem>
                     <TabItem Header="Traffic">
-                        <Grid>
+                        <Grid x:Name="graphsB">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition></ColumnDefinition>
                                 <ColumnDefinition></ColumnDefinition>
