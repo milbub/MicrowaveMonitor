@@ -1,27 +1,25 @@
 ﻿using MicrowaveMonitor.Database;
+using MicrowaveMonitor.Gui;
 using System;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace MicrowaveMonitor.Interface
+namespace MicrowaveMonitor.Frontend
 {
-    internal class LinkView
+    internal class LinkView : Renderer
     {
-        private MonitoringWindow _monitorGui;
         private Link _viewedLink;
         private Device _viewedDevice;
 
-        public MonitoringWindow MonitorGui { get => _monitorGui; }
         public Link ViewedLink { get => _viewedLink; set => _viewedLink = value; }
         public Device ViewedDevice { get => _viewedDevice; }
 
         private string tempStoreSignalData, tempStoreSignalQData, tempStoreTxData, tempStoreRxData, tempStorePingData = String.Empty;
 
-        public LinkView(MonitoringWindow monitorGui, Link viewedLink)
+        public LinkView(MonitoringWindow monitorGui, Link viewedLink) : base(monitorGui)
         {
-            _monitorGui = monitorGui;
             ChangeLink(viewedLink);
         }
 
@@ -84,12 +82,12 @@ namespace MicrowaveMonitor.Interface
                 Console.WriteLine(e.Message);
             }
             
-            updateElement(MonitorGui.avgSig, String.Format("{0:0.00} dBm", ViewedDevice.AvgSig));
-            updateElement(MonitorGui.diffSig, String.Format("{0:0.0000} dBm", ViewedDevice.DiffSig));
-            updateElement(MonitorGui.avgSigQ, String.Format("{0:0.00} dB", ViewedDevice.AvgSigQ));
-            updateElement(MonitorGui.diffSigQ, String.Format("{0:0.0000} dB", ViewedDevice.DiffSigQ));
-            updateElement(MonitorGui.avgPing, String.Format("{0:0.00} ms", ViewedDevice.AvgPing));
-            updateElement(MonitorGui.diffPing, String.Format("{0:0.0000} ms", ViewedDevice.DiffPing));
+            MonitorGui.UpdateElementContent(MonitorGui.avgSig, String.Format("{0:0.00} dBm", ViewedDevice.AvgSig));
+            MonitorGui.UpdateElementContent(MonitorGui.diffSig, String.Format("{0:0.0000} dBm", ViewedDevice.DiffSig));
+            MonitorGui.UpdateElementContent(MonitorGui.avgSigQ, String.Format("{0:0.00} dB", ViewedDevice.AvgSigQ));
+            MonitorGui.UpdateElementContent(MonitorGui.diffSigQ, String.Format("{0:0.0000} dB", ViewedDevice.DiffSigQ));
+            MonitorGui.UpdateElementContent(MonitorGui.avgPing, String.Format("{0:0.00} ms", ViewedDevice.AvgPing));
+            MonitorGui.UpdateElementContent(MonitorGui.diffPing, String.Format("{0:0.0000} ms", ViewedDevice.DiffPing));
         }
 
         private void UnregisterCharts()
@@ -147,59 +145,37 @@ namespace MicrowaveMonitor.Interface
 
         private void ShowLinkName()
         {
-            updateElement(MonitorGui.linkCaption, ViewedLink.Name);
+            MonitorGui.UpdateElementContent(MonitorGui.linkCaption, ViewedLink.Name);
         }
 
         private void ShowIp()
         {
-            updateElement(MonitorGui.ip, ViewedDevice.Address.Address.ToString());
+            MonitorGui.UpdateElementContent(MonitorGui.ip, ViewedDevice.Address.Address.ToString());
         }
 
         private void ShowPing(string pingValue)
         {
-            updateElement(MonitorGui.ping, pingValue);
+            MonitorGui.UpdateElementContent(MonitorGui.ping, pingValue);
         }
 
         private void StaticsChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == "sysName")
             {
-                updateElement(MonitorGui.unitname, ViewedDevice.DataSysName);
+                MonitorGui.UpdateElementContent(MonitorGui.unitname, ViewedDevice.DataSysName);
             }
             else if (e.PropertyName == "uptime")
             {
                 TimeSpan t = TimeSpan.FromSeconds(ViewedDevice.DataUptime / 100);
-                updateElement(MonitorGui.uptime, String.Format("{0:D2}d {1:D2}h {2:D2}m {3:D2}s", t.Days, t.Hours, t.Minutes, t.Seconds));
-            }
-        }
-
-        private void updateElement(System.Windows.Controls.ContentControl element, string value)
-        {
-            try
-            {
-                if (!element.Dispatcher.CheckAccess())
-                {
-                    element.Dispatcher.Invoke(() =>
-                    {
-                        element.Content = value;
-                    });
-                }
-                else
-                {
-                    element.Content = value;
-                }
-            }
-            catch (TaskCanceledException e)
-            {
-                Console.WriteLine(e.Message);
+                MonitorGui.UpdateElementContent(MonitorGui.uptime, String.Format("{0:D2}d {1:D2}h {2:D2}m {3:D2}s", t.Days, t.Hours, t.Minutes, t.Seconds));
             }
         }
 
         private void SignalDataChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            tempStoreSignalData = LogWindowUpdate(MonitorGui.signalLevel, MsgSignal(e.NewStartingIndex), tempStoreSignalData);
-            updateElement(MonitorGui.avgSig, String.Format("{0:0.00} dBm", ViewedDevice.AvgSig));
-            updateElement(MonitorGui.diffSig, String.Format("{0:0.0000} dBm", ViewedDevice.DiffSig));
+            tempStoreSignalData = MonitorGui.LogWindowUpdate(MonitorGui.signalLevel, MsgSignal(e.NewStartingIndex), tempStoreSignalData);
+            MonitorGui.UpdateElementContent(MonitorGui.avgSig, String.Format("{0:0.00} dBm", ViewedDevice.AvgSig));
+            MonitorGui.UpdateElementContent(MonitorGui.diffSig, String.Format("{0:0.0000} dBm", ViewedDevice.DiffSig));
         }
 
         private string MsgSignal(int position)
@@ -210,9 +186,9 @@ namespace MicrowaveMonitor.Interface
 
         private void SignalQDataChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            tempStoreSignalQData = LogWindowUpdate(MonitorGui.signalQuality, MsgSignalQ(e.NewStartingIndex), tempStoreSignalQData);
-            updateElement(MonitorGui.avgSigQ, String.Format("{0:0.00} dB", ViewedDevice.AvgSigQ));
-            updateElement(MonitorGui.diffSigQ, String.Format("{0:0.0000} dB", ViewedDevice.DiffSigQ));
+            tempStoreSignalQData = MonitorGui.LogWindowUpdate(MonitorGui.signalQuality, MsgSignalQ(e.NewStartingIndex), tempStoreSignalQData);
+            MonitorGui.UpdateElementContent(MonitorGui.avgSigQ, String.Format("{0:0.00} dB", ViewedDevice.AvgSigQ));
+            MonitorGui.UpdateElementContent(MonitorGui.diffSigQ, String.Format("{0:0.0000} dB", ViewedDevice.DiffSigQ));
         }
 
         private string MsgSignalQ(int position)
@@ -223,7 +199,7 @@ namespace MicrowaveMonitor.Interface
 
         private void TxDataChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            tempStoreTxData = LogWindowUpdate(MonitorGui.tx, MsgTx(e.NewStartingIndex), tempStoreTxData);
+            tempStoreTxData = MonitorGui.LogWindowUpdate(MonitorGui.tx, MsgTx(e.NewStartingIndex), tempStoreTxData);
         }
 
         private string MsgTx(int position)
@@ -235,7 +211,7 @@ namespace MicrowaveMonitor.Interface
 
         private void RxDataChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            tempStoreRxData = LogWindowUpdate(MonitorGui.rx, MsgRx(e.NewStartingIndex), tempStoreRxData);
+            tempStoreRxData = MonitorGui.LogWindowUpdate(MonitorGui.rx, MsgRx(e.NewStartingIndex), tempStoreRxData);
         }
 
         private string MsgRx(int position)
@@ -248,10 +224,10 @@ namespace MicrowaveMonitor.Interface
         private void PingDataChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             string msg = MsgPing(e.NewStartingIndex);
-            tempStorePingData = LogWindowUpdate(MonitorGui.pingwin, msg, tempStorePingData);
+            tempStorePingData = MonitorGui.LogWindowUpdate(MonitorGui.pingwin, msg, tempStorePingData);
             ShowPing(String.Format("{0} ms", _viewedDevice.DataPing.ElementAt(e.NewStartingIndex).Data));
-            updateElement(MonitorGui.avgPing, String.Format("{0:0.00} ms", ViewedDevice.AvgPing));
-            updateElement(MonitorGui.diffPing, String.Format("{0:0.0000} ms", ViewedDevice.DiffPing));
+            MonitorGui.UpdateElementContent(MonitorGui.avgPing, String.Format("{0:0.00} ms", ViewedDevice.AvgPing));
+            MonitorGui.UpdateElementContent(MonitorGui.diffPing, String.Format("{0:0.0000} ms", ViewedDevice.DiffPing));
         }
 
         private string MsgPing(int position)
@@ -305,11 +281,11 @@ namespace MicrowaveMonitor.Interface
                 msgPg += MsgPing(position);
             }
 
-            tempStoreSignalData = LogWindowUpdate(MonitorGui.signalLevel, msgS, tempStoreRxData);
-            tempStoreSignalQData = LogWindowUpdate(MonitorGui.signalQuality, msgSQ, tempStoreRxData);
-            tempStoreTxData = LogWindowUpdate(MonitorGui.tx, msgTx, tempStoreRxData);
-            tempStoreRxData = LogWindowUpdate(MonitorGui.rx, msgRx, tempStoreRxData);
-            tempStorePingData = LogWindowUpdate(MonitorGui.pingwin, msgPg, tempStorePingData);
+            tempStoreSignalData = MonitorGui.LogWindowUpdate(MonitorGui.signalLevel, msgS, tempStoreSignalData);
+            tempStoreSignalQData = MonitorGui.LogWindowUpdate(MonitorGui.signalQuality, msgSQ, tempStoreSignalQData);
+            tempStoreTxData = MonitorGui.LogWindowUpdate(MonitorGui.tx, msgTx, tempStoreTxData);
+            tempStoreRxData = MonitorGui.LogWindowUpdate(MonitorGui.rx, msgRx, tempStoreRxData);
+            tempStorePingData = MonitorGui.LogWindowUpdate(MonitorGui.pingwin, msgPg, tempStorePingData);
         }
 
         private int LastDataPosition(int count)
@@ -320,81 +296,6 @@ namespace MicrowaveMonitor.Interface
             else
                 position = 0;
             return position;
-        }
-
-        private string LogWindowUpdate(System.Windows.Controls.TextBox logWindow, string newMessage, string tempMessage)
-        {
-            try
-            {
-                if (!logWindow.Dispatcher.CheckAccess())
-                {
-                    logWindow.Dispatcher.Invoke(() =>
-                    {
-                        if (logWindow.IsSelectionActive)
-                        {
-                            tempMessage += newMessage;
-                        }
-                        else
-                        {
-                            logWindow.Text += tempMessage + newMessage;
-                            tempMessage = String.Empty;
-                            logWindow.ScrollToEnd();
-                        }
-                    });
-                }
-                else
-                {
-                    if (logWindow.IsSelectionActive)
-                    {
-                        tempMessage += newMessage;
-                    }
-                    else
-                    {
-                        logWindow.Text += tempMessage + newMessage;
-                        tempMessage = String.Empty;
-                        logWindow.ScrollToEnd();
-                    }
-                }
-            }
-            catch (TaskCanceledException e)
-            {
-                Console.WriteLine(e.Message);
-            }
-
-            LogWindowCleaner(logWindow, 50);
-            return tempMessage;
-        }
-
-        private void LogWindowCleaner(System.Windows.Controls.TextBox logWindow, int permittedLinesCount)
-        {
-            try
-            {
-                if (!logWindow.Dispatcher.CheckAccess())
-                {
-                    logWindow.Dispatcher.Invoke(() =>
-                    {
-                        var splitted = logWindow.Text.Split('\n');
-                        int linesCount = splitted.Length;
-                        if (linesCount > permittedLinesCount)
-                        {
-                            logWindow.Text = String.Join("\n", splitted.Skip(linesCount - permittedLinesCount));
-                        }
-                    });
-                }
-                else
-                {
-                    var splitted = logWindow.Text.Split('\n');
-                    int linesCount = splitted.Length;
-                    if (linesCount > permittedLinesCount)
-                    {
-                        logWindow.Text = String.Join("\n", splitted.Skip(linesCount - permittedLinesCount));
-                    }
-                }
-            }
-            catch (TaskCanceledException e)
-            {
-                Console.WriteLine(e.Message);
-            }
         }
     }
 }

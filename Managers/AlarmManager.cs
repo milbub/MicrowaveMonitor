@@ -28,7 +28,7 @@ namespace MicrowaveMonitor.Managers
             monitored = new List<Device>();
         }
 
-        public void StartWatcher(Dictionary<string, Link> linkDatabase)
+        public void InitWatchers(Dictionary<string, Link> linkDatabase)
         {
             foreach (Link link in linkDatabase.Values)
             {
@@ -60,7 +60,7 @@ namespace MicrowaveMonitor.Managers
             Watch();
         }
 
-        public void StopWatcher()
+        public void StopWatchers()
         {
             _isRunning = false;
             tWatcher.Abort();

@@ -1,4 +1,5 @@
 ﻿using MicrowaveMonitor.Managers;
+using MicrowaveMonitor.Gui;
 using System.Windows;
 
 namespace MicrowaveMonitor
@@ -13,16 +14,16 @@ namespace MicrowaveMonitor
         {
             linkManager.LoadLinks();
             workerManager.InitWorkers(linkManager.LinkDatabase);
-            alarmManager.StartWatcher(linkManager.LinkDatabase);
+            alarmManager.InitWatchers(linkManager.LinkDatabase);
 
-            MonitoringWindow monitoringWindow = new MonitoringWindow(linkManager, workerManager, alarmManager);
+            MonitoringWindow monitoringWindow = new MonitoringWindow(linkManager, alarmManager);
             monitoringWindow.Show();
         }
 
         private void Application_Exit(object sender, ExitEventArgs e)
         {
             workerManager.StopWorkers(linkManager.LinkDatabase);
-            alarmManager.StopWatcher();
+            alarmManager.StopWatchers();
         }
     }
 }

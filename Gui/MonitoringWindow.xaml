@@ -1,4 +1,4 @@
-﻿<Window x:Class="MicrowaveMonitor.MonitoringWindow"
+﻿<Window x:Class="MicrowaveMonitor.Gui.MonitoringWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -43,19 +43,19 @@
             <GridSplitter x:Name="monitorAreaSplitter" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="5"/>
             <Grid Grid.Column="3">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="30"></RowDefinition>
+                    <RowDefinition Height="33"></RowDefinition>
                     <RowDefinition Height="30"></RowDefinition>
                     <RowDefinition Height="26"></RowDefinition>
                     <RowDefinition></RowDefinition>
                 </Grid.RowDefinitions>
 
                 <Label x:Name="linkCaption" HorizontalAlignment="Left" FontSize="16" Margin="0,0,150,0"/>
-                <Button x:Name="buttonStart" Content="▶" HorizontalAlignment="Right" Width="25" Height="25" Margin="0,0,160,0"/>
-                <Button x:Name="buttonPause" Content="⏸" HorizontalAlignment="Right" Width="25" Height="25" Margin="0,0,130,0"/>
-                <Button x:Name="buttonAdd" Content="A" HorizontalAlignment="Right" Width="25" Height="25" Margin="0,0,100,0"/>
-                <Button x:Name="buttonDelete" Content="D" HorizontalAlignment="Right" Width="25" Height="25" Margin="0,0,70,0"/>
-                <Button x:Name="buttonSettings" Content="S" HorizontalAlignment="Right" Width="25" Height="25" Margin="0,0,40,0"/>
-                <Button x:Name="buttonInfo" Content="I" HorizontalAlignment="Right" Width="25" Height="25" Margin="0,0,10,0"/>
+                <Button x:Name="buttonStart" Content="▶" FontSize="15" HorizontalAlignment="Right" Width="28" Height="27" Margin="0,0,170,0" Padding="0,0,0,1" Foreground="#FF0064FF" BorderBrush="#FFA7BDCD"/>
+                <Button x:Name="buttonPause" Content="⏸" FontSize="15" HorizontalAlignment="Right" Width="28" Height="27" Margin="0,0,138,0" Padding="0,0,1,1" Foreground="#FF0064FF" BorderBrush="#FFA7BDCD" FontWeight="Bold"/>
+                <Button x:Name="buttonAdd" Content="➕" FontSize="15" HorizontalAlignment="Right" Width="28" Height="27" Margin="0,0,106,0" Padding="0,0,0,1" Foreground="#FF00C800" BorderBrush="#FFA7BDCD"/>
+                <Button x:Name="buttonDelete" Content="➖" FontSize="15" HorizontalAlignment="Right" Width="28" Height="27" Margin="0,0,74,0" Padding="0,0,0,1" Foreground="#FFC80000" BorderBrush="#FFA7BDCD"/>
+                <Button x:Name="buttonSettings" Content="🛠" FontSize="15" HorizontalAlignment="Right" Width="28" Height="27" Margin="0,0,42,0" Padding="0,0,0,1" Foreground="#FF2E3B44" BorderBrush="#FFA7BDCD"/>
+                <Button x:Name="buttonInfo" Content="ℹ" FontSize="15" HorizontalAlignment="Right" Width="28" Height="27" Margin="0,0,10,0" Padding="0,0,1,1" Foreground="#FF2E3B44" BorderBrush="#FFA7BDCD" FontWeight="Bold"/>
 
                 <Label Grid.Row="1" Content="Site:" VerticalAlignment="Center" HorizontalAlignment="Left"></Label>
                 <RadioButton x:Name="siteA" Grid.Row="1" Content="A" VerticalAlignment="Center" Margin="35,0,0,0" FontWeight="Bold" IsChecked="True"/>
@@ -187,7 +187,7 @@
                                                     <RowDefinition/>
                                                     <RowDefinition/>
                                                 </Grid.RowDefinitions>
-                                                
+
                                                 <Label Content="Ping:"/>
                                                 <CheckBox Grid.Column="1" IsChecked="True" IsEnabled="False" Content="Enabled" x:Name="enaPing_A" Margin="5,6,0,0"/>
                                                 <CheckBox Grid.Column="1" IsChecked="True" Content="Watch" x:Name="monPing_A" Margin="80,6,0,0"/>
