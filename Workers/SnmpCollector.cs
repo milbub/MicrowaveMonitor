@@ -42,8 +42,8 @@ namespace MicrowaveMonitor.Workers
                        var result = Messenger.Get
                        (
                            VersionCode.V1,
-                           Device.Address,
-                           Device.CommunityString,
+                           new System.Net.IPEndPoint(Device.Address, Device.SnmpPort),
+                           new OctetString(Device.CommunityString),
                            new List<Variable> { new Variable(CollectedOid) },
                            timeout
                        );

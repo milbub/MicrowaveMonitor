@@ -28,34 +28,39 @@ namespace MicrowaveMonitor.Managers
             monitored = new List<Device>();
         }
 
-        public void InitWatchers(Dictionary<string, Link> linkDatabase)
+        public void InitWatchers(SQLite.TableQuery<Device> devices)
         {
-            foreach (Link link in linkDatabase.Values)
+            //foreach (Link link in linkDatabase.Values)
+            //{
+            //    switch (link.HopCount)
+            //    {
+            //        case 0:
+            //            monitored.Add(link.BaseDevice);
+            //            break;
+            //        case 1:
+            //            monitored.Add(link.EndDevice);
+            //            goto case 0;
+            //        case 2:
+            //            monitored.Add(link.RelayOne);
+            //            goto case 1;
+            //        case 3:
+            //            monitored.Add(link.RelayTwo);
+            //            goto case 2;
+            //        case 4:
+            //            monitored.Add(link.RelayThree);
+            //            goto case 3;
+            //        case 5:
+            //            monitored.Add(link.RelayFour);
+            //            goto case 4;
+            //        default:
+            //            throw new NotSupportedException();
+            //    }
+            //}
+            foreach (Device device in devices)
             {
-                switch (link.HopCount)
-                {
-                    case 0:
-                        monitored.Add(link.BaseDevice);
-                        break;
-                    case 1:
-                        monitored.Add(link.EndDevice);
-                        goto case 0;
-                    case 2:
-                        monitored.Add(link.RelayOne);
-                        goto case 1;
-                    case 3:
-                        monitored.Add(link.RelayTwo);
-                        goto case 2;
-                    case 4:
-                        monitored.Add(link.RelayThree);
-                        goto case 3;
-                    case 5:
-                        monitored.Add(link.RelayFour);
-                        goto case 4;
-                    default:
-                        throw new NotSupportedException();
-                }
+                monitored.Add(device);
             }
+
             startTime = DateTime.Now;
             Watch();
         }
@@ -79,10 +84,10 @@ namespace MicrowaveMonitor.Managers
                     });
                     foreach (Device item in monitored)
                     {
-                        DiffAlarm(item.AvgPing, item.DiffPing, item.Address.Address, "ms", "ping");
-                        DiffAlarm(item.AvgSig, item.DiffSig, item.Address.Address, "dBm", "signal");
-                        DiffAlarm(item.AvgSigQ, item.DiffSigQ, item.Address.Address, "dB", "signal quality");
-                        notRespondAlarm(item.DataSignal, item.Address.Address);
+                        DiffAlarm(item.AvgPing, item.DiffPing, item.Address, "ms", "ping");
+                        DiffAlarm(item.AvgSig, item.DiffSig, item.Address, "dBm", "signal");
+                        DiffAlarm(item.AvgSigQ, item.DiffSigQ, item.Address, "dB", "signal quality");
+                        notRespondAlarm(item.DataSignal, item.Address);
                     }
                     Thread.Sleep(refresh);
                 }

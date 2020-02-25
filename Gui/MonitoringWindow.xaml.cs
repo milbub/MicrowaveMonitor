@@ -1,5 +1,6 @@
 ﻿using MicrowaveMonitor.Frontend;
 using MicrowaveMonitor.Managers;
+using MicrowaveMonitor.Database;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -10,6 +11,7 @@ namespace MicrowaveMonitor.Gui
 {
     public partial class MonitoringWindow : Window
     {
+        public enum DeviceType { Base, End, R1, R2, R3, R4 };
         private LinkManager linkManager;
         private AlarmManager alarmManager;
         
@@ -23,6 +25,15 @@ namespace MicrowaveMonitor.Gui
 
             InitializeComponent();
 
+            LinksList.ItemsSource = linkManager.LinkNames.Values;
+            LinksList.SelectedItem = linkManager.LinkNames.First().Value;
+            view = new LinkView(this, linkManager.LinkDatabase.Get<Link>(linkManager.LinkNames.First().Key));
+            settings = new LinkSettings(this, view);
+            
+            AlarmsList.ItemsSource = alarmManager.Alarms;
+
+            LinksList.SelectionChanged += LinkChoosed;
+
             siteA.Checked += SiteChoosed;
             siteB.Checked += SiteChoosed;
             siteR1.Checked += SiteChoosed;
@@ -30,19 +41,15 @@ namespace MicrowaveMonitor.Gui
             siteR3.Checked += SiteChoosed;
             siteR4.Checked += SiteChoosed;
 
-            LinksList.ItemsSource = linkManager.LinkDatabase.Keys;
-            LinksList.SelectedItem = linkManager.LinkDatabase.First().Key;
-            LinksList.SelectionChanged += LinkChoosed;
-            
-            AlarmsList.ItemsSource = alarmManager.Alarms;
-
-            view = new LinkView(this, linkManager.LinkDatabase.First().Value);
-            settings = new LinkSettings(this, view);
-
             graphsA.MouseEnter += SetBoxActivity;
             graphsA.MouseLeave += SetBoxActivity;
             graphsB.MouseEnter += SetBoxActivity;
             graphsB.MouseLeave += SetBoxActivity;
+        }
+
+        public Device GetDevice(Link link, LinkManager.DeviceType type)
+        {
+            return linkManager.GetDevice(link, type);
         }
 
         public void UpdateElementContent(ContentControl element, string value)
@@ -98,7 +105,7 @@ namespace MicrowaveMonitor.Gui
 
         private void LinkChoosed(object sender, SelectionChangedEventArgs e)
         {
-            view.ChangeLink(linkManager.LinkDatabase[(string)LinksList.SelectedItem]);
+            view.ChangeLink(linkManager.LinkDatabase.Get<Link>(linkManager.LinkNames.FirstOrDefault(x => x.Value == (string)LinksList.SelectedItem).Key));
             settings.ChangeSettings();
         }
 

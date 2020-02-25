@@ -16,7 +16,7 @@ namespace MicrowaveMonitor.Workers
 
         public override void RecordData(IList<Variable> result, DateTime resultTime)
         {
-            _device.DataSysName = result.First().Data.ToString(); ;
+            _device.DataSysName = result.First().Data.ToString();
         }
     }
 }

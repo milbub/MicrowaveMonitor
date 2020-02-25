@@ -36,7 +36,7 @@ namespace MicrowaveMonitor.Workers
                 while (_isRunning)
                 {
                     beginTime = DateTime.Now;
-                    PingReply reply = pingSender.Send(Device.Address.Address, 1000);
+                    PingReply reply = pingSender.Send(Device.Address, 1000);
                     finishTime = DateTime.Now;
 
                     if (reply.Status == IPStatus.Success)

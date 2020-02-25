@@ -1,5 +1,6 @@
 ﻿using MicrowaveMonitor.Database;
 using MicrowaveMonitor.Gui;
+using MicrowaveMonitor.Managers;
 using System;
 using System.Collections.Specialized;
 using System.ComponentModel;
@@ -10,10 +11,9 @@ namespace MicrowaveMonitor.Frontend
 {
     internal class LinkView : Renderer
     {
-        private Link _viewedLink;
         private Device _viewedDevice;
 
-        public Link ViewedLink { get => _viewedLink; set => _viewedLink = value; }
+        public Link ViewedLink { get; set; }
         public Device ViewedDevice { get => _viewedDevice; }
 
         private string tempStoreSignalData, tempStoreSignalQData, tempStoreTxData, tempStoreRxData, tempStorePingData = String.Empty;
@@ -46,25 +46,25 @@ namespace MicrowaveMonitor.Frontend
             switch (deviceLabel)
             {
                 case "A":
-                    _viewedDevice = ViewedLink.BaseDevice;
+                    _viewedDevice = MonitorGui.GetDevice(ViewedLink, LinkManager.DeviceType.Base);
                     break;
                 case "R1":
-                    _viewedDevice = ViewedLink.RelayOne;
+                    _viewedDevice = MonitorGui.GetDevice(ViewedLink, LinkManager.DeviceType.R1);
                     break;
                 case "R2":
-                    _viewedDevice = ViewedLink.RelayTwo;
+                    _viewedDevice = MonitorGui.GetDevice(ViewedLink, LinkManager.DeviceType.R2);
                     break;
                 case "R3":
-                    _viewedDevice = ViewedLink.RelayThree;
+                    _viewedDevice = MonitorGui.GetDevice(ViewedLink, LinkManager.DeviceType.R3);
                     break;
                 case "R4":
-                    _viewedDevice = ViewedLink.RelayFour;
+                    _viewedDevice = MonitorGui.GetDevice(ViewedLink, LinkManager.DeviceType.R4);
                     break;
                 case "B":
-                    _viewedDevice = ViewedLink.EndDevice;
+                    _viewedDevice = MonitorGui.GetDevice(ViewedLink, LinkManager.DeviceType.End);
                     break;
                 default:
-                    throw new ArgumentException();
+                    throw new NotSupportedException();
             }
 
             RegisterCharts();
@@ -150,7 +150,7 @@ namespace MicrowaveMonitor.Frontend
 
         private void ShowIp()
         {
-            MonitorGui.UpdateElementContent(MonitorGui.ip, ViewedDevice.Address.Address.ToString());
+            MonitorGui.UpdateElementContent(MonitorGui.ip, ViewedDevice.Address.ToString());
         }
 
         private void ShowPing(string pingValue)

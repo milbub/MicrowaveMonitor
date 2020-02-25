@@ -3,85 +3,94 @@ using MicrowaveMonitor.Workers;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Net;
+using SQLite;
 
 namespace MicrowaveMonitor.Database
 {
     public class Device : INotifyPropertyChanged
     {
-        /* Basic parameters */
-        private int _id;
-        private IPEndPoint _address;
-        private OctetString _communityString;
+        ///////////////////////// DATABASE /////////////////////////
 
-        public int Id { get => _id; set => _id = value; }
-        public IPEndPoint Address { get => _address; set => _address = value; }
-        public OctetString CommunityString { get => _communityString; set => _communityString = value; }
+        /* Basic parameters */
+        [PrimaryKey, AutoIncrement]
+        public int Id { get; set; }
+        public string IpAddress { get; set; }
+        public int SnmpPort { get; set; } = 161;
+        public string CommunityString { get; set; } = "public";
 
         /* Statuses */
-        private bool _enableTx = false;
-        private bool _enableRx = false;
+        public bool IsEnabledTx { get; set; } = false;
+        public bool IsEnabledRx { get; set; } = false;
 
-        public bool IsEnabledTx { get => _enableTx; set => _enableTx = value; }
-        public bool IsEnabledRx { get => _enableRx; set => _enableRx = value; }
+        /* Model specific */
+        public int SignalQDivider { get; set; } = 10;
 
-        /* Model Specific */
-        private int _signalQDivider = 10;
+        /* SNMP OIDs */
+        public static string OidSysName_s = "1.3.6.1.2.1.1.5.0";
+        public static string OidUptime_s = "1.3.6.1.2.1.1.3.0";
+        public string OidSignal_s { get; set; }
+        public string OidSignalQ_s { get; set; }
+        public string OidTxDataRate_s { get; set; }
+        public string OidRxDataRate_s { get; set; }
 
-        public int SignalQDivider { get => _signalQDivider; set => _signalQDivider = value; }
+        /* Refresh intervals */
+        public static int RefreshSysName { get; } = 600000;
+        public static int RefreshUptime { get; } = 10000;
+        public int RefreshSignal { get; set; } = 1000;
+        public int RefreshSignalQ { get; set; } = 1000;
+        public int RefreshTx { get; set; } = 1000;
+        public int RefreshRx { get; set; } = 1000;
+        public int RefreshPing { get; set; } = 1000;
 
-        /* OIDs */
-        private static ObjectIdentifier _oidSysName = new ObjectIdentifier("1.3.6.1.2.1.1.5.0");
-        private static ObjectIdentifier _oidUptime = new ObjectIdentifier("1.3.6.1.2.1.1.3.0");
-        private ObjectIdentifier _oidSignal;
-        private ObjectIdentifier _oidSignalQ;
-        private ObjectIdentifier _oidTxDataRate;
-        private ObjectIdentifier _oidRxDataRate;
+        ///////////////////////// CONVERTORS /////////////////////////
 
-        public static ObjectIdentifier OidSysName { get => _oidSysName; }
-        public static ObjectIdentifier OidUptime { get => _oidUptime; }
-        public ObjectIdentifier OidSignal { get => _oidSignal; set => _oidSignal = value; }
-        public ObjectIdentifier OidSignalQ { get => _oidSignalQ; set => _oidSignalQ = value; }
-        public ObjectIdentifier OidTxDataRate { get => _oidTxDataRate; set => _oidTxDataRate = value; }
-        public ObjectIdentifier OidRxDataRate { get => _oidRxDataRate; set => _oidRxDataRate = value; }
+        [Ignore]
+        public IPAddress Address { get => IPAddress.Parse(IpAddress); set { IpAddress = value.ToString(); } }
+        [Ignore]
+        public static ObjectIdentifier OidSysName { get => new ObjectIdentifier(OidSysName_s); }
+        [Ignore]
+        public static ObjectIdentifier OidUptime { get => new ObjectIdentifier(OidUptime_s); }
+        [Ignore]
+        public ObjectIdentifier OidSignal { get => new ObjectIdentifier(OidSignal_s); set { OidSignal_s = value.ToString(); } }
+        [Ignore]
+        public ObjectIdentifier OidSignalQ { get => new ObjectIdentifier(OidSignalQ_s); set { OidSignalQ_s = value.ToString(); } }
+        [Ignore]
+        public ObjectIdentifier OidTxDataRate { get => new ObjectIdentifier(OidTxDataRate_s); set { OidTxDataRate_s = value.ToString(); } }
+        [Ignore]
+        public ObjectIdentifier OidRxDataRate { get => new ObjectIdentifier(OidRxDataRate_s); set { OidRxDataRate_s = value.ToString(); } }
 
-        /* Refresh interval constants */
-        private const int _refreshSysName = 600000;
-        private const int _refreshUptime = 10000;
-        private int _refreshSignal;
-        private int _refreshSignalQ;
-        private int _refreshTx;
-        private int _refreshRx;
-        private int _refreshPing;
+        ///////////////////////// DATA STORAGES /////////////////////////
 
-        public static int RefreshSysName => _refreshSysName;
-        public static int RefreshUptime => _refreshUptime;
-        public int RefreshSignal { get => _refreshSignal; set => _refreshSignal = value; }
-        public int RefreshSignalQ { get => _refreshSignalQ; set => _refreshSignalQ = value; }
-        public int RefreshTx { get => _refreshTx; set => _refreshTx = value; }
-        public int RefreshRx { get => _refreshRx; set => _refreshRx = value; }
-        public int RefreshPing { get => _refreshPing; set => _refreshPing = value; }
+        /* Statistical data */
+        [Ignore]
+        public double AvgSig { get; set; } = 0;
+        [Ignore]
+        public double DiffSig { get; set; } = 0;
+        [Ignore]
+        public double AvgSigQ { get; set; } = 0;
+        [Ignore]
+        public double DiffSigQ { get; set; } = 0;
+        [Ignore]
+        public double AvgPing { get; set; } = 0;
+        [Ignore]
+        public double DiffPing { get; set; } = 0;
 
-        /* Collected data storages */
+        /* Collected data */
+        [Ignore]
+        public ObservableCollection<RecordDouble> DataSignal { get; set; } = new ObservableCollection<RecordDouble>();
+        [Ignore]
+        public ObservableCollection<RecordDouble> DataSignalQ { get; set; } = new ObservableCollection<RecordDouble>();
+        [Ignore]
+        public ObservableCollection<RecordUInt> DataTx { get; set; } = new ObservableCollection<RecordUInt>();
+        [Ignore]
+        public ObservableCollection<RecordUInt> DataRx { get; set; } = new ObservableCollection<RecordUInt>();
+        [Ignore]
+        public ObservableCollection<RecordDouble> DataPing { get; set; } = new ObservableCollection<RecordDouble>();
+
         private string _dataSysName;
         private uint _dataUptime;
-        private ObservableCollection<RecordDouble> _dataSignal;
-        private ObservableCollection<RecordDouble> _dataSignalQ;
-        private ObservableCollection<RecordUInt> _dataTx;
-        private ObservableCollection<RecordUInt> _dataRx;
-        private ObservableCollection<RecordDouble> _dataPing;
 
-        /* Statistic data */
-        private double _avgSig, _diffSig = 0;
-        private double _avgSigQ, _diffSigQ = 0;
-        private double _avgPing, _diffPing = 0;
-
-        public double AvgSig { get => _avgSig; set => _avgSig = value; }
-        public double DiffSig { get => _diffSig; set => _diffSig = value; }
-        public double AvgSigQ { get => _avgSigQ; set => _avgSigQ = value; }
-        public double DiffSigQ { get => _diffSigQ; set => _diffSigQ = value; }
-        public double AvgPing { get => _avgPing; set => _avgPing = value; }
-        public double DiffPing { get => _diffPing; set => _diffPing = value; }
-
+        [Ignore]
         public string DataSysName
         {
             get => _dataSysName;
@@ -94,6 +103,7 @@ namespace MicrowaveMonitor.Database
                 }
             }
         }
+        [Ignore]
         public uint DataUptime
         {
             get => _dataUptime;
@@ -106,62 +116,55 @@ namespace MicrowaveMonitor.Database
                 }
             }
         }
-        public ObservableCollection<RecordDouble> DataSignal { get => _dataSignal; set => _dataSignal = value; }
-        public ObservableCollection<RecordDouble> DataSignalQ { get => _dataSignalQ; set => _dataSignalQ = value; }
-        public ObservableCollection<RecordUInt> DataTx { get => _dataTx; set => _dataTx = value; }
-        public ObservableCollection<RecordUInt> DataRx { get => _dataRx; set => _dataRx = value; }
-        public ObservableCollection<RecordDouble> DataPing { get => _dataPing; set => _dataPing = value; }
-
 
         /* Workers */
-        private SnmpSysName _collectorSysName;
-        private SnmpUptime _collectorUptime;
-        private SnmpSignal _collectorSignal;
-        private SnmpSignalQ _collectorSignalQ;
-        private SnmpTx _collectorTx;
-        private SnmpRx _collectorRx;
-        private PingCollector _collectorPing;
+        [Ignore]
+        public SnmpSysName CollectorSysName { get; set; }
+        [Ignore]
+        public SnmpUptime CollectorUptime { get; set; }
+        [Ignore]
+        public SnmpSignal CollectorSignal { get; set; }
+        [Ignore]
+        public SnmpSignalQ CollectorSignalQ { get; set; }
+        [Ignore]
+        public SnmpTx CollectorTx { get; set; }
+        [Ignore]
+        public SnmpRx CollectorRx { get; set; }
+        [Ignore]
+        public PingCollector CollectorPing { get; set; }
 
-        public SnmpSysName CollectorSysName { get => _collectorSysName; set => _collectorSysName = value; }
-        public SnmpUptime CollectorUptime { get => _collectorUptime; set => _collectorUptime = value; }
-        public SnmpSignal CollectorSignal { get => _collectorSignal; set => _collectorSignal = value; }
-        public SnmpSignalQ CollectorSignalQ { get => _collectorSignalQ; set => _collectorSignalQ = value; }
-        public SnmpTx CollectorTx { get => _collectorTx; set => _collectorTx = value; }
-        public SnmpRx CollectorRx { get => _collectorRx; set => _collectorRx = value; }
-        public PingCollector CollectorPing { get => _collectorPing; set => _collectorPing = value; }
+        //public Device(int id, string ipString, int port, string snmpCommunity)
+        //{
+        //    Id = id;
+        //    Address = new IPEndPoint(IPAddress.Parse(ipString), port);
+        //    CommunityString = new OctetString(snmpCommunity);
+        //    DataSignal = new ObservableCollection<RecordDouble>();
+        //    DataSignalQ = new ObservableCollection<RecordDouble>();
+        //    DataTx = new ObservableCollection<RecordUInt>();
+        //    DataRx = new ObservableCollection<RecordUInt>();
+        //    DataPing = new ObservableCollection<RecordDouble>();
+        //}
 
-        public Device(int id, string ipString, int port, string snmpCommunity)
-        {
-            Id = id;
-            Address = new IPEndPoint(IPAddress.Parse(ipString), port);
-            CommunityString = new OctetString(snmpCommunity);
-            DataSignal = new ObservableCollection<RecordDouble>();
-            DataSignalQ = new ObservableCollection<RecordDouble>();
-            DataTx = new ObservableCollection<RecordUInt>();
-            DataRx = new ObservableCollection<RecordUInt>();
-            DataPing = new ObservableCollection<RecordDouble>();
-        }
+        //public Device(int id, string ipString, int port, string snmpCommunity, ObjectIdentifier oidSignal, int refreshSig, ObjectIdentifier oidSignalQ, int resfreshSigQ, int refreshPing)
+        //    : this(id, ipString, port, snmpCommunity)
+        //{
+        //    OidSignal = oidSignal;
+        //    RefreshSignal = refreshSig;
+        //    OidSignalQ = oidSignalQ;
+        //    RefreshSignalQ = resfreshSigQ;
+        //    RefreshPing = refreshPing;
+        //}
 
-        public Device(int id, string ipString, int port, string snmpCommunity, ObjectIdentifier oidSignal, int refreshSig, ObjectIdentifier oidSignalQ, int resfreshSigQ, int refreshPing)
-            : this(id, ipString, port, snmpCommunity)
-        {
-            OidSignal = oidSignal;
-            RefreshSignal = refreshSig;
-            OidSignalQ = oidSignalQ;
-            RefreshSignalQ = resfreshSigQ;
-            RefreshPing = refreshPing;
-        }
-
-        public Device(int id, string ipString, int port, string snmpCommunity, ObjectIdentifier oidSignal, int refreshSig, ObjectIdentifier oidSignalQ, int resfreshSigQ, ObjectIdentifier oidTx, int refreshTx, ObjectIdentifier oidRx, int refreshRx, int refreshPing)
-            : this(id, ipString, port, snmpCommunity, oidSignal, refreshSig, oidSignalQ, resfreshSigQ, refreshPing)
-        {
-            OidTxDataRate = oidTx;
-            RefreshTx = refreshTx;
-            OidRxDataRate = oidRx;
-            RefreshRx = refreshRx;
-            IsEnabledTx = true;
-            IsEnabledRx = true;
-        }
+        //public Device(int id, string ipString, int port, string snmpCommunity, ObjectIdentifier oidSignal, int refreshSig, ObjectIdentifier oidSignalQ, int resfreshSigQ, ObjectIdentifier oidTx, int refreshTx, ObjectIdentifier oidRx, int refreshRx, int refreshPing)
+        //    : this(id, ipString, port, snmpCommunity, oidSignal, refreshSig, oidSignalQ, resfreshSigQ, refreshPing)
+        //{
+        //    OidTxDataRate = oidTx;
+        //    RefreshTx = refreshTx;
+        //    OidRxDataRate = oidRx;
+        //    RefreshRx = refreshRx;
+        //    IsEnabledTx = true;
+        //    IsEnabledRx = true;
+        //}
 
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged(string PropertyName)
