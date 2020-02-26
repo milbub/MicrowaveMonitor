@@ -3,6 +3,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.ObjectModel;
+using System.Net;
 
 namespace MicrowaveMonitor.Workers
 {
@@ -13,65 +14,81 @@ namespace MicrowaveMonitor.Workers
         private const int _diffAge = 30;        // s
         private const int _avgSleep = 90;       // s
 
-        protected Device _device;
+        protected int _deviceId;
         protected int _refreshInterval;
-        protected ObservableCollection<RecordDouble> _collectedData;
+        protected IPAddress _address;
         protected bool _isRunning = false;
 
-        public Device Device { get => _device; }
-        public int RefreshInterval { get => _refreshInterval; }
-        public ObservableCollection<RecordDouble> CollectedData { get => _collectedData; }
-        public bool IsRunning { get => _isRunning; }
+        protected DeviceDisplay _display;
+
+        protected Thread tCollector;
+
         public static int MaxTimeout { get => _maxTimeout; }
         public static int AvgAge { get => _avgAge; }
         public static int DiffAge { get => _diffAge; }
         public static int AvgSleep { get => _avgSleep; }
 
-        public Collector(Device device)
+        public int DeviceId { get => _deviceId; }
+        public int RefreshInterval { get => _refreshInterval; }
+        public IPAddress Address { get => _address; }
+        public bool IsRunning { get => _isRunning; }
+
+        public DeviceDisplay Display { get => _display; }
+
+        public Collector(string address, int deviceId, int refreshInterval, DeviceDisplay display)
         {
-            _device = device;
+            _address = IPAddress.Parse(address);
+            _deviceId = deviceId;
+            _refreshInterval = refreshInterval;
+            _display = display;
         }
 
         public abstract void Start();
-        public abstract void Stop();
+
+        public void Stop()
+        {
+            _isRunning = false;
+            if (RefreshInterval > MaxTimeout)
+                tCollector.Abort();
+        }
 
         public void Average()
         {
-            TimeSpan timediff = new TimeSpan(AvgAge * 10000000);
-            DateTime old = DateTime.Now - timediff;
-            double sum = 0;
-            int i;
+            //TimeSpan timediff = new TimeSpan(AvgAge * 10000000);
+            //DateTime old = DateTime.Now - timediff;
+            //double sum = 0;
+            //int i;
 
-            for (i = 0; i < CollectedData.Count; i++)
-            {
-                if (CollectedData[i].TimeMark < old)
-                    sum += CollectedData[i].Data;
-                else
-                    break;
-            }
+            //for (i = 0; i < CollectedData.Count; i++)
+            //{
+            //    if (CollectedData[i].TimeMark < old)
+            //        sum += CollectedData[i].Data;
+            //    else
+            //        break;
+            //}
 
-            RecordAvg(sum / i);
+            //RecordAvg(sum / i);
         }
 
         public void Diff()
         {
-            TimeSpan timediff = new TimeSpan(DiffAge * 10000000);
-            DateTime old = DateTime.Now - timediff;
-            double sum = 0;
-            int x = 0;
+            //TimeSpan timediff = new TimeSpan(DiffAge * 10000000);
+            //DateTime old = DateTime.Now - timediff;
+            //double sum = 0;
+            //int x = 0;
 
-            for (int i = (CollectedData.Count - 1); i >= 0; i--)
-            {
-                if (CollectedData[i].TimeMark > old)
-                {
-                    sum += CollectedData[i].Data;
-                    x += 1;
-                }
-                else
-                    break;
-            }
+            //for (int i = (CollectedData.Count - 1); i >= 0; i--)
+            //{
+            //    if (CollectedData[i].TimeMark > old)
+            //    {
+            //        sum += CollectedData[i].Data;
+            //        x += 1;
+            //    }
+            //    else
+            //        break;
+            //}
 
-            RecordDiff(sum, x);
+            //RecordDiff(sum, x);
         }
 
         public virtual void RecordAvg(double avg)

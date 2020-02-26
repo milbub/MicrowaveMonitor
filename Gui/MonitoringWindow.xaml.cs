@@ -13,21 +13,23 @@ namespace MicrowaveMonitor.Gui
     {
         public enum DeviceType { Base, End, R1, R2, R3, R4 };
         private LinkManager linkManager;
+        private WorkerManager workerManager;
         private AlarmManager alarmManager;
         
         private LinkView view;
         private LinkSettings settings;
 
-        public MonitoringWindow(LinkManager linkManager, AlarmManager alarmManager)
+        public MonitoringWindow(LinkManager linkManager, WorkerManager workerManager, AlarmManager alarmManager)
         {
             this.linkManager = linkManager;
+            this.workerManager = workerManager;
             this.alarmManager = alarmManager;
 
             InitializeComponent();
 
             LinksList.ItemsSource = linkManager.LinkNames.Values;
             LinksList.SelectedItem = linkManager.LinkNames.First().Value;
-            view = new LinkView(this, linkManager.LinkDatabase.Get<Link>(linkManager.LinkNames.First().Key));
+            view = new LinkView(this, linkManager.LinkDatabase.Get<Link>(linkManager.LinkNames.First().Key), workerManager.DeviceToFront);
             settings = new LinkSettings(this, view);
             
             AlarmsList.ItemsSource = alarmManager.Alarms;
@@ -47,9 +49,9 @@ namespace MicrowaveMonitor.Gui
             graphsB.MouseLeave += SetBoxActivity;
         }
 
-        public Device GetDevice(Link link, LinkManager.DeviceType type)
+        public Device GetDevice(int id)
         {
-            return linkManager.GetDevice(link, type);
+            return linkManager.GetDevice(id);
         }
 
         public void UpdateElementContent(ContentControl element, string value)

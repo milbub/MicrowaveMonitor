@@ -13,17 +13,16 @@ namespace MicrowaveMonitor
 
         private void Application_Startup(object sender, StartupEventArgs e)
         {
-            //linkManager.LoadLinks();
             workerManager.InitWorkers(linkManager.LinkDatabase.Table<Device>());
-            alarmManager.InitWatchers(linkManager.LinkDatabase.Table<Device>());
+            alarmManager.InitWatchers(workerManager.DeviceToFront);
 
-            MonitoringWindow monitoringWindow = new MonitoringWindow(linkManager, alarmManager);
+            MonitoringWindow monitoringWindow = new MonitoringWindow(linkManager, workerManager, alarmManager);
             monitoringWindow.Show();
         }
 
         private void Application_Exit(object sender, ExitEventArgs e)
         {
-            workerManager.StopWorkers(linkManager.LinkDatabase.Table<Device>());
+            workerManager.StopWorkers();
             alarmManager.StopWatchers();
         }
     }

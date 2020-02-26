@@ -8,15 +8,12 @@ namespace MicrowaveMonitor.Workers
 {
     public class SnmpSysName : SnmpCollector
     {
-        public SnmpSysName(Device device) : base(device)
-        {
-            _collectedOid = Device.OidSysName;
-            _refreshInterval = Device.RefreshSysName;
-        }
+        public SnmpSysName(string oid, int port, string community, string address, int deviceId, int refreshInterval, DeviceDisplay display) : base(oid, port, community, address, deviceId, refreshInterval, display)
+        { }
 
         public override void RecordData(IList<Variable> result, DateTime resultTime)
         {
-            _device.DataSysName = result.First().Data.ToString();
+            Display.SysName = result.First().Data.ToString();
         }
     }
 }

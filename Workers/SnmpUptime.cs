@@ -8,11 +8,8 @@ namespace MicrowaveMonitor.Workers
 {
     public class SnmpUptime : SnmpCollector
     {
-        public SnmpUptime(Device device) : base(device)
-        {
-            _collectedOid = Device.OidUptime;
-            _refreshInterval = Device.RefreshUptime;
-        }
+        public SnmpUptime(string oid, int port, string community, string address, int deviceId, int refreshInterval, DeviceDisplay display) : base(oid, port, community, address, deviceId, refreshInterval, display)
+        { }
 
         public override void RecordData(IList<Variable> result, DateTime resultTime)
         {
@@ -29,7 +26,7 @@ namespace MicrowaveMonitor.Workers
                 uptime = (uint)uptimeTicks.ToInt32();
             }
 
-            _device.DataUptime = uptime;
+            Display.Uptime = uptime;
         }
     }
 }

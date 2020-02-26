@@ -10,57 +10,26 @@ namespace MicrowaveMonitor.Managers
 {
     public class AlarmManager
     {
-        private ObservableCollection<string> _alarms;
-        private bool _isRunning;
-        private List<Device> monitored;
-        private DateTime startTime;
-        private Thread tWatcher;
         private const int refresh = 5000;
         private const double diffLimit = 0.1;
         private static TimeSpan notRespondLimit = new TimeSpan(100000000);
 
+        private ObservableCollection<string> _alarms = new ObservableCollection<string>();
+        private Dictionary<int, DeviceDisplay> _deviceStats;
+        private bool _isRunning;
+        private DateTime startTime;
+        private Thread tWatcher;
+
         public ObservableCollection<string> Alarms { get => _alarms; }
+        public Dictionary<int, DeviceDisplay> DeviceStats { get => _deviceStats; }
         public bool IsRunning { get => _isRunning; }
 
         public AlarmManager()
-        {
-            _alarms = new ObservableCollection<string>();
-            monitored = new List<Device>();
-        }
+        { }
 
-        public void InitWatchers(SQLite.TableQuery<Device> devices)
+        public void InitWatchers(Dictionary<int, DeviceDisplay> deviceToFront)
         {
-            //foreach (Link link in linkDatabase.Values)
-            //{
-            //    switch (link.HopCount)
-            //    {
-            //        case 0:
-            //            monitored.Add(link.BaseDevice);
-            //            break;
-            //        case 1:
-            //            monitored.Add(link.EndDevice);
-            //            goto case 0;
-            //        case 2:
-            //            monitored.Add(link.RelayOne);
-            //            goto case 1;
-            //        case 3:
-            //            monitored.Add(link.RelayTwo);
-            //            goto case 2;
-            //        case 4:
-            //            monitored.Add(link.RelayThree);
-            //            goto case 3;
-            //        case 5:
-            //            monitored.Add(link.RelayFour);
-            //            goto case 4;
-            //        default:
-            //            throw new NotSupportedException();
-            //    }
-            //}
-            foreach (Device device in devices)
-            {
-                monitored.Add(device);
-            }
-
+            _deviceStats = deviceToFront;
             startTime = DateTime.Now;
             Watch();
         }
@@ -82,52 +51,53 @@ namespace MicrowaveMonitor.Managers
                     {
                         _alarms.Clear();
                     });
-                    foreach (Device item in monitored)
+                    foreach (KeyValuePair<int, DeviceDisplay> item in DeviceStats)
                     {
-                        DiffAlarm(item.AvgPing, item.DiffPing, item.Address, "ms", "ping");
-                        DiffAlarm(item.AvgSig, item.DiffSig, item.Address, "dBm", "signal");
-                        DiffAlarm(item.AvgSigQ, item.DiffSigQ, item.Address, "dB", "signal quality");
-                        notRespondAlarm(item.DataSignal, item.Address);
+                        DiffAlarm(item.Value.AvgPing, item.Value.DiffPing, item.Key, "ms", "ping");
+                        DiffAlarm(item.Value.AvgSig, item.Value.DiffSig, item.Key, "dBm", "signal");
+                        DiffAlarm(item.Value.AvgSigQ, item.Value.DiffSigQ, item.Key, "dB", "signal quality");
+                        //notRespondAlarm(item.DataSignal, item.Address);
                     }
+
                     Thread.Sleep(refresh);
                 }
             });
             tWatcher.Start();
         }
 
-        private void DiffAlarm(double avg, double diff, IPAddress address, string units, string meter)
+        private void DiffAlarm(double avg, double diff, int id, string units, string meter)
         {
             double maxdiff = avg * diffLimit;
             double maxval = avg + diff;
             if (diff > maxdiff)
                 App.Current.Dispatcher.Invoke((Action)delegate
                 {
-                    _alarms.Add(String.Format("Device {0} has exceeded maximum ({1} {2}) {3} treshold!", address, maxval, units, meter));
+                    _alarms.Add(String.Format("Device {0} has exceeded maximum ({1} {2}) {3} treshold!", id, maxval, units, meter));
                 });
         }
 
-        private void notRespondAlarm(ObservableCollection<RecordDouble> collection, IPAddress address)
-        {
-            if (collection.Count == 0)
-            {
-                if ((DateTime.Now - startTime) > notRespondLimit)
-                    App.Current.Dispatcher.Invoke((Action)delegate
-                    {
-                        _alarms.Add(String.Format("Device {0} is not responding since the start of monitoring!", address));
-                    });
-            }
-            else
-            {
-                DateTime old = DateTime.Now - notRespondLimit;
-                if (collection.Last().TimeMark < old)
-                {
-                    TimeSpan time = DateTime.Now - collection.Last().TimeMark;
-                    App.Current.Dispatcher.Invoke((Action)delegate
-                    {
-                        _alarms.Add(String.Format("Device {0} is not responding for {1} seconds!", address, time.TotalSeconds));
-                    });
-                }
-            }
-        }
+        //private void notRespondAlarm(ObservableCollection<RecordDouble> collection, IPAddress address)
+        //{
+        //    if (collection.Count == 0)
+        //    {
+        //        if ((DateTime.Now - startTime) > notRespondLimit)
+        //            App.Current.Dispatcher.Invoke((Action)delegate
+        //            {
+        //                _alarms.Add(String.Format("Device {0} is not responding since the start of monitoring!", address));
+        //            });
+        //    }
+        //    else
+        //    {
+        //        DateTime old = DateTime.Now - notRespondLimit;
+        //        if (collection.Last().TimeMark < old)
+        //        {
+        //            TimeSpan time = DateTime.Now - collection.Last().TimeMark;
+        //            App.Current.Dispatcher.Invoke((Action)delegate
+        //            {
+        //                _alarms.Add(String.Format("Device {0} is not responding for {1} seconds!", address, time.TotalSeconds));
+        //            });
+        //        }
+        //    }
+        //}
     }
 }

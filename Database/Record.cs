@@ -2,15 +2,15 @@
 
 namespace MicrowaveMonitor.Database
 {
-    public abstract class Record
+    public class Record<T>
     {
-        private DateTime _timeMark;
+        public DateTime TimeMark { get; set; }
+        public T Data { get; set; }
 
-        public DateTime TimeMark { get => _timeMark; set => _timeMark = value; }
-
-        public Record(DateTime timeMark)
+        public Record(DateTime timeMark, T data)
         {
             TimeMark = timeMark;
+            Data = data;
         }
     }
 }

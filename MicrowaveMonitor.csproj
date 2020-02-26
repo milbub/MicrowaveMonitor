@@ -98,9 +98,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Database\DeviceDisplay.cs" />
     <Compile Include="Database\Record.cs" />
-    <Compile Include="Database\RecordDouble.cs" />
-    <Compile Include="Database\RecordUInt.cs" />
     <Compile Include="Frontend\AlarmList.cs" />
     <Compile Include="Frontend\EventLog.cs" />
     <Compile Include="Frontend\LinkSettings.cs" />

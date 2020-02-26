@@ -9,14 +9,20 @@ namespace MicrowaveMonitor.Workers
 {
     public abstract class SnmpCollector : Collector
     {
+        protected int _port;
         protected ObjectIdentifier _collectedOid;
+        protected OctetString _community;
 
+        public int Port { get => _port; }
         public ObjectIdentifier CollectedOid { get => _collectedOid; }
+        public OctetString Community { get => _community; }
 
-        private Thread tCollector;
-
-        public SnmpCollector(Device device) : base(device)
-        { }
+        public SnmpCollector(string oid, int port, string community, string address, int deviceId, int refreshInterval, DeviceDisplay display) : base(address, deviceId, refreshInterval, display)
+        {
+            _collectedOid = new ObjectIdentifier(oid);
+            _port = port;
+            _community = new OctetString(community);
+        }
 
         public override void Start()
         {
@@ -42,8 +48,8 @@ namespace MicrowaveMonitor.Workers
                        var result = Messenger.Get
                        (
                            VersionCode.V1,
-                           new System.Net.IPEndPoint(Device.Address, Device.SnmpPort),
-                           new OctetString(Device.CommunityString),
+                           new System.Net.IPEndPoint(Address, Port),
+                           Community,
                            new List<Variable> { new Variable(CollectedOid) },
                            timeout
                        );
@@ -76,13 +82,6 @@ namespace MicrowaveMonitor.Workers
                }
             });
             tCollector.Start();
-        }
-
-        public override void Stop()
-        {
-            _isRunning = false;
-            if (RefreshInterval > MaxTimeout)
-                tCollector.Abort();
         }
 
         public abstract void RecordData(IList<Variable> result, DateTime resultTime);

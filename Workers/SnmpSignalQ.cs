@@ -11,28 +11,28 @@ namespace MicrowaveMonitor.Workers
 {
     public class SnmpSignalQ : SnmpCollector
     {
-        public SnmpSignalQ(Device device) : base(device)
+        int divisor;
+
+        public SnmpSignalQ(int divisor, string oid, int port, string community, string address, int deviceId, int refreshInterval, DeviceDisplay display) : base(oid, port, community, address, deviceId, refreshInterval, display)
         {
-            _collectedOid = Device.OidSignalQ;
-            _refreshInterval = Device.RefreshSignalQ;
-            _collectedData = Device.DataSignalQ;
+            this.divisor = divisor;
         }
 
         public override void RecordData(IList<Variable> result, DateTime resultTime)
         {
-            _collectedData.Add(new RecordDouble(resultTime, Math.Abs(double.Parse(result.First().Data.ToString()) / Device.SignalQDivider)));
+            Display.DataSigQ = new Record<double>(resultTime, Math.Abs(double.Parse(result.First().Data.ToString()) / divisor));
             Diff();
         }
 
         public override void RecordAvg(double avg)
         {
-            _device.AvgSigQ = avg;
+            Display.AvgSigQ = avg;
         }
 
         public override void RecordDiff(double sum, int count)
         {
-            if (_device.AvgSigQ > 0)
-                _device.DiffSigQ = sum / count - _device.AvgSigQ;
+            if (Display.AvgSigQ > 0)
+                Display.DiffSigQ = sum / count - Display.AvgSigQ;
         }
     }
 }
