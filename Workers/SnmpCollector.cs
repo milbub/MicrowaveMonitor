@@ -78,7 +78,11 @@ namespace MicrowaveMonitor.Workers
                             Console.WriteLine(e.Message);
                             // TODO - exception handling
                         }
-                    }
+                   }
+                   catch (ThreadAbortException e)
+                   {
+                        Console.WriteLine(e.Message);
+                   }
                }
             });
             tCollector.Start();

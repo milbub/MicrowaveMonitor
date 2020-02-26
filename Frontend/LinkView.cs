@@ -76,19 +76,13 @@ namespace MicrowaveMonitor.Frontend
             
             ShowStatics();
             ShowLastData();           
-            try
-            {
-                DataChanged(DevicesDisplays[ViewedDeviceId], new PropertyChangedEventArgs("SysName"));
-                DataChanged(DevicesDisplays[ViewedDeviceId], new PropertyChangedEventArgs("Uptime"));
-                DataChanged(DevicesDisplays[ViewedDeviceId], new PropertyChangedEventArgs("DataPing"));
-                DataChanged(DevicesDisplays[ViewedDeviceId], new PropertyChangedEventArgs("DiffPing"));
-                DataChanged(DevicesDisplays[ViewedDeviceId], new PropertyChangedEventArgs("DiffSig"));
-                DataChanged(DevicesDisplays[ViewedDeviceId], new PropertyChangedEventArgs("DiffSigQ"));
-            }
-            catch (InvalidOperationException e)
-            {
-                Console.WriteLine(e.Message);
-            }
+            DataChanged(null, new PropertyChangedEventArgs("SysName"));
+            DataChanged(null, new PropertyChangedEventArgs("Uptime"));
+            DataChanged(null, new PropertyChangedEventArgs("DiffPing"));
+            DataChanged(null, new PropertyChangedEventArgs("DiffSig"));
+            DataChanged(null, new PropertyChangedEventArgs("DiffSigQ"));
+            if (DevicesDisplays[ViewedDeviceId].DataPing != null)
+                DataChanged(null, new PropertyChangedEventArgs("DataPing"));
         }
 
         private void DataChanged(object sender, PropertyChangedEventArgs e)
