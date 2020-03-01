@@ -4,6 +4,7 @@ using MicrowaveMonitor.Database;
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using Vibrant.InfluxDB.Client.Rows;
 
 namespace MicrowaveMonitor.Workers
 {
@@ -26,66 +27,69 @@ namespace MicrowaveMonitor.Workers
 
         public override void Start()
         {
-            DateTime beginTime;
-            DateTime finishTime;
-            TimeSpan diffTime;
-
-            int timeout;
-            if (RefreshInterval > MaxTimeout)
-                timeout = MaxTimeout;
-            else
-                timeout = RefreshInterval * 2;
-
-            _isRunning = true;
-
-            tCollector = new Thread(() =>
+            if (IsRunning == false)
             {
-               while (IsRunning)
-               {
-                   beginTime = DateTime.Now;
-                   try
-                   {
-                       var result = Messenger.Get
-                       (
-                           VersionCode.V1,
-                           new System.Net.IPEndPoint(Address, Port),
-                           Community,
-                           new List<Variable> { new Variable(CollectedOid) },
-                           timeout
-                       );
+                DateTime beginTime;
+                DateTime finishTime;
+                TimeSpan diffTime;
 
-                       finishTime = DateTime.Now;
+                int timeout;
+                if (RefreshInterval > MaxTimeout)
+                    timeout = MaxTimeout;
+                else
+                    timeout = RefreshInterval * 2;
 
-                       RecordData(result, finishTime);
+                _isRunning = true;
 
-                       diffTime = finishTime - beginTime;
-                       if (diffTime.TotalMilliseconds < RefreshInterval)
-                           Thread.Sleep((int)(RefreshInterval - diffTime.TotalMilliseconds));
-                   }
-                   catch (OperationException e)
-                   {
-                        if (e is Lextm.SharpSnmpLib.Messaging.TimeoutException)
-                            continue;
-                        if (e is ErrorException)
+                tCollector = new Thread(() =>
+                {
+                    while (IsRunning)
+                    {
+                        beginTime = DateTime.Now;
+                        try
                         {
-                            _isRunning = false;
-                            Console.WriteLine("SNMP Error. Collector suspended.");
-                            // TODO - exception handling
+                            var result = Messenger.Get
+                        (
+                            VersionCode.V1,
+                            new System.Net.IPEndPoint(Address, Port),
+                            Community,
+                            new List<Variable> { new Variable(CollectedOid) },
+                            timeout
+                        );
+
+                            finishTime = DateTime.Now;
+
+                            RecordData(result, finishTime);
+
+                            diffTime = finishTime - beginTime;
+                            if (diffTime.TotalMilliseconds < RefreshInterval)
+                                Thread.Sleep((int)(RefreshInterval - diffTime.TotalMilliseconds));
                         }
-                        else
+                        catch (OperationException e)
                         {
-                            Thread.Sleep(RefreshInterval);
+                            if (e is Lextm.SharpSnmpLib.Messaging.TimeoutException)
+                                continue;
+                            if (e is ErrorException)
+                            {
+                                _isRunning = false;
+                                Console.WriteLine("SNMP Error. Collector suspended.");
+                                // TODO - exception handling
+                            }
+                            else
+                            {
+                                Thread.Sleep(RefreshInterval);
+                                Console.WriteLine(e.Message);
+                                // TODO - exception handling
+                            }
+                        }
+                        catch (ThreadAbortException e)
+                        {
                             Console.WriteLine(e.Message);
-                            // TODO - exception handling
                         }
-                   }
-                   catch (ThreadAbortException e)
-                   {
-                        Console.WriteLine(e.Message);
-                   }
-               }
-            });
-            tCollector.Start();
+                    }
+                });
+                tCollector.Start();
+            }
         }
 
         public abstract void RecordData(IList<Variable> result, DateTime resultTime);

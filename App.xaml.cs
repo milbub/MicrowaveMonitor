@@ -9,11 +9,13 @@ namespace MicrowaveMonitor
     {
         private LinkManager linkManager = new LinkManager();
         private WorkerManager workerManager = new WorkerManager();
+        private DataManager dataManager = new DataManager();
         private AlarmManager alarmManager = new AlarmManager();
 
         private void Application_Startup(object sender, StartupEventArgs e)
         {
-            workerManager.InitWorkers(linkManager.LinkDatabase.Table<Device>());
+            workerManager.InitWorkers(linkManager.LinkDatabase.Table<Device>(), dataManager);
+            dataManager.StartDatabaseWriter();
             alarmManager.InitWatchers(workerManager.DeviceToFront);
 
             MonitoringWindow monitoringWindow = new MonitoringWindow(linkManager, workerManager, alarmManager);
@@ -23,6 +25,7 @@ namespace MicrowaveMonitor
         private void Application_Exit(object sender, ExitEventArgs e)
         {
             workerManager.StopWorkers();
+            dataManager.StopDatabaseWriter();
             alarmManager.StopWatchers();
         }
     }

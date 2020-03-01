@@ -6,21 +6,30 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Vibrant.InfluxDB.Client.Rows;
 
 namespace MicrowaveMonitor.Workers
 {
     public class SnmpSignalQ : SnmpCollector
     {
         int divisor;
+        List<DynamicInfluxRow> database;
 
-        public SnmpSignalQ(int divisor, string oid, int port, string community, string address, int deviceId, int refreshInterval, DeviceDisplay display) : base(oid, port, community, address, deviceId, refreshInterval, display)
+        public SnmpSignalQ(List<DynamicInfluxRow> dbRows, int divisor, string oid, int port, string community, string address, int deviceId, int refreshInterval, DeviceDisplay display) : base(oid, port, community, address, deviceId, refreshInterval, display)
         {
             this.divisor = divisor;
+            database = dbRows;
         }
 
         public override void RecordData(IList<Variable> result, DateTime resultTime)
         {
-            Display.DataSigQ = new Record<double>(resultTime, Math.Abs(double.Parse(result.First().Data.ToString()) / divisor));
+            double resval = Math.Abs(double.Parse(result.First().Data.ToString()) / divisor);
+            Display.DataSigQ = new Record<double>(resultTime, resval); ;
+            DynamicInfluxRow row = new DynamicInfluxRow();
+            row.Timestamp = resultTime.ToUniversalTime();
+            row.Fields.Add("value", resval);
+            row.Tags.Add("device", DeviceId.ToString());
+            database.Add(row);
             Diff();
         }
 

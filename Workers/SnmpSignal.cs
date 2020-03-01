@@ -3,18 +3,28 @@ using MicrowaveMonitor.Database;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-
+using Vibrant.InfluxDB.Client.Rows;
 
 namespace MicrowaveMonitor.Workers
 {
     public class SnmpSignal : SnmpCollector
     {
-        public SnmpSignal(string oid, int port, string community, string address, int deviceId, int refreshInterval, DeviceDisplay display) : base(oid, port, community, address, deviceId, refreshInterval, display)
-        { }
+        List<DynamicInfluxRow> database;
+
+        public SnmpSignal(List<DynamicInfluxRow> dbRows, string oid, int port, string community, string address, int deviceId, int refreshInterval, DeviceDisplay display) : base(oid, port, community, address, deviceId, refreshInterval, display)
+        {
+            database = dbRows;
+        }
 
         public override void RecordData(IList<Variable> result, DateTime resultTime)
         {
-            Display.DataSig = new Record<double>(resultTime, Math.Abs(double.Parse(result.First().Data.ToString())));
+            double resval = Math.Abs(double.Parse(result.First().Data.ToString()));
+            Display.DataSig = new Record<double>(resultTime, resval);
+            DynamicInfluxRow row = new DynamicInfluxRow();
+            row.Timestamp = resultTime.ToUniversalTime();
+            row.Fields.Add("value", resval);
+            row.Tags.Add("device", DeviceId.ToString());
+            database.Add(row);
             Diff();
         }
 
