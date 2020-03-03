@@ -18,6 +18,11 @@ namespace MicrowaveMonitor.Database
         private Record<double> _dataPing;
         private string _sysName = String.Empty;
         private uint _uptime = 0;
+        private string _weatherIcon = "03d";
+        private double _weatherTemp = 0;
+        private double _weatherWind = 0;
+        private double _weatherRain = 0;
+        private double _weatherSnow = 0;
 
         public double AvgSig
         {
@@ -152,6 +157,67 @@ namespace MicrowaveMonitor.Database
                 {
                     _uptime = value;
                     OnPropertyChanged(nameof(Uptime));
+                }
+            }
+        }
+
+        public string WeatherIcon
+        {
+            get => _weatherIcon;
+            set
+            {
+                if (value != _weatherIcon)
+                {
+                    _weatherIcon = value;
+                    OnPropertyChanged(nameof(WeatherIcon));
+                }
+            }
+        }
+        public double WeatherTemp
+        {
+            get => _weatherTemp;
+            set
+            {
+                if (value != _weatherTemp)
+                {
+                    _weatherTemp = value;
+                    OnPropertyChanged(nameof(WeatherTemp));
+                }
+            }
+        }
+        public double WeatherWind
+        {
+            get => _weatherWind;
+            set
+            {
+                if (value != _weatherWind)
+                {
+                    _weatherWind = value;
+                    OnPropertyChanged(nameof(WeatherWind));
+                }
+            }
+        }
+        public double WeatherRain
+        {
+            get => _weatherRain;
+            set
+            {
+                if (value != _weatherRain)
+                {
+                    _weatherRain = value;
+                    OnPropertyChanged(nameof(WeatherRain));
+                }
+            }
+        }
+        public double WeatherSnow
+        {
+            get => _weatherSnow;
+            set
+            {
+                if (value != _weatherSnow)
+                {
+                    _weatherSnow = value;
+                    OnPropertyChanged(nameof(WeatherSnow));
                 }
             }
         }

@@ -16,12 +16,16 @@ namespace MicrowaveMonitor.Database
         public int SnmpPort { get; set; } = 161;
         public SnmpProtocolVersion SnmpVersion { get; set; } = SnmpProtocolVersion.v1;
         public string CommunityString { get; set; } = "public";
+        public string Latitude { get; set; }
+        public string Longitude { get; set; }
 
         /* Controls */
         public bool IsEnabledSignal { get; set; } = true;
         public bool IsEnabledSignalQ { get; set; } = true;
         public bool IsEnabledTx { get; set; } = false;
         public bool IsEnabledRx { get; set; } = false;
+        public bool IsEnabledTempOdu { get; set; } = false;
+        public bool IsEnabledTempIdu { get; set; } = false;
 
         /* Model specifics */
         public int SignalQDivisor { get; set; } = 10;
@@ -33,6 +37,8 @@ namespace MicrowaveMonitor.Database
         public string OidSignalQ_s { get; set; }
         public string OidTxDataRate_s { get; set; }
         public string OidRxDataRate_s { get; set; }
+        public string OidTempOdu_s { get; set; }
+        public string OidTempIdu_s { get; set; }
 
         /* Refresh intervals */
         public static int RefreshSysName { get; } = 600000;
@@ -42,5 +48,7 @@ namespace MicrowaveMonitor.Database
         public int RefreshTx { get; set; } = defaultRefresh;
         public int RefreshRx { get; set; } = defaultRefresh;
         public int RefreshPing { get; set; } = defaultRefresh;
+        public int RefreshTempOdu { get; set; } = defaultRefresh;
+        public int RefreshTempIdu { get; set; } = defaultRefresh;
     }
 }

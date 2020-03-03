@@ -98,6 +98,28 @@ namespace MicrowaveMonitor.Gui
             }
         }
 
+        public void UpdateImage(Image element, System.Windows.Media.ImageSource source)
+        {
+            try
+            {
+                if (!element.Dispatcher.CheckAccess())
+                {
+                    element.Dispatcher.Invoke(() =>
+                    {
+                        element.Source = source;
+                    });
+                }
+                else
+                {
+                    element.Source = source;
+                }
+            }
+            catch (TaskCanceledException e)
+            {
+                Console.WriteLine(e.Message);
+            }
+        }
+
         private void SiteChoosed(object sender, RoutedEventArgs e)
         {
             RadioButton rb = sender as RadioButton;

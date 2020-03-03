@@ -11,8 +11,14 @@ namespace MicrowaveMonitor.Managers
     public class WorkerManager
     {
         public Dictionary<int, DeviceDisplay> DeviceToFront { get; set; } = new Dictionary<int, DeviceDisplay>();
-        
+
         private List<Collector> workers = new List<Collector>();
+        private WeatherCollector weatherCollector;
+
+        public WorkerManager()
+        {
+            weatherCollector = new WeatherCollector(DeviceToFront);
+        }
 
         public void InitWorkers(TableQuery<Device> devices, DataManager dataDb)
         {
@@ -31,9 +37,10 @@ namespace MicrowaveMonitor.Managers
                     workers.Add(new SnmpTx(dataDb.TxTransactions, device.OidTxDataRate_s, device.SnmpPort, device.CommunityString, device.Address, device.Id, device.RefreshTx, DeviceToFront[device.Id]));
                 if (device.IsEnabledRx)
                     workers.Add(new SnmpRx(dataDb.RxTransactions, device.OidRxDataRate_s, device.SnmpPort, device.CommunityString, device.Address, device.Id, device.RefreshRx, DeviceToFront[device.Id]));
+                weatherCollector.AddDevice(device.Id, device.Latitude, device.Longitude);
             }
 
-            StartWorkers();          
+            StartWorkers();
         }
 
         public void StartWorkers()
@@ -42,6 +49,7 @@ namespace MicrowaveMonitor.Managers
             {
                 worker.Start();
             }
+            weatherCollector.Start();
         }
 
         public void StopWorkers()
@@ -50,6 +58,7 @@ namespace MicrowaveMonitor.Managers
             {
                 worker.Stop();
             }
+            weatherCollector.Stop();
         }
     }
 }
