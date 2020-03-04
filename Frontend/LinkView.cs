@@ -20,8 +20,6 @@ namespace MicrowaveMonitor.Frontend
         public Link ViewedLink { get => _viewedLink; }
         public int ViewedDeviceId { get => _viewedDeviceId; }
 
-        private string tempStoreSignalData, tempStoreSignalQData, tempStoreTxData, tempStoreRxData, tempStorePingData = String.Empty;
-
         public LinkView(MonitoringWindow monitorGui, Link viewedLink, Dictionary<int, DeviceDisplay> deviceDisplay) : base(monitorGui)
         {
             _devicesDisplays = deviceDisplay;
@@ -74,8 +72,7 @@ namespace MicrowaveMonitor.Frontend
 
             DevicesDisplays[ViewedDeviceId].PropertyChanged += DataChanged;
             
-            ShowStatics();
-            ShowLastData();           
+            ShowStatics();          
             DataChanged(null, new PropertyChangedEventArgs("SysName"));
             DataChanged(null, new PropertyChangedEventArgs("Uptime"));
             DataChanged(null, new PropertyChangedEventArgs("DiffPing"));
@@ -115,19 +112,21 @@ namespace MicrowaveMonitor.Frontend
                     break;
                 case "DataPing":
                     MonitorGui.UpdateElementContent(MonitorGui.ping, String.Format("{0} ms", DevicesDisplays[ViewedDeviceId].DataPing.Data));
-                    tempStorePingData = MonitorGui.LogWindowUpdate(MonitorGui.pingwin, MsgPing(DevicesDisplays[ViewedDeviceId].DataPing), tempStorePingData);
+                    MonitorGui.GraphUpdate(MonitorGui.pingwin, DevicesDisplays[ViewedDeviceId].DataPing);
                     break;
                 case "DataSig":
-                    tempStoreSignalData = MonitorGui.LogWindowUpdate(MonitorGui.signalLevel, MsgSignal(DevicesDisplays[ViewedDeviceId].DataSig), tempStoreSignalData);
+                    MonitorGui.GraphUpdate(MonitorGui.signalLevel, DevicesDisplays[ViewedDeviceId].DataSig);
                     break;
                 case "DataSigQ":
-                    tempStoreSignalQData = MonitorGui.LogWindowUpdate(MonitorGui.signalQuality, MsgSignalQ(DevicesDisplays[ViewedDeviceId].DataSigQ), tempStoreSignalQData);
+                    MonitorGui.GraphUpdate(MonitorGui.signalQuality, DevicesDisplays[ViewedDeviceId].DataSigQ);
                     break;
                 case "DataTx":
-                    tempStoreTxData = MonitorGui.LogWindowUpdate(MonitorGui.tx, MsgTx(DevicesDisplays[ViewedDeviceId].DataTx), tempStoreTxData);
+                    var convertedTx = new Record<double>(DevicesDisplays[ViewedDeviceId].DataTx.TimeMark, DevicesDisplays[ViewedDeviceId].DataTx.Data);
+                    MonitorGui.GraphUpdate(MonitorGui.tx, convertedTx);
                     break;
                 case "DataRx":
-                    tempStoreRxData = MonitorGui.LogWindowUpdate(MonitorGui.rx, MsgRx(DevicesDisplays[ViewedDeviceId].DataRx), tempStoreRxData);
+                    var convertedRx = new Record<double>(DevicesDisplays[ViewedDeviceId].DataRx.TimeMark, DevicesDisplays[ViewedDeviceId].DataRx.Data);
+                    MonitorGui.GraphUpdate(MonitorGui.rx, convertedRx);
                     break;
                 case "WeatherIcon":
                     System.Windows.Media.Imaging.BitmapImage bitmapImage = new System.Windows.Media.Imaging.BitmapImage();
@@ -195,99 +194,5 @@ namespace MicrowaveMonitor.Frontend
         {
             MonitorGui.UpdateElementContent(MonitorGui.ip, MonitorGui.GetDevice(ViewedDeviceId).Address.ToString());
         }
-
-        private string MsgPing(Record<double> record)
-        {
-            string msg = String.Format("{0}      {1} ms\n", record.TimeMark.ToLongTimeString(), record.Data.ToString());
-            return msg;
-        }
-
-        private string MsgSignal(Record<double> record)
-        {
-            string msg = String.Format("{0}      {1} dBm\n", record.TimeMark.ToLongTimeString(), record.Data.ToString());
-            return msg;
-        }
-
-        private string MsgSignalQ(Record<double> record)
-        {
-            string msg = String.Format("{0}      {1} dB\n", record.TimeMark.ToLongTimeString(), record.Data.ToString());
-            return msg;
-        }
-
-        private string MsgTx(Record<uint> record)
-        {
-            double dataRate = record.Data / 1000;
-            string msg = String.Format("{0}      {1} kbit/s\n", record.TimeMark.ToLongTimeString(), dataRate.ToString());
-            return msg;
-        }
-
-        private string MsgRx(Record <uint> record)
-        {
-            double dataRate = record.Data / 1000;
-            string msg = String.Format("{0}      {1} kbit/s\n", record.TimeMark.ToLongTimeString(), dataRate.ToString());
-            return msg;
-        }
-
-        private void ShowLastData()
-        {
-            //string msgS = String.Empty;
-            //string msgSQ = String.Empty;
-            //string msgTx = String.Empty;
-            //string msgRx = String.Empty;
-            //string msgPg = String.Empty;
-
-            //int countS = ViewedDevice.DataSignal.Count;
-            //int countSQ = ViewedDevice.DataSignalQ.Count;
-            //int countTx = ViewedDevice.DataTx.Count;
-            //int countRx = ViewedDevice.DataRx.Count;
-            //int countPg = ViewedDevice.DataPing.Count;
-            //int position;
-
-            //position = LastDataPosition(countS);
-            //for (; position < countS; position++)
-            //{
-            //    msgS += MsgSignal(position);
-            //}
-
-            //position = LastDataPosition(countSQ);
-            //for (; position < countSQ; position++)
-            //{
-            //    msgSQ += MsgSignalQ(position);
-            //}
-
-            //position = LastDataPosition(countTx);
-            //for (; position < countTx; position++)
-            //{
-            //    msgTx += MsgTx(position);
-            //}
-
-            //position = LastDataPosition(countRx);
-            //for (; position < countRx; position++)
-            //{
-            //    msgRx += MsgRx(position);
-            //}
-
-            //position = LastDataPosition(countPg);
-            //for (; position < countPg; position++)
-            //{
-            //    msgPg += MsgPing(position);
-            //}
-
-            //tempStoreSignalData = MonitorGui.LogWindowUpdate(MonitorGui.signalLevel, msgS, tempStoreSignalData);
-            //tempStoreSignalQData = MonitorGui.LogWindowUpdate(MonitorGui.signalQuality, msgSQ, tempStoreSignalQData);
-            //tempStoreTxData = MonitorGui.LogWindowUpdate(MonitorGui.tx, msgTx, tempStoreTxData);
-            //tempStoreRxData = MonitorGui.LogWindowUpdate(MonitorGui.rx, msgRx, tempStoreRxData);
-            //tempStorePingData = MonitorGui.LogWindowUpdate(MonitorGui.pingwin, msgPg, tempStorePingData);
-        }
-
-        //private int LastDataPosition(int count)
-        //{
-        //    int position;
-        //    if (count > 50)
-        //        position = count - 50;
-        //    else
-        //        position = 0;
-        //    return position;
-        //}
     }
 }

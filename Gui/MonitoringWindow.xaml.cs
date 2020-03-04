@@ -120,6 +120,28 @@ namespace MicrowaveMonitor.Gui
             }
         }
 
+        public void GraphUpdate(GraphRealtime element, Record<double> record)
+        {
+            try
+            {
+                if (!element.Dispatcher.CheckAccess())
+                {
+                    element.Dispatcher.Invoke(() =>
+                    {
+                        element.Read(record);
+                    });
+                }
+                else
+                {
+                    element.Read(record);
+                }
+            }
+            catch (TaskCanceledException e)
+            {
+                Console.WriteLine(e.Message);
+            }
+        }
+
         private void SiteChoosed(object sender, RoutedEventArgs e)
         {
             RadioButton rb = sender as RadioButton;
@@ -239,11 +261,11 @@ namespace MicrowaveMonitor.Gui
             unitname.Content = String.Empty;
             ping.Content = String.Empty;
             uptime.Content = String.Empty;
-            signalLevel.Text = String.Empty;
-            signalQuality.Text = String.Empty;
-            tx.Text = String.Empty;
-            rx.Text = String.Empty;
-            pingwin.Text = String.Empty;
+            signalLevel.ChartValues.Clear();
+            signalQuality.ChartValues.Clear();
+            tx.ChartValues.Clear();
+            rx.ChartValues.Clear();
+            pingwin.ChartValues.Clear();
         }
     }
 }
