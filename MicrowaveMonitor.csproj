@@ -108,8 +108,17 @@
     <Compile Include="Frontend\LinkSettings.cs" />
     <Compile Include="Frontend\LinkView.cs" />
     <Compile Include="Frontend\Renderer.cs" />
+    <Compile Include="Gui\AlarmListPane.xaml.cs">
+      <DependentUpon>AlarmListPane.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\EventLogPane.xaml.cs">
+      <DependentUpon>EventLogPane.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Gui\GraphRealtime.xaml.cs">
       <DependentUpon>GraphRealtime.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\SettingsTab.xaml.cs">
+      <DependentUpon>SettingsTab.xaml</DependentUpon>
     </Compile>
     <Compile Include="Managers\AlarmManager.cs" />
     <Compile Include="Managers\DataManager.cs" />
@@ -135,6 +144,14 @@
     <Compile Include="Workers\SnmpTx.cs" />
     <Compile Include="Workers\SnmpUptime.cs" />
     <Compile Include="Workers\WeatherCollector.cs" />
+    <Page Include="Gui\AlarmListPane.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\EventLogPane.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Gui\GraphRealtime.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -153,6 +170,10 @@
       <DependentUpon>MonitoringWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Gui\SettingsTab.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
