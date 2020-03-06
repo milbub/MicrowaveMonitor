@@ -12,7 +12,8 @@ namespace MicrowaveMonitor.Workers
 {
     public class WeatherCollector
     {
-        public static int MinRefresh { get; } = 5;    // 20 min
+        public static int MinRefresh { get; } = 5;          // 5 min
+        public static int ApiWaitTime { get; } = 1200;      // 1200 msec
 
         private Dictionary<int, DeviceDisplay> displays;
         private Dictionary<int, string> deviceLatitude = new Dictionary<int, string>();
@@ -42,24 +43,26 @@ namespace MicrowaveMonitor.Workers
                 {
                     while (IsRunning)
                     {
-                        DateTime start = DateTime.Now;
+                        DateTime startCycle = DateTime.Now;
                         TimeSpan refresh = new TimeSpan(0, MinRefresh, 0);
-                        TimeSpan apiWaitTime = TimeSpan.FromSeconds(1.1);
+                        TimeSpan apiWaitTime = new TimeSpan(0, 0, 0, 0, ApiWaitTime);
 
                         foreach (int devId in deviceLatitude.Keys)
                         {
+                            DateTime startIter = DateTime.Now;
+
                             Query query = weatherApi.Query(deviceLatitude[devId], deviceLongitude[devId]);
                             displays[devId].WeatherIcon = query.Weathers[0].Icon;
                             displays[devId].WeatherDesc = query.Weathers[0].Description;
                             displays[devId].WeatherTemp = Convert.ToInt32(query.Main.Temperature);
                             displays[devId].WeatherWind = query.Wind.SpeedMetersPerSecond;
 
-                            TimeSpan diffIter = DateTime.Now - start;
+                            TimeSpan diffIter = DateTime.Now - startIter;
                             if (diffIter < apiWaitTime)
                                 Thread.Sleep(apiWaitTime - diffIter);
                         }
 
-                        TimeSpan diffCycle = DateTime.Now - start;
+                        TimeSpan diffCycle = DateTime.Now - startCycle;
                         if (diffCycle < refresh)
                             Thread.Sleep(refresh - diffCycle);
                     }
