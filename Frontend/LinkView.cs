@@ -7,6 +7,7 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Configuration;
 
 namespace MicrowaveMonitor.Frontend
 {
@@ -79,10 +80,9 @@ namespace MicrowaveMonitor.Frontend
             DataChanged(null, new PropertyChangedEventArgs("DiffSig"));
             DataChanged(null, new PropertyChangedEventArgs("DiffSigQ"));
             DataChanged(null, new PropertyChangedEventArgs("WeatherIcon"));
+            DataChanged(null, new PropertyChangedEventArgs("WeatherDesc"));
             DataChanged(null, new PropertyChangedEventArgs("WeatherTemp"));
             DataChanged(null, new PropertyChangedEventArgs("WeatherWind"));
-            DataChanged(null, new PropertyChangedEventArgs("WeatherRain"));
-            DataChanged(null, new PropertyChangedEventArgs("WeatherSnow"));
             if (DevicesDisplays[ViewedDeviceId].DataPing != null)
                 DataChanged(null, new PropertyChangedEventArgs("DataPing"));
         }
@@ -131,21 +131,18 @@ namespace MicrowaveMonitor.Frontend
                 case "WeatherIcon":
                     System.Windows.Media.Imaging.BitmapImage bitmapImage = new System.Windows.Media.Imaging.BitmapImage();
                     bitmapImage.BeginInit();
-                    bitmapImage.UriSource = new Uri(String.Format("http://openweathermap.org/img/wn/{0}.png", DevicesDisplays[ViewedDeviceId].WeatherIcon));
+                    bitmapImage.UriSource = new Uri(String.Format(ConfigurationManager.AppSettings.Get("WeatherApiIconSource"), DevicesDisplays[ViewedDeviceId].WeatherIcon));
                     bitmapImage.EndInit();
                     MonitorGui.UpdateImage(MonitorGui.weatherIcon, bitmapImage);
+                    break;
+                case "WeatherDesc":
+                    MonitorGui.UpdateElementContent(MonitorGui.weatherDesc, DevicesDisplays[ViewedDeviceId].WeatherDesc.ToString());
                     break;
                 case "WeatherTemp":
                     MonitorGui.UpdateElementContent(MonitorGui.weatherTemp, DevicesDisplays[ViewedDeviceId].WeatherTemp.ToString() + " °C");
                     break;
                 case "WeatherWind":
                     MonitorGui.UpdateElementContent(MonitorGui.weatherWind, DevicesDisplays[ViewedDeviceId].WeatherWind.ToString() + " m/s");
-                    break;
-                case "WeatherRain":
-                    MonitorGui.UpdateElementContent(MonitorGui.weatherRain, DevicesDisplays[ViewedDeviceId].WeatherRain.ToString() + " mm");
-                    break;
-                case "WeatherSnow":
-                    MonitorGui.UpdateElementContent(MonitorGui.weatherSnow, DevicesDisplays[ViewedDeviceId].WeatherSnow.ToString() + " mm");
                     break;
                 default:
                     throw new InvalidEnumArgumentException();

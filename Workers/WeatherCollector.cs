@@ -50,12 +50,9 @@ namespace MicrowaveMonitor.Workers
                         {
                             Query query = weatherApi.Query(deviceLatitude[devId], deviceLongitude[devId]);
                             displays[devId].WeatherIcon = query.Weathers[0].Icon;
-                            displays[devId].WeatherTemp = query.Main.Temperature;
+                            displays[devId].WeatherDesc = query.Weathers[0].Description;
+                            displays[devId].WeatherTemp = Convert.ToInt32(query.Main.Temperature);
                             displays[devId].WeatherWind = query.Wind.SpeedMetersPerSecond;
-                            if (query.Rain != null)
-                                displays[devId].WeatherRain = query.Rain.H3;
-                            if (query.Snow != null)
-                                displays[devId].WeatherSnow = query.Snow.H3;
 
                             TimeSpan diffIter = DateTime.Now - start;
                             if (diffIter < apiWaitTime)

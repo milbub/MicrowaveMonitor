@@ -76,14 +76,12 @@
                 <Label x:Name="uptime" Grid.Row="2" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="615,0,0,0"></Label>
 
                 <Image x:Name="weatherIcon" Grid.RowSpan="2" Source="http://openweathermap.org/img/wn/02n.png" Width="50" Height="50" Grid.Row="2" Grid.Column="1" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="15,0,0,0"></Image>
-                <Label Grid.Row="3" Content="Air Temperature:" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="80,0,0,0"></Label>
-                <Label x:Name="weatherTemp" Grid.Row="3" VerticalAlignment="Center" HorizontalContentAlignment="Left" Margin="175,0,0,0"/>
-                <Label Grid.Row="3" Content="Wind Speed:" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="300,0,0,0"></Label>
-                <Label x:Name="weatherWind" Grid.Row="3" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="370,0,0,0"></Label>
-                <Label Grid.Row="3" Content="Rain:" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="565,0,0,0"></Label>
-                <Label x:Name="weatherRain" Grid.Row="3" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="595,0,0,0"></Label>
-                <Label Grid.Row="3" Content="Snow:" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="645,0,0,0"></Label>
-                <Label x:Name="weatherSnow" Grid.Row="3" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="681,0,0,0"></Label>
+                <Label Grid.Row="3" Content="Weather:" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="80,0,0,0"></Label>
+                <Label x:Name="weatherDesc" Grid.Row="3" VerticalAlignment="Center" HorizontalContentAlignment="Left" Margin="133,0,0,0"/>
+                <Label Grid.Row="3" Content="Air Temperature:" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="300,0,0,0"></Label>
+                <Label x:Name="weatherTemp" Grid.Row="3" VerticalAlignment="Center" HorizontalContentAlignment="Left" Margin="393,0,0,0"/>
+                <Label Grid.Row="3" Content="Wind Speed:" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="565,0,0,0"></Label>
+                <Label x:Name="weatherWind" Grid.Row="3" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="635,0,0,0"></Label>
 
                 <TabControl x:Name="monitorTabControl" Grid.Row="4" Background="LightGray" Margin="5" Padding="2">
                     <TabItem Header="Radio">
