@@ -15,13 +15,10 @@ namespace MicrowaveMonitor.Managers
         private List<Collector> workers = new List<Collector>();
         private WeatherCollector weatherCollector;
 
-        public WorkerManager()
-        {
-            weatherCollector = new WeatherCollector(DeviceToFront);
-        }
-
         public void InitWorkers(TableQuery<Device> devices, DataManager dataDb)
         {
+            weatherCollector = new WeatherCollector(dataDb.WeatherTempTransactions, DeviceToFront);
+
             foreach (Device device in devices)
             {
                 DeviceToFront.Add(device.Id, new DeviceDisplay());

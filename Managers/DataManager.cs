@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using MicrowaveMonitor.Workers;
 using Vibrant.InfluxDB.Client;
 using Vibrant.InfluxDB.Client.Rows;
 
@@ -12,11 +13,15 @@ namespace MicrowaveMonitor.Managers
 {
     public class DataManager
     {
+        public static int dbWriteInterval { get; } = 10000;      // 10000 msec
+        private static float weatherCycles = (WeatherCollector.MinRefresh * 60000) / dbWriteInterval;
+
         public List<DynamicInfluxRow> PingTransactions = new List<DynamicInfluxRow>();
         public List<DynamicInfluxRow> SignalTransactions = new List<DynamicInfluxRow>();
         public List<DynamicInfluxRow> SignalQTransactions = new List<DynamicInfluxRow>();
         public List<DynamicInfluxRow> TxTransactions = new List<DynamicInfluxRow>();
         public List<DynamicInfluxRow> RxTransactions = new List<DynamicInfluxRow>();
+        public List<DynamicInfluxRow> WeatherTempTransactions = new List<DynamicInfluxRow>();
 
         private InfluxClient databaseClient = new InfluxClient(new Uri(ConfigurationManager.ConnectionStrings["InfluxData"].ConnectionString));
         private Thread writer;
@@ -27,29 +32,46 @@ namespace MicrowaveMonitor.Managers
         {
             if (IsRunning == false)
             {
+                int writeCyckles = 0;
                 IsRunning = true;
                 writer = new Thread(async () =>
                 {
                     while (IsRunning)
                     {
-                        Thread.Sleep(10000);
+                        List<DynamicInfluxRow> dataToWrite;
+                        Thread.Sleep(dbWriteInterval);
                         try
                         {
-                            Task writePing = databaseClient.WriteAsync("MicrowaveMonDB", "ping", PingTransactions);
+                            dataToWrite = PingTransactions.ToList();
+                            Task writePing = databaseClient.WriteAsync("MicrowaveMonDB", "ping", dataToWrite);
                             PingTransactions.Clear();
                             await writePing;
-                            Task writeSig = databaseClient.WriteAsync("MicrowaveMonDB", "signal", SignalTransactions);
+                            dataToWrite = SignalTransactions.ToList();
+                            Task writeSig = databaseClient.WriteAsync("MicrowaveMonDB", "signal", dataToWrite);
                             SignalTransactions.Clear();
                             await writeSig;
-                            Task writeSigQ = databaseClient.WriteAsync("MicrowaveMonDB", "signalQ", SignalQTransactions);
+                            dataToWrite = SignalQTransactions.ToList();
+                            Task writeSigQ = databaseClient.WriteAsync("MicrowaveMonDB", "signalQ", dataToWrite);
                             SignalQTransactions.Clear();
                             await writeSigQ;
-                            Task writeTx = databaseClient.WriteAsync("MicrowaveMonDB", "tx", TxTransactions);
+                            dataToWrite = TxTransactions.ToList();
+                            Task writeTx = databaseClient.WriteAsync("MicrowaveMonDB", "tx", dataToWrite);
                             TxTransactions.Clear();
                             await writeTx;
-                            Task writeRx = databaseClient.WriteAsync("MicrowaveMonDB", "rx", RxTransactions);
+                            dataToWrite = RxTransactions.ToList();
+                            Task writeRx = databaseClient.WriteAsync("MicrowaveMonDB", "rx", dataToWrite);
                             RxTransactions.Clear();
                             await writeRx;
+
+                            if (++writeCyckles > weatherCycles)
+                            {
+                                dataToWrite = WeatherTempTransactions.ToList();
+                                Task writeWeaTemp = databaseClient.WriteAsync("MicrowaveMonDB", "airTemperature", dataToWrite);
+                                WeatherTempTransactions.Clear();
+                                weatherCycles = 0;
+                                await writeWeaTemp;
+                            }
+                            Console.WriteLine(writeCyckles);
                         }
                         catch (InfluxException e)
                         {

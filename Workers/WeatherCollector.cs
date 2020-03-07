@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Configuration;
 using MicrowaveMonitor.Database;
+using Vibrant.InfluxDB.Client.Rows;
 using OpenWeatherApi;
 
 namespace MicrowaveMonitor.Workers
@@ -16,6 +17,7 @@ namespace MicrowaveMonitor.Workers
         public static int ApiWaitTime { get; } = 1200;      // 1200 msec
 
         private Dictionary<int, DeviceDisplay> displays;
+        private List<DynamicInfluxRow> database;
         private Dictionary<int, string> deviceLatitude = new Dictionary<int, string>();
         private Dictionary<int, string> deviceLongitude = new Dictionary<int, string>();
 
@@ -23,9 +25,10 @@ namespace MicrowaveMonitor.Workers
         private Thread tCollector;
         private OpenWeather weatherApi = new OpenWeather(ConfigurationManager.AppSettings.Get("WeatherApiKey"));
 
-        public WeatherCollector(Dictionary<int, DeviceDisplay> deviceDisplays)
+        public WeatherCollector(List<DynamicInfluxRow> dbRows, Dictionary<int, DeviceDisplay> deviceDisplays)
         {
             displays = deviceDisplays;
+            database = dbRows;
         }
 
         public void AddDevice(int deviceId, string latitude, string longitude)
@@ -54,8 +57,15 @@ namespace MicrowaveMonitor.Workers
                             Query query = weatherApi.Query(deviceLatitude[devId], deviceLongitude[devId]);
                             displays[devId].WeatherIcon = query.Weathers[0].Icon;
                             displays[devId].WeatherDesc = query.Weathers[0].Description;
-                            displays[devId].WeatherTemp = Convert.ToInt32(query.Main.Temperature);
+                            int temperature = Convert.ToInt32(query.Main.Temperature);
+                            displays[devId].WeatherTemp = temperature;
                             displays[devId].WeatherWind = query.Wind.SpeedMetersPerSecond;
+
+                            DynamicInfluxRow row = new DynamicInfluxRow();
+                            row.Timestamp = startIter.ToUniversalTime();
+                            row.Fields.Add("value", temperature);
+                            row.Tags.Add("device", devId.ToString());
+                            database.Add(row);
 
                             TimeSpan diffIter = DateTime.Now - startIter;
                             if (diffIter < apiWaitTime)
