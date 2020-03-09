@@ -31,8 +31,10 @@ namespace MicrowaveMonitor.Frontend
         {
             if ((ViewedLink != null) && (ViewedLink.HopCount != viewedLink.HopCount))
                 ChangeDevicesConstellation();
+            
             _viewedLink = viewedLink;
-            ShowLinkName();
+            MonitorGui.UpdateElementContent(MonitorGui.linkCaption, ViewedLink.Name);
+            
             if (MonitorGui.siteA.IsChecked == true)
                 ChangeDevice("A");
             else
@@ -73,18 +75,7 @@ namespace MicrowaveMonitor.Frontend
 
             DevicesDisplays[ViewedDeviceId].PropertyChanged += DataChanged;
             
-            ShowStatics();          
-            DataChanged(null, new PropertyChangedEventArgs("SysName"));
-            DataChanged(null, new PropertyChangedEventArgs("Uptime"));
-            DataChanged(null, new PropertyChangedEventArgs("DiffPing"));
-            DataChanged(null, new PropertyChangedEventArgs("DiffSig"));
-            DataChanged(null, new PropertyChangedEventArgs("DiffSigQ"));
-            DataChanged(null, new PropertyChangedEventArgs("WeatherIcon"));
-            DataChanged(null, new PropertyChangedEventArgs("WeatherDesc"));
-            DataChanged(null, new PropertyChangedEventArgs("WeatherTemp"));
-            DataChanged(null, new PropertyChangedEventArgs("WeatherWind"));
-            if (DevicesDisplays[ViewedDeviceId].DataPing != null)
-                DataChanged(null, new PropertyChangedEventArgs("DataPing"));
+            ShowStatics();
         }
 
         private void DataChanged(object sender, PropertyChangedEventArgs e)
@@ -127,6 +118,15 @@ namespace MicrowaveMonitor.Frontend
                 case "DataRx":
                     var convertedRx = new Record<double>(DevicesDisplays[ViewedDeviceId].DataRx.TimeMark, DevicesDisplays[ViewedDeviceId].DataRx.Data);
                     MonitorGui.GraphUpdate(MonitorGui.rx, convertedRx);
+                    break;
+                case "DataTempOdu":
+                    MonitorGui.GraphUpdate(MonitorGui.tempOdu, DevicesDisplays[ViewedDeviceId].DataTempOdu);
+                    break;
+                case "DataTempIdu":
+                    MonitorGui.GraphUpdate(MonitorGui.tempIdu, DevicesDisplays[ViewedDeviceId].DataTempIdu);
+                    break;
+                case "DataVoltage":
+                    MonitorGui.GraphUpdate(MonitorGui.voltage, DevicesDisplays[ViewedDeviceId].DataVoltage);
                     break;
                 case "WeatherIcon":
                     System.Windows.Media.Imaging.BitmapImage bitmapImage = new System.Windows.Media.Imaging.BitmapImage();
@@ -182,14 +182,20 @@ namespace MicrowaveMonitor.Frontend
             }
         }
 
-        private void ShowLinkName()
-        {
-            MonitorGui.UpdateElementContent(MonitorGui.linkCaption, ViewedLink.Name);
-        }
-
         private void ShowStatics()
         {
             MonitorGui.UpdateElementContent(MonitorGui.ip, MonitorGui.GetDevice(ViewedDeviceId).Address.ToString());
+            DataChanged(null, new PropertyChangedEventArgs("SysName"));
+            DataChanged(null, new PropertyChangedEventArgs("Uptime"));
+            DataChanged(null, new PropertyChangedEventArgs("DiffPing"));
+            DataChanged(null, new PropertyChangedEventArgs("DiffSig"));
+            DataChanged(null, new PropertyChangedEventArgs("DiffSigQ"));
+            DataChanged(null, new PropertyChangedEventArgs("WeatherIcon"));
+            DataChanged(null, new PropertyChangedEventArgs("WeatherDesc"));
+            DataChanged(null, new PropertyChangedEventArgs("WeatherTemp"));
+            DataChanged(null, new PropertyChangedEventArgs("WeatherWind"));
+            if (DevicesDisplays[ViewedDeviceId].DataPing != null)
+                DataChanged(null, new PropertyChangedEventArgs("DataPing"));
         }
     }
 }

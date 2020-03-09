@@ -40,9 +40,10 @@ namespace OpenWeatherApi
         {
             SpeedMetersPerSecond = double.Parse(windData.SelectToken("speed").ToString());
             SpeedFeetPerSecond = SpeedMetersPerSecond * 3.28084;
-            Degree = double.Parse(windData.SelectToken("deg").ToString());
+            if (windData.SelectToken("deg") != null)
+                Degree = double.Parse(windData.SelectToken("deg").ToString());
             Direction = assignDirection(Degree);
-            if(windData.SelectToken("gust") != null)
+            if (windData.SelectToken("gust") != null)
                 Gust = double.Parse(windData.SelectToken("gust").ToString());
         }
 

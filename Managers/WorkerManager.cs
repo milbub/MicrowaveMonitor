@@ -34,6 +34,13 @@ namespace MicrowaveMonitor.Managers
                     workers.Add(new SnmpTx(dataDb.TxTransactions, device.OidTxDataRate_s, device.SnmpPort, device.CommunityString, device.Address, device.Id, device.RefreshTx, DeviceToFront[device.Id]));
                 if (device.IsEnabledRx)
                     workers.Add(new SnmpRx(dataDb.RxTransactions, device.OidRxDataRate_s, device.SnmpPort, device.CommunityString, device.Address, device.Id, device.RefreshRx, DeviceToFront[device.Id]));
+                if (device.IsEnabledTempOdu)
+                    workers.Add(new SnmpTempOdu(dataDb.TempOduTransactions, device.OidTempOdu_s, device.SnmpPort, device.CommunityString, device.Address, device.Id, device.RefreshTempOdu, DeviceToFront[device.Id]));
+                if (device.IsEnabledTempIdu)
+                    workers.Add(new SnmpTempIdu(dataDb.TempIduTransactions, device.OidTempIdu_s, device.SnmpPort, device.CommunityString, device.Address, device.Id, device.RefreshTempIdu, DeviceToFront[device.Id]));
+                if (device.IsEnabledVoltage)
+                    workers.Add(new SnmpVoltage(dataDb.VoltageTransactions, device.OidVoltage_s, device.SnmpPort, device.CommunityString, device.Address, device.Id, device.RefreshVoltage, DeviceToFront[device.Id]));
+
                 weatherCollector.AddDevice(device.Id, device.Latitude, device.Longitude);
             }
 

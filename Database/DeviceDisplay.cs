@@ -16,6 +16,9 @@ namespace MicrowaveMonitor.Database
         private Record<uint> _dataTx;
         private Record<uint> _dataRx;
         private Record<double> _dataPing;
+        private Record<double> _dataTempOdu;
+        private Record<double> _dataTempIdu;
+        private Record<double> _dataVoltage;
         private string _sysName = String.Empty;
         private uint _uptime = 0;
         private string _weatherIcon = "03d";
@@ -28,6 +31,7 @@ namespace MicrowaveMonitor.Database
             get => _avgSig;
             set => _avgSig = value;
         }
+
         public double DiffSig
         {
             get => _diffSig;
@@ -36,15 +40,17 @@ namespace MicrowaveMonitor.Database
                 if (value != _diffSig)
                 {
                     _diffSig = value;
-                    OnPropertyChanged(nameof(DiffSig));
+                    OnPropertyChanged("DiffSig");
                 }
             }
         }
+
         public double AvgSigQ
         {
             get => _avgSigQ;
             set => _avgSigQ = value;
         }
+
         public double DiffSigQ
         {
             get => _diffSigQ;
@@ -53,15 +59,17 @@ namespace MicrowaveMonitor.Database
                 if (value != _diffSigQ)
                 {
                     _diffSigQ = value;
-                    OnPropertyChanged(nameof(DiffSigQ));
+                    OnPropertyChanged("DiffSigQ");
                 }
             }
         }
+
         public double AvgPing
         {
             get => _avgPing;
             set => _avgPing = value;
         }
+
         public double DiffPing
         {
             get => _diffPing;
@@ -70,10 +78,11 @@ namespace MicrowaveMonitor.Database
                 if (value != _diffPing)
                 {
                     _diffPing = value;
-                    OnPropertyChanged(nameof(DiffPing));
+                    OnPropertyChanged("DiffPing");
                 }
             }
         }
+
         public Record<double> DataSig
         {
             get => _dataSig;
@@ -82,10 +91,11 @@ namespace MicrowaveMonitor.Database
                 if (value != _dataSig)
                 {
                     _dataSig = value;
-                    OnPropertyChanged(nameof(DataSig));
+                    OnPropertyChanged("DataSig");
                 }
             }
         }
+
         public Record<double> DataSigQ
         {
             get => _dataSigQ;
@@ -94,10 +104,11 @@ namespace MicrowaveMonitor.Database
                 if (value != _dataSigQ)
                 {
                     _dataSigQ = value;
-                    OnPropertyChanged(nameof(DataSigQ));
+                    OnPropertyChanged("DataSigQ");
                 }
             }
         }
+
         public Record<uint> DataTx
         {
             get => _dataTx;
@@ -106,10 +117,11 @@ namespace MicrowaveMonitor.Database
                 if (value != _dataTx)
                 {
                     _dataTx = value;
-                    OnPropertyChanged(nameof(DataTx));
+                    OnPropertyChanged("DataTx");
                 }
             }
         }
+
         public Record<uint> DataRx
         {
             get => _dataRx;
@@ -118,10 +130,11 @@ namespace MicrowaveMonitor.Database
                 if (value != _dataRx)
                 {
                     _dataRx = value;
-                    OnPropertyChanged(nameof(DataRx));
+                    OnPropertyChanged("DataRx");
                 }
             }
         }
+
         public Record<double> DataPing
         {
             get => _dataPing;
@@ -130,7 +143,46 @@ namespace MicrowaveMonitor.Database
                 if (value != _dataPing)
                 {
                     _dataPing = value;
-                    OnPropertyChanged(nameof(DataPing));
+                    OnPropertyChanged("DataPing");
+                }
+            }
+        }
+
+        public Record<double> DataTempOdu
+        {
+            get => _dataTempOdu;
+            set
+            {
+                if (value != _dataTempOdu)
+                {
+                    _dataTempOdu = value;
+                    OnPropertyChanged("DataTempOdu");
+                }
+            }
+        }
+
+        public Record<double> DataTempIdu
+        {
+            get => _dataTempIdu;
+            set
+            {
+                if (value != _dataTempIdu)
+                {
+                    _dataTempIdu = value;
+                    OnPropertyChanged("DataTempIdu");
+                }
+            }
+        }
+
+        public Record<double> DataVoltage
+        {
+            get => _dataVoltage;
+            set
+            {
+                if (value != _dataVoltage)
+                {
+                    _dataVoltage = value;
+                    OnPropertyChanged("DataVoltage");
                 }
             }
         }
@@ -143,10 +195,11 @@ namespace MicrowaveMonitor.Database
                 if (value != _sysName)
                 {
                     _sysName = value;
-                    OnPropertyChanged(nameof(SysName));
+                    OnPropertyChanged("SysName");
                 }
             }
         }
+
         public uint Uptime
         {
             get => _uptime;
@@ -155,7 +208,7 @@ namespace MicrowaveMonitor.Database
                 if (value != _uptime)
                 {
                     _uptime = value;
-                    OnPropertyChanged(nameof(Uptime));
+                    OnPropertyChanged("Uptime");
                 }
             }
         }
@@ -168,7 +221,7 @@ namespace MicrowaveMonitor.Database
                 if (value != _weatherIcon)
                 {
                     _weatherIcon = value;
-                    OnPropertyChanged(nameof(WeatherIcon));
+                    OnPropertyChanged("WeatherIcon");
                 }
             }
         }
@@ -180,7 +233,7 @@ namespace MicrowaveMonitor.Database
                 if (value != _weatherDesc)
                 {
                     _weatherDesc = value;
-                    OnPropertyChanged(nameof(WeatherDesc));
+                    OnPropertyChanged("WeatherDesc");
                 }
             }
         }
@@ -192,10 +245,11 @@ namespace MicrowaveMonitor.Database
                 if (value != _weatherTemp)
                 {
                     _weatherTemp = value;
-                    OnPropertyChanged(nameof(WeatherTemp));
+                    OnPropertyChanged("WeatherTemp");
                 }
             }
         }
+
         public double WeatherWind
         {
             get => _weatherWind;
@@ -204,7 +258,7 @@ namespace MicrowaveMonitor.Database
                 if (value != _weatherWind)
                 {
                     _weatherWind = value;
-                    OnPropertyChanged(nameof(WeatherWind));
+                    OnPropertyChanged("WeatherWind");
                 }
             }
         }

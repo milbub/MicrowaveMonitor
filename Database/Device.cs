@@ -26,6 +26,7 @@ namespace MicrowaveMonitor.Database
         public bool IsEnabledRx { get; set; } = false;
         public bool IsEnabledTempOdu { get; set; } = false;
         public bool IsEnabledTempIdu { get; set; } = false;
+        public bool IsEnabledVoltage { get; set; } = false;
 
         /* Model specifics */
         public int SignalQDivisor { get; set; } = 10;
@@ -39,6 +40,7 @@ namespace MicrowaveMonitor.Database
         public string OidRxDataRate_s { get; set; }
         public string OidTempOdu_s { get; set; }
         public string OidTempIdu_s { get; set; }
+        public string OidVoltage_s { get; set; }
 
         /* Refresh intervals */
         public static int RefreshSysName { get; } = 600000;
@@ -50,5 +52,6 @@ namespace MicrowaveMonitor.Database
         public int RefreshPing { get; set; } = defaultRefresh;
         public int RefreshTempOdu { get; set; } = defaultRefresh;
         public int RefreshTempIdu { get; set; } = defaultRefresh;
+        public int RefreshVoltage { get; set; } = defaultRefresh;
     }
 }

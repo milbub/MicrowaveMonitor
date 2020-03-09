@@ -21,6 +21,9 @@ namespace MicrowaveMonitor.Managers
         public List<DynamicInfluxRow> SignalQTransactions = new List<DynamicInfluxRow>();
         public List<DynamicInfluxRow> TxTransactions = new List<DynamicInfluxRow>();
         public List<DynamicInfluxRow> RxTransactions = new List<DynamicInfluxRow>();
+        public List<DynamicInfluxRow> TempOduTransactions = new List<DynamicInfluxRow>();
+        public List<DynamicInfluxRow> TempIduTransactions = new List<DynamicInfluxRow>();
+        public List<DynamicInfluxRow> VoltageTransactions = new List<DynamicInfluxRow>();
         public List<DynamicInfluxRow> WeatherTempTransactions = new List<DynamicInfluxRow>();
 
         private InfluxClient databaseClient = new InfluxClient(new Uri(ConfigurationManager.ConnectionStrings["InfluxData"].ConnectionString));
@@ -62,6 +65,18 @@ namespace MicrowaveMonitor.Managers
                             Task writeRx = databaseClient.WriteAsync("MicrowaveMonDB", "rx", dataToWrite);
                             RxTransactions.Clear();
                             await writeRx;
+                            dataToWrite = TempOduTransactions.ToList();
+                            Task writeTempOdu = databaseClient.WriteAsync("MicrowaveMonDB", "tempOdu", dataToWrite);
+                            TempOduTransactions.Clear();
+                            await writeTempOdu;
+                            dataToWrite = TempIduTransactions.ToList();
+                            Task writeTempIdu = databaseClient.WriteAsync("MicrowaveMonDB", "tempIdu", dataToWrite);
+                            TempIduTransactions.Clear();
+                            await writeTempIdu;
+                            dataToWrite = VoltageTransactions.ToList();
+                            Task writeVoltage = databaseClient.WriteAsync("MicrowaveMonDB", "voltage", dataToWrite);
+                            VoltageTransactions.Clear();
+                            await writeVoltage;
 
                             if (++writeCyckles > weatherCycles)
                             {
@@ -71,7 +86,6 @@ namespace MicrowaveMonitor.Managers
                                 weatherCycles = 0;
                                 await writeWeaTemp;
                             }
-                            Console.WriteLine(writeCyckles);
                         }
                         catch (InfluxException e)
                         {

@@ -44,19 +44,19 @@
             <Grid Grid.Column="3" Background="Silver">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="33"></RowDefinition>
-                    <RowDefinition Height="26"></RowDefinition>
+                    <RowDefinition Height="28"></RowDefinition>
                     <RowDefinition Height="26"></RowDefinition>
                     <RowDefinition Height="26"></RowDefinition>
                     <RowDefinition></RowDefinition>
                 </Grid.RowDefinitions>
 
                 <Label x:Name="linkCaption" HorizontalAlignment="Left" FontSize="16" Margin="0,0,150,0"/>
-                <Button x:Name="buttonStart" Content="▶" FontSize="15" HorizontalAlignment="Right" Width="28" Height="27" Margin="0,0,170,0" Padding="0,0,0,1" Foreground="#FF2E3B44" BorderBrush="#FFA7BDCD"/>
-                <Button x:Name="buttonPause" Content="⏸" FontSize="15" HorizontalAlignment="Right" Width="28" Height="27" Margin="0,0,138,0" Padding="0,0,1,1" Foreground="#FF2E3B44" BorderBrush="#FFA7BDCD" FontWeight="Bold"/>
-                <Button x:Name="buttonAdd" Content="➕" FontSize="15" HorizontalAlignment="Right" Width="28" Height="27" Margin="0,0,106,0" Padding="0,0,0,1" Foreground="#FF2E3B44" BorderBrush="#FFA7BDCD"/>
-                <Button x:Name="buttonDelete" Content="➖" FontSize="15" HorizontalAlignment="Right" Width="28" Height="27" Margin="0,0,74,0" Padding="0,0,0,1" Foreground="#FF2E3B44" BorderBrush="#FFA7BDCD"/>
-                <Button x:Name="buttonSettings" Content="🛠" FontSize="15" HorizontalAlignment="Right" Width="28" Height="27" Margin="0,0,42,0" Padding="0,0,0,1" Foreground="#FF2E3B44" BorderBrush="#FFA7BDCD"/>
-                <Button x:Name="buttonInfo" Content="ℹ" FontSize="15" HorizontalAlignment="Right" Width="28" Height="27" Margin="0,0,10,0" Padding="0,0,1,1" Foreground="#FF2E3B44" BorderBrush="#FFA7BDCD" FontWeight="Bold"/>
+                <Button ToolTip="Start monitoring" x:Name="buttonStart" Content="▶" FontSize="15" HorizontalAlignment="Right" Width="28" Height="27" Margin="0,0,170,0" Padding="0,0,0,1"/>
+                <Button ToolTip="Pause monitoring" x:Name="buttonPause" Content="⏸" FontSize="15" HorizontalAlignment="Right" Width="28" Height="27" Margin="0,0,138,0" Padding="0,0,1,1" FontWeight="Bold"/>
+                <Button ToolTip="Add new link" x:Name="buttonAdd" Content="➕" FontSize="15" HorizontalAlignment="Right" Width="28" Height="27" Margin="0,0,106,0" Padding="0,0,0,1"/>
+                <Button ToolTip="Delete link" x:Name="buttonDelete" Content="➖" FontSize="15" HorizontalAlignment="Right" Width="28" Height="27" Margin="0,0,74,0" Padding="0,0,0,1"/>
+                <Button ToolTip="Settings" x:Name="buttonSettings" Content="🛠" FontSize="15" HorizontalAlignment="Right" Width="28" Height="27" Margin="0,0,42,0" Padding="0,0,0,1"/>
+                <Button ToolTip="About" x:Name="buttonInfo" Content="ℹ" FontSize="15" HorizontalAlignment="Right" Width="28" Height="27" Margin="0,0,10,0" Padding="0,0,1,1" FontWeight="Bold"/>
 
                 <Label Grid.Row="1" Content="Site:" VerticalAlignment="Center" HorizontalAlignment="Left"></Label>
                 <RadioButton x:Name="siteA" Grid.Row="1" Content="A" VerticalAlignment="Center" Margin="35,0,0,0" FontWeight="Bold" IsChecked="True"/>
@@ -65,6 +65,9 @@
                 <RadioButton x:Name="siteR3" Grid.Row="1" Content="R3" Click="SiteChoosed" VerticalAlignment="Center" Margin="165,0,0,0" IsEnabled="False"/>
                 <RadioButton x:Name="siteR4" Grid.Row="1" Content="R4" Click="SiteChoosed" VerticalAlignment="Center" Margin="210,0,0,0" IsEnabled="False"/>
                 <RadioButton x:Name="siteB" Grid.Row="1" Content="B" VerticalAlignment="Center" Margin="255,0,0,0" FontWeight="Bold"/>
+                <Button ToolTip="Show site on map" Grid.Row="1" Width="28" Height="27" HorizontalAlignment="Right" Margin="0,0,10,0">
+                    <Image Source="/Gui/Icons/pin.png" Height="18"></Image>
+                </Button>
 
                 <Label Grid.Row="2" Content="IP:" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="80,0,0,0"></Label>
                 <Label x:Name="ip" Grid.Row="2" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="100,0,0,0"></Label>
@@ -85,7 +88,7 @@
 
                 <TabControl x:Name="monitorTabControl" Grid.Row="4" Background="LightGray" Margin="5" Padding="2">
                     <TabItem Header="Radio">
-                        <Grid x:Name="graphsA">
+                        <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition></RowDefinition>
                                 <RowDefinition></RowDefinition>
@@ -116,8 +119,58 @@
                             </Grid>
                         </Grid>
                     </TabItem>
+                    <TabItem Header="Temperature">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition></RowDefinition>
+                                <RowDefinition></RowDefinition>
+                            </Grid.RowDefinitions>
+                            <Grid Grid.Row="0">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="26"></RowDefinition>
+                                    <RowDefinition></RowDefinition>
+                                </Grid.RowDefinitions>
+                                <Label Content="Outdoor Unit Temperature" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                                <Label Content="AVG:" FontWeight="Bold" Margin="450,0,0,0"/>
+                                <Label x:Name="avgTempOdu" Margin="485,0,0,0"/>
+                                <Label Content="Diff:" FontWeight="Bold" Margin="550,0,0,0"/>
+                                <Label x:Name="diffTempOdu" Margin="583,0,0,0"/>
+                                <gui:GraphRealtime Grid.Row="1" x:Name="tempOdu"></gui:GraphRealtime>
+                            </Grid>
+                            <Grid Grid.Row="1">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="26"></RowDefinition>
+                                    <RowDefinition></RowDefinition>
+                                </Grid.RowDefinitions>
+                                <Label Content="Indoor Unit Temperature" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                                <Label Content="AVG:" FontWeight="Bold" Margin="450,0,0,0"/>
+                                <Label x:Name="avgTempIdu" Margin="485,0,0,0"/>
+                                <Label Content="Diff:" FontWeight="Bold" Margin="550,0,0,0"/>
+                                <Label x:Name="diffTempIdu" Margin="583,0,0,0"/>
+                                <gui:GraphRealtime Grid.Row="1" x:Name="tempIdu"></gui:GraphRealtime>
+                            </Grid>
+                        </Grid>
+                    </TabItem>
+                    <TabItem Header="Voltage">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="319*"/>
+                                <ColumnDefinition Width="402*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="26"></RowDefinition>
+                                <RowDefinition></RowDefinition>
+                            </Grid.RowDefinitions>
+                            <Label Content="Power Voltage" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                            <Label Content="AVG:" FontWeight="Bold" Margin="131,0,0,0" Grid.Column="1"/>
+                            <Label x:Name="avgVolt" Margin="166,0,0,0" Grid.Column="1"/>
+                            <Label Content="Diff:" FontWeight="Bold" Margin="231,0,0,0" Grid.Column="1"/>
+                            <Label x:Name="diffVolt" Margin="264,0,0,0" Grid.Column="1"/>
+                            <gui:GraphRealtime Grid.Row="1" x:Name="voltage" Grid.ColumnSpan="2"></gui:GraphRealtime>
+                        </Grid>
+                    </TabItem>
                     <TabItem Header="Traffic">
-                        <Grid x:Name="graphsB">
+                        <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="26"></RowDefinition>
                                 <RowDefinition></RowDefinition>
@@ -130,24 +183,32 @@
                             <gui:GraphRealtime Grid.Row="3" x:Name="rx"></gui:GraphRealtime>
                         </Grid>
                     </TabItem>
-                    <TabItem Header="Unit">
+                    <TabItem Header="Latency">
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="26"></RowDefinition>
                                 <RowDefinition></RowDefinition>
+                                <RowDefinition Height="26"></RowDefinition>
                             </Grid.RowDefinitions>
-                            <Label Content="Ping" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                            <Label Content="Round-trip Time" HorizontalAlignment="Left" VerticalAlignment="Top"/>
                             <Label Content="AVG:" FontWeight="Bold" Margin="450,0,0,0"/>
                             <Label x:Name="avgPing" Margin="485,0,0,0"/>
                             <Label Content="Diff:" FontWeight="Bold" Margin="550,0,0,0"/>
                             <Label x:Name="diffPing" Margin="583,0,0,0"/>
                             <gui:GraphRealtime Grid.Row="1" x:Name="pingwin"></gui:GraphRealtime>
+                            <Label Grid.Row="2" Content="If you are connected into the devices management network via tunneling through public networks, the measurement may not be meaningful." FontSize="10"></Label>
                         </Grid>
                     </TabItem>
-                    <TabItem Header="Historical Data">
+                    <TabItem ToolTip="Historical data">
+                        <TabItem.Header>
+                            <Image Source="/Gui/Icons/clock.png" Width="20" Height="20" Margin="3,0,3,0"></Image>
+                        </TabItem.Header>
                         <Label Content="Not implemented yet."></Label>
                     </TabItem>
-                    <TabItem Header="Settings">
+                    <TabItem ToolTip="Link settings">
+                        <TabItem.Header>
+                            <Image Source="/Gui/Icons/adjust.png" Width="20" Height="20" Margin="3,0,3,0"></Image>
+                        </TabItem.Header>
                         <gui:SettingsTab></gui:SettingsTab>
                     </TabItem>
                 </TabControl>
