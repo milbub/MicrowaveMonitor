@@ -20,7 +20,7 @@
                 </lvc:Axis>
             </lvc:CartesianChart.AxisX>
             <lvc:CartesianChart.AxisY>
-                <lvc:Axis Foreground="#818a8c" DisableAnimations="True"></lvc:Axis>
+                <lvc:Axis x:Name="axisY" Foreground="#818a8c" DisableAnimations="True"></lvc:Axis>
             </lvc:CartesianChart.AxisY>
         </lvc:CartesianChart>
     </Grid>

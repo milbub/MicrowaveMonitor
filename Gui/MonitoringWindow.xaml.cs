@@ -42,6 +42,19 @@ namespace MicrowaveMonitor.Gui
             siteR2.Checked += SiteChoosed;
             siteR3.Checked += SiteChoosed;
             siteR4.Checked += SiteChoosed;
+
+            signalLevel.axisY.Title = "[dBm]";
+            signalQuality.axisY.Title = "[dB]";
+            tx.axisY.Title = "[bit/s]";
+            rx.axisY.Title = "[bit/s]";
+            tx.axisY.MinValue = 0;
+            rx.axisY.MinValue = 0;
+            tempIdu.axisY.Title = "[°C]";
+            tempOdu.axisY.Title = "[°C]";
+            voltage.axisY.Title = "[V]";
+            voltage.axisY.MinValue = 0;
+            pingwin.axisY.Title = "[ms]";
+            pingwin.axisY.MinValue = 0;
         }
 
         public Device GetDevice(int id)
@@ -143,6 +156,9 @@ namespace MicrowaveMonitor.Gui
             signalQuality.ChartValues.Clear();
             tx.ChartValues.Clear();
             rx.ChartValues.Clear();
+            tempIdu.ChartValues.Clear();
+            tempOdu.ChartValues.Clear();
+            voltage.ChartValues.Clear();
             pingwin.ChartValues.Clear();
         }
     }
