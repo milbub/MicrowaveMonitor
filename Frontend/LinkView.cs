@@ -7,6 +7,7 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows.Media.Imaging;
 using System.Configuration;
 
 namespace MicrowaveMonitor.Frontend
@@ -129,11 +130,11 @@ namespace MicrowaveMonitor.Frontend
                     MonitorGui.GraphUpdate(MonitorGui.voltage, DevicesDisplays[ViewedDeviceId].DataVoltage);
                     break;
                 case "WeatherIcon":
-                    System.Windows.Media.Imaging.BitmapImage bitmapImage = new System.Windows.Media.Imaging.BitmapImage();
+                    BitmapImage bitmapImage = new BitmapImage();
                     bitmapImage.BeginInit();
                     bitmapImage.UriSource = new Uri(String.Format(ConfigurationManager.AppSettings.Get("WeatherApiIconSource"), DevicesDisplays[ViewedDeviceId].WeatherIcon));
                     bitmapImage.EndInit();
-                    MonitorGui.UpdateImage(MonitorGui.weatherIcon, bitmapImage);
+                    bitmapImage.DownloadCompleted += ImgUpdate;
                     break;
                 case "WeatherDesc":
                     MonitorGui.UpdateElementContent(MonitorGui.weatherDesc, DevicesDisplays[ViewedDeviceId].WeatherDesc.ToString());
@@ -147,6 +148,29 @@ namespace MicrowaveMonitor.Frontend
                 default:
                     throw new InvalidEnumArgumentException();
             }
+        }
+
+        private void ShowStatics()
+        {
+            MonitorGui.UpdateElementContent(MonitorGui.ip, MonitorGui.GetDevice(ViewedDeviceId).Address.ToString());
+            DataChanged(null, new PropertyChangedEventArgs("SysName"));
+            DataChanged(null, new PropertyChangedEventArgs("Uptime"));
+            DataChanged(null, new PropertyChangedEventArgs("DiffPing"));
+            DataChanged(null, new PropertyChangedEventArgs("DiffSig"));
+            DataChanged(null, new PropertyChangedEventArgs("DiffSigQ"));
+            DataChanged(null, new PropertyChangedEventArgs("WeatherIcon"));
+            DataChanged(null, new PropertyChangedEventArgs("WeatherDesc"));
+            DataChanged(null, new PropertyChangedEventArgs("WeatherTemp"));
+            DataChanged(null, new PropertyChangedEventArgs("WeatherWind"));
+            if (DevicesDisplays[ViewedDeviceId].DataPing != null)
+                DataChanged(null, new PropertyChangedEventArgs("DataPing"));
+        }
+
+        void ImgUpdate(object sender, EventArgs e)
+        {
+            BitmapImage source = (BitmapImage)sender;
+            source.Freeze();
+            MonitorGui.UpdateImage(MonitorGui.weatherIcon, source);
         }
 
         public void ChangeDevicesConstellation()
@@ -180,22 +204,6 @@ namespace MicrowaveMonitor.Frontend
                 default:
                     throw new NotSupportedException();
             }
-        }
-
-        private void ShowStatics()
-        {
-            MonitorGui.UpdateElementContent(MonitorGui.ip, MonitorGui.GetDevice(ViewedDeviceId).Address.ToString());
-            DataChanged(null, new PropertyChangedEventArgs("SysName"));
-            DataChanged(null, new PropertyChangedEventArgs("Uptime"));
-            DataChanged(null, new PropertyChangedEventArgs("DiffPing"));
-            DataChanged(null, new PropertyChangedEventArgs("DiffSig"));
-            DataChanged(null, new PropertyChangedEventArgs("DiffSigQ"));
-            DataChanged(null, new PropertyChangedEventArgs("WeatherIcon"));
-            DataChanged(null, new PropertyChangedEventArgs("WeatherDesc"));
-            DataChanged(null, new PropertyChangedEventArgs("WeatherTemp"));
-            DataChanged(null, new PropertyChangedEventArgs("WeatherWind"));
-            if (DevicesDisplays[ViewedDeviceId].DataPing != null)
-                DataChanged(null, new PropertyChangedEventArgs("DataPing"));
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Lextm.SharpSnmpLib;
 using MicrowaveMonitor.Database;
 using System;
+using System.Threading;
 using System.Collections.Generic;
 using System.Linq;
 using Vibrant.InfluxDB.Client.Rows;
@@ -24,7 +25,16 @@ namespace MicrowaveMonitor.Workers
             row.Timestamp = resultTime.ToUniversalTime();
             row.Fields.Add("value", resval);
             row.Tags.Add("device", DeviceId.ToString());
-            database.Add(row);
+            try
+            {
+                database.Add(row);
+            }
+            catch (IndexOutOfRangeException e)
+            {
+                Console.WriteLine(e.Message);
+                Thread.Sleep(100);
+                database.Add(row);
+            }
             Diff();
         }
 

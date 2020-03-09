@@ -98,10 +98,10 @@ namespace MicrowaveMonitor.Managers
                         {
                             Console.WriteLine(e.Message);
                         }
-                        catch (NullReferenceException e)
-                        {
-                            Console.WriteLine(e.Message);
-                        }
+                        //catch (NullReferenceException e)
+                        //{
+                        //    Console.WriteLine(e.Message);
+                        //}
                     }
                 });
                 writer.Start();

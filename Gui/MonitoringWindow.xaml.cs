@@ -5,6 +5,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Media;
 using System.Windows.Controls;
 
 namespace MicrowaveMonitor.Gui
@@ -84,7 +85,7 @@ namespace MicrowaveMonitor.Gui
             }
         }
 
-        public void UpdateImage(Image element, System.Windows.Media.ImageSource source)
+        public void UpdateImage(Image element, ImageSource source)
         {
             try
             {
