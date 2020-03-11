@@ -46,8 +46,8 @@ namespace MicrowaveMonitor.Gui
                 ChartValues.Add(record);
                 SetAxisLimits(record.TimeMark);
 
-                // only use the last 250 values
-                if (ChartValues.Count > 250) ChartValues.RemoveAt(0);
+                // only use the last 62 values
+                if (ChartValues.Count > 62) ChartValues.RemoveAt(0);
         }
 
         private void SetAxisLimits(DateTime now)

@@ -32,7 +32,7 @@ namespace MicrowaveMonitor.Workers
             catch (IndexOutOfRangeException e)
             {
                 Console.WriteLine(e.Message);
-                Thread.Sleep(100);
+                Thread.Sleep(500);
                 database.Add(row);
             }
             Diff();

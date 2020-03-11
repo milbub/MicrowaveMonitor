@@ -20,6 +20,7 @@ namespace MicrowaveMonitor.Database
         public string Longitude { get; set; }
 
         /* Controls */
+        public bool IsPaused { get; set; } = false;
         public bool IsEnabledSignal { get; set; } = true;
         public bool IsEnabledSignalQ { get; set; } = true;
         public bool IsEnabledTx { get; set; } = false;
