@@ -10,7 +10,7 @@
             <LineBreak/><Run Foreground="#FF474747">9:31:22</Run> <Run Foreground="Blue">&lt;INFO&gt;</Run> <Run>Device definitions loaded.</Run>
             <LineBreak/><Run Foreground="#FF474747">9:31:22</Run> <Run Foreground="Blue">&lt;INFO&gt;</Run> <Run>InfluxDB connection estabilished.</Run>
             <LineBreak/><Run Foreground="#FF474747">9:36:23</Run> <Run Foreground="Blue">&lt;INFO&gt;</Run> <Run>823 SNMP requests were lost in the last 5 minutes.</Run>
-            <LineBreak/><Run Foreground="#FF474747">9:41:23</Run> <Run Foreground="Blue">&lt;INFO&gt;</Run> <Run>801 SNMP requests were lost in the last 5 minutes.</Run>
+            <LineBreak/><Run Foreground="#FF474747">9:56:23</Run> <Run Foreground="Blue">&lt;INFO&gt;</Run> <Run>801 SNMP requests were lost in the last 5 minutes.</Run>
         </TextBlock>
     </ScrollViewer>
 </UserControl>
