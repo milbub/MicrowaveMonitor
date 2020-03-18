@@ -7,15 +7,21 @@
              mc:Ignorable="d">
     <TabControl x:Name="warningsTabControl" Background="LightGray" Margin="5">
         <TabItem Header="Current">
-            <ListBox x:Name="AlarmsList" Background="LightGray" BorderThickness="0">
-                <ListBox.ItemTemplate>
-                    <DataTemplate>
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="{Binding}" />
-                        </StackPanel>
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
-            </ListBox>
+            <StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Label Content="Current alarm count:"></Label>
+                    <Label Content="0"></Label>
+                </StackPanel>
+                <ListBox x:Name="AlarmsList" Background="LightGray" BorderThickness="0">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="{Binding}" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </StackPanel>
         </TabItem>
         <TabItem Header="Acknowledged">
 

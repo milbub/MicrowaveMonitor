@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:gui="clr-namespace:MicrowaveMonitor.Gui"
         mc:Ignorable="d"
-        Title="Microwave Monitor" Height="720" Width="1000" MinHeight="720" MinWidth="1000">
+        Title="Microwave Monitor" Height="720" Width="1000" MinHeight="500" MinWidth="1000">
     <Window.Resources>
         <Style TargetType="{x:Type ListBoxItem}">
             <Setter Property="Margin" Value="0,0,0,1" />
@@ -15,6 +15,7 @@
                 </Trigger>
             </Style.Triggers>
         </Style>
+        <BooleanToVisibilityConverter x:Key="searchBoolean" />
     </Window.Resources>
     <Grid Background="Silver">
         <Grid.RowDefinitions>
@@ -30,7 +31,35 @@
                 <ColumnDefinition MinWidth="500"></ColumnDefinition>
             </Grid.ColumnDefinitions>
             <Grid Background="LightGray">
-                <ListBox x:Name="LinksList" Background="LightGray">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="26"></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                </Grid.RowDefinitions>
+                <TextBox Name="searchBox" Padding="3">
+                    <TextBox.Style>
+                        <Style TargetType="TextBox" xmlns:sys="clr-namespace:System;assembly=mscorlib">
+                            <Style.Resources>
+                                <VisualBrush x:Key="CueBannerBrush" AlignmentX="Left" AlignmentY="Center" Stretch="None">
+                                    <VisualBrush.Visual>
+                                        <Label Content="Search link..." Foreground="#FF474747"/>
+                                    </VisualBrush.Visual>
+                                </VisualBrush>
+                            </Style.Resources>
+                            <Style.Triggers>
+                                <Trigger Property="Text" Value="{x:Static sys:String.Empty}">
+                                    <Setter Property="Background" Value="{StaticResource CueBannerBrush}" />
+                                </Trigger>
+                                <Trigger Property="Text" Value="{x:Null}">
+                                    <Setter Property="Background" Value="{StaticResource CueBannerBrush}" />
+                                </Trigger>
+                                <Trigger Property="IsKeyboardFocused" Value="True">
+                                    <Setter Property="Background" Value="White" />
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBox.Style>
+                </TextBox>
+                <ListBox x:Name="LinksList" Background="LightGray" Grid.Row="1">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal">
