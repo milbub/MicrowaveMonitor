@@ -57,7 +57,7 @@ namespace MicrowaveMonitor.Workers
                             Query query = weatherApi.Query(deviceLatitude[devId], deviceLongitude[devId]);
                             displays[devId].WeatherIcon = query.Weathers[0].Icon;
                             displays[devId].WeatherDesc = query.Weathers[0].Description;
-                            int temperature = Convert.ToInt32(query.Main.Temperature);
+                            float temperature = (float)query.Main.Temperature;
                             displays[devId].WeatherTemp = temperature;
                             displays[devId].WeatherWind = query.Wind.SpeedMetersPerSecond;
 

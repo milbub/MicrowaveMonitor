@@ -23,7 +23,7 @@ namespace MicrowaveMonitor.Database
         private uint _uptime = 0;
         private string _weatherIcon = "03d";
         private string _weatherDesc = "no data";
-        private int _weatherTemp = 0;
+        private float _weatherTemp = 0;
         private double _weatherWind = 0;
 
         public double AvgSig
@@ -237,7 +237,7 @@ namespace MicrowaveMonitor.Database
                 }
             }
         }
-        public int WeatherTemp
+        public float WeatherTemp
         {
             get => _weatherTemp;
             set

@@ -140,7 +140,7 @@ namespace MicrowaveMonitor.Frontend
                     MonitorGui.UpdateElementContent(MonitorGui.weatherDesc, DevicesDisplays[ViewedDeviceId].WeatherDesc.ToString());
                     break;
                 case "WeatherTemp":
-                    MonitorGui.UpdateElementContent(MonitorGui.weatherTemp, DevicesDisplays[ViewedDeviceId].WeatherTemp.ToString() + " °C");
+                    MonitorGui.UpdateElementContent(MonitorGui.weatherTemp, String.Format("{0:0} °C", DevicesDisplays[ViewedDeviceId].WeatherTemp));
                     break;
                 case "WeatherWind":
                     MonitorGui.UpdateElementContent(MonitorGui.weatherWind, DevicesDisplays[ViewedDeviceId].WeatherWind.ToString() + " m/s");
