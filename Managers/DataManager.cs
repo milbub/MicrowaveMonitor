@@ -31,6 +31,11 @@ namespace MicrowaveMonitor.Managers
 
         public bool IsRunning { get; set; } = false;
 
+        public DataManager()
+        {
+            databaseClient.DefaultWriteOptions.Precision = TimestampPrecision.Millisecond;
+        }
+
         public void StartDatabaseWriter()
         {
             if (IsRunning == false)
