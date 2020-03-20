@@ -84,6 +84,7 @@ namespace MicrowaveMonitor.Workers
         public void Stop()
         {
             IsRunning = false;
+            tCollector.Abort();
         }
     }
 }
