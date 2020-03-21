@@ -26,7 +26,8 @@ namespace MicrowaveMonitor.Managers
         public List<DynamicInfluxRow> VoltageTransactions = new List<DynamicInfluxRow>();
         public List<DynamicInfluxRow> WeatherTempTransactions = new List<DynamicInfluxRow>();
 
-        private InfluxClient databaseClient = new InfluxClient(new Uri(ConfigurationManager.ConnectionStrings["InfluxData"].ConnectionString));
+        private InfluxClient databaseClient = new InfluxClient(new Uri(ConfigurationManager.ConnectionStrings["InfluxServer"].ConnectionString));
+        private string databaseName = ConfigurationManager.ConnectionStrings["InfluxData"].ConnectionString;
         private Thread writer;
 
         public bool IsRunning { get; set; } = false;
@@ -50,42 +51,42 @@ namespace MicrowaveMonitor.Managers
                         try
                         {
                             VerifyRows(PingTransactions);
-                            Task writePing = databaseClient.WriteAsync("MicrowaveMonDB", "ping", PingTransactions);
+                            Task writePing = databaseClient.WriteAsync(databaseName, "ping", PingTransactions);
                             PingTransactions.Clear();
                             await writePing;
                             VerifyRows(SignalTransactions);
-                            Task writeSig = databaseClient.WriteAsync("MicrowaveMonDB", "signal", SignalTransactions);
+                            Task writeSig = databaseClient.WriteAsync(databaseName, "signal", SignalTransactions);
                             SignalTransactions.Clear();
                             await writeSig;
                             VerifyRows(SignalQTransactions);
-                            Task writeSigQ = databaseClient.WriteAsync("MicrowaveMonDB", "signalQ", SignalQTransactions);
+                            Task writeSigQ = databaseClient.WriteAsync(databaseName, "signalQ", SignalQTransactions);
                             SignalQTransactions.Clear();
                             await writeSigQ;
                             VerifyRows(TxTransactions);
-                            Task writeTx = databaseClient.WriteAsync("MicrowaveMonDB", "tx", TxTransactions);
+                            Task writeTx = databaseClient.WriteAsync(databaseName, "tx", TxTransactions);
                             TxTransactions.Clear();
                             await writeTx;
                             VerifyRows(RxTransactions);
-                            Task writeRx = databaseClient.WriteAsync("MicrowaveMonDB", "rx", RxTransactions);
+                            Task writeRx = databaseClient.WriteAsync(databaseName, "rx", RxTransactions);
                             RxTransactions.Clear();
                             await writeRx;
                             VerifyRows(TempOduTransactions);
-                            Task writeTempOdu = databaseClient.WriteAsync("MicrowaveMonDB", "tempOdu", TempOduTransactions);
+                            Task writeTempOdu = databaseClient.WriteAsync(databaseName, "tempOdu", TempOduTransactions);
                             TempOduTransactions.Clear();
                             await writeTempOdu;
                             VerifyRows(TempIduTransactions);
-                            Task writeTempIdu = databaseClient.WriteAsync("MicrowaveMonDB", "tempIdu", TempIduTransactions);
+                            Task writeTempIdu = databaseClient.WriteAsync(databaseName, "tempIdu", TempIduTransactions);
                             TempIduTransactions.Clear();
                             await writeTempIdu;
                             VerifyRows(VoltageTransactions);
-                            Task writeVoltage = databaseClient.WriteAsync("MicrowaveMonDB", "voltage", VoltageTransactions);
+                            Task writeVoltage = databaseClient.WriteAsync(databaseName, "voltage", VoltageTransactions);
                             VoltageTransactions.Clear();
                             await writeVoltage;
 
                             if (++writeCyckles > weatherCycles)
                             {
                                 VerifyRows(WeatherTempTransactions);
-                                Task writeWeaTemp = databaseClient.WriteAsync("MicrowaveMonDB", "airTemperature", WeatherTempTransactions);
+                                Task writeWeaTemp = databaseClient.WriteAsync(databaseName, "airTemperature", WeatherTempTransactions);
                                 WeatherTempTransactions.Clear();
                                 weatherCycles = 0;
                                 await writeWeaTemp;
