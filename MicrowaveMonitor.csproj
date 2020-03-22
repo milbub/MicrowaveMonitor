@@ -90,6 +90,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Xaml" />
     <Reference Include="Vibrant.InfluxDB.Client, Version=4.0.2.0, Culture=neutral, PublicKeyToken=8467aa639b032f6d, processorArchitecture=MSIL">
       <HintPath>packages\Vibrant.InfluxDB.Client.4.0.2\lib\net45\Vibrant.InfluxDB.Client.dll</HintPath>
@@ -213,6 +214,68 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Gui\Icons\pin.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Gui\Icons\help.png" />
+    <Resource Include="Gui\Icons\pause.png" />
+    <Resource Include="Gui\Icons\play.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Gui\Icons\Weather\01n.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\01d.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Gui\Icons\Weather\01d.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Gui\Icons\Weather\02d.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Gui\Icons\Weather\02n.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Gui\Icons\Weather\03d.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Gui\Icons\Weather\03n.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Gui\Icons\Weather\04d.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Gui\Icons\Weather\04n.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Gui\Icons\Weather\09d.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Gui\Icons\Weather\09n.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Gui\Icons\Weather\10d.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Gui\Icons\Weather\10n.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Gui\Icons\Weather\11d.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Gui\Icons\Weather\11n.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Gui\Icons\Weather\13d.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Gui\Icons\Weather\13n.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Gui\Icons\Weather\50d.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Gui\Icons\Weather\50n.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="packages\SQLitePCLRaw.lib.e_sqlite3.linux.1.1.13\build\net35\SQLitePCLRaw.lib.e_sqlite3.linux.targets" Condition="Exists('packages\SQLitePCLRaw.lib.e_sqlite3.linux.1.1.13\build\net35\SQLitePCLRaw.lib.e_sqlite3.linux.targets')" />

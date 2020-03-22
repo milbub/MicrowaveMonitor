@@ -1,5 +1,6 @@
 ﻿using MicrowaveMonitor.Database;
 using MicrowaveMonitor.Gui;
+using MicrowaveMonitor.Properties;
 using MicrowaveMonitor.Managers;
 using System;
 using System.Collections.Generic;
@@ -7,8 +8,12 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Windows.Media.Imaging;
 using System.Configuration;
+using System.Resources;
+using System.Windows.Media.Imaging;
+using System.Drawing.Imaging;
+using System.Drawing;
+using System.IO;
 
 namespace MicrowaveMonitor.Frontend
 {
@@ -22,6 +27,8 @@ namespace MicrowaveMonitor.Frontend
         public Link ViewedLink { get => _viewedLink; }
         public int ViewedDeviceId { get => _viewedDeviceId; }
 
+        private ResourceManager resources = Resources.ResourceManager;
+
         public LinkView(MonitoringWindow monitorGui, Link viewedLink, Dictionary<int, DeviceDisplay> deviceDisplay) : base(monitorGui)
         {
             _devicesDisplays = deviceDisplay;
@@ -32,10 +39,10 @@ namespace MicrowaveMonitor.Frontend
         {
             if ((ViewedLink != null) && (ViewedLink.HopCount != viewedLink.HopCount))
                 ChangeDevicesConstellation();
-            
+
             _viewedLink = viewedLink;
             MonitorGui.UpdateElementContent(MonitorGui.linkCaption, ViewedLink.Name);
-            
+
             if (MonitorGui.siteA.IsChecked == true)
                 ChangeDevice("A");
             else
@@ -75,7 +82,7 @@ namespace MicrowaveMonitor.Frontend
             }
 
             DevicesDisplays[ViewedDeviceId].PropertyChanged += DataChanged;
-            
+
             ShowStatics();
         }
 
@@ -130,11 +137,8 @@ namespace MicrowaveMonitor.Frontend
                     MonitorGui.GraphUpdate(MonitorGui.voltage, DevicesDisplays[ViewedDeviceId].DataVoltage);
                     break;
                 case "WeatherIcon":
-                    BitmapImage bitmapImage = new BitmapImage();
-                    bitmapImage.BeginInit();
-                    bitmapImage.UriSource = new Uri(String.Format(ConfigurationManager.AppSettings.Get("WeatherApiIconSource"), DevicesDisplays[ViewedDeviceId].WeatherIcon));
-                    bitmapImage.EndInit();
-                    bitmapImage.DownloadCompleted += ImgUpdate;
+                    Bitmap iconBitmap = (Bitmap)resources.GetObject(DevicesDisplays[ViewedDeviceId].WeatherIcon);
+                    MonitorGui.UpdateImage(MonitorGui.weatherIcon, BitmapToImageSource(iconBitmap));
                     break;
                 case "WeatherDesc":
                     MonitorGui.UpdateElementContent(MonitorGui.weatherDesc, DevicesDisplays[ViewedDeviceId].WeatherDesc.ToString());
@@ -164,13 +168,6 @@ namespace MicrowaveMonitor.Frontend
             DataChanged(null, new PropertyChangedEventArgs("WeatherWind"));
             if (DevicesDisplays[ViewedDeviceId].DataPing != null)
                 DataChanged(null, new PropertyChangedEventArgs("DataPing"));
-        }
-
-        void ImgUpdate(object sender, EventArgs e)
-        {
-            BitmapImage source = (BitmapImage)sender;
-            source.Freeze();
-            MonitorGui.UpdateImage(MonitorGui.weatherIcon, source);
         }
 
         public void ChangeDevicesConstellation()
@@ -203,6 +200,22 @@ namespace MicrowaveMonitor.Frontend
                     goto case 4;
                 default:
                     throw new NotSupportedException();
+            }
+        }
+
+        private BitmapImage BitmapToImageSource(Bitmap bitmap)
+        {
+            using (MemoryStream stream = new MemoryStream())
+            {
+                BitmapImage result = new BitmapImage();
+                bitmap.Save(stream, ImageFormat.Png);
+                stream.Position = 0;
+                result.BeginInit();
+                result.CacheOption = BitmapCacheOption.OnLoad;
+                result.StreamSource = stream;
+                result.EndInit();
+                result.Freeze();
+                return result;
             }
         }
     }
