@@ -142,6 +142,25 @@ namespace MicrowaveMonitor.Gui
             settings.ChangeSettings();
         }
 
+        private void ButtonFired(object sender, RoutedEventArgs e)
+        {
+            Button source = (Button)sender;
+
+            switch (source.Name)
+            {
+                case "buttonMap":
+                    MapWindow map;
+                    if (view.ViewedLink.HopCount > 0)
+                        map = new MapWindow(linkManager.GetDevice(view.ViewedLink.DeviceBaseId).Latitude, linkManager.GetDevice(view.ViewedLink.DeviceBaseId).Longitude, linkManager.GetDevice(view.ViewedLink.DeviceEndId).Latitude, linkManager.GetDevice(view.ViewedLink.DeviceEndId).Longitude);
+                    else
+                        map = new MapWindow(linkManager.GetDevice(view.ViewedLink.DeviceBaseId).Latitude, linkManager.GetDevice(view.ViewedLink.DeviceBaseId).Longitude);
+                    map.Show();
+                    break;
+                default:
+                    break;
+            }
+        }
+
         public void SiteChooserEnabler(bool state, RadioButton rb)
         {
             rb.IsEnabled = state;

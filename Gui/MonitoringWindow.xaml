@@ -103,7 +103,7 @@
                 <RadioButton x:Name="siteR3" Grid.Row="1" Content="R3" Click="SiteChoosed" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,140,0" IsEnabled="False"/>
                 <RadioButton x:Name="siteR4" Grid.Row="1" Content="R4" Click="SiteChoosed" VerticalAlignment="Center"  HorizontalAlignment="Right" Margin="0,0,95,0" IsEnabled="False"/>
                 <RadioButton x:Name="siteB" Grid.Row="1" Content="B" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,50,0" FontWeight="Bold"/>
-                <Button ToolTip="Show Site on Map" x:Name="buttonMap" Grid.Row="1" Width="28" Height="27" HorizontalAlignment="Right" Margin="0,0,10,0">
+                <Button ToolTip="Show Site on Map" x:Name="buttonMap" Click="ButtonFired" Grid.Row="1" Width="28" Height="27" HorizontalAlignment="Right" Margin="0,0,10,0">
                     <Image Source="/Gui/Icons/pin.png" Height="18"></Image>
                 </Button>
 
