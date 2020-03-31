@@ -53,8 +53,16 @@ namespace MicrowaveMonitor.Workers
                         foreach (int devId in deviceLatitude.Keys)
                         {
                             DateTime startIter = DateTime.Now;
-
-                            Query query = weatherApi.Query(deviceLatitude[devId], deviceLongitude[devId]);
+                            Query query;
+                            try
+                            {
+                                query = weatherApi.Query(deviceLatitude[devId], deviceLongitude[devId]);
+                            }
+                            catch (System.Net.WebException e)
+                            {
+                                Console.WriteLine(e.Message);
+                                continue;
+                            }
                             displays[devId].WeatherIcon = query.Weathers[0].Icon;
                             displays[devId].WeatherDesc = query.Weathers[0].Description;
                             float temperature = (float)query.Main.Temperature;

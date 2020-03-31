@@ -11,7 +11,7 @@
             <TextBox x:Name="boxLinkName" Height="25" VerticalContentAlignment="Center"></TextBox>
             <Label Content="Note: (optional)"></Label>
             <TextBox x:Name="boxNote" Height="25" VerticalContentAlignment="Center"></TextBox>
-            <Label Content="Active link endpoints or retranslation sites:"></Label>
+            <Label Content="Active link endpoints and retranslation sites:"></Label>
             <StackPanel Orientation="Horizontal">
                 <CheckBox x:Name="checkA" Content="A" Margin="10,0,0,0" IsEnabled="False" IsChecked="True"/>
                 <CheckBox x:Name="checkB" Content="B" Margin="10,0,0,0" IsChecked="True"/>
@@ -25,16 +25,35 @@
                     <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10,10,10,10">
                         <Label Content="IP address:"></Label>
                         <TextBox x:Name="boxIP_A" Height="25" VerticalContentAlignment="Center"></TextBox>
-                        <Label Content="SNMP community string:"></Label>
-                        <TextBox x:Name="boxSNMP_A" Height="25" VerticalContentAlignment="Center"></TextBox>
-                        <StackPanel Orientation="Horizontal" Margin="0,5,0,5">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition></RowDefinition>
+                                <RowDefinition Height="25"></RowDefinition>
+                            </Grid.RowDefinitions>
+                            <Label Content="SNMP community string:" HorizontalAlignment="Left"></Label>
+                            <Label Content="SNMP version:" HorizontalAlignment="Center"></Label>
+                            <Label Content="SNMP port number:" HorizontalAlignment="Right" Margin="0,0,47,0"></Label>
+                            <TextBox Grid.Row="1" x:Name="boxSnmpComm_A" Height="25" Width="159" VerticalContentAlignment="Center" HorizontalAlignment="Left"></TextBox>
+                            <ComboBox Grid.Row="1" x:Name="cmbSnmpVer_A" Width="77" HorizontalAlignment="Center">
+                                <ComboBoxItem Content="v1" IsSelected="True"></ComboBoxItem>
+                                <ComboBoxItem Content="v2c"></ComboBoxItem>
+                                <ComboBoxItem Content="v3" IsEnabled="False"></ComboBoxItem>
+                            </ComboBox>
+                            <TextBox Grid.Row="1" x:Name="boxSnmpPort_A" Text="161" Height="25" Width="159" VerticalContentAlignment="Center" HorizontalAlignment="Right"></TextBox>
+                        </Grid>
+                        <Grid Margin="0,5,0,5">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="180"></ColumnDefinition>
+                                <ColumnDefinition></ColumnDefinition>
+                                <ColumnDefinition Width="225"></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
                             <Label Content="Use SNMP OID model template:"></Label>
-                            <ComboBox x:Name="cmbTemplates" Width="150" Height="20" Margin="10,1,0,0" IsEnabled="False">
+                            <ComboBox Grid.Column="1" x:Name="cmbTemplates" Height="25" Margin="0,0,10,0" IsEnabled="False">
 
                             </ComboBox>
-                            <Button x:Name="btnLoadTemp" Content="Load template" Width="90" Height="20" Margin="5,1,0,0" IsEnabled="False"/>
-                            <Button x:Name="btnManageTemp" Content="Manage templates" Width="110" Height="20" Margin="5,1,0,0" IsEnabled="False"/>
-                        </StackPanel>
+                            <Button Grid.Column="2" x:Name="btnLoadTemp" Content="Load Template" Width="110" Height="25" HorizontalAlignment="Left" IsEnabled="False"/>
+                            <Button Grid.Column="2" x:Name="btnManageTemp" Content="Manage Templates" Width="110" Height="25" HorizontalAlignment="Right" Margin="115,0,0,0" IsEnabled="False"/>
+                        </Grid>
                         <Separator Margin="0,8,0,8"/>
                         <Grid>
                             <Grid.ColumnDefinitions>

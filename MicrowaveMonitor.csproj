@@ -79,7 +79,6 @@
     <Compile Include="Database\Record.cs" />
     <Compile Include="Frontend\AlarmList.cs" />
     <Compile Include="Frontend\EventLog.cs" />
-    <Compile Include="Frontend\LinkSettings.cs" />
     <Compile Include="Frontend\LinkView.cs" />
     <Compile Include="Frontend\Renderer.cs" />
     <Compile Include="Gui\AlarmListPane.xaml.cs">

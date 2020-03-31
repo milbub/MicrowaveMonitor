@@ -18,7 +18,6 @@ namespace MicrowaveMonitor.Gui
         private AlarmManager alarmManager;
         
         private LinkView view;
-        private LinkSettings settings;
 
         public MonitoringWindow(LinkManager linkManager, WorkerManager workerManager, AlarmManager alarmManager)
         {
@@ -31,7 +30,6 @@ namespace MicrowaveMonitor.Gui
             LinksList.ItemsSource = linkManager.LinkNames.Values;
             LinksList.SelectedItem = linkManager.LinkNames.First().Value;
             view = new LinkView(this, linkManager.LinkDatabase.Get<Link>(linkManager.LinkNames.First().Key), workerManager.DeviceToFront);
-            settings = new LinkSettings(this, view);
             
             alarmListPane.AlarmsList.ItemsSource = alarmManager.Alarms;
 
@@ -56,6 +54,8 @@ namespace MicrowaveMonitor.Gui
             voltage.axisY.MinValue = 0;
             pingwin.axisY.Title = "[ms]";
             pingwin.axisY.MinValue = 0;
+
+            settingsTab.FillBoxes(view, linkManager);
         }
 
         public Device GetDevice(int id)
@@ -139,7 +139,7 @@ namespace MicrowaveMonitor.Gui
         private void LinkChoosed(object sender, SelectionChangedEventArgs e)
         {
             view.ChangeLink(linkManager.LinkDatabase.Get<Link>(linkManager.LinkNames.FirstOrDefault(x => x.Value == (string)LinksList.SelectedItem).Key));
-            settings.ChangeSettings();
+            settingsTab.FillBoxes(view, linkManager);
         }
 
         private void ButtonFired(object sender, RoutedEventArgs e)

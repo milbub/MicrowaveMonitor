@@ -303,17 +303,17 @@
                             <Label Grid.Row="2" Content="If you are connected into the devices management network via tunneling through public networks, the measurement may not be meaningful." FontSize="10"></Label>
                         </Grid>
                     </TabItem>
-                    <TabItem ToolTip="Historical Data">
+                    <TabItem>
                         <TabItem.Header>
-                            <Image Source="/Gui/Icons/timeline.png" Width="22" Height="22" Margin="3,0,3,0"></Image>
+                            <Image ToolTip="Historical Data" Source="/Gui/Icons/timeline.png" Width="22" Height="22" Margin="3,0,3,0"></Image>
                         </TabItem.Header>
                         <Label Content="Not implemented yet."></Label>
                     </TabItem>
-                    <TabItem ToolTip="Link Settings">
+                    <TabItem>
                         <TabItem.Header>
-                            <Image Source="/Gui/Icons/adjust.png" Width="20" Height="20" Margin="3,0,3,0"></Image>
+                            <Image ToolTip="Link Settings" Source="/Gui/Icons/adjust.png" Width="20" Height="20" Margin="3,0,3,0"></Image>
                         </TabItem.Header>
-                        <gui:SettingsTab></gui:SettingsTab>
+                        <gui:SettingsTab x:Name="settingsTab"></gui:SettingsTab>
                     </TabItem>
                 </TabControl>
             </Grid>
