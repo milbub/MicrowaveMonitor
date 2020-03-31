@@ -59,7 +59,11 @@ namespace MicrowaveMonitor.Gui
 
                                             var b = SMap.Coords.fromWGS84({longitudeB}, {latitudeB});
                                             var marker_b = new SMap.Marker(b, ""Device B"", {{url:znacka_b}});
-                                            layer.addMarker(marker_b);";
+                                            layer.addMarker(marker_b);
+
+                                            var pointer_b = new SMap.Control.Pointer({{type: SMap.Control.Pointer.TYPES.RED}});
+                                            m.addControl(pointer_b);
+                                            pointer_b.setCoords(b);";
             }
 
             string page = $@"<!doctype html>
@@ -80,6 +84,9 @@ namespace MicrowaveMonitor.Gui
                                             var layer = new SMap.Layer.Marker();
                                             m.addLayer(layer);
                                             layer.enable();
+
+                                            var sync = new SMap.Control.Sync();
+                                            m.addControl(sync);
                              
                                             var znacka_a = JAK.mel(""div"");
                                             var obrazek_a = JAK.mel(""img"", {{src:SMap.CONFIG.img+""/marker/drop-red.png""}});
@@ -90,16 +97,11 @@ namespace MicrowaveMonitor.Gui
 
                                             var marker_a = new SMap.Marker(a, ""Device A"", {{url:znacka_a}});
                                             layer.addMarker(marker_a);
+
+                                            var pointer_a = new SMap.Control.Pointer({{type: SMap.Control.Pointer.TYPES.RED}});
+                                            m.addControl(pointer_a);
+                                            pointer_a.setCoords(a);
                                             {markB}
-                                    </script>
-                                    <script type=""text/javascript"">
-                                            var resizeTimeout;
-                                            window.addEventListener('resize', function(event) {{
-                                              clearTimeout(resizeTimeout);
-                                              resizeTimeout = setTimeout(function(){{
-                                                window.location.reload();
-                                              }}, 500);
-                                            }});
                                     </script>
                                </body>
                              </html>";
