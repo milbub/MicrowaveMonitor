@@ -156,6 +156,14 @@ namespace MicrowaveMonitor.Gui
                         map = new MapWindow(linkManager.GetDevice(view.ViewedLink.DeviceBaseId).Latitude, linkManager.GetDevice(view.ViewedLink.DeviceBaseId).Longitude);
                     map.Show();
                     break;
+                case "buttonTerrain":
+                    ElevationWindow elevation;
+                    if (view.ViewedLink.HopCount > 0)
+                        elevation = new ElevationWindow(linkManager.GetDevice(view.ViewedLink.DeviceBaseId).Latitude, linkManager.GetDevice(view.ViewedLink.DeviceBaseId).Longitude, linkManager.GetDevice(view.ViewedLink.DeviceEndId).Latitude, linkManager.GetDevice(view.ViewedLink.DeviceEndId).Longitude);
+                    else
+                        elevation = new ElevationWindow();
+                    elevation.Show();
+                    break;
                 default:
                     break;
             }

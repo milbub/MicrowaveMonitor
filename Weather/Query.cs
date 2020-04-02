@@ -42,7 +42,7 @@ namespace OpenWeatherApi
 
         public Query(string apiKey, string latitude, string longitude)
         {
-            JObject jsonData = JObject.Parse(new System.Net.WebClient().DownloadString(string.Format(ConfigurationManager.AppSettings.Get("WeatherApiUrl"), latitude, longitude, apiKey)));
+            JObject jsonData = JObject.Parse(new System.Net.WebClient().DownloadString(string.Format("http://api.openweathermap.org/data/2.5/weather?lat={0}&lon={1}&units=metric&appid={2}", latitude, longitude, apiKey)));
             if (jsonData.SelectToken("cod").ToString() == "200")
             {
                 validRequest = true;

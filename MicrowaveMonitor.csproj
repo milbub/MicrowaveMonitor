@@ -84,6 +84,9 @@
     <Compile Include="Gui\AlarmListPane.xaml.cs">
       <DependentUpon>AlarmListPane.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Gui\ElevationWindow.xaml.cs">
+      <DependentUpon>ElevationWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Gui\EventLogPane.xaml.cs">
       <DependentUpon>EventLogPane.xaml</DependentUpon>
     </Compile>
@@ -124,6 +127,10 @@
     <Compile Include="Workers\SnmpVoltage.cs" />
     <Compile Include="Workers\WeatherCollector.cs" />
     <Page Include="Gui\AlarmListPane.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\ElevationWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -271,6 +278,9 @@
     <PackageReference Include="Vibrant.InfluxDB.Client">
       <Version>4.0.2</Version>
     </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Gui\Icons\terrain.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

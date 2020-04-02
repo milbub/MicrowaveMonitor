@@ -96,15 +96,18 @@
                 <Label Content="Link State:" Grid.Row="1"></Label>
                 <Label x:Name="linkState" Content="running" Grid.Row="1" Margin="60,0,0,0" Foreground="Green"></Label>
                 
-                <Label Grid.Row="1" Content="Site:" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,310,0"></Label>
-                <RadioButton x:Name="siteA" Grid.Row="1" Content="A" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,275,0" FontWeight="Bold" IsChecked="True"/>
-                <RadioButton x:Name="siteR1" Grid.Row="1" Content="R1" Click="SiteChoosed" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,230,0" IsEnabled="False"/>
-                <RadioButton x:Name="siteR2" Grid.Row="1" Content="R2" Click="SiteChoosed" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,185,0" IsEnabled="False"/>
-                <RadioButton x:Name="siteR3" Grid.Row="1" Content="R3" Click="SiteChoosed" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,140,0" IsEnabled="False"/>
-                <RadioButton x:Name="siteR4" Grid.Row="1" Content="R4" Click="SiteChoosed" VerticalAlignment="Center"  HorizontalAlignment="Right" Margin="0,0,95,0" IsEnabled="False"/>
-                <RadioButton x:Name="siteB" Grid.Row="1" Content="B" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,50,0" FontWeight="Bold"/>
-                <Button ToolTip="Show Site on Map" x:Name="buttonMap" Click="ButtonFired" Grid.Row="1" Width="28" Height="27" HorizontalAlignment="Right" Margin="0,0,10,0">
+                <Label Grid.Row="1" Content="Site:" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,342,0"></Label>
+                <RadioButton x:Name="siteA" Grid.Row="1" Content="A" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,307,0" FontWeight="Bold" IsChecked="True"/>
+                <RadioButton x:Name="siteR1" Grid.Row="1" Content="R1" Click="SiteChoosed" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,262,0" IsEnabled="False"/>
+                <RadioButton x:Name="siteR2" Grid.Row="1" Content="R2" Click="SiteChoosed" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,217,0" IsEnabled="False"/>
+                <RadioButton x:Name="siteR3" Grid.Row="1" Content="R3" Click="SiteChoosed" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,172,0" IsEnabled="False"/>
+                <RadioButton x:Name="siteR4" Grid.Row="1" Content="R4" Click="SiteChoosed" VerticalAlignment="Center"  HorizontalAlignment="Right" Margin="0,0,127,0" IsEnabled="False"/>
+                <RadioButton x:Name="siteB" Grid.Row="1" Content="B" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,82,0" FontWeight="Bold"/>
+                <Button ToolTip="Show Site on Map" x:Name="buttonMap" Click="ButtonFired" Grid.Row="1" Width="28" Height="27" HorizontalAlignment="Right" Margin="0,0,42,0">
                     <Image Source="/Gui/Icons/pin.png" Height="18"></Image>
+                </Button>
+                <Button ToolTip="Show Terrain" x:Name="buttonTerrain" Click="ButtonFired" Grid.Row="1" Width="28" Height="27" HorizontalAlignment="Right" Margin="0,0,10,0">
+                    <Image Source="/Gui/Icons/terrain.png" Height="20"></Image>
                 </Button>
 
                 <Label Grid.Row="2" Content="IP:" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="80,0,0,0"></Label>
