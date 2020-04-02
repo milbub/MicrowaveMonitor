@@ -37,7 +37,7 @@ namespace MicrowaveMonitor.Gui
             dual = true;
         }
 
-        private void mapBrowser_Loaded(object sender, RoutedEventArgs e)
+        private void MapBrowser_Loaded(object sender, RoutedEventArgs e)
         {
             string page = PageBuilder();
             mapBrowser.NavigateToString(page);

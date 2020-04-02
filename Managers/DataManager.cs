@@ -26,15 +26,21 @@ namespace MicrowaveMonitor.Managers
         public List<DynamicInfluxRow> VoltageTransactions = new List<DynamicInfluxRow>();
         public List<DynamicInfluxRow> WeatherTempTransactions = new List<DynamicInfluxRow>();
 
-        private InfluxClient databaseClient = new InfluxClient(new Uri(ConfigurationManager.ConnectionStrings["InfluxServer"].ConnectionString));
-        private string databaseName = ConfigurationManager.ConnectionStrings["InfluxData"].ConnectionString;
+        private readonly string serverAddress = ConfigurationManager.ConnectionStrings["InfluxServer"].ConnectionString;
+        private readonly string databaseName = ConfigurationManager.ConnectionStrings["InfluxData"].ConnectionString;
+        private readonly string user = ConfigurationManager.ConnectionStrings["InfluxUser"].ConnectionString;
+        private readonly string pass = ConfigurationManager.ConnectionStrings["InfluxPass"].ConnectionString;
+
+        private InfluxClient databaseClient;
         private Thread writer;
 
         public bool IsRunning { get; set; } = false;
 
         public DataManager()
         {
+            databaseClient = new InfluxClient(new Uri(serverAddress), user, pass);
             databaseClient.DefaultWriteOptions.Precision = TimestampPrecision.Millisecond;
+            databaseClient.DefaultQueryOptions.Precision = TimestampPrecision.Millisecond;            
         }
 
         public void StartDatabaseWriter()
@@ -94,9 +100,13 @@ namespace MicrowaveMonitor.Managers
                         }
                         catch (InfluxException e)
                         {
-                            if (e.InnerException.InnerException != null)
-                                Console.WriteLine(e.InnerException.InnerException.Message);
-                            else
+                            if (e.InnerException != null)
+                            {
+                                if (e.InnerException.InnerException != null)
+                                    Console.WriteLine(e.InnerException.InnerException.Message);
+                                else
+                                    Console.WriteLine(e.Message);
+                            } else
                                 Console.WriteLine(e.Message);
                         }
                         catch (InvalidOperationException e)
@@ -109,7 +119,7 @@ namespace MicrowaveMonitor.Managers
             }
         }
 
-        public void VerifyRows(List<DynamicInfluxRow> rows)
+        private void VerifyRows(List<DynamicInfluxRow> rows)
         {
             foreach (var row in rows)
             {

@@ -21,6 +21,7 @@ namespace MicrowaveMonitor.Gui
     public partial class ElevationWindow : Window
     {
         private static readonly long EarthRadius = 6371000;
+        private static readonly int SampleCount = 60;
 
         public ElevationWindow()
         {
@@ -32,15 +33,15 @@ namespace MicrowaveMonitor.Gui
         {
             InitializeComponent();
 
-            MockLocation siteA = new MockLocation(Double.Parse(latitudeA, CultureInfo.InvariantCulture), Double.Parse(longitudeA, CultureInfo.InvariantCulture));
-            MockLocation siteB = new MockLocation(Double.Parse(latitudeB, CultureInfo.InvariantCulture), Double.Parse(longitudeB, CultureInfo.InvariantCulture));
+            LocationCoord siteA = new LocationCoord(Double.Parse(latitudeA, CultureInfo.InvariantCulture), Double.Parse(longitudeA, CultureInfo.InvariantCulture));
+            LocationCoord siteB = new LocationCoord(Double.Parse(latitudeB, CultureInfo.InvariantCulture), Double.Parse(longitudeB, CultureInfo.InvariantCulture));
 
             double dist = GetDistance(siteA, siteB);
             double azimuth = CalculateBearing(siteA, siteB);
             distance.Content = String.Format("{0:0.##} m", dist);
 
-            int interval = Convert.ToInt32(Math.Round(dist / 20, MidpointRounding.AwayFromZero));
-            List<MockLocation> coords = GetLocations(interval, dist, azimuth, siteA, siteB);
+            int interval = Convert.ToInt32(Math.Round(dist / SampleCount, MidpointRounding.AwayFromZero));
+            List<LocationCoord> coords = GetLocations(interval, dist, azimuth, siteA, siteB);
             string[] coordstrings = new string[coords.Count];
 
             for (int i = 0; i < coords.Count; i++)
@@ -66,7 +67,7 @@ namespace MicrowaveMonitor.Gui
             graph.Source = image;
         }
 
-        internal double GetDistance(MockLocation start, MockLocation end)
+        internal double GetDistance(LocationCoord start, LocationCoord end)
         {
             double dLat = ToRadians(end.lat - start.lat);
             double dLon = ToRadians(end.lng - start.lng);
@@ -78,7 +79,7 @@ namespace MicrowaveMonitor.Gui
             return d;
         }
 
-        private double CalculateBearing(MockLocation start, MockLocation end)
+        private double CalculateBearing(LocationCoord start, LocationCoord end)
         {
             double startLat = ToRadians(start.lat);
             double startLong = ToRadians(start.lng);
@@ -101,7 +102,7 @@ namespace MicrowaveMonitor.Gui
             return bearing;
         }
 
-        private MockLocation GetDestinationLatLng(double lat, double lng, double azimuth, double distance)
+        private LocationCoord GetDestinationLatLng(double lat, double lng, double azimuth, double distance)
         {
             double radiusKm = EarthRadius / 1000; //Radius of the Earth in km
             double brng = ToRadians(azimuth); //Bearing is degrees converted to radians.
@@ -112,20 +113,20 @@ namespace MicrowaveMonitor.Gui
             double lon2 = lon1 + Math.Atan2(Math.Sin(brng) * Math.Sin(d / radiusKm) * Math.Cos(lat1), Math.Cos(d / radiusKm) - Math.Sin(lat1) * Math.Sin(lat2));
             lat2 = ToDegrees(lat2);
             lon2 = ToDegrees(lon2);
-            return new MockLocation(lat2, lon2);
+            return new LocationCoord(lat2, lon2);
         }
 
-        private List<MockLocation> GetLocations(int interval, double distance, double azimuth, MockLocation start, MockLocation end)
+        private List<LocationCoord> GetLocations(int interval, double distance, double azimuth, LocationCoord start, LocationCoord end)
         {
-            List<MockLocation> coords = new List<MockLocation>();
-            MockLocation mock = new MockLocation(start.lat, start.lng);
+            List<LocationCoord> coords = new List<LocationCoord>();
+            LocationCoord mock = new LocationCoord(start.lat, start.lng);
             coords.Add(mock);
             for (int coveredDist = interval; coveredDist < distance; coveredDist += interval)
             {
-                MockLocation coord = GetDestinationLatLng(start.lat, start.lng, azimuth, coveredDist);
+                LocationCoord coord = GetDestinationLatLng(start.lat, start.lng, azimuth, coveredDist);
                 coords.Add(coord);
             }
-            coords.Add(new MockLocation(end.lat, end.lng));
+            coords.Add(new LocationCoord(end.lat, end.lng));
             return coords;
         }
 
@@ -141,12 +142,12 @@ namespace MicrowaveMonitor.Gui
         }
     }
 
-    internal class MockLocation
+    internal class LocationCoord
     {
         public double lat;
         public double lng;
 
-        public MockLocation(double lat, double lng)
+        public LocationCoord(double lat, double lng)
         {
             this.lat = lat;
             this.lng = lng;
