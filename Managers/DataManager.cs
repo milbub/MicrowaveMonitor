@@ -19,8 +19,7 @@ namespace MicrowaveMonitor.Managers
         public List<DynamicInfluxRow> PingTransactions = new List<DynamicInfluxRow>();
         public List<DynamicInfluxRow> SignalTransactions = new List<DynamicInfluxRow>();
         public List<DynamicInfluxRow> SignalQTransactions = new List<DynamicInfluxRow>();
-        public List<DynamicInfluxRow> TxTransactions = new List<DynamicInfluxRow>();
-        public List<DynamicInfluxRow> RxTransactions = new List<DynamicInfluxRow>();
+        public List<DynamicInfluxRow> TrafficTransactions = new List<DynamicInfluxRow>();
         public List<DynamicInfluxRow> TempOduTransactions = new List<DynamicInfluxRow>();
         public List<DynamicInfluxRow> TempIduTransactions = new List<DynamicInfluxRow>();
         public List<DynamicInfluxRow> VoltageTransactions = new List<DynamicInfluxRow>();
@@ -68,14 +67,10 @@ namespace MicrowaveMonitor.Managers
                             Task writeSigQ = databaseClient.WriteAsync(databaseName, "signalQ", SignalQTransactions);
                             SignalQTransactions.Clear();
                             await writeSigQ;
-                            VerifyRows(TxTransactions);
-                            Task writeTx = databaseClient.WriteAsync(databaseName, "tx", TxTransactions);
-                            TxTransactions.Clear();
+                            VerifyRows(TrafficTransactions);
+                            Task writeTx = databaseClient.WriteAsync(databaseName, "traffic", TrafficTransactions);
+                            TrafficTransactions.Clear();
                             await writeTx;
-                            VerifyRows(RxTransactions);
-                            Task writeRx = databaseClient.WriteAsync(databaseName, "rx", RxTransactions);
-                            RxTransactions.Clear();
-                            await writeRx;
                             VerifyRows(TempOduTransactions);
                             Task writeTempOdu = databaseClient.WriteAsync(databaseName, "tempOdu", TempOduTransactions);
                             TempOduTransactions.Clear();
@@ -92,7 +87,7 @@ namespace MicrowaveMonitor.Managers
                             if (++writeCyckles > weatherCycles)
                             {
                                 VerifyRows(WeatherTempTransactions);
-                                Task writeWeaTemp = databaseClient.WriteAsync(databaseName, "airTemperature", WeatherTempTransactions);
+                                Task writeWeaTemp = databaseClient.WriteAsync(databaseName, "tempAir", WeatherTempTransactions);
                                 WeatherTempTransactions.Clear();
                                 weatherCycles = 0;
                                 await writeWeaTemp;
