@@ -78,22 +78,22 @@
     </ApplicationDefinition>
     <Compile Include="Database\DeviceDisplay.cs" />
     <Compile Include="Database\Record.cs" />
-    <Compile Include="Gui\AlarmListPane.xaml.cs">
+    <Compile Include="Gui\Panes\AlarmListPane.xaml.cs">
       <DependentUpon>AlarmListPane.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\ElevationWindow.xaml.cs">
       <DependentUpon>ElevationWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\EventLogPane.xaml.cs">
+    <Compile Include="Gui\Panes\EventLogPane.xaml.cs">
       <DependentUpon>EventLogPane.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\GraphRealtime.xaml.cs">
+    <Compile Include="Gui\Charts\GraphRealtime.xaml.cs">
       <DependentUpon>GraphRealtime.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\MapWindow.xaml.cs">
       <DependentUpon>MapWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\SettingsTab.xaml.cs">
+    <Compile Include="Gui\Panes\SettingsTab.xaml.cs">
       <DependentUpon>SettingsTab.xaml</DependentUpon>
     </Compile>
     <Compile Include="Managers\AlarmManager.cs" />
@@ -113,17 +113,17 @@
     <Compile Include="Workers\Collector.cs" />
     <Compile Include="Workers\PingCollector.cs" />
     <Compile Include="Workers\SnmpCollector.cs" />
-    <Compile Include="Workers\SnmpRx.cs" />
-    <Compile Include="Workers\SnmpSignal.cs" />
-    <Compile Include="Workers\SnmpSignalQ.cs" />
-    <Compile Include="Workers\SnmpSysName.cs" />
-    <Compile Include="Workers\SnmpTempIdu.cs" />
-    <Compile Include="Workers\SnmpTempOdu.cs" />
-    <Compile Include="Workers\SnmpTx.cs" />
-    <Compile Include="Workers\SnmpUptime.cs" />
-    <Compile Include="Workers\SnmpVoltage.cs" />
+    <Compile Include="Workers\Snmp\SnmpRx.cs" />
+    <Compile Include="Workers\Snmp\SnmpSignal.cs" />
+    <Compile Include="Workers\Snmp\SnmpSignalQ.cs" />
+    <Compile Include="Workers\Snmp\SnmpSysName.cs" />
+    <Compile Include="Workers\Snmp\SnmpTempIdu.cs" />
+    <Compile Include="Workers\Snmp\SnmpTempOdu.cs" />
+    <Compile Include="Workers\Snmp\SnmpTx.cs" />
+    <Compile Include="Workers\Snmp\SnmpUptime.cs" />
+    <Compile Include="Workers\Snmp\SnmpVoltage.cs" />
     <Compile Include="Workers\WeatherCollector.cs" />
-    <Page Include="Gui\AlarmListPane.xaml">
+    <Page Include="Gui\Panes\AlarmListPane.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -131,11 +131,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Gui\EventLogPane.xaml">
+    <Page Include="Gui\Panes\EventLogPane.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Gui\GraphRealtime.xaml">
+    <Page Include="Gui\Charts\GraphRealtime.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -157,7 +157,7 @@
       <DependentUpon>MonitoringWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="Gui\SettingsTab.xaml">
+    <Page Include="Gui\Panes\SettingsTab.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -278,6 +278,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Gui\Icons\terrain.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Gui\Icons\search.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

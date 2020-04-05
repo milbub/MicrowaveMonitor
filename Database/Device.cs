@@ -33,8 +33,8 @@ namespace MicrowaveMonitor.Database
         public int SignalQDivisor { get; set; } = 10;
 
         /* SNMP OIDs */
-        public static string OidSysName_s { get; } = "1.3.6.1.2.1.1.5.0";
-        public static string OidUptime_s { get; } = "1.3.6.1.2.1.1.3.0";
+        public static string OidSysName_s { get; } = "1.3.6.1.2.1.1.5.0";   // RFC 1213
+        public static string OidUptime_s { get; } = "1.3.6.1.2.1.1.3.0";    // RFC 1213
         public string OidSignal_s { get; set; }
         public string OidSignalQ_s { get; set; }
         public string OidTxDataRate_s { get; set; }
