@@ -8,9 +8,9 @@
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300" d:DataContext="{  d:DesignInstance graphRealtime:GraphRealtime}">
     <Grid>
-        <lvc:CartesianChart AnimationsSpeed="0:0:0.5" Hoverable="False" DataTooltip="{x:Null}">
+        <lvc:CartesianChart AnimationsSpeed="0:0:0.5" DisableAnimations="{Binding DisableAnimations}" Hoverable="False" DataTooltip="{x:Null}">
             <lvc:CartesianChart.Series>
-                <lvc:LineSeries Values="{Binding ChartValues}" PointGeometry="{x:Null}" LineSmoothness="1" StrokeThickness="2" Stroke="#FF6F88B2" Fill="Transparent"/>
+                <lvc:LineSeries Values="{Binding ChartValues}" PointGeometry="{x:Null}" LineSmoothness="0" StrokeThickness="2" Stroke="#FF6F88B2" Fill="Transparent"/>
             </lvc:CartesianChart.Series>
             <lvc:CartesianChart.AxisX>
                 <lvc:Axis LabelFormatter="{Binding DateTimeFormatter}" MaxValue="{Binding AxisMax}" MinValue="{Binding AxisMin}" Unit="{Binding AxisUnit}" DisableAnimations="True" Foreground="#818a8c">

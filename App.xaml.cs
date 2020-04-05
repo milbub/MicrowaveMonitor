@@ -18,7 +18,7 @@ namespace MicrowaveMonitor
             dataManager.StartDatabaseWriter();
             alarmManager.InitWatchers(workerManager.DeviceToFront);
 
-            MonitoringWindow monitoringWindow = new MonitoringWindow(linkManager, workerManager, alarmManager);
+            MonitoringWindow monitoringWindow = new MonitoringWindow(linkManager, workerManager, alarmManager, dataManager);
             monitoringWindow.Show();
         }
 

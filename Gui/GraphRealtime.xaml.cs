@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using LiveCharts;
@@ -12,12 +15,15 @@ namespace MicrowaveMonitor.Gui
     {
         private double _axisMax;
         private double _axisMin;
+        private double _axisStep;
+        private double _axisUnit;
+        private bool _disableAnimations;
 
         public ChartValues<Record<double>> ChartValues { get; set; }
         public Func<double, string> DateTimeFormatter { get; set; }
-        public double AxisStep { get; set; }
-        public double AxisUnit { get; set; }
         public bool IsReading { get; set; }
+        public int Span { get; private set; }
+        public int DevId { get; private set; }
 
         public GraphRealtime()
         {
@@ -32,28 +38,49 @@ namespace MicrowaveMonitor.Gui
             ChartValues = new ChartValues<Record<double>>();
             DateTimeFormatter = value => new DateTime((long)value).ToString("HH:mm:ss");
 
-            AxisStep = TimeSpan.FromSeconds(5).Ticks;
-            AxisUnit = TimeSpan.TicksPerSecond;
-
-            SetAxisLimits(DateTime.Now);
+            SetAxisGrid(TimeSpan.FromSeconds(60).Ticks, TimeSpan.TicksPerSecond);
+            SetAxisLimits(DateTime.Now, 600);
+            DisableAnimations = true;
 
             DataContext = this;
             IsReading = true;
         }
 
-        public void Read(Record<double> record)
+        public void Read(Record<double> record, int resolution, int span)
         {
                 ChartValues.Add(record);
-                SetAxisLimits(record.TimeMark);
+                SetAxisLimits(record.TimeMark, span);
 
-                // only use the last 62 values
-                if (ChartValues.Count > 62) ChartValues.RemoveAt(0);
+                if (ChartValues.Count > (resolution + 2))
+                    ChartValues.RemoveAt(0);
         }
 
-        private void SetAxisLimits(DateTime now)
+        public void ReadMany(List<Record<double>> records, int resolution, int span, int device)
         {
-            AxisMax = now.Ticks + TimeSpan.FromSeconds(1).Ticks;    // axis ahead
-            AxisMin = now.Ticks - TimeSpan.FromSeconds(59).Ticks;   // axis behind
+            ChartValues.AddRange(records);
+            SetAxisLimits(records.Last().TimeMark, span);
+
+            resolution += 2;
+            if (ChartValues.Count > resolution)
+                for (int i = 0; i < (ChartValues.Count - resolution); i++)
+                {
+                    ChartValues.RemoveAt(0);
+                }
+
+            Span = span;
+            DevId = device;
+        }
+
+        public void SetAxisLimits(DateTime timestamp, int span)
+        {
+            AxisMax = timestamp.Ticks + TimeSpan.FromSeconds(1).Ticks;          // axis ahead
+            AxisMin = timestamp.Ticks - TimeSpan.FromSeconds(span - 1).Ticks;   // axis behind
+        }
+
+        public void SetAxisGrid(long step, long unit)
+        {
+            AxisStep = step;
+            AxisUnit = unit;
         }
 
         public double AxisMax
@@ -75,12 +102,39 @@ namespace MicrowaveMonitor.Gui
             }
         }
 
+        public double AxisStep
+        {
+            get { return _axisStep; }
+            set
+            {
+                _axisStep = value;
+                OnPropertyChanged("AxisStep");
+            }
+        }
+        public double AxisUnit
+        {
+            get { return _axisUnit; }
+            set
+            {
+                _axisUnit = value;
+                OnPropertyChanged("AxisUnit");
+            }
+        }
+
+        public bool DisableAnimations
+        {
+            get { return _disableAnimations; }
+            set
+            {
+                _disableAnimations = value;
+                OnPropertyChanged("DisableAnimations");
+            }
+        }
+
         private void InjectStopOnClick(object sender, RoutedEventArgs e)
         {
             IsReading = !IsReading;
         }
-
-        #region INotifyPropertyChanged implementation
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -89,7 +143,5 @@ namespace MicrowaveMonitor.Gui
             if (PropertyChanged != null)
                 PropertyChanged.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-
-        #endregion
     }
 }

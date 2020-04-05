@@ -10,9 +10,9 @@ namespace MicrowaveMonitor.Workers
 {
     public class SnmpSignal : SnmpCollector
     {
-        List<DynamicInfluxRow> database;
+        Queue<DynamicInfluxRow> database;
 
-        public SnmpSignal(List<DynamicInfluxRow> dbRows, string oid, int port, string community, string address, int deviceId, int refreshInterval, DeviceDisplay display) : base(oid, port, community, address, deviceId, refreshInterval, display)
+        public SnmpSignal(Queue<DynamicInfluxRow> dbRows, string oid, int port, string community, string address, int deviceId, int refreshInterval, DeviceDisplay display) : base(oid, port, community, address, deviceId, refreshInterval, display)
         {
             database = dbRows;
         }
@@ -27,13 +27,11 @@ namespace MicrowaveMonitor.Workers
             row.Tags.Add("device", DeviceId.ToString());
             try
             {
-                database.Add(row);
+                database.Enqueue(row);
             }
             catch (IndexOutOfRangeException e)
             {
                 Console.WriteLine(e.Message);
-                Thread.Sleep(500);
-                database.Add(row);
             }
             Diff();
         }

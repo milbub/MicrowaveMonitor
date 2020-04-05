@@ -11,9 +11,9 @@ namespace MicrowaveMonitor.Workers
 {
     class SnmpTempIdu : SnmpCollector
     {
-        List<DynamicInfluxRow> database;
+        Queue<DynamicInfluxRow> database;
 
-        public SnmpTempIdu(List<DynamicInfluxRow> dbRows, string oid, int port, string community, string address, int deviceId, int refreshInterval, DeviceDisplay display) : base(oid, port, community, address, deviceId, refreshInterval, display)
+        public SnmpTempIdu(Queue<DynamicInfluxRow> dbRows, string oid, int port, string community, string address, int deviceId, int refreshInterval, DeviceDisplay display) : base(oid, port, community, address, deviceId, refreshInterval, display)
         {
             database = dbRows;
         }
@@ -26,7 +26,7 @@ namespace MicrowaveMonitor.Workers
             row.Timestamp = resultTime.ToUniversalTime();
             row.Fields.Add("value", resval);
             row.Tags.Add("device", DeviceId.ToString());
-            database.Add(row);
+            database.Enqueue(row);
         }
     }
 }

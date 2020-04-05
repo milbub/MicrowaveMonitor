@@ -143,13 +143,14 @@
                                 <Label Margin="153,0,0,0" ToolTip="Graph History" HorizontalAlignment="Left">
                                     <Image Source="/Gui/Icons/clock.png"></Image>
                                 </Label>
-                                <ComboBox x:Name="historySignal" Width="100" Height="21" HorizontalAlignment="Left" Margin="180,0,0,0">
-                                    <ComboBoxItem Content="Past 1 minute" IsSelected="True"></ComboBoxItem>
-                                    <ComboBoxItem Content="Past 1 hour"></ComboBoxItem>
-                                    <ComboBoxItem Content="Past 6 hours"></ComboBoxItem>
-                                    <ComboBoxItem Content="Past 1 day"></ComboBoxItem>
-                                    <ComboBoxItem Content="Past 7 days"></ComboBoxItem>
-                                    <ComboBoxItem Content="Past 30 days"></ComboBoxItem>
+                                <ComboBox x:Name="historySignal" Tag="sig" Width="90" Height="21" HorizontalAlignment="Left" Margin="180,0,0,0">
+                                    <ComboBoxItem Content="1 minute"></ComboBoxItem>
+                                    <ComboBoxItem Content="10 minutes" IsSelected="True"></ComboBoxItem>
+                                    <ComboBoxItem Content="1 hour"></ComboBoxItem>
+                                    <ComboBoxItem Content="6 hours"></ComboBoxItem>
+                                    <ComboBoxItem Content="1 day"></ComboBoxItem>
+                                    <ComboBoxItem Content="7 days"></ComboBoxItem>
+                                    <ComboBoxItem Content="30 days"></ComboBoxItem>
                                 </ComboBox>
                                 <Label Content="AVG:" FontWeight="Bold" Margin="450,0,0,0"/>
                                 <Label x:Name="avgSig" Margin="485,0,0,0"/>
@@ -166,13 +167,14 @@
                                 <Label Margin="153,0,0,0" ToolTip="Graph History" HorizontalAlignment="Left">
                                     <Image Source="/Gui/Icons/clock.png"></Image>
                                 </Label>
-                                <ComboBox x:Name="historySignalQ" Width="100" Height="21" HorizontalAlignment="Left" Margin="180,0,0,0">
-                                    <ComboBoxItem Content="Past 1 minute" IsSelected="True"></ComboBoxItem>
-                                    <ComboBoxItem Content="Past 1 hour"></ComboBoxItem>
-                                    <ComboBoxItem Content="Past 6 hours"></ComboBoxItem>
-                                    <ComboBoxItem Content="Past 1 day"></ComboBoxItem>
-                                    <ComboBoxItem Content="Past 7 days"></ComboBoxItem>
-                                    <ComboBoxItem Content="Past 30 days"></ComboBoxItem>
+                                <ComboBox x:Name="historySignalQ" Tag="sigQ" Width="90" Height="21" HorizontalAlignment="Left" Margin="180,0,0,0">
+                                    <ComboBoxItem Content="1 minute"></ComboBoxItem>
+                                    <ComboBoxItem Content="10 minutes" IsSelected="True"></ComboBoxItem>
+                                    <ComboBoxItem Content="1 hour"></ComboBoxItem>
+                                    <ComboBoxItem Content="6 hours"></ComboBoxItem>
+                                    <ComboBoxItem Content="1 day"></ComboBoxItem>
+                                    <ComboBoxItem Content="7 days"></ComboBoxItem>
+                                    <ComboBoxItem Content="30 days"></ComboBoxItem>
                                 </ComboBox>
                                 <Label Content="AVG:" FontWeight="Bold" Margin="450,0,0,0"/>
                                 <Label x:Name="avgSigQ" Margin="485,0,0,0"/>
@@ -197,13 +199,14 @@
                                 <Label Margin="153,0,0,0" ToolTip="Graph History" HorizontalAlignment="Left">
                                     <Image Source="/Gui/Icons/clock.png"></Image>
                                 </Label>
-                                <ComboBox x:Name="historyTempOdu" Width="100" Height="21" HorizontalAlignment="Left" Margin="180,0,0,0">
-                                    <ComboBoxItem Content="Past 1 minute" IsSelected="True"></ComboBoxItem>
-                                    <ComboBoxItem Content="Past 1 hour"></ComboBoxItem>
-                                    <ComboBoxItem Content="Past 6 hours"></ComboBoxItem>
-                                    <ComboBoxItem Content="Past 1 day"></ComboBoxItem>
-                                    <ComboBoxItem Content="Past 7 days"></ComboBoxItem>
-                                    <ComboBoxItem Content="Past 30 days"></ComboBoxItem>
+                                <ComboBox x:Name="historyTempOdu" Tag="tempodu" Width="90" Height="21" HorizontalAlignment="Left" Margin="180,0,0,0">
+                                    <ComboBoxItem Content="1 minute"></ComboBoxItem>
+                                    <ComboBoxItem Content="10 minutes" IsSelected="True"></ComboBoxItem>
+                                    <ComboBoxItem Content="1 hour"></ComboBoxItem>
+                                    <ComboBoxItem Content="6 hours"></ComboBoxItem>
+                                    <ComboBoxItem Content="1 day"></ComboBoxItem>
+                                    <ComboBoxItem Content="7 days"></ComboBoxItem>
+                                    <ComboBoxItem Content="30 days"></ComboBoxItem>
                                 </ComboBox>
                                 <Label Content="AVG:" FontWeight="Bold" Margin="450,0,0,0"/>
                                 <Label x:Name="avgTempOdu" Margin="485,0,0,0"/>
@@ -220,13 +223,14 @@
                                 <Label Margin="153,0,0,0" ToolTip="Graph History" HorizontalAlignment="Left">
                                     <Image Source="/Gui/Icons/clock.png"></Image>
                                 </Label>
-                                <ComboBox x:Name="historyTempIdu" Width="100" Height="21" HorizontalAlignment="Left" Margin="180,0,0,0">
-                                    <ComboBoxItem Content="Past 1 minute" IsSelected="True"></ComboBoxItem>
-                                    <ComboBoxItem Content="Past 1 hour"></ComboBoxItem>
-                                    <ComboBoxItem Content="Past 6 hours"></ComboBoxItem>
-                                    <ComboBoxItem Content="Past 1 day"></ComboBoxItem>
-                                    <ComboBoxItem Content="Past 7 days"></ComboBoxItem>
-                                    <ComboBoxItem Content="Past 30 days"></ComboBoxItem>
+                                <ComboBox x:Name="historyTempIdu" Tag="tempidu" Width="90" Height="21" HorizontalAlignment="Left" Margin="180,0,0,0">
+                                    <ComboBoxItem Content="1 minute"></ComboBoxItem>
+                                    <ComboBoxItem Content="10 minutes" IsSelected="True"></ComboBoxItem>
+                                    <ComboBoxItem Content="1 hour"></ComboBoxItem>
+                                    <ComboBoxItem Content="6 hours"></ComboBoxItem>
+                                    <ComboBoxItem Content="1 day"></ComboBoxItem>
+                                    <ComboBoxItem Content="7 days"></ComboBoxItem>
+                                    <ComboBoxItem Content="30 days"></ComboBoxItem>
                                 </ComboBox>
                                 <Label Content="AVG:" FontWeight="Bold" Margin="450,0,0,0"/>
                                 <Label x:Name="avgTempIdu" Margin="485,0,0,0"/>
@@ -250,13 +254,14 @@
                             <Label Margin="153,0,0,0" ToolTip="Graph History" HorizontalAlignment="Left">
                                 <Image Source="/Gui/Icons/clock.png"></Image>
                             </Label>
-                            <ComboBox x:Name="historyVoltage" Width="100" Height="21" HorizontalAlignment="Left" Margin="180,0,0,0">
-                                <ComboBoxItem Content="Past 1 minute" IsSelected="True"></ComboBoxItem>
-                                <ComboBoxItem Content="Past 1 hour"></ComboBoxItem>
-                                <ComboBoxItem Content="Past 6 hours"></ComboBoxItem>
-                                <ComboBoxItem Content="Past 1 day"></ComboBoxItem>
-                                <ComboBoxItem Content="Past 7 days"></ComboBoxItem>
-                                <ComboBoxItem Content="Past 30 days"></ComboBoxItem>
+                            <ComboBox x:Name="historyVoltage" Tag="volt" Width="90" Height="21" HorizontalAlignment="Left" Margin="180,0,0,0">
+                                <ComboBoxItem Content="1 minute"></ComboBoxItem>
+                                <ComboBoxItem Content="10 minutes" IsSelected="True"></ComboBoxItem>
+                                <ComboBoxItem Content="1 hour"></ComboBoxItem>
+                                <ComboBoxItem Content="6 hours"></ComboBoxItem>
+                                <ComboBoxItem Content="1 day"></ComboBoxItem>
+                                <ComboBoxItem Content="7 days"></ComboBoxItem>
+                                <ComboBoxItem Content="30 days"></ComboBoxItem>
                             </ComboBox>
                             <Label Content="AVG:" FontWeight="Bold" Margin="131,0,0,0" Grid.Column="1"/>
                             <Label x:Name="avgVolt" Margin="166,0,0,0" Grid.Column="1"/>
@@ -267,6 +272,10 @@
                     </TabItem>
                     <TabItem Header="Traffic">
                         <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="319*"/>
+                                <ColumnDefinition Width="402*"/>
+                            </Grid.ColumnDefinitions>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="26"></RowDefinition>
                                 <RowDefinition></RowDefinition>
@@ -274,9 +283,42 @@
                                 <RowDefinition></RowDefinition>
                             </Grid.RowDefinitions>
                             <Label Content="Radio Transmit" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-                            <gui:GraphRealtime Grid.Row="1" x:Name="tx"></gui:GraphRealtime>
+                            <Label Margin="153,0,0,0" ToolTip="Graph History" HorizontalAlignment="Left">
+                                <Image Source="/Gui/Icons/clock.png"></Image>
+                            </Label>
+                            <ComboBox x:Name="historyTx" Tag="tx" Width="90" Height="21" HorizontalAlignment="Left" Margin="180,0,0,0">
+                                <ComboBoxItem Content="1 minute"></ComboBoxItem>
+                                <ComboBoxItem Content="10 minutes" IsSelected="True"></ComboBoxItem>
+                                <ComboBoxItem Content="1 hour"></ComboBoxItem>
+                                <ComboBoxItem Content="6 hours"></ComboBoxItem>
+                                <ComboBoxItem Content="1 day"></ComboBoxItem>
+                                <ComboBoxItem Content="7 days"></ComboBoxItem>
+                                <ComboBoxItem Content="30 days"></ComboBoxItem>
+                            </ComboBox>
+                            <Label Content="AVG:" FontWeight="Bold" Margin="131,0,0,0" Grid.Column="1"/>
+                            <Label x:Name="avgTx" Margin="166,0,0,0" Grid.Column="1"/>
+                            <Label Content="Diff:" FontWeight="Bold" Margin="231,0,0,0" Grid.Column="1"/>
+                            <Label x:Name="diffTx" Margin="264,0,0,0" Grid.Column="1"/>
+                            <gui:GraphRealtime Grid.Row="1" x:Name="tx" Grid.ColumnSpan="2"></gui:GraphRealtime>
+                            
                             <Label Grid.Row="2" Content="Radio Receive" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-                            <gui:GraphRealtime Grid.Row="3" x:Name="rx"></gui:GraphRealtime>
+                            <Label Grid.Row="2" Margin="153,0,0,0" ToolTip="Graph History" HorizontalAlignment="Left">
+                                <Image Source="/Gui/Icons/clock.png"></Image>
+                            </Label>
+                            <ComboBox Grid.Row="2" x:Name="historyRx" Tag="rx" Width="90" Height="21" HorizontalAlignment="Left" Margin="180,0,0,0">
+                                <ComboBoxItem Content="1 minute"></ComboBoxItem>
+                                <ComboBoxItem Content="10 minutes" IsSelected="True"></ComboBoxItem>
+                                <ComboBoxItem Content="1 hour"></ComboBoxItem>
+                                <ComboBoxItem Content="6 hours"></ComboBoxItem>
+                                <ComboBoxItem Content="1 day"></ComboBoxItem>
+                                <ComboBoxItem Content="7 days"></ComboBoxItem>
+                                <ComboBoxItem Content="30 days"></ComboBoxItem>
+                            </ComboBox>
+                            <Label Grid.Row="2" Content="AVG:" FontWeight="Bold" Margin="131,0,0,0" Grid.Column="1"/>
+                            <Label Grid.Row="2" x:Name="avgRx" Margin="166,0,0,0" Grid.Column="1"/>
+                            <Label Grid.Row="2" Content="Diff:" FontWeight="Bold" Margin="231,0,0,0" Grid.Column="1"/>
+                            <Label Grid.Row="2" x:Name="diffRx" Margin="264,0,0,0" Grid.Column="1"/>
+                            <gui:GraphRealtime Grid.Row="3" x:Name="rx" Grid.ColumnSpan="2"></gui:GraphRealtime>
                         </Grid>
                     </TabItem>
                     <TabItem Header="Latency">
@@ -290,13 +332,14 @@
                             <Label Margin="153,0,0,0" ToolTip="Graph History" HorizontalAlignment="Left">
                                 <Image Source="/Gui/Icons/clock.png"></Image>
                             </Label>
-                            <ComboBox x:Name="historyLatency" Width="100" Height="21" HorizontalAlignment="Left" Margin="180,0,0,0">
-                                <ComboBoxItem Content="Past 1 minute" IsSelected="True"></ComboBoxItem>
-                                <ComboBoxItem Content="Past 1 hour"></ComboBoxItem>
-                                <ComboBoxItem Content="Past 6 hours"></ComboBoxItem>
-                                <ComboBoxItem Content="Past 1 day"></ComboBoxItem>
-                                <ComboBoxItem Content="Past 7 days"></ComboBoxItem>
-                                <ComboBoxItem Content="Past 30 days"></ComboBoxItem>
+                            <ComboBox x:Name="historyLatency" Tag="ping" Width="90" Height="21" HorizontalAlignment="Left" Margin="180,0,0,0">
+                                <ComboBoxItem Content="1 minute"></ComboBoxItem>
+                                <ComboBoxItem Content="10 minutes" IsSelected="True"></ComboBoxItem>
+                                <ComboBoxItem Content="1 hour"></ComboBoxItem>
+                                <ComboBoxItem Content="6 hours"></ComboBoxItem>
+                                <ComboBoxItem Content="1 day"></ComboBoxItem>
+                                <ComboBoxItem Content="7 days"></ComboBoxItem>
+                                <ComboBoxItem Content="30 days"></ComboBoxItem>
                             </ComboBox>
                             <Label Content="AVG:" FontWeight="Bold" Margin="450,0,0,0"/>
                             <Label x:Name="avgPing" Margin="485,0,0,0"/>
