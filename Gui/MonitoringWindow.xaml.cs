@@ -39,7 +39,6 @@ namespace MicrowaveMonitor.Gui
             workerM = workerManager;
             alarmM = alarmManager;
             dataM = dataManager;
-
             devicesDisplays = workerManager.DeviceToFront;
 
             InitializeComponent();
@@ -79,17 +78,13 @@ namespace MicrowaveMonitor.Gui
             voltage.axisY.MinValue = 0;
             pingwin.axisY.Title = "[ms]";
             pingwin.axisY.MinValue = 0;
-
-            settingsTab.FillBoxes(this, linkManager);
         }
 
         public void ChangeLink(Link viewedLink)
         {
-            if ((viewedLink != null) && (viewedLink.HopCount != viewedLink.HopCount))
-                ChangeDevicesConstellation();
-
             this.viewedLink = viewedLink;
             linkCaption.Content = viewedLink.Name;
+            FillSettings();
 
             if (siteA.IsChecked == true)
                 ChangeDevice("A");
@@ -158,6 +153,25 @@ namespace MicrowaveMonitor.Gui
                 DataChanged(null, new PropertyChangedEventArgs("DataPing"));
         }
 
+        private void FillSettings()
+        {
+            boxLinkName.Text = viewedLink.Name;
+            boxNote.Text = viewedLink.Note;
+
+            settingsA.FillBoxes(linkM, viewedLink.DeviceBaseId);
+
+            siteB.IsEnabled = viewedLink.DeviceEndId > 0 ? settingsB.FillBoxes(linkM, viewedLink.DeviceEndId) : false;
+            checkB.IsChecked = viewedLink.DeviceEndId > 0 ? settingsB.FillBoxes(linkM, viewedLink.DeviceEndId) : false;
+            siteR1.IsEnabled = viewedLink.DeviceR1Id > 0 ? settingsR1.FillBoxes(linkM, viewedLink.DeviceR1Id) : false;
+            checkR1.IsChecked = viewedLink.DeviceR1Id > 0 ? settingsR1.FillBoxes(linkM, viewedLink.DeviceR1Id) : false;
+            siteR2.IsEnabled = viewedLink.DeviceR2Id > 0 ? settingsR2.FillBoxes(linkM, viewedLink.DeviceR2Id) : false;
+            checkR2.IsChecked = viewedLink.DeviceR2Id > 0 ? settingsR2.FillBoxes(linkM, viewedLink.DeviceR2Id) : false;
+            siteR3.IsEnabled = viewedLink.DeviceR3Id > 0 ? settingsR3.FillBoxes(linkM, viewedLink.DeviceR3Id) : false;
+            checkR3.IsChecked = viewedLink.DeviceR3Id > 0 ? settingsR3.FillBoxes(linkM, viewedLink.DeviceR3Id) : false;
+            siteR4.IsEnabled = viewedLink.DeviceR4Id > 0 ? settingsR4.FillBoxes(linkM, viewedLink.DeviceR4Id) : false;
+            checkR4.IsChecked = viewedLink.DeviceR4Id > 0 ? settingsR4.FillBoxes(linkM, viewedLink.DeviceR4Id) : false;
+        }
+
         private void DataChangedDispatch(object sender, PropertyChangedEventArgs e)
         {
             try
@@ -182,103 +196,73 @@ namespace MicrowaveMonitor.Gui
 
         private void DataChanged(object sender, PropertyChangedEventArgs e)
         {
-            switch (e.PropertyName)
-            {
-                case "DiffPing":
-                    diffPing.Content = String.Format("{0:0.0000} ms", devicesDisplays[viewedDeviceId].DiffPing);
-                    avgPing.Content = String.Format("{0:0.00} ms", devicesDisplays[viewedDeviceId].AvgPing);
-                    break;
-                case "DiffSig":
-                    diffSig.Content = String.Format("{0:0.0000} dBm", devicesDisplays[viewedDeviceId].DiffSig);
-                    avgSig.Content = String.Format("{0:0.00} dBm", devicesDisplays[viewedDeviceId].AvgSig);
-                    break;
-                case "DiffSigQ":
-                    diffSigQ.Content = String.Format("{0:0.0000} dB", devicesDisplays[viewedDeviceId].DiffSigQ);
-                    avgSigQ.Content = String.Format("{0:0.00} dB", devicesDisplays[viewedDeviceId].AvgSigQ);
-                    break;
-                case "SysName":
-                    unitname.Content = devicesDisplays[viewedDeviceId].SysName;
-                    break;
-                case "Uptime":
-                    TimeSpan t = TimeSpan.FromSeconds(devicesDisplays[viewedDeviceId].Uptime / 100);
-                    uptime.Content = String.Format("{0:D2}d {1:D2}h {2:D2}m {3:D2}s", t.Days, t.Hours, t.Minutes, t.Seconds);
-                    break;
-                case "DataPing":
-                    ping.Content = String.Format("{0} ms", devicesDisplays[viewedDeviceId].DataPing.Data);
-                    GraphUpdate(pingwin, historyLatency, devicesDisplays[viewedDeviceId].DataPing, null);
-                    break;
-                case "DataSig":
-                    GraphUpdate(signalLevel, historySignal, devicesDisplays[viewedDeviceId].DataSig, null);
-                    break;
-                case "DataSigQ":
-                    GraphUpdate(signalQuality, historySignalQ, devicesDisplays[viewedDeviceId].DataSigQ, null);
-                    break;
-                case "DataTx":
-                    var convertedTx = new Record<double>(devicesDisplays[viewedDeviceId].DataTx.TimeMark, devicesDisplays[viewedDeviceId].DataTx.Data);
-                    GraphUpdate(tx, historyTx, convertedTx, null);
-                    break;
-                case "DataRx":
-                    var convertedRx = new Record<double>(devicesDisplays[viewedDeviceId].DataRx.TimeMark, devicesDisplays[viewedDeviceId].DataRx.Data);
-                    GraphUpdate(rx, historyRx, convertedRx, null);
-                    break;
-                case "DataTempOdu":
-                    GraphUpdate(tempOdu, historyTempOdu, devicesDisplays[viewedDeviceId].DataTempOdu, null);
-                    break;
-                case "DataTempIdu":
-                    GraphUpdate(tempIdu, historyTempIdu, devicesDisplays[viewedDeviceId].DataTempIdu, null);
-                    break;
-                case "DataVoltage":
-                    GraphUpdate(voltage, historyVoltage, devicesDisplays[viewedDeviceId].DataVoltage, null);
-                    break;
-                case "WeatherIcon":
-                    Bitmap iconBitmap = (Bitmap)Properties.Resources.ResourceManager.GetObject(devicesDisplays[viewedDeviceId].WeatherIcon);
-                    weatherIcon.Source = BitmapToImageSource(iconBitmap);
-                    break;
-                case "WeatherDesc":
-                    weatherDesc.Content = devicesDisplays[viewedDeviceId].WeatherDesc.ToString();
-                    break;
-                case "WeatherTemp":
-                    weatherTemp.Content = String.Format("{0:0} °C", devicesDisplays[viewedDeviceId].WeatherTemp);
-                    break;
-                case "WeatherWind":
-                    weatherWind.Content = devicesDisplays[viewedDeviceId].WeatherWind.ToString() + " m/s";
-                    break;
-                default:
-                    throw new InvalidEnumArgumentException();
-            }
-        }
-
-        private void ChangeDevicesConstellation()
-        {
-            ConstellationChanger(false, 5);
-            ConstellationChanger(true, viewedLink.HopCount);
-        }
-
-        private void ConstellationChanger(bool state, byte selector)
-        {
-            switch (selector)
-            {
-                case 0:
-                    siteA.IsEnabled = state;
-                    break;
-                case 1:
-                    siteB.IsEnabled = state;
-                    goto case 0;
-                case 2:
-                    siteR1.IsEnabled = state;
-                    goto case 1;
-                case 3:
-                    siteR2.IsEnabled = state;
-                    goto case 2;
-                case 4:
-                    siteR3.IsEnabled = state;
-                    goto case 3;
-                case 5:
-                    siteR4.IsEnabled = state;
-                    goto case 4;
-                default:
-                    throw new NotSupportedException();
-            }
+            DeviceDisplay display = (DeviceDisplay)sender;
+            
+            if (display == devicesDisplays[viewedDeviceId])
+                switch (e.PropertyName)
+                {
+                    case "DiffPing":
+                        diffPing.Content = String.Format("{0:0.0000} ms", display.DiffPing);
+                        avgPing.Content = String.Format("{0:0.00} ms", display.AvgPing);
+                        break;
+                    case "DiffSig":
+                        diffSig.Content = String.Format("{0:0.0000} dBm", display.DiffSig);
+                        avgSig.Content = String.Format("{0:0.00} dBm", display.AvgSig);
+                        break;
+                    case "DiffSigQ":
+                        diffSigQ.Content = String.Format("{0:0.0000} dB", display.DiffSigQ);
+                        avgSigQ.Content = String.Format("{0:0.00} dB", display.AvgSigQ);
+                        break;
+                    case "SysName":
+                        unitname.Content = display.SysName;
+                        break;
+                    case "Uptime":
+                        TimeSpan t = TimeSpan.FromSeconds(display.Uptime / 100);
+                        uptime.Content = String.Format("{0:D2}d {1:D2}h {2:D2}m {3:D2}s", t.Days, t.Hours, t.Minutes, t.Seconds);
+                        break;
+                    case "DataPing":
+                        ping.Content = String.Format("{0} ms", display.DataPing.Data);
+                        GraphUpdate(pingwin, historyLatency, display.DataPing, null);
+                        break;
+                    case "DataSig":
+                        GraphUpdate(signalLevel, historySignal, display.DataSig, null);
+                        break;
+                    case "DataSigQ":
+                        GraphUpdate(signalQuality, historySignalQ, display.DataSigQ, null);
+                        break;
+                    case "DataTx":
+                        var convertedTx = new Record<double>(display.DataTx.TimeMark, display.DataTx.Data);
+                        GraphUpdate(tx, historyTx, convertedTx, null);
+                        break;
+                    case "DataRx":
+                        var convertedRx = new Record<double>(display.DataRx.TimeMark, display.DataRx.Data);
+                        GraphUpdate(rx, historyRx, convertedRx, null);
+                        break;
+                    case "DataTempOdu":
+                        GraphUpdate(tempOdu, historyTempOdu, display.DataTempOdu, null);
+                        break;
+                    case "DataTempIdu":
+                        GraphUpdate(tempIdu, historyTempIdu, display.DataTempIdu, null);
+                        break;
+                    case "DataVoltage":
+                        GraphUpdate(voltage, historyVoltage, display.DataVoltage, null);
+                        break;
+                    case "WeatherIcon":
+                        Bitmap iconBitmap = (Bitmap)Properties.Resources.ResourceManager.GetObject(display.WeatherIcon);
+                        weatherIcon.Source = BitmapToImageSource(iconBitmap);
+                        break;
+                    case "WeatherDesc":
+                        weatherDesc.Content = display.WeatherDesc.ToString();
+                        break;
+                    case "WeatherTemp":
+                        weatherTemp.Content = String.Format("{0:0} °C", display.WeatherTemp);
+                        break;
+                    case "WeatherWind":
+                        weatherWind.Content = display.WeatherWind.ToString() + " m/s";
+                        break;
+                    default:
+                        throw new InvalidEnumArgumentException();
+                }
         }
 
         private void GraphUpdate(GraphRealtime graph, ComboBox history, Record<double> record, List<Record<double>> manyRecords)
@@ -340,42 +324,50 @@ namespace MicrowaveMonitor.Gui
             {
                 case "sig":
                     graph = signalLevel;
-                    pending = dataM.SignalTransactions.ToArray();
+                    lock (dataM.SignalTransactions)
+                        pending = dataM.SignalTransactions.ToArray();
                     query = pre + $@"""{DataManager.measSig}"" " + query;
                     break;
                 case "sigQ":
                     graph = signalQuality;
-                    pending = dataM.SignalQTransactions.ToArray();
+                    lock (dataM.SignalQTransactions)
+                        pending = dataM.SignalQTransactions.ToArray();
                     query = pre + $@"""{DataManager.measSigQ}"" " + query;
                     break;
                 case "tempodu":
                     graph = tempOdu;
-                    pending = dataM.TempOduTransactions.ToArray();
+                    lock (dataM.TempOduTransactions)
+                        pending = dataM.TempOduTransactions.ToArray();
                     query = pre + $@"""{DataManager.measTmpO}"" " + query;
                     break;
                 case "tempidu":
                     graph = tempIdu;
-                    pending = dataM.TempIduTransactions.ToArray();
+                    lock (dataM.TempIduTransactions)
+                        pending = dataM.TempIduTransactions.ToArray();
                     query = pre + $@"""{DataManager.measTmpI}"" " + query;
                     break;
                 case "volt":
                     graph = voltage;
-                    pending = dataM.VoltageTransactions.ToArray();
+                    lock (dataM.VoltageTransactions)
+                        pending = dataM.VoltageTransactions.ToArray();
                     query = pre + $@"""{DataManager.measVolt}"" " + query;
                     break;
                 case "tx":
                     graph = tx;
-                    pending = dataM.TxTransactions.ToArray();
+                    lock (dataM.TxTransactions)
+                        pending = dataM.TxTransactions.ToArray();
                     query = pre + $@"""{DataManager.measTx}"" " + query;
                     break;
                 case "rx":
                     graph = rx;
-                    pending = dataM.RxTransactions.ToArray();
+                    lock (dataM.RxTransactions)
+                        pending = dataM.RxTransactions.ToArray();
                     query = pre + $@"""{DataManager.measRx}"" " + query;
                     break;
                 case "ping":
                     graph = pingwin;
-                    pending = dataM.PingTransactions.ToArray();
+                    lock (dataM.PingTransactions)
+                        pending = dataM.PingTransactions.ToArray();
                     query = pre + $@"""{DataManager.measLat}"" " + query;
                     break;
                 default:
@@ -422,7 +414,6 @@ namespace MicrowaveMonitor.Gui
         private void LinkChoosed(object sender, SelectionChangedEventArgs e)
         {
             ChangeLink(linkM.LinkDatabase.Get<Link>(linkM.LinkNames.FirstOrDefault(x => x.Value == (string)LinksList.SelectedItem).Key));
-            settingsTab.FillBoxes(this, linkM);
         }
 
         private void ButtonFired(object sender, RoutedEventArgs e)

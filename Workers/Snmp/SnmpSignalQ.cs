@@ -12,8 +12,8 @@ namespace MicrowaveMonitor.Workers
 {
     public class SnmpSignalQ : SnmpCollector
     {
-        int divisor;
-        Queue<DynamicInfluxRow> database;
+        private readonly int divisor;
+        private readonly Queue<DynamicInfluxRow> database;
 
         public SnmpSignalQ(Queue<DynamicInfluxRow> dbRows, int divisor, string oid, int port, string community, string address, int deviceId, int refreshInterval, DeviceDisplay display) : base(oid, port, community, address, deviceId, refreshInterval, display)
         {
@@ -29,14 +29,10 @@ namespace MicrowaveMonitor.Workers
             row.Timestamp = resultTime.ToUniversalTime();
             row.Fields.Add("value", resval);
             row.Tags.Add("device", DeviceId.ToString());
-            try
-            {
+
+            lock (database)
                 database.Enqueue(row);
-            }
-            catch (IndexOutOfRangeException e)
-            {
-                Console.WriteLine(e.Message);
-            }
+
             Diff();
         }
 

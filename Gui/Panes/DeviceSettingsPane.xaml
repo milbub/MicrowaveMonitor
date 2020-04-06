@@ -1,0 +1,110 @@
+﻿<UserControl x:Class="MicrowaveMonitor.Gui.DeviceSettingsPane"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d">
+    <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10,10,10,10">
+        <Label Content="IP address:"></Label>
+        <TextBox x:Name="boxIP_A" Height="25" VerticalContentAlignment="Center"></TextBox>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition></RowDefinition>
+                <RowDefinition Height="25"></RowDefinition>
+            </Grid.RowDefinitions>
+            <Label Content="SNMP community string:" HorizontalAlignment="Left"></Label>
+            <Label Content="SNMP version:" HorizontalAlignment="Center"></Label>
+            <Label Content="SNMP port number:" HorizontalAlignment="Right" Margin="0,0,47,0"></Label>
+            <TextBox Grid.Row="1" x:Name="boxSnmpComm_A" Height="25" Width="159" VerticalContentAlignment="Center" HorizontalAlignment="Left"></TextBox>
+            <ComboBox Grid.Row="1" x:Name="cmbSnmpVer_A" Width="77" HorizontalAlignment="Center">
+                <ComboBoxItem Content="v1" IsSelected="True"></ComboBoxItem>
+                <ComboBoxItem Content="v2c"></ComboBoxItem>
+                <ComboBoxItem Content="v3" IsEnabled="False"></ComboBoxItem>
+            </ComboBox>
+            <TextBox Grid.Row="1" x:Name="boxSnmpPort_A" Text="161" Height="25" Width="159" VerticalContentAlignment="Center" HorizontalAlignment="Right"></TextBox>
+        </Grid>
+        <Grid Margin="0,5,0,5">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="180"></ColumnDefinition>
+                <ColumnDefinition></ColumnDefinition>
+                <ColumnDefinition Width="225"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <Label Content="Use SNMP OID model template:"></Label>
+            <ComboBox Grid.Column="1" x:Name="cmbTemplates" Height="25" Margin="0,0,10,0" IsEnabled="False">
+
+            </ComboBox>
+            <Button Grid.Column="2" x:Name="btnLoadTemp" Content="Load Template" Width="110" Height="25" HorizontalAlignment="Left" IsEnabled="False"/>
+            <Button Grid.Column="2" x:Name="btnManageTemp" Content="Manage Templates" Width="110" Height="25" HorizontalAlignment="Right" Margin="115,0,0,0" IsEnabled="False"/>
+        </Grid>
+        <Separator Margin="0,8,0,8"/>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="150"/>
+                <ColumnDefinition Width="160"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+
+            <Label Content="Ping:"/>
+            <CheckBox Grid.Column="1" IsChecked="True" IsEnabled="False" Content="Enabled" x:Name="enaPing_A" Margin="5,6,0,0"/>
+            <CheckBox Grid.Column="1" IsChecked="True" Content="Watch" x:Name="monPing_A" Margin="80,6,0,0"/>
+            <Label Content="Refresh rate:" Grid.Column="2"/>
+            <TextBox Grid.Column="2" x:Name="refPing_A" Width="50" Height="20" VerticalContentAlignment="Center" HorizontalAlignment="Left" Margin="78,1,0,0"></TextBox>
+            <Label Content="seconds" Grid.Column="2" Margin="127,0,0,0"/>
+
+            <Separator Grid.Row="1" Grid.ColumnSpan="3" Margin="0,8,0,8"/>
+            <Label Grid.Row="2" Content="Signal strength:" Grid.RowSpan="2" VerticalAlignment="Center"/>
+            <CheckBox Grid.Column="1" IsChecked="True" Grid.Row="2" Content="Enabled" x:Name="enaSignalStr_A" Margin="5,6,0,0"/>
+            <CheckBox Grid.Column="1" IsChecked="True" Grid.Row="2" Content="Watch" x:Name="monSignalStr_A" Margin="80,6,0,0"/>
+            <Label Content="Refresh rate:" Grid.Row="2" Grid.Column="2"/>
+            <TextBox Grid.Column="2" Grid.Row="2" x:Name="refSignalStr_A" Width="50" Height="20" VerticalContentAlignment="Center" HorizontalAlignment="Left" Margin="78,1,0,0"></TextBox>
+            <Label Content="seconds" Grid.Row="2" Grid.Column="2" Margin="127,0,0,0"/>
+            <Label Content="OID:" Grid.Row="3" Grid.Column="1"/>
+            <TextBox Grid.Column="1" Grid.Row="3" Grid.ColumnSpan="2" x:Name="boxSignalStr_A" Height="25" VerticalContentAlignment="Center" Margin="37,0,0,0"></TextBox>
+
+            <Separator Grid.Row="4" Grid.ColumnSpan="3" Margin="0,13,0,8"/>
+            <Label Grid.Row="5" Content="Signal quality:" Grid.RowSpan="2" VerticalAlignment="Center"/>
+            <CheckBox Grid.Column="1" IsChecked="True" Grid.Row="5" Content="Enabled" x:Name="enaSignalQ_A" Margin="5,6,0,0"/>
+            <CheckBox Grid.Column="1" IsChecked="True" Grid.Row="5" Content="Watch" x:Name="monSignalQ_A" Margin="80,6,0,0"/>
+            <Label Content="Refresh rate:" Grid.Row="5" Grid.Column="2"/>
+            <TextBox Grid.Column="2" Grid.Row="5" x:Name="refSignalQ_A" Width="50" Height="20" VerticalContentAlignment="Center" HorizontalAlignment="Left" Margin="78,1,0,0"></TextBox>
+            <Label Content="seconds" Grid.Row="5" Grid.Column="2" Margin="127,0,0,0"/>
+            <Label Content="OID:" Grid.Row="6" Grid.Column="1"/>
+            <TextBox Grid.Column="1" Grid.Row="6" Grid.ColumnSpan="2" x:Name="boxSignalQ_A" Height="25" VerticalContentAlignment="Center" Margin="37,0,0,0"></TextBox>
+
+            <Separator Grid.Row="7" Grid.ColumnSpan="3" Margin="0,13,0,8"/>
+            <Label Grid.Row="8" Content="Radio Tx data rate:" Grid.RowSpan="2" VerticalAlignment="Center"/>
+            <CheckBox Grid.Column="1" IsChecked="True" Grid.Row="8" Content="Enabled" x:Name="enaTx_A" Margin="5,6,0,0"/>
+            <CheckBox Grid.Column="1" IsChecked="True" Grid.Row="8" Content="Watch" x:Name="monTx_A" Margin="80,6,0,0"/>
+            <Label Content="Refresh rate:" Grid.Row="8" Grid.Column="2"/>
+            <TextBox Grid.Column="2" Grid.Row="8" x:Name="refTx_A" Width="50" Height="20" VerticalContentAlignment="Center" HorizontalAlignment="Left" Margin="78,1,0,0"></TextBox>
+            <Label Content="seconds" Grid.Row="8" Grid.Column="2" Margin="127,0,0,0"/>
+            <Label Content="OID:" Grid.Row="9" Grid.Column="1"/>
+            <TextBox Grid.Column="1" Grid.Row="9" Grid.ColumnSpan="2" x:Name="boxTx_A" Height="25" VerticalContentAlignment="Center" Margin="37,0,0,0"></TextBox>
+
+            <Separator Grid.Row="10" Grid.ColumnSpan="3" Margin="0,13,0,8"/>
+            <Label Grid.Row="11" Content="Radio RX data rate:" Grid.RowSpan="2" VerticalAlignment="Center"/>
+            <CheckBox Grid.Column="1" IsChecked="True" Grid.Row="11" Content="Enabled" x:Name="enaRx_A" Margin="5,6,0,0"/>
+            <CheckBox Grid.Column="1" IsChecked="True" Grid.Row="11" Content="Watch" x:Name="monRx_A" Margin="80,6,0,0"/>
+            <Label Content="Refresh rate:" Grid.Row="11" Grid.Column="2"/>
+            <TextBox Grid.Column="2" Grid.Row="11" x:Name="refRx_A" Width="50" Height="20" VerticalContentAlignment="Center" HorizontalAlignment="Left" Margin="78,1,0,0"></TextBox>
+            <Label Content="seconds" Grid.Row="11" Grid.Column="2" Margin="127,0,0,0"/>
+            <Label Content="OID:" Grid.Row="12" Grid.Column="1"/>
+            <TextBox Grid.Column="1" Grid.Row="12" Grid.ColumnSpan="2" x:Name="boxRx_A" Height="25" VerticalContentAlignment="Center" Margin="37,0,0,0"></TextBox>
+        </Grid>
+    </StackPanel>
+</UserControl>

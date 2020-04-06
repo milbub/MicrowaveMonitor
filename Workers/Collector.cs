@@ -14,40 +14,32 @@ namespace MicrowaveMonitor.Workers
         private const int _diffAge = 30;        // s
         private const int _avgSleep = 90;       // s
 
-        protected int _deviceId;
-        protected int _refreshInterval;
-        protected IPAddress _address;
-        protected bool _isRunning = false;
-
-        protected DeviceDisplay _display;
-
-        protected Thread tCollector;
-
         public static int MaxTimeout { get => _maxTimeout; }
         public static int AvgAge { get => _avgAge; }
         public static int DiffAge { get => _diffAge; }
         public static int AvgSleep { get => _avgSleep; }
 
-        public int DeviceId { get => _deviceId; }
-        public int RefreshInterval { get => _refreshInterval; }
-        public IPAddress Address { get => _address; }
-        public bool IsRunning { get => _isRunning; }
+        public int DeviceId { get; protected set; }
+        public int RefreshInterval { get; protected set; }
+        public IPAddress Address { get; protected set; }
+        public bool IsRunning { get; protected set; } = false;
+        public DeviceDisplay Display { get; protected set; }
 
-        public DeviceDisplay Display { get => _display; }
+        protected Thread tCollector;
 
         public Collector(string address, int deviceId, int refreshInterval, DeviceDisplay display)
         {
-            _address = IPAddress.Parse(address);
-            _deviceId = deviceId;
-            _refreshInterval = refreshInterval;
-            _display = display;
+            Address = IPAddress.Parse(address);
+            DeviceId = deviceId;
+            RefreshInterval = refreshInterval;
+            Display = display;
         }
 
         public abstract void Start();
 
         public void Stop()
         {
-            _isRunning = false;
+            IsRunning = false;
             if (RefreshInterval > MaxTimeout)
                 tCollector.Abort();
         }

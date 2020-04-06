@@ -10,19 +10,15 @@ namespace MicrowaveMonitor.Workers
 {
     public abstract class SnmpCollector : Collector
     {
-        protected int _port;
-        protected ObjectIdentifier _collectedOid;
-        protected OctetString _community;
-
-        public int Port { get => _port; }
-        public ObjectIdentifier CollectedOid { get => _collectedOid; }
-        public OctetString Community { get => _community; }
+        public int Port { get; protected set; }
+        public ObjectIdentifier CollectedOid { get; protected set; }
+        public OctetString Community { get; protected set; }
 
         public SnmpCollector(string oid, int port, string community, string address, int deviceId, int refreshInterval, DeviceDisplay display) : base(address, deviceId, refreshInterval, display)
         {
-            _collectedOid = new ObjectIdentifier(oid);
-            _port = port;
-            _community = new OctetString(community);
+            CollectedOid = new ObjectIdentifier(oid);
+            Port = port;
+            Community = new OctetString(community);
         }
 
         public override void Start()
@@ -39,7 +35,7 @@ namespace MicrowaveMonitor.Workers
                 else
                     timeout = RefreshInterval * 2;
 
-                _isRunning = true;
+                IsRunning = true;
 
                 tCollector = new Thread(() =>
                 {
@@ -71,7 +67,7 @@ namespace MicrowaveMonitor.Workers
                                 continue;
                             if (e is ErrorException)
                             {
-                                _isRunning = false;
+                                IsRunning = false;
                                 Console.WriteLine("SNMP Error. Collector suspended. " + e.Message);
                                 // TODO - exception handling
                             }

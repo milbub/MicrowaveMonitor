@@ -93,8 +93,8 @@
     <Compile Include="Gui\MapWindow.xaml.cs">
       <DependentUpon>MapWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Panes\SettingsTab.xaml.cs">
-      <DependentUpon>SettingsTab.xaml</DependentUpon>
+    <Compile Include="Gui\Panes\DeviceSettingsPane.xaml.cs">
+      <DependentUpon>DeviceSettingsPane.xaml</DependentUpon>
     </Compile>
     <Compile Include="Managers\AlarmManager.cs" />
     <Compile Include="Managers\DataManager.cs" />
@@ -157,7 +157,7 @@
       <DependentUpon>MonitoringWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="Gui\Panes\SettingsTab.xaml">
+    <Page Include="Gui\Panes\DeviceSettingsPane.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

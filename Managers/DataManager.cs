@@ -67,47 +67,30 @@ namespace MicrowaveMonitor.Managers
                         Thread.Sleep(dbWriteInterval);
                         try
                         {
-                            //VerifyRows(PingTransactions);
                             Task writePing = databaseClient.WriteAsync(databaseName, measLat, VerifyRows(PingTransactions));
-                            //PingTransactions.Clear();
-                            await writePing;
-                            //VerifyRows(SignalTransactions);
                             Task writeSig = databaseClient.WriteAsync(databaseName, measSig, VerifyRows(SignalTransactions));
-                            //SignalTransactions.Clear();
-                            await writeSig;
-                            //VerifyRows(SignalQTransactions);
                             Task writeSigQ = databaseClient.WriteAsync(databaseName, measSigQ, VerifyRows(SignalQTransactions));
-                            //SignalQTransactions.Clear();
-                            await writeSigQ;
-                            //VerifyRows(TxTransactions);
                             Task writeTx = databaseClient.WriteAsync(databaseName, measTx, VerifyRows(TxTransactions));
-                            //TxTransactions.Clear();
-                            await writeTx;
-                            //VerifyRows(RxTransactions);
                             Task writeRx = databaseClient.WriteAsync(databaseName, measRx, VerifyRows(RxTransactions));
-                            //RxTransactions.Clear();
-                            await writeRx;
-                            //VerifyRows(TempOduTransactions);
                             Task writeTempOdu = databaseClient.WriteAsync(databaseName, measTmpO, VerifyRows(TempOduTransactions));
-                            //TempOduTransactions.Clear();
-                            await writeTempOdu;
-                            //VerifyRows(TempIduTransactions);
                             Task writeTempIdu = databaseClient.WriteAsync(databaseName, measTmpI, VerifyRows(TempIduTransactions));
-                            //TempIduTransactions.Clear();
-                            await writeTempIdu;
-                            //VerifyRows(VoltageTransactions);
                             Task writeVoltage = databaseClient.WriteAsync(databaseName, measVolt, VerifyRows(VoltageTransactions));
-                            //VoltageTransactions.Clear();
-                            await writeVoltage;
 
                             if (++writeCyckles > weatherCycles)
                             {
-                                //VerifyRows(WeatherTempTransactions);
                                 Task writeWeaTemp = databaseClient.WriteAsync(databaseName, measTmpA, VerifyRows(WeatherTempTransactions));
-                                //WeatherTempTransactions.Clear();
                                 weatherCycles = 0;
                                 await writeWeaTemp;
                             }
+                            
+                            await writePing;
+                            await writeSig;
+                            await writeSigQ;
+                            await writeTx;
+                            await writeRx;
+                            await writeTempOdu;
+                            await writeTempIdu;
+                            await writeVoltage;
                         }
                         catch (InfluxException e)
                         {
@@ -120,10 +103,6 @@ namespace MicrowaveMonitor.Managers
                             } else
                                 Console.WriteLine(e.Message);
                         }
-                        catch (InvalidOperationException e)
-                        {
-                            Console.WriteLine(e.Message);
-                        }
                     }
                 });
                 writer.Start();
@@ -133,11 +112,14 @@ namespace MicrowaveMonitor.Managers
         private List<DynamicInfluxRow> VerifyRows(Queue<DynamicInfluxRow> rows)
         {
             List<DynamicInfluxRow> verified = new List<DynamicInfluxRow>();
-            for (int i = 0; i < rows.Count; i++)
+            lock (rows)
             {
-                DynamicInfluxRow r = rows.Dequeue();
-                if (r != null)
-                    verified.Add(r);
+                for (int i = 0; i < rows.Count; i++)
+                {
+                    DynamicInfluxRow r = rows.Dequeue();
+                    if (r != null)
+                        verified.Add(r);
+                }
             }
             return verified;
         }

@@ -9,7 +9,7 @@ namespace MicrowaveMonitor.Workers
 {
     public class PingCollector : Collector
     {
-        private Queue<DynamicInfluxRow> database;
+        private readonly Queue<DynamicInfluxRow> database;
 
         public PingCollector(Queue<DynamicInfluxRow> dbRows, string address, int deviceId, int refreshInterval, DeviceDisplay display) : base(address, deviceId, refreshInterval, display)
         {
@@ -31,11 +31,11 @@ namespace MicrowaveMonitor.Workers
                 else
                     timeout = RefreshInterval * 2;
 
-                _isRunning = true;
+                IsRunning = true;
 
                 tCollector = new Thread(() =>
                 {
-                    while (_isRunning)
+                    while (IsRunning)
                     {
                         beginTime = DateTime.Now;
                         PingReply reply = pingSender.Send(Address, 1000);
@@ -60,7 +60,10 @@ namespace MicrowaveMonitor.Workers
             row.Timestamp = DateTime.Now.ToUniversalTime();
             row.Fields.Add("value", result.RoundtripTime);
             row.Tags.Add("device", DeviceId.ToString());
-            database.Enqueue(row);
+
+            lock (database)
+                database.Enqueue(row);
+
             Diff();
         }
 

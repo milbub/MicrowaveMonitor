@@ -105,7 +105,7 @@
                 <RadioButton x:Name="siteR2" Grid.Row="1" Content="R2" Click="SiteChoosed" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,217,0" IsEnabled="False"/>
                 <RadioButton x:Name="siteR3" Grid.Row="1" Content="R3" Click="SiteChoosed" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,172,0" IsEnabled="False"/>
                 <RadioButton x:Name="siteR4" Grid.Row="1" Content="R4" Click="SiteChoosed" VerticalAlignment="Center"  HorizontalAlignment="Right" Margin="0,0,127,0" IsEnabled="False"/>
-                <RadioButton x:Name="siteB" Grid.Row="1" Content="B" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,82,0" FontWeight="Bold"/>
+                <RadioButton x:Name="siteB" Grid.Row="1" Content="B" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,82,0" FontWeight="Bold" IsEnabled="False"/>
                 <Button ToolTip="Show Site on Map" x:Name="buttonMap" Click="ButtonFired" Grid.Row="1" Width="28" Height="27" HorizontalAlignment="Right" Margin="0,0,42,0">
                     <Image Source="/Gui/Icons/pin.png" Height="18"></Image>
                 </Button>
@@ -362,7 +362,45 @@
                         <TabItem.Header>
                             <Image ToolTip="Link Settings" Source="/Gui/Icons/adjust.png" Width="20" Height="20" Margin="3,0,3,0"></Image>
                         </TabItem.Header>
-                        <gui:SettingsTab x:Name="settingsTab"></gui:SettingsTab>
+                        <ScrollViewer VerticalScrollBarVisibility="Visible">
+                            <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5,5,5,5">
+                                <Label Content="Configuration changes takes effect after the restart of link monitoring!" FontWeight="Bold"></Label>
+                                <Label Content="Link Name:"></Label>
+                                <TextBox x:Name="boxLinkName" Height="25" VerticalContentAlignment="Center"></TextBox>
+                                <Label Content="Note: (optional)"></Label>
+                                <TextBox x:Name="boxNote" Height="25" VerticalContentAlignment="Center"></TextBox>
+                                <Label Content="Active link endpoints and retranslation sites:"></Label>
+                                <StackPanel Orientation="Horizontal">
+                                    <CheckBox x:Name="checkA" Content="A" Margin="10,0,0,0" IsEnabled="False" IsChecked="True" />
+                                    <CheckBox x:Name="checkB" Content="B" Margin="10,0,0,0" IsEnabled="{Binding ElementName=checkA, Path=IsChecked}" />
+                                    <CheckBox x:Name="checkR1" Content="R1" Margin="10,0,0,0" IsEnabled="{Binding ElementName=checkB, Path=IsChecked}" />
+                                    <CheckBox x:Name="checkR2" Content="R2" Margin="10,0,0,0" IsEnabled="{Binding ElementName=checkR1, Path=IsChecked}" />
+                                    <CheckBox x:Name="checkR3" Content="R3" Margin="10,0,0,0" IsEnabled="{Binding ElementName=checkR2, Path=IsChecked}" />
+                                    <CheckBox x:Name="checkR4" Content="R4" Margin="10,0,0,0" IsEnabled="{Binding ElementName=checkR3, Path=IsChecked}" />
+                                </StackPanel>
+                                <TabControl Margin="0,10,0,10" Background="LightGray">
+                                    <TabItem x:Name="tabA" Header="A">
+                                        <gui:DeviceSettingsPane x:Name="settingsA"></gui:DeviceSettingsPane>
+                                    </TabItem>
+                                    <TabItem x:Name="tabB" Header="B" IsEnabled="{Binding ElementName=checkB, Path=IsChecked}">
+                                        <gui:DeviceSettingsPane x:Name="settingsB"></gui:DeviceSettingsPane>
+                                    </TabItem>
+                                    <TabItem x:Name="tabR1" Header="R1" IsEnabled="{Binding ElementName=checkR1, Path=IsChecked}">
+                                        <gui:DeviceSettingsPane x:Name="settingsR1"></gui:DeviceSettingsPane>
+                                    </TabItem>
+                                    <TabItem x:Name="tabR2" Header="R2" IsEnabled="{Binding ElementName=checkR2, Path=IsChecked}">
+                                        <gui:DeviceSettingsPane x:Name="settingsR2"></gui:DeviceSettingsPane>
+                                    </TabItem>
+                                    <TabItem x:Name="tabR3" Header="R3" IsEnabled="{Binding ElementName=checkR3, Path=IsChecked}">
+                                        <gui:DeviceSettingsPane x:Name="settingsR3"></gui:DeviceSettingsPane>
+                                    </TabItem>
+                                    <TabItem x:Name="tabR4" Header="R4" IsEnabled="{Binding ElementName=checkR4, Path=IsChecked}">
+                                        <gui:DeviceSettingsPane x:Name="settingsR4"></gui:DeviceSettingsPane>
+                                    </TabItem>
+                                </TabControl>
+                                <Button x:Name="settingsSave" Content="Save" Width="110" Height="30" Margin="0,0,0,0" HorizontalAlignment="Center"/>
+                            </StackPanel>
+                        </ScrollViewer>
                     </TabItem>
                 </TabControl>
             </Grid>

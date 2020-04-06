@@ -16,14 +16,14 @@ namespace MicrowaveMonitor.Workers
         public static int MinRefresh { get; } = 5;          // 5 min
         public static int ApiWaitTime { get; } = 1200;      // 1200 msec
 
-        private Dictionary<int, DeviceDisplay> displays;
-        private Queue<DynamicInfluxRow> database;
-        private Dictionary<int, string> deviceLatitude = new Dictionary<int, string>();
-        private Dictionary<int, string> deviceLongitude = new Dictionary<int, string>();
+        private readonly Dictionary<int, DeviceDisplay> displays;
+        private readonly Queue<DynamicInfluxRow> database;
+        private readonly Dictionary<int, string> deviceLatitude = new Dictionary<int, string>();
+        private readonly Dictionary<int, string> deviceLongitude = new Dictionary<int, string>();
 
         public bool IsRunning { get; set; }
         private Thread tCollector;
-        private OpenWeather weatherApi = new OpenWeather(ConfigurationManager.AppSettings.Get("WeatherApiKey"));
+        private readonly OpenWeather weatherApi = new OpenWeather(ConfigurationManager.AppSettings.Get("WeatherApiKey"));
 
         public WeatherCollector(Queue<DynamicInfluxRow> dbRows, Dictionary<int, DeviceDisplay> deviceDisplays)
         {
@@ -73,7 +73,9 @@ namespace MicrowaveMonitor.Workers
                             row.Timestamp = startIter.ToUniversalTime();
                             row.Fields.Add("value", temperature);
                             row.Tags.Add("device", devId.ToString());
-                            database.Enqueue(row);
+
+                            lock (database)
+                                database.Enqueue(row);
 
                             TimeSpan diffIter = DateTime.Now - startIter;
                             if (diffIter < apiWaitTime)
