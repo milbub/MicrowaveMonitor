@@ -32,19 +32,6 @@ namespace MicrowaveMonitor.Workers
 
             lock (database)
                 database.Enqueue(row);
-
-            Diff();
-        }
-
-        public override void RecordAvg(double avg)
-        {
-            Display.AvgSigQ = avg;
-        }
-
-        public override void RecordDiff(double sum, int count)
-        {
-            if (Display.AvgSigQ > 0)
-                Display.DiffSigQ = sum / count - Display.AvgSigQ;
         }
     }
 }

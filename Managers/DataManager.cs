@@ -13,18 +13,18 @@ namespace MicrowaveMonitor.Managers
 {
     public class DataManager
     {
-        public static int dbWriteInterval { get; } = 10000;      // 10000 msec
-        private static float weatherCycles = (WeatherCollector.MinRefresh * 60000) / dbWriteInterval;
+        public static int DbWriteInterval { get; } = 10000;      // 10000 msec
+        private static float weatherCycles = (WeatherCollector.MinRefresh * 60000) / DbWriteInterval;
 
-        public const string measLat = "latency";
-        public const string measSig = "signal";
-        public const string measSigQ = "signalQ";
-        public const string measTx = "tx";
-        public const string measRx = "rx";
-        public const string measTmpO = "tempOdu";
-        public const string measTmpI = "tempIdu";
-        public const string measVolt = "voltage";
-        public const string measTmpA = "tempAir";
+        public readonly string measLat = "latency";
+        public readonly string measSig = "signal";
+        public readonly string measSigQ = "signalQ";
+        public readonly string measTx = "tx";
+        public readonly string measRx = "rx";
+        public readonly string measTmpO = "tempOdu";
+        public readonly string measTmpI = "tempIdu";
+        public readonly string measVolt = "voltage";
+        public readonly string measTmpA = "tempAir";
 
         public Queue<DynamicInfluxRow> PingTransactions = new Queue<DynamicInfluxRow>();
         public Queue<DynamicInfluxRow> SignalTransactions = new Queue<DynamicInfluxRow>();
@@ -36,13 +36,13 @@ namespace MicrowaveMonitor.Managers
         public Queue<DynamicInfluxRow> VoltageTransactions = new Queue<DynamicInfluxRow>();
         public Queue<DynamicInfluxRow> WeatherTempTransactions = new Queue<DynamicInfluxRow>();
 
-        public static string serverAddress = ConfigurationManager.ConnectionStrings["InfluxServer"].ConnectionString;
-        public static string databaseName = ConfigurationManager.ConnectionStrings["InfluxData"].ConnectionString;
-        public static string retention = ConfigurationManager.ConnectionStrings["InfluxRetention"].ConnectionString;
+        public readonly string serverAddress = ConfigurationManager.ConnectionStrings["InfluxServer"].ConnectionString;
+        public readonly string databaseName = ConfigurationManager.ConnectionStrings["InfluxData"].ConnectionString;
+        public readonly string retention = ConfigurationManager.ConnectionStrings["InfluxRetention"].ConnectionString;
         private readonly string user = ConfigurationManager.ConnectionStrings["InfluxUser"].ConnectionString;
         private readonly string pass = ConfigurationManager.ConnectionStrings["InfluxPass"].ConnectionString;
 
-        private InfluxClient databaseClient;
+        private readonly InfluxClient databaseClient;
         private Thread writer;
 
         public bool IsRunning { get; set; } = false;
@@ -64,7 +64,7 @@ namespace MicrowaveMonitor.Managers
                 {
                     while (IsRunning)
                     {
-                        Thread.Sleep(dbWriteInterval);
+                        Thread.Sleep(DbWriteInterval);
                         try
                         {
                             Task writePing = databaseClient.WriteAsync(databaseName, measLat, VerifyRows(PingTransactions));
@@ -133,10 +133,14 @@ namespace MicrowaveMonitor.Managers
             return null;
         }
 
-        public async Task<object> QueryValue(string query)
+        public async Task<DynamicInfluxRow> QueryValue(string query)
         {
             InfluxResultSet<DynamicInfluxRow> resultSet = await databaseClient.ReadAsync<DynamicInfluxRow>(databaseName, query);
-            return resultSet.Results[0].Series[0].Rows[0].Fields.Values.First();
+            if (resultSet != null)
+                if (resultSet.Results.First().Series.Count > 0)
+                    if (resultSet.Results.First().Series.First().Rows.Count > 0)
+                        return resultSet.Results.First().Series.First().Rows.First();
+            return null;
         }
 
         public void StopDatabaseWriter()

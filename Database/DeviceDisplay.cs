@@ -5,12 +5,6 @@ namespace MicrowaveMonitor.Database
 {
     public class DeviceDisplay : INotifyPropertyChanged
     {
-        private double _avgSig = 0;
-        private double _diffSig = 0;
-        private double _avgSigQ = 0;
-        private double _diffSigQ = 0;
-        private double _avgPing = 0;
-        private double _diffPing = 0;
         private Record<double> _dataSig;
         private Record<double> _dataSigQ;
         private Record<uint> _dataTx;
@@ -25,63 +19,6 @@ namespace MicrowaveMonitor.Database
         private string _weatherDesc = "no data";
         private float _weatherTemp = 0;
         private double _weatherWind = 0;
-
-        public double AvgSig
-        {
-            get => _avgSig;
-            set => _avgSig = value;
-        }
-
-        public double DiffSig
-        {
-            get => _diffSig;
-            set
-            {
-                if (value != _diffSig)
-                {
-                    _diffSig = value;
-                    OnPropertyChanged("DiffSig");
-                }
-            }
-        }
-
-        public double AvgSigQ
-        {
-            get => _avgSigQ;
-            set => _avgSigQ = value;
-        }
-
-        public double DiffSigQ
-        {
-            get => _diffSigQ;
-            set
-            {
-                if (value != _diffSigQ)
-                {
-                    _diffSigQ = value;
-                    OnPropertyChanged("DiffSigQ");
-                }
-            }
-        }
-
-        public double AvgPing
-        {
-            get => _avgPing;
-            set => _avgPing = value;
-        }
-
-        public double DiffPing
-        {
-            get => _diffPing;
-            set
-            {
-                if (value != _diffPing)
-                {
-                    _diffPing = value;
-                    OnPropertyChanged("DiffPing");
-                }
-            }
-        }
 
         public Record<double> DataSig
         {

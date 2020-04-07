@@ -53,9 +53,9 @@ namespace MicrowaveMonitor.Managers
                     });
                     foreach (KeyValuePair<int, DeviceDisplay> item in DeviceStats)
                     {
-                        DiffAlarm(item.Value.AvgPing, item.Value.DiffPing, item.Key, "ms", "ping");
-                        DiffAlarm(item.Value.AvgSig, item.Value.DiffSig, item.Key, "dBm", "signal");
-                        DiffAlarm(item.Value.AvgSigQ, item.Value.DiffSigQ, item.Key, "dB", "signal quality");
+                        //DiffAlarm(item.Value.AvgPing, item.Value.DiffPing, item.Key, "ms", "ping");
+                        //DiffAlarm(item.Value.AvgSig, item.Value.DiffSig, item.Key, "dBm", "signal");
+                        //DiffAlarm(item.Value.AvgSigQ, item.Value.DiffSigQ, item.Key, "dB", "signal quality");
                         //notRespondAlarm(item.DataSignal, item.Address);
                     }
 

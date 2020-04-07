@@ -35,7 +35,7 @@
                     <RowDefinition Height="31"></RowDefinition>
                     <RowDefinition></RowDefinition>
                 </Grid.RowDefinitions>
-                <TextBox Name="searchBox" Padding="3">
+                <TextBox Name="searchBox" Padding="3" VerticalContentAlignment="Center">
                     <TextBox.Style>
                         <Style TargetType="TextBox" xmlns:sys="clr-namespace:System;assembly=mscorlib">
                             <Style.Resources>
@@ -137,54 +137,8 @@
                                 <RowDefinition></RowDefinition>
                                 <RowDefinition></RowDefinition>
                             </Grid.RowDefinitions>
-                            <Grid Grid.Row="0">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="26"></RowDefinition>
-                                    <RowDefinition></RowDefinition>
-                                </Grid.RowDefinitions>
-                                <Label Content="Signal Strength" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-                                <Label Margin="153,0,0,0" ToolTip="Graph History" HorizontalAlignment="Left">
-                                    <Image Source="/Gui/Icons/clock.png"></Image>
-                                </Label>
-                                <ComboBox x:Name="historySignal" Tag="sig" Width="90" Height="21" HorizontalAlignment="Left" Margin="180,0,0,0">
-                                    <ComboBoxItem Content="1 minute"></ComboBoxItem>
-                                    <ComboBoxItem Content="10 minutes" IsSelected="True"></ComboBoxItem>
-                                    <ComboBoxItem Content="1 hour"></ComboBoxItem>
-                                    <ComboBoxItem Content="6 hours"></ComboBoxItem>
-                                    <ComboBoxItem Content="1 day"></ComboBoxItem>
-                                    <ComboBoxItem Content="7 days"></ComboBoxItem>
-                                    <ComboBoxItem Content="30 days"></ComboBoxItem>
-                                </ComboBox>
-                                <Label Content="AVG:" FontWeight="Bold" Margin="450,0,0,0"/>
-                                <Label x:Name="avgSig" Margin="485,0,0,0"/>
-                                <Label Content="Diff:" FontWeight="Bold" Margin="550,0,0,0"/>
-                                <Label x:Name="diffSig" Margin="583,0,0,0"/>
-                                <gui:GraphRealtime Grid.Row="1" x:Name="signalLevel"></gui:GraphRealtime>
-                            </Grid>
-                            <Grid Grid.Row="1">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="26"></RowDefinition>
-                                    <RowDefinition></RowDefinition>
-                                </Grid.RowDefinitions>
-                                <Label Content="Signal Quality" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-                                <Label Margin="153,0,0,0" ToolTip="Graph History" HorizontalAlignment="Left">
-                                    <Image Source="/Gui/Icons/clock.png"></Image>
-                                </Label>
-                                <ComboBox x:Name="historySignalQ" Tag="sigQ" Width="90" Height="21" HorizontalAlignment="Left" Margin="180,0,0,0">
-                                    <ComboBoxItem Content="1 minute"></ComboBoxItem>
-                                    <ComboBoxItem Content="10 minutes" IsSelected="True"></ComboBoxItem>
-                                    <ComboBoxItem Content="1 hour"></ComboBoxItem>
-                                    <ComboBoxItem Content="6 hours"></ComboBoxItem>
-                                    <ComboBoxItem Content="1 day"></ComboBoxItem>
-                                    <ComboBoxItem Content="7 days"></ComboBoxItem>
-                                    <ComboBoxItem Content="30 days"></ComboBoxItem>
-                                </ComboBox>
-                                <Label Content="AVG:" FontWeight="Bold" Margin="450,0,0,0"/>
-                                <Label x:Name="avgSigQ" Margin="485,0,0,0"/>
-                                <Label Content="Diff:" FontWeight="Bold" Margin="550,0,0,0"/>
-                                <Label x:Name="diffSigQ" Margin="583,0,0,0"/>
-                                <gui:GraphRealtime Grid.Row="1" x:Name="signalQuality"></gui:GraphRealtime>
-                            </Grid>
+                            <gui:ChartRealtimePane x:Name="signal" Grid.Row="0"></gui:ChartRealtimePane>
+                            <gui:ChartRealtimePane x:Name="signalQ" Grid.Row="1"></gui:ChartRealtimePane>
                         </Grid>
                     </TabItem>
                     <TabItem Header="Temperature">
@@ -193,163 +147,31 @@
                                 <RowDefinition></RowDefinition>
                                 <RowDefinition></RowDefinition>
                             </Grid.RowDefinitions>
-                            <Grid Grid.Row="0">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="26"></RowDefinition>
-                                    <RowDefinition></RowDefinition>
-                                </Grid.RowDefinitions>
-                                <Label Content="Outdoor Unit Temperature" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-                                <Label Margin="153,0,0,0" ToolTip="Graph History" HorizontalAlignment="Left">
-                                    <Image Source="/Gui/Icons/clock.png"></Image>
-                                </Label>
-                                <ComboBox x:Name="historyTempOdu" Tag="tempodu" Width="90" Height="21" HorizontalAlignment="Left" Margin="180,0,0,0">
-                                    <ComboBoxItem Content="1 minute"></ComboBoxItem>
-                                    <ComboBoxItem Content="10 minutes" IsSelected="True"></ComboBoxItem>
-                                    <ComboBoxItem Content="1 hour"></ComboBoxItem>
-                                    <ComboBoxItem Content="6 hours"></ComboBoxItem>
-                                    <ComboBoxItem Content="1 day"></ComboBoxItem>
-                                    <ComboBoxItem Content="7 days"></ComboBoxItem>
-                                    <ComboBoxItem Content="30 days"></ComboBoxItem>
-                                </ComboBox>
-                                <Label Content="AVG:" FontWeight="Bold" Margin="450,0,0,0"/>
-                                <Label x:Name="avgTempOdu" Margin="485,0,0,0"/>
-                                <Label Content="Diff:" FontWeight="Bold" Margin="550,0,0,0"/>
-                                <Label x:Name="diffTempOdu" Margin="583,0,0,0"/>
-                                <gui:GraphRealtime Grid.Row="1" x:Name="tempOdu"></gui:GraphRealtime>
-                            </Grid>
-                            <Grid Grid.Row="1">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="26"></RowDefinition>
-                                    <RowDefinition></RowDefinition>
-                                </Grid.RowDefinitions>
-                                <Label Content="Indoor Unit Temperature" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-                                <Label Margin="153,0,0,0" ToolTip="Graph History" HorizontalAlignment="Left">
-                                    <Image Source="/Gui/Icons/clock.png"></Image>
-                                </Label>
-                                <ComboBox x:Name="historyTempIdu" Tag="tempidu" Width="90" Height="21" HorizontalAlignment="Left" Margin="180,0,0,0">
-                                    <ComboBoxItem Content="1 minute"></ComboBoxItem>
-                                    <ComboBoxItem Content="10 minutes" IsSelected="True"></ComboBoxItem>
-                                    <ComboBoxItem Content="1 hour"></ComboBoxItem>
-                                    <ComboBoxItem Content="6 hours"></ComboBoxItem>
-                                    <ComboBoxItem Content="1 day"></ComboBoxItem>
-                                    <ComboBoxItem Content="7 days"></ComboBoxItem>
-                                    <ComboBoxItem Content="30 days"></ComboBoxItem>
-                                </ComboBox>
-                                <Label Content="AVG:" FontWeight="Bold" Margin="450,0,0,0"/>
-                                <Label x:Name="avgTempIdu" Margin="485,0,0,0"/>
-                                <Label Content="Diff:" FontWeight="Bold" Margin="550,0,0,0"/>
-                                <Label x:Name="diffTempIdu" Margin="583,0,0,0"/>
-                                <gui:GraphRealtime Grid.Row="1" x:Name="tempIdu"></gui:GraphRealtime>
-                            </Grid>
+                            <gui:ChartRealtimePane x:Name="tempOdu" Grid.Row="0"></gui:ChartRealtimePane>
+                            <gui:ChartRealtimePane x:Name="tempIdu" Grid.Row="1"></gui:ChartRealtimePane>
                         </Grid>
                     </TabItem>
                     <TabItem Header="Voltage">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="319*"/>
-                                <ColumnDefinition Width="402*"/>
-                            </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="26"></RowDefinition>
-                                <RowDefinition></RowDefinition>
-                            </Grid.RowDefinitions>
-                            <Label Content="Power Voltage" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-                            <Label Margin="153,0,0,0" ToolTip="Graph History" HorizontalAlignment="Left">
-                                <Image Source="/Gui/Icons/clock.png"></Image>
-                            </Label>
-                            <ComboBox x:Name="historyVoltage" Tag="volt" Width="90" Height="21" HorizontalAlignment="Left" Margin="180,0,0,0">
-                                <ComboBoxItem Content="1 minute"></ComboBoxItem>
-                                <ComboBoxItem Content="10 minutes" IsSelected="True"></ComboBoxItem>
-                                <ComboBoxItem Content="1 hour"></ComboBoxItem>
-                                <ComboBoxItem Content="6 hours"></ComboBoxItem>
-                                <ComboBoxItem Content="1 day"></ComboBoxItem>
-                                <ComboBoxItem Content="7 days"></ComboBoxItem>
-                                <ComboBoxItem Content="30 days"></ComboBoxItem>
-                            </ComboBox>
-                            <Label Content="AVG:" FontWeight="Bold" Margin="131,0,0,0" Grid.Column="1"/>
-                            <Label x:Name="avgVolt" Margin="166,0,0,0" Grid.Column="1"/>
-                            <Label Content="Diff:" FontWeight="Bold" Margin="231,0,0,0" Grid.Column="1"/>
-                            <Label x:Name="diffVolt" Margin="264,0,0,0" Grid.Column="1"/>
-                            <gui:GraphRealtime Grid.Row="1" x:Name="voltage" Grid.ColumnSpan="2"></gui:GraphRealtime>
-                        </Grid>
+                        <gui:ChartRealtimePane x:Name="voltage"></gui:ChartRealtimePane>
                     </TabItem>
                     <TabItem Header="Traffic">
                         <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="319*"/>
-                                <ColumnDefinition Width="402*"/>
-                            </Grid.ColumnDefinitions>
                             <Grid.RowDefinitions>
-                                <RowDefinition Height="26"></RowDefinition>
                                 <RowDefinition></RowDefinition>
-                                <RowDefinition Height="26"></RowDefinition>
                                 <RowDefinition></RowDefinition>
                             </Grid.RowDefinitions>
-                            <Label Content="Radio Transmit" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-                            <Label Margin="153,0,0,0" ToolTip="Graph History" HorizontalAlignment="Left">
-                                <Image Source="/Gui/Icons/clock.png"></Image>
-                            </Label>
-                            <ComboBox x:Name="historyTx" Tag="tx" Width="90" Height="21" HorizontalAlignment="Left" Margin="180,0,0,0">
-                                <ComboBoxItem Content="1 minute"></ComboBoxItem>
-                                <ComboBoxItem Content="10 minutes" IsSelected="True"></ComboBoxItem>
-                                <ComboBoxItem Content="1 hour"></ComboBoxItem>
-                                <ComboBoxItem Content="6 hours"></ComboBoxItem>
-                                <ComboBoxItem Content="1 day"></ComboBoxItem>
-                                <ComboBoxItem Content="7 days"></ComboBoxItem>
-                                <ComboBoxItem Content="30 days"></ComboBoxItem>
-                            </ComboBox>
-                            <Label Content="AVG:" FontWeight="Bold" Margin="131,0,0,0" Grid.Column="1"/>
-                            <Label x:Name="avgTx" Margin="166,0,0,0" Grid.Column="1"/>
-                            <Label Content="Diff:" FontWeight="Bold" Margin="231,0,0,0" Grid.Column="1"/>
-                            <Label x:Name="diffTx" Margin="264,0,0,0" Grid.Column="1"/>
-                            <gui:GraphRealtime Grid.Row="1" x:Name="tx" Grid.ColumnSpan="2"></gui:GraphRealtime>
-                            
-                            <Label Grid.Row="2" Content="Radio Receive" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-                            <Label Grid.Row="2" Margin="153,0,0,0" ToolTip="Graph History" HorizontalAlignment="Left">
-                                <Image Source="/Gui/Icons/clock.png"></Image>
-                            </Label>
-                            <ComboBox Grid.Row="2" x:Name="historyRx" Tag="rx" Width="90" Height="21" HorizontalAlignment="Left" Margin="180,0,0,0">
-                                <ComboBoxItem Content="1 minute"></ComboBoxItem>
-                                <ComboBoxItem Content="10 minutes" IsSelected="True"></ComboBoxItem>
-                                <ComboBoxItem Content="1 hour"></ComboBoxItem>
-                                <ComboBoxItem Content="6 hours"></ComboBoxItem>
-                                <ComboBoxItem Content="1 day"></ComboBoxItem>
-                                <ComboBoxItem Content="7 days"></ComboBoxItem>
-                                <ComboBoxItem Content="30 days"></ComboBoxItem>
-                            </ComboBox>
-                            <Label Grid.Row="2" Content="AVG:" FontWeight="Bold" Margin="131,0,0,0" Grid.Column="1"/>
-                            <Label Grid.Row="2" x:Name="avgRx" Margin="166,0,0,0" Grid.Column="1"/>
-                            <Label Grid.Row="2" Content="Diff:" FontWeight="Bold" Margin="231,0,0,0" Grid.Column="1"/>
-                            <Label Grid.Row="2" x:Name="diffRx" Margin="264,0,0,0" Grid.Column="1"/>
-                            <gui:GraphRealtime Grid.Row="3" x:Name="rx" Grid.ColumnSpan="2"></gui:GraphRealtime>
+                            <gui:ChartRealtimePane x:Name="tx" Grid.Row="0"></gui:ChartRealtimePane>
+                            <gui:ChartRealtimePane x:Name="rx" Grid.Row="1"></gui:ChartRealtimePane>
                         </Grid>
                     </TabItem>
                     <TabItem Header="Latency">
                         <Grid>
                             <Grid.RowDefinitions>
-                                <RowDefinition Height="26"></RowDefinition>
                                 <RowDefinition></RowDefinition>
-                                <RowDefinition Height="26"></RowDefinition>
+                                <RowDefinition Height="25"></RowDefinition>
                             </Grid.RowDefinitions>
-                            <Label Content="Round-trip Time" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-                            <Label Margin="153,0,0,0" ToolTip="Graph History" HorizontalAlignment="Left">
-                                <Image Source="/Gui/Icons/clock.png"></Image>
-                            </Label>
-                            <ComboBox x:Name="historyLatency" Tag="ping" Width="90" Height="21" HorizontalAlignment="Left" Margin="180,0,0,0">
-                                <ComboBoxItem Content="1 minute"></ComboBoxItem>
-                                <ComboBoxItem Content="10 minutes" IsSelected="True"></ComboBoxItem>
-                                <ComboBoxItem Content="1 hour"></ComboBoxItem>
-                                <ComboBoxItem Content="6 hours"></ComboBoxItem>
-                                <ComboBoxItem Content="1 day"></ComboBoxItem>
-                                <ComboBoxItem Content="7 days"></ComboBoxItem>
-                                <ComboBoxItem Content="30 days"></ComboBoxItem>
-                            </ComboBox>
-                            <Label Content="AVG:" FontWeight="Bold" Margin="450,0,0,0"/>
-                            <Label x:Name="avgPing" Margin="485,0,0,0"/>
-                            <Label Content="Diff:" FontWeight="Bold" Margin="550,0,0,0"/>
-                            <Label x:Name="diffPing" Margin="583,0,0,0"/>
-                            <gui:GraphRealtime Grid.Row="1" x:Name="pingwin"></gui:GraphRealtime>
-                            <Label Grid.Row="2" Content="If you are connected into the devices management network via tunneling through public networks, the measurement may not be meaningful." FontSize="10"></Label>
+                            <gui:ChartRealtimePane x:Name="latency"></gui:ChartRealtimePane>
+                            <Label Grid.Row="1" Content="If you are connected into the devices management network via tunneling through public networks, the measurement may not be meaningful." FontSize="10" HorizontalAlignment="Center"></Label>
                         </Grid>
                     </TabItem>
                     <TabItem>

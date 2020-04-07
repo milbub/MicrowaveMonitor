@@ -46,6 +46,7 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>true</Prefer32Bit>
+    <NoWarn>618</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
     <OutputPath>bin\x64\Release\</OutputPath>
@@ -83,6 +84,9 @@
     </Compile>
     <Compile Include="Gui\ElevationWindow.xaml.cs">
       <DependentUpon>ElevationWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Panes\ChartRealtimePane.xaml.cs">
+      <DependentUpon>ChartRealtimePane.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Panes\EventLogPane.xaml.cs">
       <DependentUpon>EventLogPane.xaml</DependentUpon>
@@ -128,6 +132,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Gui\ElevationWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\Panes\ChartRealtimePane.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -29,9 +29,9 @@ namespace MicrowaveMonitor.Gui
         private readonly AlarmManager alarmM;
         private readonly DataManager dataM;
 
-        public Dictionary<int, DeviceDisplay> devicesDisplays;
-        public Link viewedLink;
-        public int viewedDeviceId = 0;
+        private readonly Dictionary<int, DeviceDisplay> devicesDisplays;
+        private Link viewedLink;
+        private int viewedDeviceId = 0;
 
         public MonitoringWindow(LinkManager linkManager, WorkerManager workerManager, AlarmManager alarmManager, DataManager dataManager)
         {
@@ -42,6 +42,7 @@ namespace MicrowaveMonitor.Gui
             devicesDisplays = workerManager.DeviceToFront;
 
             InitializeComponent();
+            RegisterCharts();
             ChangeLink(linkManager.LinkDatabase.Get<Link>(linkManager.LinkNames.First().Key));
 
             LinksList.ItemsSource = linkManager.LinkNames.Values;
@@ -57,27 +58,10 @@ namespace MicrowaveMonitor.Gui
             siteR3.Checked += SiteChoosed;
             siteR4.Checked += SiteChoosed;
 
-            historySignal.SelectionChanged += HistoryChanged;
-            historySignalQ.SelectionChanged += HistoryChanged;
-            historyTempOdu.SelectionChanged += HistoryChanged;
-            historyTempIdu.SelectionChanged += HistoryChanged;
-            historyVoltage.SelectionChanged += HistoryChanged;
-            historyTx.SelectionChanged += HistoryChanged;
-            historyRx.SelectionChanged += HistoryChanged;
-            historyLatency.SelectionChanged += HistoryChanged;
-
-            signalLevel.axisY.Title = "[dBm]";
-            signalQuality.axisY.Title = "[dB]";
-            tx.axisY.Title = "[bit/s]";
-            rx.axisY.Title = "[bit/s]";
-            tx.axisY.MinValue = 0;
-            rx.axisY.MinValue = 0;
-            tempIdu.axisY.Title = "[°C]";
-            tempOdu.axisY.Title = "[°C]";
-            voltage.axisY.Title = "[V]";
-            voltage.axisY.MinValue = 0;
-            pingwin.axisY.Title = "[ms]";
-            pingwin.axisY.MinValue = 0;
+            tx.chart.axisY.MinValue = 0;
+            rx.chart.axisY.MinValue = 0;
+            voltage.chart.axisY.MinValue = 0;
+            latency.chart.axisY.MinValue = 0;
         }
 
         public void ChangeLink(Link viewedLink)
@@ -104,34 +88,40 @@ namespace MicrowaveMonitor.Gui
             {
                 case "A":
                     viewedDeviceId = viewedLink.DeviceBaseId;
+                    ChartsChangeDevice(viewedLink.DeviceBaseId);
                     break;
                 case "R1":
                     viewedDeviceId = viewedLink.DeviceR1Id;
+                    ChartsChangeDevice(viewedLink.DeviceR1Id);
                     break;
                 case "R2":
                     viewedDeviceId = viewedLink.DeviceR2Id;
+                    ChartsChangeDevice(viewedLink.DeviceR2Id);
                     break;
                 case "R3":
                     viewedDeviceId = viewedLink.DeviceR3Id;
+                    ChartsChangeDevice(viewedLink.DeviceR3Id);
                     break;
                 case "R4":
                     viewedDeviceId = viewedLink.DeviceR4Id;
+                    ChartsChangeDevice(viewedLink.DeviceR4Id);
                     break;
                 case "B":
                     viewedDeviceId = viewedLink.DeviceEndId;
+                    ChartsChangeDevice(viewedLink.DeviceEndId);
                     break;
                 default:
                     throw new NotSupportedException();
             }
 
-            HistoryChanged(historySignal, null);
-            HistoryChanged(historySignalQ, null);
-            HistoryChanged(historyTempOdu, null);
-            HistoryChanged(historyTempIdu, null);
-            HistoryChanged(historyVoltage, null);
-            HistoryChanged(historyTx, null);
-            HistoryChanged(historyRx, null);
-            HistoryChanged(historyLatency, null);
+            signal.HistoryChanged(null, null);
+            signalQ.HistoryChanged(null, null);
+            tempOdu.HistoryChanged(null, null);
+            tempIdu.HistoryChanged(null, null);
+            voltage.HistoryChanged(null, null);
+            tx.HistoryChanged(null, null);
+            rx.HistoryChanged(null, null);
+            latency.HistoryChanged(null, null);
             ShowStatics();
 
             devicesDisplays[viewedDeviceId].PropertyChanged += DataChangedDispatch;
@@ -140,17 +130,14 @@ namespace MicrowaveMonitor.Gui
         private void ShowStatics()
         {
             ip.Content = linkM.GetDevice(viewedDeviceId).Address.ToString();
-            DataChanged(null, new PropertyChangedEventArgs("SysName"));
-            DataChanged(null, new PropertyChangedEventArgs("Uptime"));
-            DataChanged(null, new PropertyChangedEventArgs("DiffPing"));
-            DataChanged(null, new PropertyChangedEventArgs("DiffSig"));
-            DataChanged(null, new PropertyChangedEventArgs("DiffSigQ"));
-            DataChanged(null, new PropertyChangedEventArgs("WeatherIcon"));
-            DataChanged(null, new PropertyChangedEventArgs("WeatherDesc"));
-            DataChanged(null, new PropertyChangedEventArgs("WeatherTemp"));
-            DataChanged(null, new PropertyChangedEventArgs("WeatherWind"));
+            DataChanged(devicesDisplays[viewedDeviceId], new PropertyChangedEventArgs("SysName"));
+            DataChanged(devicesDisplays[viewedDeviceId], new PropertyChangedEventArgs("Uptime"));
+            DataChanged(devicesDisplays[viewedDeviceId], new PropertyChangedEventArgs("WeatherIcon"));
+            DataChanged(devicesDisplays[viewedDeviceId], new PropertyChangedEventArgs("WeatherDesc"));
+            DataChanged(devicesDisplays[viewedDeviceId], new PropertyChangedEventArgs("WeatherTemp"));
+            DataChanged(devicesDisplays[viewedDeviceId], new PropertyChangedEventArgs("WeatherWind"));
             if (devicesDisplays[viewedDeviceId].DataPing != null)
-                DataChanged(null, new PropertyChangedEventArgs("DataPing"));
+                DataChanged(devicesDisplays[viewedDeviceId], new PropertyChangedEventArgs("DataPing"));
         }
 
         private void FillSettings()
@@ -159,7 +146,6 @@ namespace MicrowaveMonitor.Gui
             boxNote.Text = viewedLink.Note;
 
             settingsA.FillBoxes(linkM, viewedLink.DeviceBaseId);
-
             siteB.IsEnabled = viewedLink.DeviceEndId > 0 ? settingsB.FillBoxes(linkM, viewedLink.DeviceEndId) : false;
             checkB.IsChecked = viewedLink.DeviceEndId > 0 ? settingsB.FillBoxes(linkM, viewedLink.DeviceEndId) : false;
             siteR1.IsEnabled = viewedLink.DeviceR1Id > 0 ? settingsR1.FillBoxes(linkM, viewedLink.DeviceR1Id) : false;
@@ -194,25 +180,13 @@ namespace MicrowaveMonitor.Gui
             }
         }
 
-        private void DataChanged(object sender, PropertyChangedEventArgs e)
+        private async void DataChanged(object sender, PropertyChangedEventArgs e)
         {
             DeviceDisplay display = (DeviceDisplay)sender;
             
             if (display == devicesDisplays[viewedDeviceId])
                 switch (e.PropertyName)
                 {
-                    case "DiffPing":
-                        diffPing.Content = String.Format("{0:0.0000} ms", display.DiffPing);
-                        avgPing.Content = String.Format("{0:0.00} ms", display.AvgPing);
-                        break;
-                    case "DiffSig":
-                        diffSig.Content = String.Format("{0:0.0000} dBm", display.DiffSig);
-                        avgSig.Content = String.Format("{0:0.00} dBm", display.AvgSig);
-                        break;
-                    case "DiffSigQ":
-                        diffSigQ.Content = String.Format("{0:0.0000} dB", display.DiffSigQ);
-                        avgSigQ.Content = String.Format("{0:0.00} dB", display.AvgSigQ);
-                        break;
                     case "SysName":
                         unitname.Content = display.SysName;
                         break;
@@ -222,30 +196,30 @@ namespace MicrowaveMonitor.Gui
                         break;
                     case "DataPing":
                         ping.Content = String.Format("{0} ms", display.DataPing.Data);
-                        GraphUpdate(pingwin, historyLatency, display.DataPing, null);
+                        await latency.GraphUpdate(display.DataPing, null);
                         break;
                     case "DataSig":
-                        GraphUpdate(signalLevel, historySignal, display.DataSig, null);
+                        await signal.GraphUpdate(display.DataSig, null);
                         break;
                     case "DataSigQ":
-                        GraphUpdate(signalQuality, historySignalQ, display.DataSigQ, null);
+                        await signalQ.GraphUpdate(display.DataSigQ, null);
                         break;
                     case "DataTx":
                         var convertedTx = new Record<double>(display.DataTx.TimeMark, display.DataTx.Data);
-                        GraphUpdate(tx, historyTx, convertedTx, null);
+                        await tx.GraphUpdate(convertedTx, null);
                         break;
                     case "DataRx":
                         var convertedRx = new Record<double>(display.DataRx.TimeMark, display.DataRx.Data);
-                        GraphUpdate(rx, historyRx, convertedRx, null);
+                        await rx.GraphUpdate(convertedRx, null);
                         break;
                     case "DataTempOdu":
-                        GraphUpdate(tempOdu, historyTempOdu, display.DataTempOdu, null);
+                        await tempOdu.GraphUpdate(display.DataTempOdu, null);
                         break;
                     case "DataTempIdu":
-                        GraphUpdate(tempIdu, historyTempIdu, display.DataTempIdu, null);
+                        await tempIdu.GraphUpdate(display.DataTempIdu, null);
                         break;
                     case "DataVoltage":
-                        GraphUpdate(voltage, historyVoltage, display.DataVoltage, null);
+                        await voltage.GraphUpdate(display.DataVoltage, null);
                         break;
                     case "WeatherIcon":
                         Bitmap iconBitmap = (Bitmap)Properties.Resources.ResourceManager.GetObject(display.WeatherIcon);
@@ -263,145 +237,6 @@ namespace MicrowaveMonitor.Gui
                     default:
                         throw new InvalidEnumArgumentException();
                 }
-        }
-
-        private void GraphUpdate(GraphRealtime graph, ComboBox history, Record<double> record, List<Record<double>> manyRecords)
-        {
-            int resolution;     // chart's samples count
-            int span;           // chart's timespan (s)
-
-            switch (history.SelectedIndex)
-            {
-                case 0:         // 1 m
-                    resolution = 60;
-                    span = 60;
-                    break;
-                case 1:         // 10 m
-                    resolution = 600;
-                    span = 600;
-                    break;
-                default:
-                    return;
-            }
-
-            if (record != null && span == graph.Span && viewedDeviceId == graph.DevId)
-                graph.Read(record, resolution, span);
-            else if (manyRecords != null && manyRecords.Count > 0)
-                graph.ReadMany(manyRecords, resolution, span, viewedDeviceId);
-            else
-                graph.SetAxisLimits(DateTime.Now, span);
-        }
-
-        private async void HistoryChanged(object sender, SelectionChangedEventArgs e)
-        {
-            long step;
-            long unit;
-            string query;
-
-            ComboBox history = (ComboBox)sender;
-            switch (history.SelectedIndex)
-            {
-                case 0:         // 1 m
-                    step = TimeSpan.FromSeconds(5).Ticks;
-                    unit = TimeSpan.TicksPerSecond;
-                    query = $@"WHERE time > now() - 1m AND time < now() AND ""device""='{viewedDeviceId}' GROUP BY time(1s) FILL(none)";
-                    break;
-                case 1:         // 10 m
-                    step = TimeSpan.FromSeconds(50).Ticks;
-                    unit = TimeSpan.TicksPerSecond;
-                    query = $@"WHERE time > now() - 10m AND time < now() AND ""device""='{viewedDeviceId}' GROUP BY time(1s) FILL(none)";
-                    break;
-                default:
-                    return;
-            }
-
-            GraphRealtime graph;
-            DynamicInfluxRow[] pending;
-
-            string pre = $@"SELECT mean(""value"") FROM ""{DataManager.databaseName}"".""{DataManager.retention}"".";
-
-            switch (history.Tag)
-            {
-                case "sig":
-                    graph = signalLevel;
-                    lock (dataM.SignalTransactions)
-                        pending = dataM.SignalTransactions.ToArray();
-                    query = pre + $@"""{DataManager.measSig}"" " + query;
-                    break;
-                case "sigQ":
-                    graph = signalQuality;
-                    lock (dataM.SignalQTransactions)
-                        pending = dataM.SignalQTransactions.ToArray();
-                    query = pre + $@"""{DataManager.measSigQ}"" " + query;
-                    break;
-                case "tempodu":
-                    graph = tempOdu;
-                    lock (dataM.TempOduTransactions)
-                        pending = dataM.TempOduTransactions.ToArray();
-                    query = pre + $@"""{DataManager.measTmpO}"" " + query;
-                    break;
-                case "tempidu":
-                    graph = tempIdu;
-                    lock (dataM.TempIduTransactions)
-                        pending = dataM.TempIduTransactions.ToArray();
-                    query = pre + $@"""{DataManager.measTmpI}"" " + query;
-                    break;
-                case "volt":
-                    graph = voltage;
-                    lock (dataM.VoltageTransactions)
-                        pending = dataM.VoltageTransactions.ToArray();
-                    query = pre + $@"""{DataManager.measVolt}"" " + query;
-                    break;
-                case "tx":
-                    graph = tx;
-                    lock (dataM.TxTransactions)
-                        pending = dataM.TxTransactions.ToArray();
-                    query = pre + $@"""{DataManager.measTx}"" " + query;
-                    break;
-                case "rx":
-                    graph = rx;
-                    lock (dataM.RxTransactions)
-                        pending = dataM.RxTransactions.ToArray();
-                    query = pre + $@"""{DataManager.measRx}"" " + query;
-                    break;
-                case "ping":
-                    graph = pingwin;
-                    lock (dataM.PingTransactions)
-                        pending = dataM.PingTransactions.ToArray();
-                    query = pre + $@"""{DataManager.measLat}"" " + query;
-                    break;
-                default:
-                    return;
-            }
-
-            graph.ChartValues.Clear();
-            graph.SetAxisGrid(step, unit);
-
-            List<Record<double>> records = new List<Record<double>>();
-            InfluxSeries<DynamicInfluxRow> series = await dataM.QuerySeries(query);
-            if (series != null)            
-                foreach (dynamic row in series.Rows)
-                {
-                    records.Add(new Record<double>(row.time.ToLocalTime(), row.mean));
-                }
-
-            try
-            {
-                foreach (dynamic row in pending)
-                {
-                    if (row.device == viewedDeviceId.ToString())
-                    {
-                        DateTime timestamp = row.Timestamp;
-                        records.Add(new Record<double>(timestamp.ToLocalTime(), row.value));
-                    }
-                }
-            }
-            catch (Microsoft.CSharp.RuntimeBinder.RuntimeBinderException ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
-
-            GraphUpdate(graph, history, null, records);
         }
 
         private void SiteChoosed(object sender, RoutedEventArgs e)
@@ -449,6 +284,30 @@ namespace MicrowaveMonitor.Gui
             unitname.Content = String.Empty;
             ping.Content = String.Empty;
             uptime.Content = String.Empty;
+        }
+
+        private void RegisterCharts()
+        {
+            signal.RegisterChart("Signal Level", "dBm", "[dBm]", dataM.measSig, viewedDeviceId, dataM.SignalTransactions, dataM);
+            signalQ.RegisterChart("Signal Quality", "dB", "[dB]", dataM.measSigQ, viewedDeviceId, dataM.SignalQTransactions, dataM);
+            tempOdu.RegisterChart("Outdoor Unit Temperature", "°C", "[°C]", dataM.measTmpO, viewedDeviceId, dataM.TempOduTransactions, dataM);
+            tempIdu.RegisterChart("Outdoor Unit Temperature", "°C", "[°C]", dataM.measTmpI, viewedDeviceId, dataM.TempIduTransactions, dataM);
+            voltage.RegisterChart("Power Voltage", "V", "[V]", dataM.measVolt, viewedDeviceId, dataM.VoltageTransactions, dataM);
+            tx.RegisterChart("Transmit Data Rate", "kb/s", "[kbit/s]", dataM.measTx, viewedDeviceId, dataM.TxTransactions, dataM);
+            rx.RegisterChart("Receive Data Rate", "kb/s", "[kbit/s]", dataM.measRx, viewedDeviceId, dataM.RxTransactions, dataM);
+            latency.RegisterChart("Round/trip Time", "ms", "[ms]", dataM.measLat, viewedDeviceId, dataM.PingTransactions, dataM);
+        }
+
+        private void ChartsChangeDevice(int id)
+        {
+            signal.DeviceId = id;
+            signalQ.DeviceId = id;
+            tempOdu.DeviceId = id;
+            tempIdu.DeviceId = id;
+            voltage.DeviceId = id;
+            tx.DeviceId = id;
+            rx.DeviceId = id;
+            latency.DeviceId = id;
         }
 
         public static BitmapImage BitmapToImageSource(Bitmap bitmap)

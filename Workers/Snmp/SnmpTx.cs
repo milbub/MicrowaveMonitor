@@ -20,6 +20,7 @@ namespace MicrowaveMonitor.Workers
         public override void RecordData(IList<Variable> result, DateTime resultTime)
         {
             uint resval = UInt32.Parse(result.First().Data.ToString());
+            resval /= 1000;     // to kb/s
             Display.DataTx = new Record<uint>(resultTime, resval);
             DynamicInfluxRow row = new DynamicInfluxRow();
             row.Timestamp = resultTime.ToUniversalTime();
@@ -28,8 +29,6 @@ namespace MicrowaveMonitor.Workers
 
             lock (database)
                 database.Enqueue(row);
-
-            Diff();
         }
     }
 }
