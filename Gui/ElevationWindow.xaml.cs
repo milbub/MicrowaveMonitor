@@ -49,9 +49,6 @@ namespace MicrowaveMonitor.Gui
                 coordstrings[i] = coords[i].ToString();
             }
 
-            Console.WriteLine(coords.Count);
-            Console.WriteLine(string.Join(",", coordstrings));
-
             _ = ImgDownloadAsync(new Uri(String.Format("http://open.mapquestapi.com/elevation/v1/chart?key={0}&shapeFormat=raw&width=585&height=265&latLngCollection={1}", ConfigurationManager.AppSettings.Get("ElevationApiKey"), string.Join(",", coordstrings))));
         }
 

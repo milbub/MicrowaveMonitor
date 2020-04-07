@@ -44,7 +44,11 @@ namespace MicrowaveMonitor.Managers
                         workers.Add(new SnmpVoltage(dataDb.VoltageTransactions, device.OidVoltage_s, device.SnmpPort, device.CommunityString, device.Address, device.Id, device.RefreshVoltage, DeviceToFront[device.Id]));
 
                     weatherCollector.AddDevice(device.Id, device.Latitude, device.Longitude);
+
+                    DeviceToFront[device.Id].State = DeviceDisplay.LinkState.Running;
                 }
+                else
+                    DeviceToFront[device.Id].State = DeviceDisplay.LinkState.Paused;
             }
 
             StartWorkers();

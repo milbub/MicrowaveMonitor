@@ -15,8 +15,6 @@ using System.Windows.Media.Imaging;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Drawing;
-using Vibrant.InfluxDB.Client;
-using Vibrant.InfluxDB.Client.Rows;
 
 namespace MicrowaveMonitor.Gui
 {
@@ -128,6 +126,7 @@ namespace MicrowaveMonitor.Gui
         {
             ip.Content = device.Address.ToString();
             DataChanged(devicesDisplays[viewedDeviceId], new PropertyChangedEventArgs("SysName"));
+            DataChanged(devicesDisplays[viewedDeviceId], new PropertyChangedEventArgs("State"));
             DataChanged(devicesDisplays[viewedDeviceId], new PropertyChangedEventArgs("Uptime"));
             DataChanged(devicesDisplays[viewedDeviceId], new PropertyChangedEventArgs("WeatherIcon"));
             DataChanged(devicesDisplays[viewedDeviceId], new PropertyChangedEventArgs("WeatherDesc"));
@@ -187,6 +186,9 @@ namespace MicrowaveMonitor.Gui
                     case "SysName":
                         unitname.Content = display.SysName;
                         break;
+                    case "State":
+                        ChangeLinkState(display.State);
+                        break;
                     case "Uptime":
                         TimeSpan t = TimeSpan.FromSeconds(display.Uptime / 100);
                         uptime.Content = String.Format("{0:D2}d {1:D2}h {2:D2}m {3:D2}s", t.Days, t.Hours, t.Minutes, t.Seconds);
@@ -236,6 +238,35 @@ namespace MicrowaveMonitor.Gui
                 }
         }
 
+        private void ChangeLinkState(DeviceDisplay.LinkState state)
+        {
+            switch (state)
+            {
+                case DeviceDisplay.LinkState.Paused:
+                    linkState.Content = "paused";
+                    linkState.Foreground = System.Windows.Media.Brushes.DarkSlateGray;
+                    break;
+                case DeviceDisplay.LinkState.Running:
+                    linkState.Content = "running";
+                    linkState.Foreground = System.Windows.Media.Brushes.Green;
+                    break;
+                case DeviceDisplay.LinkState.AlarmWarning:
+                    linkState.Content = "warning";
+                    linkState.Foreground = System.Windows.Media.Brushes.Gold;
+                    break;
+                case DeviceDisplay.LinkState.AlarmCritical:
+                    linkState.Content = "critical";
+                    linkState.Foreground = System.Windows.Media.Brushes.Crimson;
+                    break;
+                case DeviceDisplay.LinkState.AlarmDown:
+                    linkState.Content = "down";
+                    linkState.Foreground = System.Windows.Media.Brushes.DarkRed;
+                    break;
+                default:
+                    break;
+            }
+        }
+
         private void SiteChoosed(object sender, RoutedEventArgs e)
         {
             RadioButton rb = sender as RadioButton;
@@ -255,17 +286,23 @@ namespace MicrowaveMonitor.Gui
             switch (source.Name)
             {
                 case "buttonMap":
+                    Device a = linkM.GetDevice(viewedLink.DeviceBaseId);
+                    Device b = linkM.GetDevice(viewedLink.DeviceEndId);
                     MapWindow map;
                     if (viewedLink.HopCount > 0)
-                        map = new MapWindow(linkM.GetDevice(viewedLink.DeviceBaseId).Latitude, linkM.GetDevice(viewedLink.DeviceBaseId).Longitude, linkM.GetDevice(viewedLink.DeviceEndId).Latitude, linkM.GetDevice(viewedLink.DeviceEndId).Longitude);
+                        map = new MapWindow(a.Latitude, a.Longitude, b.Latitude, b.Longitude);
                     else
-                        map = new MapWindow(linkM.GetDevice(viewedLink.DeviceBaseId).Latitude, linkM.GetDevice(viewedLink.DeviceBaseId).Longitude);
+                        map = new MapWindow(a.Latitude, a.Longitude);
                     map.Show();
                     break;
                 case "buttonTerrain":
                     ElevationWindow elevation;
                     if (viewedLink.HopCount > 0)
-                        elevation = new ElevationWindow(linkM.GetDevice(viewedLink.DeviceBaseId).Latitude, linkM.GetDevice(viewedLink.DeviceBaseId).Longitude, linkM.GetDevice(viewedLink.DeviceEndId).Latitude, linkM.GetDevice(viewedLink.DeviceEndId).Longitude);
+                    {
+                        Device c = linkM.GetDevice(viewedLink.DeviceBaseId);
+                        Device d = linkM.GetDevice(viewedLink.DeviceEndId);
+                        elevation = new ElevationWindow(c.Latitude, c.Longitude, d.Latitude, d.Longitude);
+                    }
                     else
                         elevation = new ElevationWindow();
                     elevation.Show();

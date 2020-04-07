@@ -5,6 +5,15 @@ namespace MicrowaveMonitor.Database
 {
     public class DeviceDisplay : INotifyPropertyChanged
     {
+        public enum LinkState
+        {
+            Paused = 0,
+            Running = 1,
+            AlarmWarning = 2,
+            AlarmCritical = 3,
+            AlarmDown = 4
+        }
+
         private Record<double> _dataSig;
         private Record<double> _dataSigQ;
         private Record<uint> _dataTx;
@@ -13,6 +22,7 @@ namespace MicrowaveMonitor.Database
         private Record<double> _dataTempOdu;
         private Record<double> _dataTempIdu;
         private Record<double> _dataVoltage;
+        private LinkState _linkState = LinkState.Paused;
         private string _sysName = String.Empty;
         private uint _uptime = 0;
         private string _weatherIcon = "03d";
@@ -120,6 +130,19 @@ namespace MicrowaveMonitor.Database
                 {
                     _dataVoltage = value;
                     OnPropertyChanged("DataVoltage");
+                }
+            }
+        }
+
+        public LinkState State
+        {
+            get => _linkState;
+            set
+            {
+                if (value != _linkState)
+                {
+                    _linkState = value;
+                    OnPropertyChanged("State");
                 }
             }
         }
