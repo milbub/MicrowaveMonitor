@@ -88,31 +88,28 @@ namespace MicrowaveMonitor.Gui
             {
                 case "A":
                     viewedDeviceId = viewedLink.DeviceBaseId;
-                    ChartsChangeDevice(viewedLink.DeviceBaseId);
                     break;
                 case "R1":
                     viewedDeviceId = viewedLink.DeviceR1Id;
-                    ChartsChangeDevice(viewedLink.DeviceR1Id);
                     break;
                 case "R2":
                     viewedDeviceId = viewedLink.DeviceR2Id;
-                    ChartsChangeDevice(viewedLink.DeviceR2Id);
                     break;
                 case "R3":
                     viewedDeviceId = viewedLink.DeviceR3Id;
-                    ChartsChangeDevice(viewedLink.DeviceR3Id);
                     break;
                 case "R4":
                     viewedDeviceId = viewedLink.DeviceR4Id;
-                    ChartsChangeDevice(viewedLink.DeviceR4Id);
                     break;
                 case "B":
                     viewedDeviceId = viewedLink.DeviceEndId;
-                    ChartsChangeDevice(viewedLink.DeviceEndId);
                     break;
                 default:
                     throw new NotSupportedException();
             }
+
+            Device device = linkM.GetDevice(viewedDeviceId);
+            ChartsChangeDevice(viewedDeviceId, device);
 
             signal.HistoryChanged(null, null);
             signalQ.HistoryChanged(null, null);
@@ -122,14 +119,14 @@ namespace MicrowaveMonitor.Gui
             tx.HistoryChanged(null, null);
             rx.HistoryChanged(null, null);
             latency.HistoryChanged(null, null);
-            ShowStatics();
+            ShowStatics(device);
 
             devicesDisplays[viewedDeviceId].PropertyChanged += DataChangedDispatch;
         }
 
-        private void ShowStatics()
+        private void ShowStatics(Device device)
         {
-            ip.Content = linkM.GetDevice(viewedDeviceId).Address.ToString();
+            ip.Content = device.Address.ToString();
             DataChanged(devicesDisplays[viewedDeviceId], new PropertyChangedEventArgs("SysName"));
             DataChanged(devicesDisplays[viewedDeviceId], new PropertyChangedEventArgs("Uptime"));
             DataChanged(devicesDisplays[viewedDeviceId], new PropertyChangedEventArgs("WeatherIcon"));
@@ -298,16 +295,24 @@ namespace MicrowaveMonitor.Gui
             latency.RegisterChart("Round/trip Time", "ms", "[ms]", dataM.measLat, viewedDeviceId, dataM.PingTransactions, dataM);
         }
 
-        private void ChartsChangeDevice(int id)
+        private void ChartsChangeDevice(int id, Device device)
         {
-            signal.DeviceId = id;
-            signalQ.DeviceId = id;
-            tempOdu.DeviceId = id;
-            tempIdu.DeviceId = id;
-            voltage.DeviceId = id;
-            tx.DeviceId = id;
-            rx.DeviceId = id;
-            latency.DeviceId = id;
+            ChartIdChanger(signal, id, device.IsEnabledSignal && !device.IsPaused);
+            ChartIdChanger(signalQ, id, device.IsEnabledSignalQ && !device.IsPaused);
+            ChartIdChanger(tempOdu, id, device.IsEnabledTempOdu && !device.IsPaused);
+            ChartIdChanger(tempIdu, id, device.IsEnabledTempIdu && !device.IsPaused);
+            ChartIdChanger(voltage, id, device.IsEnabledVoltage && !device.IsPaused);
+            ChartIdChanger(tx, id, device.IsEnabledTx && !device.IsPaused);
+            ChartIdChanger(rx, id, device.IsEnabledRx && !device.IsPaused);
+            ChartIdChanger(latency, id, true && !device.IsPaused);
+        }
+
+        private void ChartIdChanger(ChartRealtimePane chart, int id, bool state)
+        {
+            if (state)
+                chart.DeviceId = id;
+            else
+                chart.DeviceId = 0;
         }
 
         public static BitmapImage BitmapToImageSource(Bitmap bitmap)

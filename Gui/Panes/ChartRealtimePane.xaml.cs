@@ -16,11 +16,31 @@ namespace MicrowaveMonitor.Gui
 {
     public partial class ChartRealtimePane : UserControl
     {
+        private int _deviceId;
+
         public string ChartName { get; set; }
         public string Unit { get; set; }
         public string AxisUnit { get; set; }
         public string Measurement { get; set; }
-        public int DeviceId { get; set; }
+        public int DeviceId
+        { 
+            get => _deviceId;
+            set
+            {
+                if (value > 0)
+                {
+                    _deviceId = value;
+                    disNotify.Visibility = Visibility.Hidden;
+                    IsEnabled = true;
+                }
+                else
+                {
+                    _deviceId = 0;
+                    disNotify.Visibility = Visibility.Visible;
+                    IsEnabled = false;
+                }
+            }
+        }
         public Queue<DynamicInfluxRow> Transactions { get; set; }
         public DataManager DataM { get; set; }
         public double Avg { get; set; }
@@ -106,8 +126,12 @@ namespace MicrowaveMonitor.Gui
 
         public async void HistoryChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (DataM == null || Measurement == null || DeviceId == 0)
+            if (DataM == null || Measurement == null)
                 return;
+
+            chart.ChartValues.Clear();
+            avg.Content = string.Empty;
+            diff.Content = string.Empty;
 
             long step;
             long unit;
@@ -131,14 +155,14 @@ namespace MicrowaveMonitor.Gui
 
             query = $@"SELECT mean(""value"") FROM ""{DataM.databaseName}"".""{DataM.retention}""." + $@"""{Measurement}"" " + query;
 
+            chart.SetAxisGrid(step, unit);
+
+            if (DeviceId == 0)
+                return;
+
             DynamicInfluxRow[] pending;
             lock (Transactions)
                 pending = Transactions.ToArray();
-
-            chart.ChartValues.Clear();
-            avg.Content = string.Empty;
-            diff.Content = string.Empty;
-            chart.SetAxisGrid(step, unit);
 
             List<Record<double>> records = new List<Record<double>>();
 

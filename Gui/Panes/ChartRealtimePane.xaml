@@ -28,5 +28,6 @@
         <Label Content="Diff:" FontWeight="Bold" Margin="572,0,0,0"/>
         <Label x:Name="diff" Margin="605,0,0,0"/>
         <gui:GraphRealtime Grid.Row="1" x:Name="chart"></gui:GraphRealtime>
+        <Label Grid.Row="1" x:Name="disNotify" Visibility="Hidden" Content="Monitoring is disabled or not supported on this device." HorizontalAlignment="Center" VerticalAlignment="Center"></Label>
     </Grid>
 </UserControl>
