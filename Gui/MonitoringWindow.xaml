@@ -62,15 +62,17 @@
                 <Button ToolTip="Search Link" x:Name="buttonSearch" Width="28" Height="27" HorizontalAlignment="Right" Margin="0,0,2,0">
                     <Image Source="/Gui/Icons/search.png" Height="24"></Image>
                 </Button>
-                <ListBox x:Name="LinksList" Background="LightGray" Grid.Row="1">
-                    <ListBox.ItemTemplate>
-                        <DataTemplate>
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="{Binding}" />
-                            </StackPanel>
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
+                <ScrollViewer x:Name="linksScroll" Grid.Row="1">
+                    <ListBox x:Name="LinksList" Background="LightGray">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="{Binding}" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </ScrollViewer>
             </Grid>
             <GridSplitter Background="#FF9E9E9E" x:Name="monitorAreaSplitter" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="5"/>
             <Grid Grid.Column="3" Background="Silver">
@@ -83,15 +85,21 @@
                 </Grid.RowDefinitions>
 
                 <Label x:Name="linkCaption" HorizontalAlignment="Left" FontSize="16" Margin="0,0,150,0"/>
-                <Button ToolTip="Start Monitoring" Click="StartButtonFired" x:Name="buttonStart" HorizontalAlignment="Right" Width="28" Height="27" Margin="0,0,170,0">
+                <Button ToolTip="Start Monitoring" Click="StartButtonFired" x:Name="buttonStart" HorizontalAlignment="Right" Width="28" Height="27" Margin="0,0,171,0">
                     <Image Source="/Gui/Icons/play.png" Height="24"></Image>
                 </Button>
-                <Button ToolTip="Pause Monitoring" Click="StopButtonFired" x:Name="buttonPause" HorizontalAlignment="Right" Width="28" Height="27" Margin="0,0,138,0">
+                <Button ToolTip="Pause Monitoring" Click="StopButtonFired" x:Name="buttonPause" HorizontalAlignment="Right" Width="28" Height="27" Margin="0,0,139,0">
                     <Image Source="/Gui/Icons/pause.png" Height="24"></Image>
                 </Button>
-                <Button ToolTip="Add New Link" x:Name="buttonAdd" Content="➕" FontSize="15" HorizontalAlignment="Right" Width="28" Height="27" Margin="0,0,106,0" Padding="0,0,0,1"/>
-                <Button ToolTip="Delete Link" x:Name="buttonDelete" Content="➖" FontSize="15" HorizontalAlignment="Right" Width="28" Height="27" Margin="0,0,74,0" Padding="0,0,0,1"/>
-                <Button ToolTip="Settings" x:Name="buttonSettings" Content="🛠" FontSize="17" HorizontalAlignment="Right" Width="28" Height="27" Margin="0,0,42,0" Padding="0,0,1,1" FontWeight="Bold"/>
+                <Button ToolTip="Add New Link" Click="NewButtonFired" x:Name="buttonAdd" FontSize="15" HorizontalAlignment="Right" Width="28" Height="27" Margin="0,0,107,0" Padding="0,0,0,1">
+                    <Image Source="/Gui/Icons/add.png" Height="24" Margin="0,1,0,0"></Image>
+                </Button>
+                <Button ToolTip="Delete Link" Click="DeleteButtonFired" x:Name="buttonDelete" FontSize="15" HorizontalAlignment="Right" Width="29" Height="27" Margin="0,0,74,0" Padding="0,0,0,1">
+                    <Image Source="/Gui/Icons/delete.png" Height="25" Margin="0,0,0,0"></Image>
+                </Button>
+                <Button ToolTip="Settings" x:Name="buttonSettings" FontSize="17" HorizontalAlignment="Right" Width="28" Height="27" Margin="0,0,42,0" Padding="0,0,1,1" FontWeight="Bold">
+                    <Image Source="/Gui/Icons/settings.png" Margin="0,1,0,0" Height="24"></Image>
+                </Button>
                 <Button ToolTip="About" x:Name="buttonInfo" HorizontalAlignment="Right" Width="28" Height="27" Margin="0,0,10,0">
                     <Image Source="/Gui/Icons/help.png" Height="24"></Image>
                 </Button>

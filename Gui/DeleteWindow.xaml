@@ -1,0 +1,29 @@
+﻿<Window x:Class="MicrowaveMonitor.Gui.DeleteWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:MicrowaveMonitor.Gui"
+        mc:Ignorable="d"
+        Title="Delete Link" ResizeMode="NoResize" Height="190" Width="600" WindowStartupLocation="CenterScreen"
+        ContentRendered="SetFocus">
+    <Grid Background="LightGray">
+        <Grid Height="115">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="40"></RowDefinition>
+                <RowDefinition Height="35"></RowDefinition>
+                <RowDefinition Height="40"></RowDefinition>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="100"></ColumnDefinition>
+                <ColumnDefinition></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <Image Source="/Gui/Icons/bigdelete.png" Width="72" Grid.RowSpan="3"></Image>
+            <Label Content="Are you sure you want to remove this link with all mapped devices?" Grid.Column="1" VerticalAlignment="Bottom"></Label>
+            <TextBox x:Name="confirmBox" Text="Please confirm this action by typing DELETE" Grid.Column="1" Grid.Row="1" Margin="5,5,25,5" VerticalContentAlignment="Center"></TextBox>
+            <Label x:Name="notify" Visibility="Hidden" Grid.Row="2" Grid.Column="1" Content="You haven't typed DELETE." VerticalAlignment="Center" Foreground="DarkRed"></Label>
+            <Button Content="OK" IsDefault="True" Click="OkFired" Grid.Column="1" Grid.Row="2" Width="80" Height="30" HorizontalAlignment="Right" Margin="0,0,115,0"></Button>
+            <Button Content="Cancel" IsCancel="True" Grid.Column="1" Grid.Row="2" Width="80" Height="30" HorizontalAlignment="Right" Margin="0,0,25,0"></Button>
+        </Grid>
+    </Grid>
+</Window>

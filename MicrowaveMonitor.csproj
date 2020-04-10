@@ -79,6 +79,12 @@
     </ApplicationDefinition>
     <Compile Include="Database\DeviceDisplay.cs" />
     <Compile Include="Database\Record.cs" />
+    <Compile Include="Gui\DeleteWindow.xaml.cs">
+      <DependentUpon>DeleteWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\NewLinkWindow.xaml.cs">
+      <DependentUpon>NewLinkWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Gui\Panes\AlarmListPane.xaml.cs">
       <DependentUpon>AlarmListPane.xaml</DependentUpon>
     </Compile>
@@ -127,6 +133,14 @@
     <Compile Include="Workers\Snmp\SnmpUptime.cs" />
     <Compile Include="Workers\Snmp\SnmpVoltage.cs" />
     <Compile Include="Workers\WeatherCollector.cs" />
+    <Page Include="Gui\DeleteWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\NewLinkWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Gui\Panes\AlarmListPane.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -289,6 +303,19 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Gui\Icons\search.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Gui\Icons\link.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Gui\Icons\add.png" />
+    <Resource Include="Gui\Icons\settings.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Gui\Icons\bigdelete.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Gui\Icons\delete.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -6,7 +6,7 @@ namespace MicrowaveMonitor.Database
     {
         [PrimaryKey, AutoIncrement]
         public int Id { get; set; }
-        public byte HopCount { get; set; }
+        public byte HopCount { get; set; } = 0;
         public string Name { get; set; }
         public string Note { get; set; }
         [Indexed]

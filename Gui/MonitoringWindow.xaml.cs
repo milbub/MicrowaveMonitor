@@ -43,7 +43,12 @@ namespace MicrowaveMonitor.Gui
             RegisterCharts();
             ChangeLink(linkManager.LinkDatabase.Get<Link>(linkManager.LinkNames.First().Key));
 
-            LinksList.ItemsSource = linkManager.LinkNames.Values;
+            //LinksList.ItemsSource = linkManager.LinkNames.Values;
+            foreach (string name in linkManager.LinkNames.Values)
+            {
+                LinksList.Items.Add(name);
+            }
+
             LinksList.SelectedItem = linkManager.LinkNames.First().Value;
             LinksList.SelectionChanged += LinkChoosed;
 
@@ -285,7 +290,7 @@ namespace MicrowaveMonitor.Gui
 
         private void LinkChoosed(object sender, SelectionChangedEventArgs e)
         {
-            ChangeLink(linkM.LinkDatabase.Get<Link>(linkM.LinkNames.FirstOrDefault(x => x.Value == (string)LinksList.SelectedItem).Key));
+            ChangeLink(linkM.LinkDatabase.Get<Link>(linkM.LinkNames.FirstOrDefault(x => x.Value == (string)e.AddedItems[0]).Key));
         }
 
         private void MapButtonFired(object sender, RoutedEventArgs e)
@@ -325,6 +330,78 @@ namespace MicrowaveMonitor.Gui
         {
             workerM.StopDevice(linkM.GetDevice(viewedDeviceId));
             ChartsChangeDevice(viewedDeviceId, linkM.GetDevice(viewedDeviceId));
+        }
+
+        private void NewButtonFired(object sender, RoutedEventArgs e)
+        {
+            NewLinkWindow newLinkWindow = new NewLinkWindow();
+            if (newLinkWindow.ShowDialog() == true)
+            {
+                string name = newLinkWindow.NameAnswer;
+                
+                Device newDevice = new Device() { IsPaused = true };
+                linkM.AddDevice(newDevice);
+                workerM.InitDevice(newDevice);
+                
+                Link newLink = new Link() { Name = name, DeviceBaseId = newDevice.Id };
+                linkM.AddLink(newLink);
+
+                LinksList.Items.Add(newLink.Name);
+                LinksList.SelectedItem = newLink.Name;
+                monitorTabControl.SelectedIndex = 6;
+                linksScroll.ScrollToBottom();
+            }
+        }
+
+        private void DeleteButtonFired(object sender, RoutedEventArgs e)
+        {
+            DeleteWindow deleteWindow = new DeleteWindow();
+            if (deleteWindow.ShowDialog() == true)
+            {
+                linkM.DeleteLink(viewedLink);
+
+                switch (viewedLink.HopCount)
+                {
+                    case 0:
+                        Device devBase = linkM.GetDevice(viewedLink.DeviceBaseId);
+                        workerM.RemoveDevice(devBase);
+                        linkM.DeleteDevice(devBase);
+                        break;
+                    case 1:
+                        Device devEnd = linkM.GetDevice(viewedLink.DeviceEndId);
+                        workerM.RemoveDevice(devEnd);
+                        linkM.DeleteDevice(devEnd);
+                        goto case 0;
+                    case 2:
+                        Device devR1 = linkM.GetDevice(viewedLink.DeviceR1Id);
+                        workerM.RemoveDevice(devR1);
+                        linkM.DeleteDevice(devR1);
+                        goto case 1;
+                    case 3:
+                        Device devR2 = linkM.GetDevice(viewedLink.DeviceR2Id);
+                        workerM.RemoveDevice(devR2);
+                        linkM.DeleteDevice(devR2);
+                        goto case 2;
+                    case 4:
+                        Device devR3 = linkM.GetDevice(viewedLink.DeviceR3Id);
+                        workerM.RemoveDevice(devR3);
+                        linkM.DeleteDevice(devR3);
+                        goto case 3;
+                    case 5:
+                        Device devR4 = linkM.GetDevice(viewedLink.DeviceR4Id);
+                        workerM.RemoveDevice(devR4);
+                        linkM.DeleteDevice(devR4);
+                        goto case 4;
+                    default:
+                        break;
+                }
+
+                string removing = viewedLink.Name;
+                viewedDeviceId = 0;
+                LinksList.SelectedItem = linkM.LinkNames.First().Value;
+                LinksList.Items.Remove(removing);
+                linksScroll.ScrollToTop();
+            }
         }
 
         private void ResetView()

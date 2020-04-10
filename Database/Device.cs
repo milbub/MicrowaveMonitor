@@ -12,12 +12,12 @@ namespace MicrowaveMonitor.Database
         /* Basic parameters */
         [PrimaryKey, AutoIncrement]
         public int Id { get; set; }
-        public string Address { get; set; }
+        public string Address { get; set; } = "0.0.0.0";
         public int SnmpPort { get; set; } = 161;
         public SnmpProtocolVersion SnmpVersion { get; set; } = SnmpProtocolVersion.v1;
         public string CommunityString { get; set; } = "public";
-        public string Latitude { get; set; }
-        public string Longitude { get; set; }
+        public string Latitude { get; set; } = "0";
+        public string Longitude { get; set; } = "0";
 
         /* Controls */
         public bool IsPaused { get; set; } = false;
@@ -64,5 +64,24 @@ namespace MicrowaveMonitor.Database
         public int RefreshTempOdu { get; set; } = defaultRefresh;
         public int RefreshTempIdu { get; set; } = defaultRefresh;
         public int RefreshVoltage { get; set; } = defaultRefresh;
+
+        /* Tresholds */
+        public int TreshUpSignal { get; set; } 
+        public int TreshUpSignalQ { get; set; }
+        public int TreshUpTx { get; set; }
+        public int TreshUpRx { get; set; }
+        public int TreshUpPing { get; set; }
+        public int TreshUpTempOdu { get; set; }
+        public int TreshUpTempIdu { get; set; }
+        public int TreshUpVoltage { get; set; }
+
+        public int TreshDownSignal { get; set; }
+        public int TreshDownSignalQ { get; set; }
+        public int TreshDownTx { get; set; }
+        public int TreshDownRx { get; set; }
+        public int TreshDownPing { get; set; }
+        public int TreshDownTempOdu { get; set; }
+        public int TreshDownTempIdu { get; set; }
+        public int TreshDownVoltage { get; set; }
     }
 }
