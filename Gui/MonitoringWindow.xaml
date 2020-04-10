@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:gui="clr-namespace:MicrowaveMonitor.Gui"
         mc:Ignorable="d"
-        Title="Microwave Monitor" Height="720" Width="1000" MinHeight="720" MinWidth="1000">
+        Title="Microwave Monitor" Height="720" Width="1100" MinHeight="720" MinWidth="1100">
     <Window.Resources>
         <Style TargetType="{x:Type ListBoxItem}">
             <Setter Property="Margin" Value="0,0,0,1" />
@@ -26,9 +26,9 @@
         <GridSplitter x:Name="baseSplitter" Background="#FF9E9E9E" Grid.Row="1" Grid.ColumnSpan="3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="5"/>
         <Grid Grid.Row="0">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="250" MinWidth="250" MaxWidth="400"></ColumnDefinition>
+                <ColumnDefinition Width="300" MinWidth="300" MaxWidth="400"></ColumnDefinition>
                 <ColumnDefinition Width="5"></ColumnDefinition>
-                <ColumnDefinition MinWidth="500"></ColumnDefinition>
+                <ColumnDefinition MinWidth="745"></ColumnDefinition>
             </Grid.ColumnDefinitions>
             <Grid Background="LightGray">
                 <Grid.RowDefinitions>
@@ -59,7 +59,7 @@
                         </Style>
                     </TextBox.Style>
                 </TextBox>
-                <Button ToolTip="Search Link" x:Name="buttonSearch" Click="ButtonFired" Width="28" Height="27" HorizontalAlignment="Right" Margin="0,0,2,0">
+                <Button ToolTip="Search Link" x:Name="buttonSearch" Width="28" Height="27" HorizontalAlignment="Right" Margin="0,0,2,0">
                     <Image Source="/Gui/Icons/search.png" Height="24"></Image>
                 </Button>
                 <ListBox x:Name="LinksList" Background="LightGray" Grid.Row="1">
@@ -83,10 +83,10 @@
                 </Grid.RowDefinitions>
 
                 <Label x:Name="linkCaption" HorizontalAlignment="Left" FontSize="16" Margin="0,0,150,0"/>
-                <Button ToolTip="Start Monitoring" x:Name="buttonStart" HorizontalAlignment="Right" Width="28" Height="27" Margin="0,0,170,0">
+                <Button ToolTip="Start Monitoring" Click="StartButtonFired" x:Name="buttonStart" HorizontalAlignment="Right" Width="28" Height="27" Margin="0,0,170,0">
                     <Image Source="/Gui/Icons/play.png" Height="24"></Image>
                 </Button>
-                <Button ToolTip="Pause Monitoring" x:Name="buttonPause" HorizontalAlignment="Right" Width="28" Height="27" Margin="0,0,138,0">
+                <Button ToolTip="Pause Monitoring" Click="StopButtonFired" x:Name="buttonPause" HorizontalAlignment="Right" Width="28" Height="27" Margin="0,0,138,0">
                     <Image Source="/Gui/Icons/pause.png" Height="24"></Image>
                 </Button>
                 <Button ToolTip="Add New Link" x:Name="buttonAdd" Content="➕" FontSize="15" HorizontalAlignment="Right" Width="28" Height="27" Margin="0,0,106,0" Padding="0,0,0,1"/>
@@ -96,8 +96,8 @@
                     <Image Source="/Gui/Icons/help.png" Height="24"></Image>
                 </Button>
 
-                <Label Content="Link State:" Grid.Row="1"></Label>
-                <Label x:Name="linkState" Content="paused" FontWeight="Bold" Grid.Row="1" Margin="60,0,0,0" Foreground="DarkSlateGray"></Label>
+                <Label Content="Device State:" Grid.Row="1"></Label>
+                <Label x:Name="linkState" Content="paused" FontWeight="Bold" Grid.Row="1" Margin="72,0,0,0" Foreground="DarkSlateGray"></Label>
                 
                 <Label Grid.Row="1" Content="Site:" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,342,0"></Label>
                 <RadioButton x:Name="siteA" Grid.Row="1" Content="A" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,307,0" FontWeight="Bold" IsChecked="True"/>
@@ -106,10 +106,10 @@
                 <RadioButton x:Name="siteR3" Grid.Row="1" Content="R3" Click="SiteChoosed" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,172,0" IsEnabled="False"/>
                 <RadioButton x:Name="siteR4" Grid.Row="1" Content="R4" Click="SiteChoosed" VerticalAlignment="Center"  HorizontalAlignment="Right" Margin="0,0,127,0" IsEnabled="False"/>
                 <RadioButton x:Name="siteB" Grid.Row="1" Content="B" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,82,0" FontWeight="Bold" IsEnabled="False"/>
-                <Button ToolTip="Show Site on Map" x:Name="buttonMap" Click="ButtonFired" Grid.Row="1" Width="28" Height="27" HorizontalAlignment="Right" Margin="0,0,42,0">
+                <Button ToolTip="Show Site on Map" x:Name="buttonMap" Click="MapButtonFired" Grid.Row="1" Width="28" Height="27" HorizontalAlignment="Right" Margin="0,0,42,0">
                     <Image Source="/Gui/Icons/pin.png" Height="18"></Image>
                 </Button>
-                <Button ToolTip="Show Terrain" x:Name="buttonTerrain" Click="ButtonFired" Grid.Row="1" Width="28" Height="27" HorizontalAlignment="Right" Margin="0,0,10,0">
+                <Button ToolTip="Show Terrain" x:Name="buttonTerrain" Click="ElevationButtonFired" Grid.Row="1" Width="28" Height="27" HorizontalAlignment="Right" Margin="0,0,10,0">
                     <Image Source="/Gui/Icons/terrain.png" Height="20"></Image>
                 </Button>
 

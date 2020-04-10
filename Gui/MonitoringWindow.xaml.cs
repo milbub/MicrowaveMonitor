@@ -109,6 +109,14 @@ namespace MicrowaveMonitor.Gui
             Device device = linkM.GetDevice(viewedDeviceId);
             ChartsChangeDevice(viewedDeviceId, device);
 
+            ContextChanged();
+            ShowStatics(device);
+
+            devicesDisplays[viewedDeviceId].PropertyChanged += DataChangedDispatch;
+        }
+
+        private void ContextChanged()
+        {
             signal.HistoryChanged(null, null);
             signalQ.HistoryChanged(null, null);
             tempOdu.HistoryChanged(null, null);
@@ -117,9 +125,6 @@ namespace MicrowaveMonitor.Gui
             tx.HistoryChanged(null, null);
             rx.HistoryChanged(null, null);
             latency.HistoryChanged(null, null);
-            ShowStatics(device);
-
-            devicesDisplays[viewedDeviceId].PropertyChanged += DataChangedDispatch;
         }
 
         private void ShowStatics(Device device)
@@ -245,10 +250,14 @@ namespace MicrowaveMonitor.Gui
                 case DeviceDisplay.LinkState.Paused:
                     linkState.Content = "paused";
                     linkState.Foreground = System.Windows.Media.Brushes.DarkSlateGray;
+                    buttonPause.IsEnabled = false;
+                    buttonStart.IsEnabled = true;
                     break;
                 case DeviceDisplay.LinkState.Running:
                     linkState.Content = "running";
                     linkState.Foreground = System.Windows.Media.Brushes.Green;
+                    buttonStart.IsEnabled = false;
+                    buttonPause.IsEnabled = true;
                     break;
                 case DeviceDisplay.LinkState.AlarmWarning:
                     linkState.Content = "warning";
@@ -279,37 +288,43 @@ namespace MicrowaveMonitor.Gui
             ChangeLink(linkM.LinkDatabase.Get<Link>(linkM.LinkNames.FirstOrDefault(x => x.Value == (string)LinksList.SelectedItem).Key));
         }
 
-        private void ButtonFired(object sender, RoutedEventArgs e)
+        private void MapButtonFired(object sender, RoutedEventArgs e)
         {
-            Button source = (Button)sender;
+            Device a = linkM.GetDevice(viewedLink.DeviceBaseId);
+            Device b = linkM.GetDevice(viewedLink.DeviceEndId);
+            MapWindow map;
+            if (viewedLink.HopCount > 0)
+                map = new MapWindow(a.Latitude, a.Longitude, b.Latitude, b.Longitude);
+            else
+                map = new MapWindow(a.Latitude, a.Longitude);
+            map.Show();
+        }
 
-            switch (source.Name)
+        private void ElevationButtonFired(object sender, RoutedEventArgs e)
+        {
+            ElevationWindow elevation;
+            if (viewedLink.HopCount > 0)
             {
-                case "buttonMap":
-                    Device a = linkM.GetDevice(viewedLink.DeviceBaseId);
-                    Device b = linkM.GetDevice(viewedLink.DeviceEndId);
-                    MapWindow map;
-                    if (viewedLink.HopCount > 0)
-                        map = new MapWindow(a.Latitude, a.Longitude, b.Latitude, b.Longitude);
-                    else
-                        map = new MapWindow(a.Latitude, a.Longitude);
-                    map.Show();
-                    break;
-                case "buttonTerrain":
-                    ElevationWindow elevation;
-                    if (viewedLink.HopCount > 0)
-                    {
-                        Device c = linkM.GetDevice(viewedLink.DeviceBaseId);
-                        Device d = linkM.GetDevice(viewedLink.DeviceEndId);
-                        elevation = new ElevationWindow(c.Latitude, c.Longitude, d.Latitude, d.Longitude);
-                    }
-                    else
-                        elevation = new ElevationWindow();
-                    elevation.Show();
-                    break;
-                default:
-                    break;
+                Device a = linkM.GetDevice(viewedLink.DeviceBaseId);
+                Device b = linkM.GetDevice(viewedLink.DeviceEndId);
+                elevation = new ElevationWindow(a.Latitude, a.Longitude, b.Latitude, b.Longitude);
             }
+            else
+                elevation = new ElevationWindow();
+            elevation.Show();
+        }
+
+        private void StartButtonFired(object sender, RoutedEventArgs e)
+        {
+            workerM.StartDevice(linkM.GetDevice(viewedDeviceId));
+            ChartsChangeDevice(viewedDeviceId, linkM.GetDevice(viewedDeviceId));
+            ContextChanged();
+        }
+
+        private void StopButtonFired(object sender, RoutedEventArgs e)
+        {
+            workerM.StopDevice(linkM.GetDevice(viewedDeviceId));
+            ChartsChangeDevice(viewedDeviceId, linkM.GetDevice(viewedDeviceId));
         }
 
         private void ResetView()

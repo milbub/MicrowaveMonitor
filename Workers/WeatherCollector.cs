@@ -33,8 +33,18 @@ namespace MicrowaveMonitor.Workers
 
         public void AddDevice(int deviceId, string latitude, string longitude)
         {
-            deviceLatitude.Add(deviceId, latitude);
-            deviceLongitude.Add(deviceId, longitude);
+            lock (deviceLatitude)
+                deviceLatitude.Add(deviceId, latitude);
+            lock (deviceLongitude)
+                deviceLongitude.Add(deviceId, longitude);
+        }
+
+        public void RemoveDevice(int deviceId)
+        {
+            lock (deviceLatitude)
+                deviceLatitude.Remove(deviceId);
+            lock (deviceLongitude)
+                deviceLongitude.Remove(deviceId);
         }
 
         public void Start()
@@ -50,24 +60,50 @@ namespace MicrowaveMonitor.Workers
                         TimeSpan refresh = new TimeSpan(0, MinRefresh, 0);
                         TimeSpan apiWaitTime = new TimeSpan(0, 0, 0, 0, ApiWaitTime);
 
-                        foreach (int devId in deviceLatitude.Keys)
+                        int[] keys;
+                        lock (deviceLatitude)
+                            keys = deviceLatitude.Keys.ToArray();
+
+                        foreach (int devId in keys)
                         {
                             DateTime startIter = DateTime.Now;
                             Query query;
                             try
                             {
-                                query = weatherApi.Query(deviceLatitude[devId], deviceLongitude[devId]);
+                                string lat;
+                                string longi;
+
+                                lock (deviceLatitude)
+                                    lat = deviceLatitude[devId];
+                                lock (deviceLongitude)
+                                    longi = deviceLongitude[devId];
+
+                                query = weatherApi.Query(lat, longi);
                             }
                             catch (System.Net.WebException e)
                             {
                                 Console.WriteLine(e.Message);
                                 continue;
                             }
-                            displays[devId].WeatherIcon = query.Weathers[0].Icon;
-                            displays[devId].WeatherDesc = query.Weathers[0].Description;
+                            catch (KeyNotFoundException)
+                            {
+                                Thread.Sleep(refresh);
+                                continue;
+                            }
+
                             float temperature = (float)query.Main.Temperature;
-                            displays[devId].WeatherTemp = temperature;
-                            displays[devId].WeatherWind = query.Wind.SpeedMetersPerSecond;
+
+                            try
+                            {
+                                displays[devId].WeatherIcon = query.Weathers[0].Icon;
+                                displays[devId].WeatherDesc = query.Weathers[0].Description;
+                                displays[devId].WeatherTemp = temperature;
+                                displays[devId].WeatherWind = query.Wind.SpeedMetersPerSecond;
+                            } catch (KeyNotFoundException)
+                            {
+                                Thread.Sleep(refresh);
+                                continue;
+                            }
 
                             DynamicInfluxRow row = new DynamicInfluxRow();
                             row.Timestamp = startIter.ToUniversalTime();
@@ -76,7 +112,7 @@ namespace MicrowaveMonitor.Workers
 
                             lock (database)
                                 database.Enqueue(row);
-
+                            
                             TimeSpan diffIter = DateTime.Now - startIter;
                             if (diffIter < apiWaitTime)
                                 Thread.Sleep(apiWaitTime - diffIter);
@@ -94,7 +130,7 @@ namespace MicrowaveMonitor.Workers
         public void Stop()
         {
             IsRunning = false;
-            tCollector.Abort();
+                tCollector.Abort();
         }
     }
 }

@@ -36,6 +36,10 @@ namespace MicrowaveMonitor.Gui
                 else
                 {
                     _deviceId = 0;
+                    isFilled = false;
+                    chart.ChartValues.Clear();
+                    avg.Content = string.Empty;
+                    diff.Content = string.Empty;
                     disNotify.Visibility = Visibility.Visible;
                     IsEnabled = false;
                 }
@@ -46,6 +50,7 @@ namespace MicrowaveMonitor.Gui
         public double Avg { get; set; }
         public double Diff { get; set; }
 
+        private bool isFilled = false;
         private int writesCount = 0;
 
         public ChartRealtimePane()
@@ -91,7 +96,7 @@ namespace MicrowaveMonitor.Gui
                     return;
             }
 
-            if (record != null && span == chart.Span && DeviceId == chart.DevId)
+            if (record != null && isFilled && DeviceId == chart.DevId)
             {
                 chart.Read(record, resolution, span);
                 writesCount++;
@@ -104,6 +109,7 @@ namespace MicrowaveMonitor.Gui
             else if (manyRecords != null && manyRecords.Count > 0)
             {
                 chart.ReadMany(manyRecords, resolution, span, DeviceId);
+                isFilled = true;
                 await UpdateAvg(query);
             }
             else
@@ -129,6 +135,7 @@ namespace MicrowaveMonitor.Gui
             if (DataM == null || Measurement == null)
                 return;
 
+            isFilled = false;
             chart.ChartValues.Clear();
             avg.Content = string.Empty;
             diff.Content = string.Empty;
@@ -156,9 +163,6 @@ namespace MicrowaveMonitor.Gui
             query = $@"SELECT mean(""value"") FROM ""{DataM.databaseName}"".""{DataM.retention}""." + $@"""{Measurement}"" " + query;
 
             chart.SetAxisGrid(step, unit);
-
-            if (DeviceId == 0)
-                return;
 
             DynamicInfluxRow[] pending;
             lock (Transactions)

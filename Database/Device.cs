@@ -21,6 +21,7 @@ namespace MicrowaveMonitor.Database
 
         /* Controls */
         public bool IsPaused { get; set; } = false;
+
         public bool IsEnabledSignal { get; set; } = true;
         public bool IsEnabledSignalQ { get; set; } = true;
         public bool IsEnabledTx { get; set; } = false;
@@ -28,6 +29,15 @@ namespace MicrowaveMonitor.Database
         public bool IsEnabledTempOdu { get; set; } = false;
         public bool IsEnabledTempIdu { get; set; } = false;
         public bool IsEnabledVoltage { get; set; } = false;
+
+        public bool IsWatchedSignal { get; set; } = true;
+        public bool IsWatchedSignalQ { get; set; } = true;
+        public bool IsWatchedTx { get; set; } = false;
+        public bool IsWatchedRx { get; set; } = false;
+        public bool IsWatchedTempOdu { get; set; } = false;
+        public bool IsWatchedTempIdu { get; set; } = false;
+        public bool IsWatchedVoltage { get; set; } = false;
+        public bool IsWatchedPing { get; set; } = true;
 
         /* Model specifics */
         public int SignalQDivisor { get; set; } = 10;
