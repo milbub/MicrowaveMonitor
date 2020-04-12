@@ -15,6 +15,7 @@ using System.Windows.Media.Imaging;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Drawing;
+using System.Windows.Input;
 
 namespace MicrowaveMonitor.Gui
 {
@@ -41,9 +42,8 @@ namespace MicrowaveMonitor.Gui
 
             InitializeComponent();
             RegisterCharts();
-            ChangeLink(linkManager.LinkDatabase.Get<Link>(linkManager.LinkNames.First().Key));
+            ChangeLink(linkManager.GetLink(linkManager.LinkNames.First().Key));
 
-            //LinksList.ItemsSource = linkManager.LinkNames.Values;
             foreach (string name in linkManager.LinkNames.Values)
             {
                 LinksList.Items.Add(name);
@@ -72,6 +72,7 @@ namespace MicrowaveMonitor.Gui
             this.viewedLink = viewedLink;
             linkCaption.Content = viewedLink.Name;
             FillSettings();
+            deviceTabs.SelectedIndex = 0;
 
             if (siteA.IsChecked == true)
                 ChangeDevice("A");
@@ -151,17 +152,17 @@ namespace MicrowaveMonitor.Gui
             boxLinkName.Text = viewedLink.Name;
             boxNote.Text = viewedLink.Note;
 
-            settingsA.FillBoxes(linkM, viewedLink.DeviceBaseId);
-            siteB.IsEnabled = viewedLink.DeviceEndId > 0 ? settingsB.FillBoxes(linkM, viewedLink.DeviceEndId) : false;
-            checkB.IsChecked = viewedLink.DeviceEndId > 0 ? settingsB.FillBoxes(linkM, viewedLink.DeviceEndId) : false;
-            siteR1.IsEnabled = viewedLink.DeviceR1Id > 0 ? settingsR1.FillBoxes(linkM, viewedLink.DeviceR1Id) : false;
-            checkR1.IsChecked = viewedLink.DeviceR1Id > 0 ? settingsR1.FillBoxes(linkM, viewedLink.DeviceR1Id) : false;
-            siteR2.IsEnabled = viewedLink.DeviceR2Id > 0 ? settingsR2.FillBoxes(linkM, viewedLink.DeviceR2Id) : false;
-            checkR2.IsChecked = viewedLink.DeviceR2Id > 0 ? settingsR2.FillBoxes(linkM, viewedLink.DeviceR2Id) : false;
-            siteR3.IsEnabled = viewedLink.DeviceR3Id > 0 ? settingsR3.FillBoxes(linkM, viewedLink.DeviceR3Id) : false;
-            checkR3.IsChecked = viewedLink.DeviceR3Id > 0 ? settingsR3.FillBoxes(linkM, viewedLink.DeviceR3Id) : false;
-            siteR4.IsEnabled = viewedLink.DeviceR4Id > 0 ? settingsR4.FillBoxes(linkM, viewedLink.DeviceR4Id) : false;
-            checkR4.IsChecked = viewedLink.DeviceR4Id > 0 ? settingsR4.FillBoxes(linkM, viewedLink.DeviceR4Id) : false;
+            settingsA.FillBoxes(linkM.GetDevice(viewedLink.DeviceBaseId));
+            siteB.IsEnabled = viewedLink.DeviceEndId > 0 ? true : false;
+            checkB.IsChecked = viewedLink.DeviceEndId > 0 ? settingsB.FillBoxes(linkM.GetDevice(viewedLink.DeviceEndId)) : settingsB.ClearBoxes();
+            siteR1.IsEnabled = viewedLink.DeviceR1Id > 0 ? true : false;
+            checkR1.IsChecked = viewedLink.DeviceR1Id > 0 ? settingsR1.FillBoxes(linkM.GetDevice(viewedLink.DeviceR1Id)) : settingsR1.ClearBoxes();
+            siteR2.IsEnabled = viewedLink.DeviceR2Id > 0 ? true : false;
+            checkR2.IsChecked = viewedLink.DeviceR2Id > 0 ? settingsR2.FillBoxes(linkM.GetDevice(viewedLink.DeviceR2Id)) : settingsR2.ClearBoxes();
+            siteR3.IsEnabled = viewedLink.DeviceR3Id > 0 ? true : false;
+            checkR3.IsChecked = viewedLink.DeviceR3Id > 0 ? settingsR3.FillBoxes(linkM.GetDevice(viewedLink.DeviceR3Id)) : settingsR3.ClearBoxes();
+            siteR4.IsEnabled = viewedLink.DeviceR4Id > 0 ? true : false;
+            checkR4.IsChecked = viewedLink.DeviceR4Id > 0 ? settingsR4.FillBoxes(linkM.GetDevice(viewedLink.DeviceR4Id)) : settingsR4.ClearBoxes();
         }
 
         private void DataChangedDispatch(object sender, PropertyChangedEventArgs e)
@@ -189,7 +190,7 @@ namespace MicrowaveMonitor.Gui
         private async void DataChanged(object sender, PropertyChangedEventArgs e)
         {
             DeviceDisplay display = (DeviceDisplay)sender;
-            
+
             if (display == devicesDisplays[viewedDeviceId])
                 switch (e.PropertyName)
                 {
@@ -290,7 +291,7 @@ namespace MicrowaveMonitor.Gui
 
         private void LinkChoosed(object sender, SelectionChangedEventArgs e)
         {
-            ChangeLink(linkM.LinkDatabase.Get<Link>(linkM.LinkNames.FirstOrDefault(x => x.Value == (string)e.AddedItems[0]).Key));
+            ChangeLink(linkM.GetLink(linkM.LinkNames.FirstOrDefault(x => x.Value == (string)e.AddedItems[0]).Key));
         }
 
         private void MapButtonFired(object sender, RoutedEventArgs e)
@@ -404,6 +405,71 @@ namespace MicrowaveMonitor.Gui
             }
         }
 
+        private void SaveButtonFired(object sender, RoutedEventArgs e)
+        {
+            Device basedev = settingsA.SaveBoxes(linkM.GetDevice(viewedLink.DeviceBaseId));
+            linkM.UpdateDevice(basedev);
+
+            byte hopCount = 0;
+          
+            if (boxLinkName.Text != string.Empty)
+            {
+                linkM.LinkNames[viewedLink.Id] = boxLinkName.Text;
+                viewedLink.Name = boxLinkName.Text;
+                LinksList.SelectionChanged -= LinkChoosed;
+                LinksList.Items[LinksList.SelectedIndex] = boxLinkName.Text;
+                LinksList.SelectedItem = boxLinkName.Text;
+                LinksList.SelectionChanged += LinkChoosed;
+            }
+            viewedLink.Note = boxNote.Text;
+
+            viewedLink.DeviceEndId = UpdateDeviceSettings(viewedLink.DeviceEndId, checkB, settingsB, 1, ref hopCount);
+            viewedLink.DeviceR1Id = UpdateDeviceSettings(viewedLink.DeviceR1Id, checkR1, settingsR1, 2, ref hopCount);
+            viewedLink.DeviceR2Id = UpdateDeviceSettings(viewedLink.DeviceR2Id, checkR2, settingsR2, 3, ref hopCount);
+            viewedLink.DeviceR3Id = UpdateDeviceSettings(viewedLink.DeviceR3Id, checkR3, settingsR3, 4, ref hopCount);
+            viewedLink.DeviceR4Id = UpdateDeviceSettings(viewedLink.DeviceR4Id, checkR4, settingsR4, 5, ref hopCount);
+            viewedLink.HopCount = hopCount;
+
+            linkM.UpdateLink(viewedLink);
+            ChangeLink(viewedLink);
+        }
+
+        private int UpdateDeviceSettings(int deviceId, CheckBox check, DeviceSettingsPane deviceSettings, int tabIndex, ref byte hops)
+        {
+            if ((deviceId > 0) && (bool)check.IsChecked)
+            {
+                Device dev = deviceSettings.SaveBoxes(linkM.GetDevice(deviceId));
+                linkM.UpdateDevice(dev);
+                workerM.RestartDevice(dev);
+                hops++;
+            }
+            else if ((deviceId == 0) && (bool)check.IsChecked)
+            {
+                Device newDevice = new Device() { IsPaused = true };
+                deviceSettings.SaveBoxes(newDevice);
+                linkM.AddDevice(newDevice);
+                workerM.InitDevice(newDevice);
+                deviceId = newDevice.Id;
+                hops++;
+            }
+            else if ((deviceId > 0) && !(bool)check.IsChecked)
+            {
+                Device delDevice = linkM.GetDevice(deviceId);
+                if (viewedDeviceId == delDevice.Id)
+                {
+                    viewedDeviceId = 0;
+                    siteA.IsChecked = true;
+                }
+                workerM.RemoveDevice(delDevice);
+                linkM.DeleteDevice(delDevice);
+                deviceId = 0;
+                if (deviceTabs.SelectedIndex == tabIndex)
+                    deviceTabs.SelectedIndex = 0;
+            }
+
+            return deviceId;
+        }
+
         private void ResetView()
         {
             ip.Content = String.Empty;
@@ -414,7 +480,7 @@ namespace MicrowaveMonitor.Gui
 
         private void RegisterCharts()
         {
-            signal.RegisterChart("Signal Level", "dBm", "[dBm]", dataM.measSig, viewedDeviceId, dataM.SignalTransactions, dataM);
+            signal.RegisterChart("Signal Strength", "dBm", "[dBm]", dataM.measSig, viewedDeviceId, dataM.SignalTransactions, dataM);
             signalQ.RegisterChart("Signal Quality", "dB", "[dB]", dataM.measSigQ, viewedDeviceId, dataM.SignalQTransactions, dataM);
             tempOdu.RegisterChart("Outdoor Unit Temperature", "°C", "[°C]", dataM.measTmpO, viewedDeviceId, dataM.TempOduTransactions, dataM);
             tempIdu.RegisterChart("Outdoor Unit Temperature", "°C", "[°C]", dataM.measTmpI, viewedDeviceId, dataM.TempIduTransactions, dataM);
@@ -442,6 +508,18 @@ namespace MicrowaveMonitor.Gui
                 chart.DeviceId = id;
             else
                 chart.DeviceId = 0;
+        }
+
+        private void ListBoxMouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            if (e.Delta < 0)
+            {
+                linksScroll.LineDown();
+            }
+            else
+            {
+                linksScroll.LineUp();
+            }
         }
 
         public static BitmapImage BitmapToImageSource(Bitmap bitmap)

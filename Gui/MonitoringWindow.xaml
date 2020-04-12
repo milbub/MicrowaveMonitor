@@ -26,7 +26,7 @@
         <GridSplitter x:Name="baseSplitter" Background="#FF9E9E9E" Grid.Row="1" Grid.ColumnSpan="3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="5"/>
         <Grid Grid.Row="0">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="300" MinWidth="300" MaxWidth="400"></ColumnDefinition>
+                <ColumnDefinition Width="300" MinWidth="300" MaxWidth="330"></ColumnDefinition>
                 <ColumnDefinition Width="5"></ColumnDefinition>
                 <ColumnDefinition MinWidth="745"></ColumnDefinition>
             </Grid.ColumnDefinitions>
@@ -63,7 +63,7 @@
                     <Image Source="/Gui/Icons/search.png" Height="24"></Image>
                 </Button>
                 <ScrollViewer x:Name="linksScroll" Grid.Row="1">
-                    <ListBox x:Name="LinksList" Background="LightGray">
+                    <ListBox x:Name="LinksList" PreviewMouseWheel="ListBoxMouseWheel" Background="LightGray">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal">
@@ -194,7 +194,7 @@
                         </TabItem.Header>
                         <ScrollViewer VerticalScrollBarVisibility="Visible">
                             <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5,5,5,5">
-                                <Label Content="Configuration changes takes effect after the restart of link monitoring!" FontWeight="Bold"></Label>
+                                <Label Content="Don't forget to start monitoring after adding and saving of a new device!" FontWeight="Bold"></Label>
                                 <Label Content="Link Name:"></Label>
                                 <TextBox x:Name="boxLinkName" Height="25" VerticalContentAlignment="Center"></TextBox>
                                 <Label Content="Note: (optional)"></Label>
@@ -208,7 +208,7 @@
                                     <CheckBox x:Name="checkR3" Content="R3" Margin="10,0,0,0" IsEnabled="{Binding ElementName=checkR2, Path=IsChecked}" />
                                     <CheckBox x:Name="checkR4" Content="R4" Margin="10,0,0,0" IsEnabled="{Binding ElementName=checkR3, Path=IsChecked}" />
                                 </StackPanel>
-                                <TabControl Margin="0,10,0,10" Background="LightGray">
+                                <TabControl x:Name="deviceTabs" Margin="0,10,0,10" Background="LightGray">
                                     <TabItem x:Name="tabA" Header="A">
                                         <gui:DeviceSettingsPane x:Name="settingsA"></gui:DeviceSettingsPane>
                                     </TabItem>
@@ -228,7 +228,7 @@
                                         <gui:DeviceSettingsPane x:Name="settingsR4"></gui:DeviceSettingsPane>
                                     </TabItem>
                                 </TabControl>
-                                <Button x:Name="settingsSave" Content="Save" Width="110" Height="30" Margin="0,0,0,0" HorizontalAlignment="Center"/>
+                                <Button x:Name="settingsSave" Click="SaveButtonFired" Content="Save" Width="200" Height="30" Margin="0,0,0,0" HorizontalAlignment="Center"/>
                             </StackPanel>
                         </ScrollViewer>
                     </TabItem>

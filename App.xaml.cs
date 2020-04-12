@@ -22,7 +22,7 @@ namespace MicrowaveMonitor
 
         private void Application_Startup(object sender, StartupEventArgs e)
         {
-            workerManager.InitWorkers(linkManager.LinkDatabase.Table<Device>());
+            workerManager.InitWorkers(linkManager.GetDeviceTable());
             dataManager.StartDatabaseWriter();
             alarmManager.InitWatchers(workerManager.DeviceToFront);
 

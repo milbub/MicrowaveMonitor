@@ -48,17 +48,20 @@ namespace MicrowaveMonitor.Gui
 
         public void Read(Record<double> record, int resolution, int span)
         {
-                ChartValues.Add(record);
-                SetAxisLimits(record.TimeMark, span);
+            ChartValues.Add(record);
+            SetAxisLimits(record.TimeMark, span);
 
-                if (ChartValues.Count > (resolution + 2))
+            if (ChartValues.Count > (resolution + 2))
                     ChartValues.RemoveAt(0);
         }
 
         public void ReadMany(List<Record<double>> records, int resolution, int span, int device)
         {
-            ChartValues.AddRange(records);
-            SetAxisLimits(records.Last().TimeMark, span);
+            if (records.Count > 0)
+            {
+                ChartValues.AddRange(records);
+                SetAxisLimits(records.Last().TimeMark, span);
+            }
 
             resolution += 2;
             if (ChartValues.Count > resolution)

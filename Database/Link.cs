@@ -10,16 +10,16 @@ namespace MicrowaveMonitor.Database
         public string Name { get; set; }
         public string Note { get; set; }
         [Indexed]
-        public int DeviceBaseId { get; set; }
+        public int DeviceBaseId { get; set; } = 0;
         [Indexed]
-        public int DeviceEndId { get; set; }
+        public int DeviceEndId { get; set; } = 0;
         [Indexed]
-        public int DeviceR1Id { get; set; }
+        public int DeviceR1Id { get; set; } = 0;
         [Indexed]
-        public int DeviceR2Id { get; set; }
+        public int DeviceR2Id { get; set; } = 0;
         [Indexed]
-        public int DeviceR3Id { get; set; }
+        public int DeviceR3Id { get; set; } = 0;
         [Indexed]
-        public int DeviceR4Id { get; set; }
+        public int DeviceR4Id { get; set; } = 0;
     }
 }

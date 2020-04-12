@@ -22,22 +22,31 @@ namespace MicrowaveMonitor.Database
         /* Controls */
         public bool IsPaused { get; set; } = false;
 
-        public bool IsEnabledSignal { get; set; } = true;
-        public bool IsEnabledSignalQ { get; set; } = true;
+        public bool IsEnabledSignal { get; set; } = false;
+        public bool IsEnabledSignalQ { get; set; } = false;
         public bool IsEnabledTx { get; set; } = false;
         public bool IsEnabledRx { get; set; } = false;
         public bool IsEnabledTempOdu { get; set; } = false;
         public bool IsEnabledTempIdu { get; set; } = false;
         public bool IsEnabledVoltage { get; set; } = false;
 
-        public bool IsWatchedSignal { get; set; } = true;
-        public bool IsWatchedSignalQ { get; set; } = true;
+        public bool IsWatchedSignal { get; set; } = false;
+        public bool IsWatchedSignalQ { get; set; } = false;
         public bool IsWatchedTx { get; set; } = false;
         public bool IsWatchedRx { get; set; } = false;
         public bool IsWatchedTempOdu { get; set; } = false;
         public bool IsWatchedTempIdu { get; set; } = false;
         public bool IsWatchedVoltage { get; set; } = false;
         public bool IsWatchedPing { get; set; } = true;
+
+        public bool TresholdSignal { get; set; } = false;
+        public bool TresholdSignalQ { get; set; } = false;
+        public bool TresholdTx { get; set; } = false;
+        public bool TresholdRx { get; set; } = false;
+        public bool TresholdTempOdu { get; set; } = false;
+        public bool TresholdTempIdu { get; set; } = false;
+        public bool TresholdVoltage { get; set; } = false;
+        public bool TresholdPing { get; set; } = true;
 
         /* Model specifics */
         public int SignalQDivisor { get; set; } = 10;
@@ -66,22 +75,22 @@ namespace MicrowaveMonitor.Database
         public int RefreshVoltage { get; set; } = defaultRefresh;
 
         /* Tresholds */
-        public int TreshUpSignal { get; set; } 
-        public int TreshUpSignalQ { get; set; }
-        public int TreshUpTx { get; set; }
-        public int TreshUpRx { get; set; }
-        public int TreshUpPing { get; set; }
-        public int TreshUpTempOdu { get; set; }
-        public int TreshUpTempIdu { get; set; }
-        public int TreshUpVoltage { get; set; }
+        public float TreshUpSignal { get; set; } 
+        public float TreshUpSignalQ { get; set; }
+        public float TreshUpTx { get; set; }
+        public float TreshUpRx { get; set; }
+        public float TreshUpPing { get; set; }
+        public float TreshUpTempOdu { get; set; }
+        public float TreshUpTempIdu { get; set; }
+        public float TreshUpVoltage { get; set; }
 
-        public int TreshDownSignal { get; set; }
-        public int TreshDownSignalQ { get; set; }
-        public int TreshDownTx { get; set; }
-        public int TreshDownRx { get; set; }
-        public int TreshDownPing { get; set; }
-        public int TreshDownTempOdu { get; set; }
-        public int TreshDownTempIdu { get; set; }
-        public int TreshDownVoltage { get; set; }
+        public float TreshDownSignal { get; set; }
+        public float TreshDownSignalQ { get; set; }
+        public float TreshDownTx { get; set; }
+        public float TreshDownRx { get; set; }
+        public float TreshDownPing { get; set; }
+        public float TreshDownTempOdu { get; set; }
+        public float TreshDownTempIdu { get; set; }
+        public float TreshDownVoltage { get; set; }
     }
 }

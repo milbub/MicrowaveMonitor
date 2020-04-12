@@ -154,5 +154,11 @@ namespace MicrowaveMonitor.Managers
             StopDevice(device);
             DeviceToFront.Remove(device.Id);
         }
+
+        public void RestartDevice(Device device)
+        {
+            StopDevice(device);
+            StartDevice(device);
+        }
     }
 }

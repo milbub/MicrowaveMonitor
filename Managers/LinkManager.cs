@@ -9,7 +9,7 @@ namespace MicrowaveMonitor.Managers
 {
     public class LinkManager
     {
-        public SQLiteConnection LinkDatabase { get; private set; } = new SQLiteConnection(Path.Combine(Environment.CurrentDirectory, ConfigurationManager.ConnectionStrings["DeviceData"].ConnectionString));
+        private SQLiteConnection LinkDatabase { get; set; } = new SQLiteConnection(Path.Combine(Environment.CurrentDirectory, ConfigurationManager.ConnectionStrings["DeviceData"].ConnectionString));
         public Dictionary<int, string> LinkNames { get; private set; } = new Dictionary<int, string>();
 
         public LinkManager()
@@ -19,6 +19,11 @@ namespace MicrowaveMonitor.Managers
 
             foreach (Link link in LinkDatabase.Table<Link>())
                 LinkNames.Add(link.Id, link.Name);
+        }
+
+        public TableQuery<Device> GetDeviceTable()
+        {
+            return LinkDatabase.Table<Device>();
         }
 
         public Device GetDevice(int id)
@@ -39,6 +44,16 @@ namespace MicrowaveMonitor.Managers
         public void DeleteDevice(Device device)
         {
             LinkDatabase.Delete(device);
+        }
+
+        public Link GetLink(int id)
+        {
+            return LinkDatabase.Get<Link>(id);
+        }
+
+        public void UpdateLink(Link link)
+        {
+            LinkDatabase.Update(link);
         }
 
         public void AddLink(Link link)

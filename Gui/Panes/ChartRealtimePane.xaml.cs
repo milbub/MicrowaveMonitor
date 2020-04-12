@@ -106,7 +106,7 @@ namespace MicrowaveMonitor.Gui
                 Diff = record.Data - Avg;
                 diff.Content = String.Format("{0} {1}", Diff.ToString("+0.00;−0.00"), Unit);
             }
-            else if (manyRecords != null && manyRecords.Count > 0)
+            else if (manyRecords != null)
             {
                 chart.ReadMany(manyRecords, resolution, span, DeviceId);
                 isFilled = true;
