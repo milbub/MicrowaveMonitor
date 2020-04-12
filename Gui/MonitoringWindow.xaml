@@ -244,7 +244,7 @@
                 <ColumnDefinition Width="5"></ColumnDefinition>
                 <ColumnDefinition MinWidth="493"></ColumnDefinition>
             </Grid.ColumnDefinitions>
-            <gui:EventLogPane></gui:EventLogPane>
+            <gui:EventLogPane x:Name="eventLog"></gui:EventLogPane>
             <GridSplitter x:Name="notificationAreaSplitter" Background="#FF9E9E9E" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="5"/>
             <gui:AlarmListPane x:Name="alarmListPane" Grid.Column="2"></gui:AlarmListPane>
         </Grid>

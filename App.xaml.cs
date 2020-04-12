@@ -1,6 +1,7 @@
 ﻿using MicrowaveMonitor.Managers;
 using MicrowaveMonitor.Gui;
 using MicrowaveMonitor.Database;
+using System;
 using System.Windows;
 
 namespace MicrowaveMonitor
@@ -11,9 +12,13 @@ namespace MicrowaveMonitor
         private readonly DataManager dataManager;
         private readonly WorkerManager workerManager;
         private readonly AlarmManager alarmManager;
+        private readonly LogManager logManager;
 
         public App()
         {
+            logManager = new LogManager(Console.Out);           
+            Console.SetOut(logManager);
+            Console.WriteLine("0Application started.");           
             linkManager = new LinkManager();
             dataManager = new DataManager();
             workerManager = new WorkerManager(dataManager, linkManager);
@@ -28,6 +33,8 @@ namespace MicrowaveMonitor
 
             MonitoringWindow monitoringWindow = new MonitoringWindow(linkManager, workerManager, alarmManager, dataManager);
             monitoringWindow.Show();
+
+            logManager.SetGuiLog(monitoringWindow.eventLog);
         }
 
         private void Application_Exit(object sender, ExitEventArgs e)
@@ -35,6 +42,7 @@ namespace MicrowaveMonitor
             workerManager.PauseWorkers();
             dataManager.StopDatabaseWriter();
             alarmManager.StopWatchers();
+            Console.WriteLine("0Application exited.");
         }
     }
 }

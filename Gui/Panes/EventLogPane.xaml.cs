@@ -15,6 +15,16 @@ using System.Windows.Shapes;
 
 namespace MicrowaveMonitor.Gui
 {
+    public struct LogRow
+    {
+        public string time;
+        public string level;
+        public string text;
+        public SolidColorBrush timeColor;
+        public SolidColorBrush levelColor;
+        public SolidColorBrush textColor;
+    }
+
     public partial class EventLogPane : UserControl
     {
         private const int permittedLinesCount = 50;
@@ -27,7 +37,7 @@ namespace MicrowaveMonitor.Gui
             log.MouseLeave += SetBoxActivity;
         }
 
-        public void AppendNotificationDispatch(string time, string level, string text, SolidColorBrush timeColor, SolidColorBrush levelColor, SolidColorBrush textColor)
+        public void AppendNotificationDispatch(LogRow row)
         {
             try
             {
@@ -35,17 +45,17 @@ namespace MicrowaveMonitor.Gui
                 {
                     Dispatcher.Invoke(() =>
                     {
-                        AppendText(time, timeColor);
-                        AppendText(level, levelColor);
-                        AppendText(text, textColor);
+                        AppendText(row.time, row.timeColor);
+                        AppendText(row.level, row.levelColor);
+                        AppendText(row.text, row.textColor);
                         Clean();
                     });
                 }
                 else
                 {
-                    AppendText(time, timeColor);
-                    AppendText(level, levelColor);
-                    AppendText(text, textColor);
+                    AppendText(row.time, row.timeColor);
+                    AppendText(row.level, row.levelColor);
+                    AppendText(row.text, row.textColor);
                     Clean();
                 }
             }
@@ -77,7 +87,7 @@ namespace MicrowaveMonitor.Gui
             }
         }
 
-        public void AppendText(string text, SolidColorBrush color)
+        private void AppendText(string text, SolidColorBrush color)
         {
             TextRange tr = new TextRange(log.Document.ContentEnd, log.Document.ContentEnd);
             tr.Text = text;

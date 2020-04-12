@@ -19,6 +19,8 @@ namespace MicrowaveMonitor.Managers
 
             foreach (Link link in LinkDatabase.Table<Link>())
                 LinkNames.Add(link.Id, link.Name);
+
+            Console.WriteLine("0Devices loaded.");
         }
 
         public TableQuery<Device> GetDeviceTable()
