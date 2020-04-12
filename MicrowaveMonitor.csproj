@@ -317,5 +317,8 @@
   <ItemGroup>
     <Resource Include="Gui\Icons\delete.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Gui\Icons\clear.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

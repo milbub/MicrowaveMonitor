@@ -434,6 +434,37 @@ namespace MicrowaveMonitor.Gui
             ChangeLink(viewedLink);
         }
 
+        private void SearchButtonFired(object sender, RoutedEventArgs e)
+        {
+            LinksList.SelectionChanged -= LinkChoosed;
+            LinksList.Items.Clear();
+            
+            foreach (string name in linkM.LinkNames.Values)
+            {
+                if (name.IndexOf(searchBox.Text, StringComparison.CurrentCultureIgnoreCase) > 0)
+                {
+                    LinksList.Items.Add(name);
+                }
+            }
+
+            LinksList.SelectionChanged += LinkChoosed;
+        }
+
+        private void ClearSearchButtonFired(object sender, RoutedEventArgs e)
+        {
+            searchBox.Text = string.Empty;
+            LinksList.SelectionChanged -= LinkChoosed;
+            LinksList.Items.Clear();
+
+            foreach (string name in linkM.LinkNames.Values)
+            {
+                LinksList.Items.Add(name);
+            }
+
+            LinksList.SelectedItem = viewedLink.Name;
+            LinksList.SelectionChanged += LinkChoosed;
+        }
+
         private int UpdateDeviceSettings(int deviceId, CheckBox check, DeviceSettingsPane deviceSettings, int tabIndex, ref byte hops)
         {
             if ((deviceId > 0) && (bool)check.IsChecked)

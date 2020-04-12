@@ -59,8 +59,11 @@
                         </Style>
                     </TextBox.Style>
                 </TextBox>
-                <Button ToolTip="Search Link" x:Name="buttonSearch" Width="28" Height="27" HorizontalAlignment="Right" Margin="0,0,2,0">
+                <Button ToolTip="Search Link" x:Name="buttonSearch" Click="SearchButtonFired" IsDefault="{Binding ElementName=searchBox, Path=IsKeyboardFocused}" Width="28" Height="27" HorizontalAlignment="Right" Margin="0,0,32,0">
                     <Image Source="/Gui/Icons/search.png" Height="24"></Image>
+                </Button>
+                <Button ToolTip="Clear Search" x:Name="buttonClear" Click="ClearSearchButtonFired" Width="28" Height="27" HorizontalAlignment="Right" Margin="0,0,2,0">
+                    <Image Source="/Gui/Icons/clear.png" Height="24"></Image>
                 </Button>
                 <ScrollViewer x:Name="linksScroll" Grid.Row="1">
                     <ListBox x:Name="LinksList" PreviewMouseWheel="ListBoxMouseWheel" Background="LightGray">
