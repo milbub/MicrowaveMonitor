@@ -4,14 +4,11 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              mc:Ignorable="d">
-    <ScrollViewer VerticalScrollBarVisibility="Hidden">
-        <TextBlock x:Name="eventLog" Margin="5" Background="LightGray" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.CanContentScroll="True" Padding="10">
-            <Run Foreground="#FF474747">22:46:22</Run> <Run Foreground="Blue">&lt;INFO&gt;</Run> <Run>Application started.</Run>
-            <LineBreak/><Run Foreground="#FF474747">22:46:22</Run> <Run Foreground="Blue">&lt;INFO&gt;</Run> <Run>Device definitions loaded.</Run>
-            <LineBreak/><Run Foreground="#FF474747">22:46:23</Run> <Run Foreground="Blue">&lt;INFO&gt;</Run> <Run>InfluxDB connection estabilished.</Run>
-            <LineBreak/><Run Foreground="#FF474747">22:51:22</Run> <Run Foreground="Blue">&lt;INFO&gt;</Run> <Run>762 SNMP requests were lost during last 5 minutes.</Run>
-            <LineBreak/><Run Foreground="#FF474747">22:56:22</Run> <Run Foreground="Blue">&lt;INFO&gt;</Run> <Run>827 SNMP requests were lost during last 5 minutes.</Run>
-            <LineBreak/><Run Foreground="#FF474747">23:01:22</Run> <Run Foreground="Blue">&lt;INFO&gt;</Run> <Run>790 SNMP requests were lost during last 5 minutes.</Run>
-        </TextBlock>
-    </ScrollViewer>
+    <RichTextBox x:Name="log" Background="LightGray" IsReadOnly="True">
+        <RichTextBox.Resources>
+            <Style TargetType="{x:Type Paragraph}">
+                <Setter Property="Margin" Value="0"/>
+            </Style>
+        </RichTextBox.Resources>
+    </RichTextBox>
 </UserControl>

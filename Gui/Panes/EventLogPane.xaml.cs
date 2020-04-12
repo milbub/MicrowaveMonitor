@@ -17,86 +17,78 @@ namespace MicrowaveMonitor.Gui
 {
     public partial class EventLogPane : UserControl
     {
+        private const int permittedLinesCount = 50;
+
         public EventLogPane()
         {
             InitializeComponent();
 
-            eventLog.MouseEnter += SetBoxActivity;
-            eventLog.MouseLeave += SetBoxActivity;
+            log.MouseEnter += SetBoxActivity;
+            log.MouseLeave += SetBoxActivity;
         }
 
-        public string LogWindowUpdate(TextBox logWindow, string newMessage, string tempMessage)
+        public void AppendNotificationDispatch(string time, string level, string text, SolidColorBrush timeColor, SolidColorBrush levelColor, SolidColorBrush textColor)
         {
             try
             {
-                if (!logWindow.Dispatcher.CheckAccess())
+                if (!Dispatcher.CheckAccess())
                 {
-                    logWindow.Dispatcher.Invoke(() =>
+                    Dispatcher.Invoke(() =>
                     {
-                        if (logWindow.IsSelectionActive)
-                        {
-                            tempMessage += newMessage;
-                        }
-                        else
-                        {
-                            logWindow.Text += tempMessage + newMessage;
-                            tempMessage = String.Empty;
-                            logWindow.ScrollToEnd();
-                        }
+                        AppendText(time, timeColor);
+                        AppendText(level, levelColor);
+                        AppendText(text, textColor);
+                        Clean();
                     });
                 }
                 else
                 {
-                    if (logWindow.IsSelectionActive)
-                    {
-                        tempMessage += newMessage;
-                    }
-                    else
-                    {
-                        logWindow.Text += tempMessage + newMessage;
-                        tempMessage = String.Empty;
-                        logWindow.ScrollToEnd();
-                    }
+                    AppendText(time, timeColor);
+                    AppendText(level, levelColor);
+                    AppendText(text, textColor);
+                    Clean();
                 }
             }
-            catch (TaskCanceledException e)
+            catch (TaskCanceledException ex)
             {
-                Console.WriteLine(e.Message);
+                Console.WriteLine(ex.Message);
             }
-
-            LogWindowCleaner(logWindow, 50);
-            return tempMessage;
         }
 
-        private void LogWindowCleaner(TextBox logWindow, int permittedLinesCount)
+        public void AppendTextDispatch(string text, SolidColorBrush color)
         {
             try
             {
-                if (!logWindow.Dispatcher.CheckAccess())
+                if (!Dispatcher.CheckAccess())
                 {
-                    logWindow.Dispatcher.Invoke(() =>
+                    Dispatcher.Invoke(() =>
                     {
-                        var splitted = logWindow.Text.Split('\n');
-                        int linesCount = splitted.Length;
-                        if (linesCount > permittedLinesCount)
-                        {
-                            logWindow.Text = String.Join("\n", splitted.Skip(linesCount - permittedLinesCount));
-                        }
+                        AppendText(text, color);
                     });
                 }
                 else
                 {
-                    var splitted = logWindow.Text.Split('\n');
-                    int linesCount = splitted.Length;
-                    if (linesCount > permittedLinesCount)
-                    {
-                        logWindow.Text = String.Join("\n", splitted.Skip(linesCount - permittedLinesCount));
-                    }
+                    AppendText(text, color);
                 }
             }
-            catch (TaskCanceledException e)
+            catch (TaskCanceledException ex)
             {
-                Console.WriteLine(e.Message);
+                Console.WriteLine(ex.Message);
+            }
+        }
+
+        public void AppendText(string text, SolidColorBrush color)
+        {
+            TextRange tr = new TextRange(log.Document.ContentEnd, log.Document.ContentEnd);
+            tr.Text = text;
+            tr.ApplyPropertyValue(TextElement.ForegroundProperty, color);
+        }
+
+        private void Clean()
+        {
+            if (log.Document.Blocks.Count() > permittedLinesCount)
+            {
+                log.Document.Blocks.Remove(log.Document.Blocks.FirstBlock);
             }
         }
 
@@ -104,11 +96,11 @@ namespace MicrowaveMonitor.Gui
         {
             if (e.RoutedEvent.Name == MouseEnterEvent.Name)
             {
-                eventLog.Focusable = true;
+                log.Focusable = true;
             }
             else if (e.RoutedEvent.Name == MouseLeaveEvent.Name)
             {
-                eventLog.Focusable = false;
+                log.Focusable = false;
             }
         }
     }

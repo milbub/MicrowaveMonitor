@@ -109,6 +109,7 @@
     <Compile Include="Managers\AlarmManager.cs" />
     <Compile Include="Managers\DataManager.cs" />
     <Compile Include="Managers\LinkManager.cs" />
+    <Compile Include="Managers\LogManager.cs" />
     <Compile Include="Managers\WorkerManager.cs" />
     <Compile Include="Weather\Clouds.cs" />
     <Compile Include="Weather\Coord.cs" />
