@@ -38,17 +38,18 @@ public class LogManager : TextWriter
 
     public override void Write(string value)
     {
+        SolidColorBrush timeColor = Brushes.Black;
+        SolidColorBrush textColor = Brushes.Black;
+        SolidColorBrush levelColor;
         string time = DateTime.Now.ToLongTimeString();
+        string level = string.Empty;
+        LogRow row;
+
         char[] chars = value.ToCharArray();
 
         if (char.IsDigit(chars[0]))
         {
             value = value.Remove(0, 1);
-
-            SolidColorBrush timeColor = Brushes.Black;
-            SolidColorBrush textColor = Brushes.Black;
-            SolidColorBrush levelColor;
-            string level;
 
             switch (chars[0])
             {
@@ -65,12 +66,10 @@ public class LogManager : TextWriter
                     level = " <ERROR> ";
                     break;
                 default:
-                    logSystem.Write(value);
-                    return;
+                    goto case '0';
             }
 
-            logSystem.Write(time + level + value);
-            LogRow row = new LogRow
+            row = new LogRow
             {
                 time = time,
                 level = level,
@@ -79,19 +78,29 @@ public class LogManager : TextWriter
                 levelColor = levelColor,
                 textColor = textColor
             };
-
-            if (logGui != null)
-            {
-                logGui.AppendNotificationDispatch(row);
-            }
-            else
-            {
-                rowsToGui.Add(row);
-            }
         }
         else
         {
-            logSystem.Write(time + ' ' + value);
+            row = new LogRow
+            {
+                time = time,
+                level = " <EXCEPTION> ",
+                text = value,
+                timeColor = timeColor,
+                levelColor = Brushes.Crimson,
+                textColor = textColor
+            };
+        }
+
+        logSystem.Write(time + level + value);
+
+        if (logGui != null)
+        {
+            logGui.AppendNotificationDispatch(row);
+        }
+        else
+        {
+            rowsToGui.Add(row);
         }
     }
 

@@ -14,6 +14,17 @@ namespace MicrowaveMonitor.Workers
         public ObjectIdentifier CollectedOid { get; protected set; }
         public OctetString Community { get; protected set; }
 
+        private static readonly TimeSpan messCyckle;
+        private static int timeouts;
+        private static DateTime lastMessage;
+
+        static SnmpCollector()
+        {
+            messCyckle = TimeSpan.FromMinutes(5);
+            timeouts = 0;
+            lastMessage = DateTime.Now;
+        }
+
         public SnmpCollector(string oid, int port, string community, string address, int deviceId, int refreshInterval, DeviceDisplay display) : base(address, deviceId, refreshInterval, display)
         {
             CollectedOid = new ObjectIdentifier(oid);
@@ -64,7 +75,10 @@ namespace MicrowaveMonitor.Workers
                         catch (OperationException e)
                         {
                             if (e is Lextm.SharpSnmpLib.Messaging.TimeoutException)
+                            {
+                                TimeoutCounter();
                                 continue;
+                            }
                             if (e is ErrorException)
                             {
                                 IsRunning = false;
@@ -85,6 +99,18 @@ namespace MicrowaveMonitor.Workers
                     }
                 });
                 tCollector.Start();
+            }
+        }
+
+        private static void TimeoutCounter()
+        {
+            timeouts++;
+            TimeSpan span = DateTime.Now - lastMessage;
+            if (span > messCyckle)
+            {
+                Console.WriteLine("0" + timeouts.ToString() + " SNMP requests were lost during last " + span.Minutes.ToString() + " minutes and " + span.Seconds.ToString() + " seconds.");
+                timeouts = 0;
+                lastMessage = DateTime.Now;
             }
         }
 

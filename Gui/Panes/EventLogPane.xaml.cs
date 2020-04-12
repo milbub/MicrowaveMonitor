@@ -27,7 +27,7 @@ namespace MicrowaveMonitor.Gui
 
     public partial class EventLogPane : UserControl
     {
-        private const int permittedLinesCount = 50;
+        private const int permittedLinesCount = 150;
 
         public EventLogPane()
         {
@@ -45,18 +45,12 @@ namespace MicrowaveMonitor.Gui
                 {
                     Dispatcher.Invoke(() =>
                     {
-                        AppendText(row.time, row.timeColor);
-                        AppendText(row.level, row.levelColor);
-                        AppendText(row.text, row.textColor);
-                        Clean();
+                        AppendNotification(row);
                     });
                 }
                 else
                 {
-                    AppendText(row.time, row.timeColor);
-                    AppendText(row.level, row.levelColor);
-                    AppendText(row.text, row.textColor);
-                    Clean();
+                    AppendNotification(row);
                 }
             }
             catch (TaskCanceledException ex)
@@ -85,6 +79,15 @@ namespace MicrowaveMonitor.Gui
             {
                 Console.WriteLine(ex.Message);
             }
+        }
+
+        private void AppendNotification(LogRow row)
+        {
+            AppendText(row.time, row.timeColor);
+            AppendText(row.level, row.levelColor);
+            AppendText(row.text, row.textColor);
+            log.ScrollToEnd();
+            Clean();
         }
 
         private void AppendText(string text, SolidColorBrush color)

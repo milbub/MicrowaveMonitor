@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              mc:Ignorable="d">
-    <RichTextBox x:Name="log" Background="LightGray" IsReadOnly="True">
+    <RichTextBox x:Name="log" Background="LightGray" IsReadOnly="True" Padding="5,5,5,-7" Margin="0,1,0,-1" VerticalScrollBarVisibility="Auto">
         <RichTextBox.Resources>
             <Style TargetType="{x:Type Paragraph}">
                 <Setter Property="Margin" Value="0"/>
