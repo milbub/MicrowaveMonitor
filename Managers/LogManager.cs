@@ -8,6 +8,8 @@ using MicrowaveMonitor.Gui;
 
 public class LogManager : TextWriter
 {
+    public bool IsExiting { get; set; } = false;
+
     private readonly TextWriter logSystem;
     private EventLogPane logGui;
     private readonly List<LogRow> rowsToGui = new List<LogRow>();
@@ -38,7 +40,13 @@ public class LogManager : TextWriter
 
     public override void Write(string value)
     {
-        SolidColorBrush timeColor = Brushes.Black;
+        if (IsExiting)
+        {
+            logSystem.Write(value);
+            return;
+        }
+
+        SolidColorBrush timeColor = Brushes.DarkSlateGray;
         SolidColorBrush textColor = Brushes.Black;
         SolidColorBrush levelColor;
         string time = DateTime.Now.ToLongTimeString();

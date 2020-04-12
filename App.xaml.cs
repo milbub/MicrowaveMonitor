@@ -39,10 +39,10 @@ namespace MicrowaveMonitor
 
         private void Application_Exit(object sender, ExitEventArgs e)
         {
+            logManager.IsExiting = true;
             workerManager.PauseWorkers();
             dataManager.StopDatabaseWriter();
             alarmManager.StopWatchers();
-            Console.WriteLine("0Application exited.");
         }
     }
 }

@@ -108,9 +108,9 @@ namespace MicrowaveMonitor.Workers
             TimeSpan span = DateTime.Now - lastMessage;
             if (span > messCyckle)
             {
+                lastMessage = DateTime.Now;
                 Console.WriteLine("0" + timeouts.ToString() + " SNMP requests were lost during last " + span.Minutes.ToString() + " minutes and " + span.Seconds.ToString() + " seconds.");
                 timeouts = 0;
-                lastMessage = DateTime.Now;
             }
         }
 
