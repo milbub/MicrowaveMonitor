@@ -5,29 +5,43 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:MicrowaveMonitor.Gui"
              mc:Ignorable="d">
-    <TabControl x:Name="warningsTabControl" Background="LightGray" Margin="5">
+    <TabControl x:Name="warningsTabControl" Background="LightGray" Margin="5" Padding="2">
         <TabItem Header="Current">
-            <StackPanel>
-                <StackPanel Orientation="Horizontal">
-                    <Label Content="Current alarm count:"></Label>
-                    <Label Content="0"></Label>
-                </StackPanel>
-                <ListBox x:Name="AlarmsList" Background="LightGray" BorderThickness="0">
-                    <ListBox.ItemTemplate>
-                        <DataTemplate>
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="{Binding}" />
-                            </StackPanel>
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
-            </StackPanel>
+            <ListView x:Name="viewCurrent" Margin="0" Background="LightGray">
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Header="Rank" Width="50"></GridViewColumn>
+                        <GridViewColumn Header="Timestamp" Width="80"></GridViewColumn>
+                        <GridViewColumn Header="Link" Width="163"></GridViewColumn>
+                        <GridViewColumn Header="Device" Width="50"></GridViewColumn>
+                        <GridViewColumn Header="Measurement" Width="87"></GridViewColumn>
+                        <GridViewColumn Header="Problem" Width="115"></GridViewColumn>
+                        <GridViewColumn Header="Value" Width="40"></GridViewColumn>
+                        <GridViewColumn Header="ACK" Width="30"></GridViewColumn>
+                    </GridView>
+                </ListView.View>
+            </ListView>
         </TabItem>
         <TabItem Header="Acknowledged">
+            <ListView x:Name="viewAck" Margin="0" Background="LightGray">
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Header="Rank" Width="50"></GridViewColumn>
+                        <GridViewColumn Header="Timestamp" Width="80"></GridViewColumn>
+                        <GridViewColumn Header="Link" Width="183"></GridViewColumn>
+                        <GridViewColumn Header="Device" Width="50"></GridViewColumn>
+                        <GridViewColumn Header="Measurement" Width="87"></GridViewColumn>
+                        <GridViewColumn Header="Problem" Width="115"></GridViewColumn>
+                        <GridViewColumn Header="Value" Width="50"></GridViewColumn>
+                    </GridView>
+                </ListView.View>
+            </ListView>
+        </TabItem>
+        <TabItem Header="Settled (acknowledged)">
 
         </TabItem>
-        <TabItem Header="Suspended">
-
+        <TabItem Header="Settled (unaddressed)">
+            
         </TabItem>
     </TabControl>
 </UserControl>

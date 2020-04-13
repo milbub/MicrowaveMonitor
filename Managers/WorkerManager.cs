@@ -14,14 +14,16 @@ namespace MicrowaveMonitor.Managers
 
         private readonly DataManager data;
         private readonly LinkManager links;
+        private readonly AlarmManager alarms;
 
         private readonly List<Collector> workers = new List<Collector>();
         private WeatherCollector weatherCollector;
 
-        public WorkerManager(DataManager data, LinkManager links)
+        public WorkerManager(DataManager data, LinkManager links, AlarmManager alarms)
         {
             this.data = data;
             this.links = links;
+            this.alarms = alarms;
         }
 
         public void InitWorkers(TableQuery<Device> devices)

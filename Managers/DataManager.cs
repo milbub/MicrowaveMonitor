@@ -143,10 +143,5 @@ namespace MicrowaveMonitor.Managers
                         return resultSet.Results.First().Series.First().Rows.First();
             return null;
         }
-
-        public void StopDatabaseWriter()
-        {
-            IsRunning = false;
-        }
     }
 }

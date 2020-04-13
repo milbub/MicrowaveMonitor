@@ -240,7 +240,7 @@
         </Grid>
         <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition MinWidth="277"></ColumnDefinition>
+                <ColumnDefinition MinWidth="277" Width="450"></ColumnDefinition>
                 <ColumnDefinition Width="5"></ColumnDefinition>
                 <ColumnDefinition MinWidth="493"></ColumnDefinition>
             </Grid.ColumnDefinitions>

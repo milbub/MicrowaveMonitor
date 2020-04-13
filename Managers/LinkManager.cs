@@ -10,12 +10,15 @@ namespace MicrowaveMonitor.Managers
     public class LinkManager
     {
         private SQLiteConnection LinkDatabase { get; set; } = new SQLiteConnection(Path.Combine(Environment.CurrentDirectory, ConfigurationManager.ConnectionStrings["DeviceData"].ConnectionString));
+        private SQLiteConnection AlarmDatabase { get; set; } = new SQLiteConnection(Path.Combine(Environment.CurrentDirectory, ConfigurationManager.ConnectionStrings["AlarmData"].ConnectionString));
+
         public Dictionary<int, string> LinkNames { get; private set; } = new Dictionary<int, string>();
 
         public LinkManager()
         {
             LinkDatabase.CreateTable<Device>();
             LinkDatabase.CreateTable<Link>();
+            AlarmDatabase.CreateTable<Alarm>();
 
             foreach (Link link in LinkDatabase.Table<Link>())
                 LinkNames.Add(link.Id, link.Name);
@@ -68,6 +71,21 @@ namespace MicrowaveMonitor.Managers
         {
             LinkNames.Remove(link.Id);
             LinkDatabase.Delete(link);
+        }
+
+        public Alarm GetAlarm(int id)
+        {
+            return AlarmDatabase.Get<Alarm>(id);
+        }
+
+        public void UpdateAlarm(Alarm alarm)
+        {
+            AlarmDatabase.Update(alarm);
+        }
+
+        public void AddAlarm(Alarm alarm)
+        {
+            AlarmDatabase.Insert(alarm);
         }
     }
 }

@@ -52,8 +52,6 @@ namespace MicrowaveMonitor.Gui
             LinksList.SelectedItem = linkManager.LinkNames.First().Value;
             LinksList.SelectionChanged += LinkChoosed;
 
-            alarmListPane.AlarmsList.ItemsSource = alarmManager.Alarms;
-
             siteA.Checked += SiteChoosed;
             siteB.Checked += SiteChoosed;
             siteR1.Checked += SiteChoosed;

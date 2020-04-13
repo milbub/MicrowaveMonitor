@@ -21,8 +21,8 @@ namespace MicrowaveMonitor
             Console.WriteLine("0Application started.");           
             linkManager = new LinkManager();
             dataManager = new DataManager();
-            workerManager = new WorkerManager(dataManager, linkManager);
             alarmManager = new AlarmManager();
+            workerManager = new WorkerManager(dataManager, linkManager, alarmManager);
         }
 
         private void Application_Startup(object sender, StartupEventArgs e)
@@ -41,8 +41,8 @@ namespace MicrowaveMonitor
         {
             logManager.IsExiting = true;
             workerManager.PauseWorkers();
-            dataManager.StopDatabaseWriter();
-            alarmManager.StopWatchers();
+            dataManager.IsRunning = false;
+            alarmManager.IsRunning = false;
         }
     }
 }
