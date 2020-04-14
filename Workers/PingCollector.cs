@@ -1,4 +1,5 @@
 ﻿using MicrowaveMonitor.Database;
+using MicrowaveMonitor.Managers;
 using System;
 using System.Collections.Generic;
 using System.Net.NetworkInformation;
@@ -11,7 +12,7 @@ namespace MicrowaveMonitor.Workers
     {
         private readonly Queue<DynamicInfluxRow> database;
 
-        public PingCollector(Queue<DynamicInfluxRow> dbRows, string address, int deviceId, int refreshInterval, DeviceDisplay display) : base(address, deviceId, refreshInterval, display)
+        public PingCollector(Queue<DynamicInfluxRow> dbRows, string address, int deviceId, int refreshInterval, DeviceDisplay display, AlarmManager alarmManager, bool checkTresholds, float treshUp, float treshDown, Measurement measurement) : base(address, deviceId, refreshInterval, display, alarmManager, checkTresholds, treshUp, treshDown, measurement)
         {
             database = dbRows;
         }
@@ -42,7 +43,14 @@ namespace MicrowaveMonitor.Workers
                         finishTime = DateTime.Now;
 
                         if (reply.Status == IPStatus.Success)
+                        {
                             RecordData(reply);
+                            HasResponded(true);
+                        }
+                        else if (reply.Status == IPStatus.TimedOut)
+                        {
+                            HasResponded(false);
+                        }
 
                         diffTime = finishTime - beginTime;
                         if (diffTime.TotalMilliseconds < RefreshInterval)
@@ -53,7 +61,7 @@ namespace MicrowaveMonitor.Workers
             }
         }
 
-        public virtual void RecordData(PingReply result)
+        protected virtual void RecordData(PingReply result)
         {
             Display.DataPing = new Record<double>(DateTime.Now, result.RoundtripTime);
             DynamicInfluxRow row = new DynamicInfluxRow();

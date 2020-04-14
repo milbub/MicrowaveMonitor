@@ -3,6 +3,7 @@ using MicrowaveMonitor.Gui;
 using MicrowaveMonitor.Database;
 using System;
 using System.Windows;
+using System.Collections.Generic;
 
 namespace MicrowaveMonitor
 {
@@ -13,23 +14,27 @@ namespace MicrowaveMonitor
         private readonly WorkerManager workerManager;
         private readonly AlarmManager alarmManager;
         private readonly LogManager logManager;
+        
+        private readonly Dictionary<int, DeviceDisplay> deviceDisplays;
 
         public App()
         {
-            logManager = new LogManager(Console.Out);           
+            logManager = new LogManager(Console.Out);
+            
             Console.SetOut(logManager);
-            Console.WriteLine("0Application started.");           
+            Console.WriteLine("0Application started.");
+
             linkManager = new LinkManager();
             dataManager = new DataManager();
-            alarmManager = new AlarmManager();
-            workerManager = new WorkerManager(dataManager, linkManager, alarmManager);
+            deviceDisplays = new Dictionary<int, DeviceDisplay>();
+            alarmManager = new AlarmManager(linkManager, deviceDisplays);
+            workerManager = new WorkerManager(dataManager, linkManager, alarmManager, deviceDisplays);
         }
 
         private void Application_Startup(object sender, StartupEventArgs e)
         {
             workerManager.InitWorkers(linkManager.GetDeviceTable());
             dataManager.StartDatabaseWriter();
-            alarmManager.InitWatchers(workerManager.DeviceToFront);
 
             MonitoringWindow monitoringWindow = new MonitoringWindow(linkManager, workerManager, alarmManager, dataManager);
             monitoringWindow.Show();

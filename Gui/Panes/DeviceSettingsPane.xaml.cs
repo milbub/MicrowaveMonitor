@@ -30,62 +30,62 @@ namespace MicrowaveMonitor.Gui
                 default:
                     break;
             }
-            boxSnmpPort_A.Text = device.SnmpPort.ToString();
+            boxSnmpPort_A.Text = device.SnmpPort.ToString(CultureInfo.InvariantCulture);
             boxLatitude.Text = device.Latitude;
             boxLongitude.Text = device.Longitude;
 
             monPing_A.IsChecked = device.IsWatchedPing;
-            refPing_A.Text = (device.RefreshPing / 1000).ToString();
+            refPing_A.Text = (device.RefreshPing / 1000).ToString(CultureInfo.InvariantCulture);
             tPingCheck.IsChecked = device.TresholdPing;
-            tmaxPing.Text = device.TreshUpPing.ToString();
-            tminPing.Text = device.TreshDownPing.ToString();
+            tmaxPing.Text = device.TreshUpPing.ToString(CultureInfo.InvariantCulture);
+            tminPing.Text = device.TreshDownPing.ToString(CultureInfo.InvariantCulture);
 
             enaSignalStr_A.IsChecked = device.IsEnabledSignal;
             monSignalStr_A.IsChecked = device.IsWatchedSignal;
-            refSignalStr_A.Text = (device.RefreshSignal / 1000).ToString();
+            refSignalStr_A.Text = (device.RefreshSignal / 1000).ToString(CultureInfo.InvariantCulture);
             boxSignalStr_A.Text = device.OidSignal_s;
             tSigCheck.IsChecked = device.TresholdSignal;
-            tmaxSig.Text = device.TreshUpSignal.ToString();
-            tminSig.Text = device.TreshDownSignal.ToString();
+            tmaxSig.Text = device.TreshUpSignal.ToString(CultureInfo.InvariantCulture);
+            tminSig.Text = device.TreshDownSignal.ToString(CultureInfo.InvariantCulture);
 
             enaSignalQ_A.IsChecked = device.IsEnabledSignalQ;
             monSignalQ_A.IsChecked = device.IsWatchedSignalQ;
-            refSignalQ_A.Text = (device.RefreshSignalQ / 1000).ToString();
+            refSignalQ_A.Text = (device.RefreshSignalQ / 1000).ToString(CultureInfo.InvariantCulture);
             boxSignalQ_A.Text = device.OidSignalQ_s;
             tSigQCheck.IsChecked = device.TresholdSignalQ;
-            tmaxSigQ.Text = device.TreshUpSignalQ.ToString();
-            tminSigQ.Text = device.TreshDownSignalQ.ToString();
+            tmaxSigQ.Text = device.TreshUpSignalQ.ToString(CultureInfo.InvariantCulture);
+            tminSigQ.Text = device.TreshDownSignalQ.ToString(CultureInfo.InvariantCulture);
 
             enaTempOdu.IsChecked = device.IsEnabledTempOdu;
             monTempOdu.IsChecked = device.IsWatchedTempOdu;
-            refTempOdu.Text = (device.RefreshTempOdu / 1000).ToString();
+            refTempOdu.Text = (device.RefreshTempOdu / 1000).ToString(CultureInfo.InvariantCulture);
             boxTempOdu.Text = device.OidTempOdu_s;
             tTempOduCheck.IsChecked = device.TresholdTempOdu;
-            tmaxTempOdu.Text = device.TreshUpTempOdu.ToString();
-            tminTempOdu.Text = device.TreshDownTempOdu.ToString();
+            tmaxTempOdu.Text = device.TreshUpTempOdu.ToString(CultureInfo.InvariantCulture);
+            tminTempOdu.Text = device.TreshDownTempOdu.ToString(CultureInfo.InvariantCulture);
 
             enaTempIdu.IsChecked = device.IsEnabledTempIdu;
             monTempIdu.IsChecked = device.IsWatchedTempIdu;
-            refTempIdu.Text = (device.RefreshTempIdu / 1000).ToString();
+            refTempIdu.Text = (device.RefreshTempIdu / 1000).ToString(CultureInfo.InvariantCulture);
             boxTempIdu.Text = device.OidTempIdu_s;
             tTempIduCheck.IsChecked = device.TresholdTempIdu;
-            tmaxTempIdu.Text = device.TreshUpTempIdu.ToString();
-            tminTempIdu.Text = device.TreshDownTempIdu.ToString();
+            tmaxTempIdu.Text = device.TreshUpTempIdu.ToString(CultureInfo.InvariantCulture);
+            tminTempIdu.Text = device.TreshDownTempIdu.ToString(CultureInfo.InvariantCulture);
 
             enaVolt.IsChecked = device.IsEnabledVoltage;
             monVolt.IsChecked = device.IsWatchedVoltage;
-            refVolt.Text = (device.RefreshVoltage / 1000).ToString();
+            refVolt.Text = (device.RefreshVoltage / 1000).ToString(CultureInfo.InvariantCulture);
             boxVolt.Text = device.OidVoltage_s;
             tVoltCheck.IsChecked = device.TresholdVoltage;
-            tmaxVolt.Text = device.TreshUpVoltage.ToString();
-            tminVolt.Text = device.TreshDownVoltage.ToString();
+            tmaxVolt.Text = device.TreshUpVoltage.ToString(CultureInfo.InvariantCulture);
+            tminVolt.Text = device.TreshDownVoltage.ToString(CultureInfo.InvariantCulture);
 
             enaTx_A.IsChecked = device.IsEnabledTx;
-            refTx_A.Text = (device.RefreshTx / 1000).ToString();
+            refTx_A.Text = (device.RefreshTx / 1000).ToString(CultureInfo.InvariantCulture);
             boxTx_A.Text = device.OidTxDataRate_s;
 
             enaRx_A.IsChecked = device.IsEnabledRx;
-            refRx_A.Text = (device.RefreshRx / 1000).ToString();
+            refRx_A.Text = (device.RefreshRx / 1000).ToString(CultureInfo.InvariantCulture);
             boxRx_A.Text = device.OidRxDataRate_s;
             
             return true;

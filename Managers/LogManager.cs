@@ -73,6 +73,22 @@ public class LogManager : TextWriter
                     levelColor = Brushes.DarkRed;
                     level = " <ERROR> ";
                     break;
+                case '3':
+                    levelColor = Brushes.DarkOrchid;
+                    level = " <ALARM> [WARNING] ";
+                    break;
+                case '4':
+                    levelColor = Brushes.Purple;
+                    level = " <ALARM> [CRITICAL] ";
+                    break;
+                case '5':
+                    levelColor = Brushes.DarkRed;
+                    level = " <ALARM> [DEVICE DOWN] ";
+                    break;
+                case '6':
+                    levelColor = Brushes.Green;
+                    level = " <ALARM> [SETTLE UP]";
+                    break;
                 default:
                     goto case '0';
             }

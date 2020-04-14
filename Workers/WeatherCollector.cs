@@ -80,9 +80,14 @@ namespace MicrowaveMonitor.Workers
 
                                 query = weatherApi.Query(lat, longi);
                             }
-                            catch (System.Net.WebException e)
+                            catch (System.Net.WebException)
                             {
-                                Console.WriteLine(e.Message);
+                                Console.WriteLine("2Connection to weather API server is not available.");
+                                continue;
+                            }
+                            catch (Newtonsoft.Json.JsonReaderException)
+                            {
+                                Console.WriteLine("2Bad format of JSON weather data.");
                                 continue;
                             }
                             catch (KeyNotFoundException)

@@ -42,6 +42,7 @@ namespace MicrowaveMonitor.Gui
 
             InitializeComponent();
             RegisterCharts();
+            alarmListPane.SetItemsSource(alarmManager);
             ChangeLink(linkManager.GetLink(linkManager.LinkNames.First().Key));
 
             foreach (string name in linkManager.LinkNames.Values)
@@ -265,11 +266,11 @@ namespace MicrowaveMonitor.Gui
                     break;
                 case DeviceDisplay.LinkState.AlarmWarning:
                     linkState.Content = "warning";
-                    linkState.Foreground = System.Windows.Media.Brushes.Gold;
+                    linkState.Foreground = System.Windows.Media.Brushes.Blue;
                     break;
                 case DeviceDisplay.LinkState.AlarmCritical:
                     linkState.Content = "critical";
-                    linkState.Foreground = System.Windows.Media.Brushes.Crimson;
+                    linkState.Foreground = System.Windows.Media.Brushes.Purple;
                     break;
                 case DeviceDisplay.LinkState.AlarmDown:
                     linkState.Content = "down";
@@ -407,6 +408,7 @@ namespace MicrowaveMonitor.Gui
         {
             Device basedev = settingsA.SaveBoxes(linkM.GetDevice(viewedLink.DeviceBaseId));
             linkM.UpdateDevice(basedev);
+            workerM.RestartDevice(basedev);
 
             byte hopCount = 0;
           
@@ -446,6 +448,7 @@ namespace MicrowaveMonitor.Gui
             }
 
             LinksList.SelectionChanged += LinkChoosed;
+            alarmM.Test();
         }
 
         private void ClearSearchButtonFired(object sender, RoutedEventArgs e)
@@ -461,6 +464,7 @@ namespace MicrowaveMonitor.Gui
 
             LinksList.SelectedItem = viewedLink.Name;
             LinksList.SelectionChanged += LinkChoosed;
+            alarmM.Test2();
         }
 
         private int UpdateDeviceSettings(int deviceId, CheckBox check, DeviceSettingsPane deviceSettings, int tabIndex, ref byte hops)

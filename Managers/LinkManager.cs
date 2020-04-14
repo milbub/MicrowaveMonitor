@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Linq;
 using SQLite;
 using System.IO;
 
@@ -20,72 +21,130 @@ namespace MicrowaveMonitor.Managers
             LinkDatabase.CreateTable<Link>();
             AlarmDatabase.CreateTable<Alarm>();
 
-            foreach (Link link in LinkDatabase.Table<Link>())
-                LinkNames.Add(link.Id, link.Name);
+            lock (LinkDatabase)
+                foreach (Link link in LinkDatabase.Table<Link>())
+                    LinkNames.Add(link.Id, link.Name);
 
             Console.WriteLine("0Device definitions loaded.");
         }
 
         public TableQuery<Device> GetDeviceTable()
         {
-            return LinkDatabase.Table<Device>();
+            lock (LinkDatabase)
+                return LinkDatabase.Table<Device>();
         }
 
         public Device GetDevice(int id)
         {
-            return LinkDatabase.Get<Device>(id);
+            lock (LinkDatabase)
+                return LinkDatabase.Get<Device>(id);
         }
 
         public void UpdateDevice(Device device)
         {
-            LinkDatabase.Update(device);
+            lock (LinkDatabase)
+                LinkDatabase.Update(device);
         }
 
         public void AddDevice(Device device)
         {
-            LinkDatabase.Insert(device);
+            lock (LinkDatabase)
+                LinkDatabase.Insert(device);
         }
 
         public void DeleteDevice(Device device)
         {
-            LinkDatabase.Delete(device);
+            lock (LinkDatabase)
+                LinkDatabase.Delete(device);
+        }
+
+        public string GetDeviceType(int deviceId)
+        {
+            TableQuery<Link> query;
+
+            lock (LinkDatabase)
+            {
+                query = LinkDatabase.Table<Link>().Where(v => (v.DeviceBaseId == deviceId)
+                || (v.DeviceEndId == deviceId) || (v.DeviceR1Id == deviceId)
+                || (v.DeviceR2Id == deviceId) || (v.DeviceR3Id == deviceId)
+                || (v.DeviceR4Id == deviceId));
+            }
+
+            if (query.First().DeviceBaseId == deviceId)
+                return "A";
+            else if (query.First().DeviceEndId == deviceId)
+                return "B";
+            else if (query.First().DeviceR1Id == deviceId)
+                return "R1";
+            else if (query.First().DeviceR2Id == deviceId)
+                return "R2";
+            else if (query.First().DeviceR3Id == deviceId)
+                return "R3";
+            else if (query.First().DeviceR4Id == deviceId)
+                return "R4";
+
+            return null;
         }
 
         public Link GetLink(int id)
         {
-            return LinkDatabase.Get<Link>(id);
+            lock (LinkDatabase)
+                return LinkDatabase.Get<Link>(id);
         }
 
         public void UpdateLink(Link link)
         {
-            LinkDatabase.Update(link);
+            lock (LinkDatabase)
+                LinkDatabase.Update(link);
         }
 
         public void AddLink(Link link)
         {
-            LinkDatabase.Insert(link);
-            LinkNames.Add(link.Id, link.Name);
+            lock (LinkDatabase)
+                LinkDatabase.Insert(link);
+            lock (LinkNames)
+                LinkNames.Add(link.Id, link.Name);
         }
 
         public void DeleteLink(Link link)
         {
-            LinkNames.Remove(link.Id);
-            LinkDatabase.Delete(link);
+            lock (LinkNames)
+                LinkNames.Remove(link.Id);
+            lock (LinkDatabase)
+                LinkDatabase.Delete(link);
+        }
+
+        public int FindLinkByDevice(int deviceId)
+        {
+            TableQuery<Link> query;
+
+            lock (LinkDatabase)
+            {
+                query = LinkDatabase.Table<Link>().Where(v => (v.DeviceBaseId == deviceId)
+                || (v.DeviceEndId == deviceId) || (v.DeviceR1Id == deviceId)
+                || (v.DeviceR2Id == deviceId) || (v.DeviceR3Id == deviceId)
+                || (v.DeviceR4Id == deviceId));
+            }
+
+            return query.First().Id;
         }
 
         public Alarm GetAlarm(int id)
         {
-            return AlarmDatabase.Get<Alarm>(id);
+            lock (AlarmDatabase)
+                return AlarmDatabase.Get<Alarm>(id);
         }
 
         public void UpdateAlarm(Alarm alarm)
         {
-            AlarmDatabase.Update(alarm);
+            lock (AlarmDatabase)
+                AlarmDatabase.Update(alarm);
         }
 
         public void AddAlarm(Alarm alarm)
         {
-            AlarmDatabase.Insert(alarm);
+            lock (AlarmDatabase)
+                AlarmDatabase.Insert(alarm);
         }
     }
 }

@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net;
 using System.Threading;
+using System.Windows.Threading;
 
 namespace MicrowaveMonitor.Managers
 {
@@ -21,50 +22,262 @@ namespace MicrowaveMonitor.Managers
             public int voltage;
         }
 
-        private struct AlarmDisplay
+        public struct AlarmDisplay
         {
-            public int id;
-            public string rank;
-            public string timestamp;
-            public string link;
-            public string device;
-            public string measurement;
-            public string problem;
-            public string value;
+            public int Id { get; set; }
+            public string Rank { get; set; }
+            public string Timestamp { get; set; }
+            public string EndTimestamp { get; set; }
+            public string Link { get; set; }
+            public string Device { get; set; }
+            public string Measurement { get; set; }
+            public string Problem { get; set; }
+            public string Value { get; set; }
+            public string SettledValue { get; set; }
+            public bool Ack { get; set; }
         }
 
         public bool IsRunning { get; set; }
 
         private readonly LinkManager linkM;
+        private readonly Dictionary<int, DeviceDisplay> displays;
 
-        private readonly ObservableCollection<AlarmDisplay> alarmsCurrent = new ObservableCollection<AlarmDisplay>();
-        private readonly ObservableCollection<AlarmDisplay> alarmsAck = new ObservableCollection<AlarmDisplay>();
+        public readonly ObservableCollection<AlarmDisplay> alarmsCurrent = new ObservableCollection<AlarmDisplay>();
+        public readonly ObservableCollection<AlarmDisplay> alarmsAck = new ObservableCollection<AlarmDisplay>();
+        public readonly ObservableCollection<AlarmDisplay> alarmsSettledAck = new ObservableCollection<AlarmDisplay>();
+        public readonly ObservableCollection<AlarmDisplay> alarmsSettledUnack = new ObservableCollection<AlarmDisplay>();
 
         /* Device down detection */
         private readonly Dictionary<int, byte> downTriggers = new Dictionary<int, byte>();
+        private readonly Dictionary<int, int> downIds = new Dictionary<int, int>();
 
         /* Treshold exceed detection */
         private readonly Dictionary<int, AlarmIdAssign> tresholdIds = new Dictionary<int, AlarmIdAssign>();
 
 
-        public AlarmManager(LinkManager linkManager)
+        public AlarmManager(LinkManager linkManager, Dictionary<int, DeviceDisplay> deviceDisplays)
         {
             linkM = linkManager;
+            displays = deviceDisplays;
         }
 
-        private int GenerateAlarm(int deviceId, AlarmRank rank, Measurement measure, AlarmType type, ValueTrend trend, double measValue)
+        public void Test() /////////////////////////////////////////////////////////////////////////////////////
         {
-            return 0;
+            TreshExcTrigger(1, Measurement.TempODU, 50.36, true);
+            //DeviceDownTrigger(1);
         }
 
-        private void UpdateAlarm(int alarmId)
+        public void Test2() /////////////////////////////////////////////////////////////////////////////////////
         {
-
+            //DeviceUpTrigger(1);
+            TreshSettTrigger(1, Measurement.TempODU, 30.2);
         }
 
-        private void SettleAlarm(int? alarmId, int? deviceId)
+        private int GenerateAlarmDispatched(int deviceId, AlarmRank rank, Measurement measure, AlarmType method, bool trend, double measValue)
         {
+            object obj = null;
 
+            App.Current.Dispatcher.Invoke(delegate
+            {
+                return obj = GenerateAlarm(deviceId, rank, measure, method, trend, measValue);
+            });
+
+            if (obj == null)
+                return 0;
+            return (int)obj;
+        }
+
+        private void SettleAlarmDispatched(int alarmId, double settledValue)
+        {
+            App.Current.Dispatcher.Invoke(delegate
+            {
+                SettleAlarm(alarmId, settledValue);
+            });
+        }
+
+        private int GenerateAlarm(int deviceId, AlarmRank rank, Measurement measure, AlarmType method, bool trend, double measValue)
+        {
+            int link = linkM.FindLinkByDevice(deviceId);
+            string deviceType = linkM.GetDeviceType(deviceId);
+            string linkName = linkM.LinkNames[link];
+
+            Alarm alarm = new Alarm()
+            {
+                Rank = rank,
+                IsActive = true,
+                IsAck = false,
+                GenerTime = DateTime.Now,
+                LinkId = link,
+                DeviceId = deviceId,
+                Measure = measure,
+                Type = method,
+                Trend = trend,
+                GenerValue = measValue,
+                DeviceType = deviceType
+            };
+
+            linkM.AddAlarm(alarm);
+            string text = string.Empty;
+
+            switch (method)
+            {
+                case AlarmType.Down:
+                    text = "Device is not responding.";
+                    break;
+                case AlarmType.Treshold:
+                    if (trend)
+                        text = "Value exceeded setted treshold.";
+                    else
+                        text = "Value dropped below setted treshold.";
+                    break;
+                case AlarmType.AvgLong:
+                    if (trend)
+                        text = "Value exceeded longterm average.";
+                    else
+                        text = "Value dropped below longterm average.";
+                    break;
+                case AlarmType.AvgShort:
+                    if (trend)
+                        text = "Value exceeded shortterm average.";
+                    else
+                        text = "Value dropped below shortterm average.";
+                    break;
+                case AlarmType.Retrospecitve:
+                    if (trend)
+                        text = "Value significantly exceeded values from the last days.";
+                    else
+                        text = "Value significantly dropped below values from the last days.";
+                    break;
+                case AlarmType.Repetition:
+                    if (trend)
+                        text = "Values are peaking on a regular basis.";
+                    else
+                        text = "Values ​​are dropping on a regular basis.";
+                    break;
+                case AlarmType.TempCorrel:
+                    if (trend)
+                        text = "The temperature is over the safe corresponding ambient temperature.";
+                    else
+                        text = "The temperature is below the safe corresponding ambient temperature.";
+                    break;
+                default:
+                    break;
+            }
+
+            AlarmDisplay alarmDisplay = new AlarmDisplay();
+            if (method == AlarmType.Down)
+                alarmDisplay.Value = "-";
+            else
+                alarmDisplay.Value = measValue.ToString("0.00");
+            alarmDisplay.Id = alarm.Id;
+            alarmDisplay.Rank = rank.ToString();
+            alarmDisplay.Timestamp = alarm.GenerTime.ToString("dd.MM.yyyy HH:mm");
+            alarmDisplay.Link = linkName;
+            alarmDisplay.Device = deviceType;
+            alarmDisplay.Measurement = measure.ToString();
+            alarmDisplay.Problem = text;
+            alarmDisplay.Ack = false;
+
+            lock (displays)
+            {
+                if ((int)displays[deviceId].State < (int)rank)
+                    displays[deviceId].State = (DeviceDisplay.LinkState)(int)rank;
+            }
+
+            Console.WriteLine(((int)rank + 1).ToString() + " Link: " + linkName + "; Device: " + deviceType + "; Measure: " + measure.ToString() + ". " + text);
+
+            lock (alarmsCurrent)
+                alarmsCurrent.Add(alarmDisplay);
+            return alarm.Id;
+        }
+
+        private void SettleAlarm(int alarmId, double settledValue)
+        {
+            if (alarmId == 0)
+                return;
+
+            Alarm alarm = linkM.GetAlarm(alarmId);
+            string linkName = linkM.LinkNames[alarm.LinkId];
+            
+            AlarmDisplay display;
+            ObservableCollection<AlarmDisplay> destination;
+
+            if (alarm.IsAck)
+            {
+                lock (alarmsAck)
+                {
+                    display = alarmsAck.First(v => (v.Id == alarm.Id));
+                    alarmsAck.Remove(display);
+                }
+                destination = alarmsSettledAck;
+            }
+            else
+            {
+                lock (alarmsCurrent)
+                {
+                    display = alarmsCurrent.First(v => (v.Id == alarm.Id));
+                    alarmsCurrent.Remove(display);
+                }
+                destination = alarmsSettledUnack;
+            }
+
+            alarm.IsActive = false;
+            alarm.SettledTime = DateTime.Now;
+            alarm.SettledValue = settledValue;
+
+            if (alarm.Type == AlarmType.Down)
+                display.SettledValue = "-";
+            else
+                display.SettledValue = settledValue.ToString("0.00");
+            display.EndTimestamp = alarm.SettledTime.ToString("dd.MM.yyyy HH:mm");
+
+            lock (destination)
+                destination.Add(display);
+            linkM.UpdateAlarm(alarm);
+
+            Console.WriteLine(6.ToString() + " Link: " + linkName + "; Device: " + alarm.DeviceType + "; Measure: " + alarm.Measure.ToString() + ".");
+
+            lock (displays)
+            {
+                if (displays[alarm.DeviceId].State == DeviceDisplay.LinkState.Paused)
+                {
+                    Console.WriteLine("blekeke");
+                    return;
+                }
+            }
+
+            /* TODO REWRITE !!! */
+            lock (downTriggers)
+            {
+                if (downTriggers.ContainsKey(alarm.DeviceId))
+                    lock (displays)
+                        displays[alarm.DeviceId].State = DeviceDisplay.LinkState.AlarmDown;
+                else if (tresholdIds.ContainsKey(alarm.DeviceId))
+                {
+                    if (tresholdIds[alarm.DeviceId].count > 0)
+                        lock (displays)
+                            displays[alarm.DeviceId].State = DeviceDisplay.LinkState.AlarmCritical;
+                }
+                else
+                    lock (displays)
+                        displays[alarm.DeviceId].State = DeviceDisplay.LinkState.Running;
+            }
+        }
+
+        public void SetAck(int id)
+        {
+            AlarmDisplay display = alarmsCurrent.First(v => (v.Id == id));
+            alarmsCurrent.Remove(display);
+            display.Ack = true;
+            alarmsAck.Add(display);
+        }
+
+        public void UnsetAck(int id)
+        {
+            AlarmDisplay display = alarmsAck.First(v => (v.Id == id));
+            alarmsAck.Remove(display);
+            display.Ack = false;
+            alarmsCurrent.Add(display);
         }
 
         public void DeviceDownTrigger(int deviceId)
@@ -74,10 +287,10 @@ namespace MicrowaveMonitor.Managers
                 if (downTriggers.ContainsKey(deviceId))
                     downTriggers[deviceId]++;
                 else
+                {
                     downTriggers.Add(deviceId, 1);
-
-                if (downTriggers[deviceId] == 1)
-                    GenerateAlarm();
+                    downIds.Add(deviceId, GenerateAlarmDispatched(deviceId, AlarmRank.Down, Measurement.All, AlarmType.Down, false, 0));
+                }
             }
         }
 
@@ -91,60 +304,57 @@ namespace MicrowaveMonitor.Managers
 
                     if (downTriggers[deviceId] < 1)
                     {
-                        SettleAlarm(null, deviceId);
                         downTriggers.Remove(deviceId);
+                        SettleAlarmDispatched(downIds[deviceId], 0);
+                        downIds.Remove(deviceId);
                     }
                 }
             }
         }
 
-        public void TreshExcTrigger(int deviceId, Measurement measurement, double value)
+        public void TreshExcTrigger(int deviceId, Measurement measurement, double value, bool trend)
         {
-            int alarm = GenerateAlarm();
-            AlarmIdAssign idAssign;
+            int alarmId = GenerateAlarmDispatched(deviceId, AlarmRank.Critical, measurement, AlarmType.Treshold, trend, value);
 
             lock (tresholdIds)
             {
-                if (tresholdIds.ContainsKey(deviceId))
-                    idAssign = tresholdIds[deviceId];
-                else
-                {
-                    idAssign = new AlarmIdAssign();
-                    idAssign.count = 0;
-                    tresholdIds[deviceId] = idAssign;
-                }
+                if (!tresholdIds.ContainsKey(deviceId))
+                    tresholdIds.Add(deviceId, new AlarmIdAssign() { count = 0 });
+
+                AlarmIdAssign ids = tresholdIds[deviceId];
 
                 switch (measurement)
                 {
-                    case Measurement.Ping:
-                        idAssign.ping = alarm;
+                    case Measurement.Latency:
+                        ids.ping = alarmId;
                         break;
-                    case Measurement.Signal:
-                        idAssign.signal = alarm;
+                    case Measurement.Strength:
+                        ids.signal = alarmId;
                         break;
-                    case Measurement.SignalQ:
-                        idAssign.signalQ = alarm;
+                    case Measurement.Quality:
+                        ids.signalQ = alarmId;
                         break;
-                    case Measurement.TempOdu:
-                        idAssign.tempOdu = alarm;
+                    case Measurement.TempODU:
+                        ids.tempOdu = alarmId;
                         break;
-                    case Measurement.TempIdu:
-                        idAssign.tempIdu = alarm;
+                    case Measurement.TempIDU:
+                        ids.tempIdu = alarmId;
                         break;
                     case Measurement.Voltage:
-                        idAssign.voltage = alarm;
+                        ids.voltage = alarmId;
                         break;
                     default:
                         return;
                 }
 
-                idAssign.count++;
+                ids.count++;
+                tresholdIds[deviceId] = ids;
             }
         }
 
         public void TreshSettTrigger(int deviceId, Measurement measurement, double value)
         {
-            int alarm = 0;
+            int alarmId = 0;
             AlarmIdAssign ids;
 
             lock (tresholdIds)
@@ -154,28 +364,28 @@ namespace MicrowaveMonitor.Managers
                     ids = tresholdIds[deviceId];
                     switch (measurement)
                     {
-                        case Measurement.Ping:
-                            alarm = ids.ping;
+                        case Measurement.Latency:
+                            alarmId = ids.ping;
                             ids.ping = 0;
                             break;
-                        case Measurement.Signal:
-                            alarm = ids.signal;
+                        case Measurement.Strength:
+                            alarmId = ids.signal;
                             ids.signal = 0;
                             break;
-                        case Measurement.SignalQ:
-                            alarm = ids.signalQ;
+                        case Measurement.Quality:
+                            alarmId = ids.signalQ;
                             ids.signalQ = 0;
                             break;
-                        case Measurement.TempOdu:
-                            alarm = ids.tempOdu;
+                        case Measurement.TempODU:
+                            alarmId = ids.tempOdu;
                             ids.tempOdu = 0;
                             break;
-                        case Measurement.TempIdu:
-                            alarm = ids.tempIdu;
+                        case Measurement.TempIDU:
+                            alarmId = ids.tempIdu;
                             ids.tempIdu = 0;
                             break;
                         case Measurement.Voltage:
-                            alarm = ids.voltage;
+                            alarmId = ids.voltage;
                             ids.voltage = 0;
                             break;
                         default:
@@ -188,7 +398,8 @@ namespace MicrowaveMonitor.Managers
                 }
             }
 
-            SettleAlarm(alarm, null);
+            if (alarmId > 0)
+                SettleAlarmDispatched(alarmId, value);
         }
     }
 }

@@ -10,14 +10,20 @@
             <ListView x:Name="viewCurrent" Margin="0" Background="LightGray">
                 <ListView.View>
                     <GridView>
-                        <GridViewColumn Header="Rank" Width="50"></GridViewColumn>
-                        <GridViewColumn Header="Timestamp" Width="80"></GridViewColumn>
-                        <GridViewColumn Header="Link" Width="163"></GridViewColumn>
-                        <GridViewColumn Header="Device" Width="50"></GridViewColumn>
-                        <GridViewColumn Header="Measurement" Width="87"></GridViewColumn>
-                        <GridViewColumn Header="Problem" Width="115"></GridViewColumn>
-                        <GridViewColumn Header="Value" Width="40"></GridViewColumn>
-                        <GridViewColumn Header="ACK" Width="30"></GridViewColumn>
+                        <GridViewColumn Header="Rank" Width="48" DisplayMemberBinding="{Binding Rank}"></GridViewColumn>
+                        <GridViewColumn Header="Timestamp" Width="102" DisplayMemberBinding="{Binding Timestamp}"></GridViewColumn>
+                        <GridViewColumn Header="Link" Width="170" DisplayMemberBinding="{Binding Link}"></GridViewColumn>
+                        <GridViewColumn Header="Site" Width="50" DisplayMemberBinding="{Binding Device}"></GridViewColumn>
+                        <GridViewColumn Header="Measurement" Width="87" DisplayMemberBinding="{Binding Measurement}"></GridViewColumn>
+                        <GridViewColumn Header="Description" Width="212" DisplayMemberBinding="{Binding Problem}"></GridViewColumn>
+                        <GridViewColumn Header="Value" Width="40" DisplayMemberBinding="{Binding Value}"></GridViewColumn>
+                        <GridViewColumn Header="ACK" Width="27">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <CheckBox Tag="{Binding Id}" IsChecked="{Binding Ack}" Click="AckCheckFired"/>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
                     </GridView>
                 </ListView.View>
             </ListView>
@@ -26,22 +32,57 @@
             <ListView x:Name="viewAck" Margin="0" Background="LightGray">
                 <ListView.View>
                     <GridView>
-                        <GridViewColumn Header="Rank" Width="50"></GridViewColumn>
-                        <GridViewColumn Header="Timestamp" Width="80"></GridViewColumn>
-                        <GridViewColumn Header="Link" Width="183"></GridViewColumn>
-                        <GridViewColumn Header="Device" Width="50"></GridViewColumn>
-                        <GridViewColumn Header="Measurement" Width="87"></GridViewColumn>
-                        <GridViewColumn Header="Problem" Width="115"></GridViewColumn>
-                        <GridViewColumn Header="Value" Width="50"></GridViewColumn>
+                        <GridViewColumn Header="Rank" Width="48" DisplayMemberBinding="{Binding Rank}"></GridViewColumn>
+                        <GridViewColumn Header="Timestamp" Width="102" DisplayMemberBinding="{Binding Timestamp}"></GridViewColumn>
+                        <GridViewColumn Header="Link" Width="170" DisplayMemberBinding="{Binding Link}"></GridViewColumn>
+                        <GridViewColumn Header="Site" Width="50" DisplayMemberBinding="{Binding Device}"></GridViewColumn>
+                        <GridViewColumn Header="Measurement" Width="87" DisplayMemberBinding="{Binding Measurement}"></GridViewColumn>
+                        <GridViewColumn Header="Description" Width="212" DisplayMemberBinding="{Binding Problem}"></GridViewColumn>
+                        <GridViewColumn Header="Value" Width="40" DisplayMemberBinding="{Binding Value}"></GridViewColumn>
+                        <GridViewColumn Header="ACK" Width="27">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <CheckBox Tag="{Binding Id}" IsChecked="{Binding Ack}" Click="AckUncheckFired"/>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
                     </GridView>
                 </ListView.View>
             </ListView>
         </TabItem>
         <TabItem Header="Settled (acknowledged)">
-
+            <ListView x:Name="viewSettledAck" Margin="0" Background="LightGray">
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Header="Rank" Width="48" DisplayMemberBinding="{Binding Rank}"></GridViewColumn>
+                        <GridViewColumn Header="Beginning Timestamp" Width="127" DisplayMemberBinding="{Binding StartTimestamp}"></GridViewColumn>
+                        <GridViewColumn Header="End Timestamp" Width="127" DisplayMemberBinding="{Binding EndTimestamp}"></GridViewColumn>
+                        <GridViewColumn Header="Link" Width="170" DisplayMemberBinding="{Binding Link}"></GridViewColumn>
+                        <GridViewColumn Header="Site" Width="50" DisplayMemberBinding="{Binding Device}"></GridViewColumn>
+                        <GridViewColumn Header="Measurement" Width="87" DisplayMemberBinding="{Binding Measurement}"></GridViewColumn>
+                        <GridViewColumn Header="Description" Width="300" DisplayMemberBinding="{Binding Problem}"></GridViewColumn>
+                        <GridViewColumn Header="Beginning Value" Width="95" DisplayMemberBinding="{Binding Value}"></GridViewColumn>
+                        <GridViewColumn Header="End Value" Width="95" DisplayMemberBinding="{Binding SettledValue}"></GridViewColumn>
+                    </GridView>
+                </ListView.View>
+            </ListView>
         </TabItem>
         <TabItem Header="Settled (unaddressed)">
-            
+            <ListView x:Name="viewSettledUnack" Margin="0" Background="LightGray">
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Header="Rank" Width="48" DisplayMemberBinding="{Binding Rank}"></GridViewColumn>
+                        <GridViewColumn Header="Begin Timestamp" Width="127" DisplayMemberBinding="{Binding Timestamp}"></GridViewColumn>
+                        <GridViewColumn Header="End Timestamp" Width="127" DisplayMemberBinding="{Binding EndTimestamp}"></GridViewColumn>
+                        <GridViewColumn Header="Link" Width="170" DisplayMemberBinding="{Binding Link}"></GridViewColumn>
+                        <GridViewColumn Header="Site" Width="50" DisplayMemberBinding="{Binding Device}"></GridViewColumn>
+                        <GridViewColumn Header="Measurement" Width="87" DisplayMemberBinding="{Binding Measurement}"></GridViewColumn>
+                        <GridViewColumn Header="Description" Width="300" DisplayMemberBinding="{Binding Problem}"></GridViewColumn>
+                        <GridViewColumn Header="Beginning Value" Width="95" DisplayMemberBinding="{Binding Value}"></GridViewColumn>
+                        <GridViewColumn Header="End Value" Width="95" DisplayMemberBinding="{Binding SettledValue}"></GridViewColumn>
+                    </GridView>
+                </ListView.View>
+            </ListView>
         </TabItem>
     </TabControl>
 </UserControl>

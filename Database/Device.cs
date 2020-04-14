@@ -75,22 +75,22 @@ namespace MicrowaveMonitor.Database
         public int RefreshVoltage { get; set; } = defaultRefresh;
 
         /* Tresholds */
-        public float TreshUpSignal { get; set; } 
-        public float TreshUpSignalQ { get; set; }
-        public float TreshUpTx { get; set; }
-        public float TreshUpRx { get; set; }
-        public float TreshUpPing { get; set; }
-        public float TreshUpTempOdu { get; set; }
-        public float TreshUpTempIdu { get; set; }
-        public float TreshUpVoltage { get; set; }
+        public float TreshUpSignal { get; set; } = 0;
+        public float TreshUpSignalQ { get; set; } = 0;
+        public float TreshUpTx { get; set; } = 0;
+        public float TreshUpRx { get; set; } = 0;
+        public float TreshUpPing { get; set; } = 0;
+        public float TreshUpTempOdu { get; set; } = 0;
+        public float TreshUpTempIdu { get; set; } = 0;
+        public float TreshUpVoltage { get; set; } = 0;
 
-        public float TreshDownSignal { get; set; }
-        public float TreshDownSignalQ { get; set; }
-        public float TreshDownTx { get; set; }
-        public float TreshDownRx { get; set; }
-        public float TreshDownPing { get; set; }
-        public float TreshDownTempOdu { get; set; }
-        public float TreshDownTempIdu { get; set; }
-        public float TreshDownVoltage { get; set; }
+        public float TreshDownSignal { get; set; } = 0;
+        public float TreshDownSignalQ { get; set; } = 0;
+        public float TreshDownTx { get; set; } = 0;
+        public float TreshDownRx { get; set; } = 0;
+        public float TreshDownPing { get; set; } = 0;
+        public float TreshDownTempOdu { get; set; } = 0;
+        public float TreshDownTempIdu { get; set; } = 0;
+        public float TreshDownVoltage { get; set; } = 0;
     }
 }

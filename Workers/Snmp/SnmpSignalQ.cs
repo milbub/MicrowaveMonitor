@@ -1,5 +1,6 @@
 ﻿using Lextm.SharpSnmpLib;
 using MicrowaveMonitor.Database;
+using MicrowaveMonitor.Managers;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -15,15 +16,16 @@ namespace MicrowaveMonitor.Workers
         private readonly int divisor;
         private readonly Queue<DynamicInfluxRow> database;
 
-        public SnmpSignalQ(Queue<DynamicInfluxRow> dbRows, int divisor, string oid, int port, string community, string address, int deviceId, int refreshInterval, DeviceDisplay display) : base(oid, port, community, address, deviceId, refreshInterval, display)
+        public SnmpSignalQ(Queue<DynamicInfluxRow> dbRows, int divisor, string oid, int port, string community, string address, int deviceId, int refreshInterval, DeviceDisplay display, AlarmManager alarmManager, bool checkTresholds, float treshUp, float treshDown, Measurement measurement) : base(oid, port, community, address, deviceId, refreshInterval, display, alarmManager, checkTresholds, treshUp, treshDown, measurement)
         {
             this.divisor = divisor;
             database = dbRows;
         }
 
-        public override void RecordData(IList<Variable> result, DateTime resultTime)
+        protected override void RecordData(IList<Variable> result, DateTime resultTime)
         {
             double resval = Math.Abs(double.Parse(result.First().Data.ToString()) / divisor);
+            TresholdCheck(resval);
             Display.DataSigQ = new Record<double>(resultTime, resval); ;
             DynamicInfluxRow row = new DynamicInfluxRow();
             row.Timestamp = resultTime.ToUniversalTime();

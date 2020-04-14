@@ -1,5 +1,6 @@
 ﻿using Lextm.SharpSnmpLib;
 using MicrowaveMonitor.Database;
+using MicrowaveMonitor.Managers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,14 +14,15 @@ namespace MicrowaveMonitor.Workers
     {
         private readonly Queue<DynamicInfluxRow> database;
 
-        public SnmpVoltage(Queue<DynamicInfluxRow> dbRows, string oid, int port, string community, string address, int deviceId, int refreshInterval, DeviceDisplay display) : base(oid, port, community, address, deviceId, refreshInterval, display)
+        public SnmpVoltage(Queue<DynamicInfluxRow> dbRows, string oid, int port, string community, string address, int deviceId, int refreshInterval, DeviceDisplay display, AlarmManager alarmManager, bool checkTresholds, float treshUp, float treshDown, Measurement measurement) : base(oid, port, community, address, deviceId, refreshInterval, display, alarmManager, checkTresholds, treshUp, treshDown, measurement)
         {
             database = dbRows;
         }
 
-        public override void RecordData(IList<Variable> result, DateTime resultTime)
+        protected override void RecordData(IList<Variable> result, DateTime resultTime)
         {
             double resval = double.Parse(result.First().Data.ToString());
+            TresholdCheck(resval);
             Display.DataVoltage = new Record<double>(resultTime, resval);
             DynamicInfluxRow row = new DynamicInfluxRow();
             row.Timestamp = resultTime.ToUniversalTime();

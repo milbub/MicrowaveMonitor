@@ -1,6 +1,7 @@
 ﻿using Lextm.SharpSnmpLib;
 using Lextm.SharpSnmpLib.Messaging;
 using MicrowaveMonitor.Database;
+using MicrowaveMonitor.Managers;
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -25,7 +26,7 @@ namespace MicrowaveMonitor.Workers
             lastMessage = DateTime.Now;
         }
 
-        public SnmpCollector(string oid, int port, string community, string address, int deviceId, int refreshInterval, DeviceDisplay display) : base(address, deviceId, refreshInterval, display)
+        public SnmpCollector(string oid, int port, string community, string address, int deviceId, int refreshInterval, DeviceDisplay display, AlarmManager alarmManager, bool checkTresholds, float treshUp, float treshDown, Measurement measurement) : base(address, deviceId, refreshInterval, display, alarmManager, checkTresholds, treshUp, treshDown, measurement)
         {
             CollectedOid = new ObjectIdentifier(oid);
             Port = port;
@@ -56,17 +57,18 @@ namespace MicrowaveMonitor.Workers
                         try
                         {
                             var result = Messenger.Get
-                        (
-                            VersionCode.V1,
-                            new System.Net.IPEndPoint(Address, Port),
-                            Community,
-                            new List<Variable> { new Variable(CollectedOid) },
-                            timeout
-                        );
+                            (
+                                VersionCode.V1,
+                                new System.Net.IPEndPoint(Address, Port),
+                                Community,
+                                new List<Variable> { new Variable(CollectedOid) },
+                                timeout
+                            );
 
                             finishTime = DateTime.Now;
 
                             RecordData(result, finishTime);
+                            HasResponded(true);
 
                             diffTime = finishTime - beginTime;
                             if (diffTime.TotalMilliseconds < RefreshInterval)
@@ -77,6 +79,7 @@ namespace MicrowaveMonitor.Workers
                             if (e is Lextm.SharpSnmpLib.Messaging.TimeoutException)
                             {
                                 TimeoutCounter();
+                                HasResponded(false);
                                 continue;
                             }
                             if (e is ErrorException)
@@ -92,10 +95,8 @@ namespace MicrowaveMonitor.Workers
                                 // TODO - exception handling
                             }
                         }
-                        catch (ThreadAbortException e)
-                        {
-                            Console.WriteLine(e.Message);
-                        }
+                        catch (ThreadAbortException)
+                        { }
                     }
                 });
                 tCollector.Start();
@@ -114,6 +115,6 @@ namespace MicrowaveMonitor.Workers
             }
         }
 
-        public abstract void RecordData(IList<Variable> result, DateTime resultTime);
+        protected abstract void RecordData(IList<Variable> result, DateTime resultTime);
     }
 }
