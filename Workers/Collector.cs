@@ -10,7 +10,7 @@ namespace MicrowaveMonitor.Workers
 {
     public abstract class Collector
     {
-        public static int MaxTimeoutCount { get; set; } = 6;
+        public static int MaxTimeoutCount { get; set; } = 8;
         public static int MaxTimeout { get; private set; } = 5000;   // ms
         public int RefreshInterval { get; protected set; }
 
@@ -32,6 +32,7 @@ namespace MicrowaveMonitor.Workers
         private bool treshOver = false;
 
         private int timeoutCount = 0;
+        private bool up = true;
 
         public Collector(string address, int deviceId, int refreshInterval, DeviceDisplay display, AlarmManager alarmManager, bool checkTresholds, float treshUp, float treshDown, Measurement measurement)
         {
@@ -80,28 +81,30 @@ namespace MicrowaveMonitor.Workers
                 }
             }*/
 
-            if (responded && timeoutCount <= MaxTimeoutCount)
+            if (responded && up)
             {
                 timeoutCount = 0;
-                return;
             }
-
-            if (responded && timeoutCount > MaxTimeoutCount)
-            {
-                alarmMan.DeviceUpTrigger(DeviceId);
-                timeoutCount = 0;
-                return;
-            }
-
-            if (!responded && timeoutCount < MaxTimeoutCount)
+            else if (!responded && up)
             {
                 timeoutCount++;
-                return;
-            }
 
-            if (!responded && timeoutCount == MaxTimeoutCount)
+                if (timeoutCount == MaxTimeoutCount)
+                {
+                    alarmMan.DeviceDownTrigger(DeviceId);
+                    RefreshInterval *= 3;
+                    up = false;
+                }
+            }
+            else if (responded && !up)
             {
-                alarmMan.DeviceDownTrigger(DeviceId);
+                timeoutCount = 0;
+                up = true;
+                alarmMan.DeviceUpTrigger(DeviceId);
+                RefreshInterval /= 3;
+            }
+            else if (!responded && !up)
+            {
                 timeoutCount++;
             }
         }

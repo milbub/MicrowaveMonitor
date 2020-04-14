@@ -13,6 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using CefSharp;
+using CefSharp.Wpf;
 
 namespace MicrowaveMonitor.Gui
 {
@@ -27,8 +28,12 @@ namespace MicrowaveMonitor.Gui
         public MapWindow(string latitude, string longitude)
         {
             InitializeComponent();
+            //Cef.Initialize(new CefSettings());
+            
             latitudeA = latitude;
             longitudeA = longitude;
+
+            mapBrowser.IsBrowserInitializedChanged += MapBrowserInit;
         }
 
         public MapWindow(string latitudeA, string longitudeA, string latitudeB, string longitudeB) : this(latitudeA, longitudeA)
@@ -38,10 +43,13 @@ namespace MicrowaveMonitor.Gui
             dual = true;
         }
 
-        private void MapBrowser_Loaded(object sender, RoutedEventArgs e)
+        private void MapBrowserInit(object sender, DependencyPropertyChangedEventArgs e)
         {
-            string page = PageBuilder();
-            mapBrowser.LoadHtml(page, "https://www.vutbr.cz");
+            if (mapBrowser.IsBrowserInitialized)
+            {
+                string page = PageBuilder();
+                mapBrowser.LoadHtml(page, "https://www.vutbr.cz");
+            }
         }
 
         private string PageBuilder()

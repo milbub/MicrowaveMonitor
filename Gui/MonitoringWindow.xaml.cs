@@ -448,7 +448,6 @@ namespace MicrowaveMonitor.Gui
             }
 
             LinksList.SelectionChanged += LinkChoosed;
-            alarmM.Test();
         }
 
         private void ClearSearchButtonFired(object sender, RoutedEventArgs e)
@@ -464,7 +463,6 @@ namespace MicrowaveMonitor.Gui
 
             LinksList.SelectedItem = viewedLink.Name;
             LinksList.SelectionChanged += LinkChoosed;
-            alarmM.Test2();
         }
 
         private int UpdateDeviceSettings(int deviceId, CheckBox check, DeviceSettingsPane deviceSettings, int tabIndex, ref byte hops)

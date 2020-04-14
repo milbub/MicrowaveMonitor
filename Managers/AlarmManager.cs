@@ -50,6 +50,7 @@ namespace MicrowaveMonitor.Managers
         /* Device down detection */
         private readonly Dictionary<int, byte> downTriggers = new Dictionary<int, byte>();
         private readonly Dictionary<int, int> downIds = new Dictionary<int, int>();
+        private object downLocker = new object();
 
         /* Treshold exceed detection */
         private readonly Dictionary<int, AlarmIdAssign> tresholdIds = new Dictionary<int, AlarmIdAssign>();
@@ -59,18 +60,6 @@ namespace MicrowaveMonitor.Managers
         {
             linkM = linkManager;
             displays = deviceDisplays;
-        }
-
-        public void Test() /////////////////////////////////////////////////////////////////////////////////////
-        {
-            //TreshExcTrigger(1, Measurement.TempODU, 50.36, true);
-            DeviceDownTrigger(17);
-        }
-
-        public void Test2() /////////////////////////////////////////////////////////////////////////////////////
-        {
-            DeviceUpTrigger(17);
-            //TreshSettTrigger(1, Measurement.TempODU, 30.2);
         }
 
         private int GenerateAlarmDispatched(int deviceId, AlarmRank rank, Measurement measure, AlarmType method, bool trend, double measValue)
@@ -248,7 +237,6 @@ namespace MicrowaveMonitor.Managers
 
             /* TODO REWRITE !!! */
             lock (downTriggers)
-            {
                 if (downTriggers.ContainsKey(alarm.DeviceId))
                     lock (displays)
                         displays[alarm.DeviceId].State = DeviceDisplay.LinkState.AlarmDown;
@@ -261,7 +249,6 @@ namespace MicrowaveMonitor.Managers
                 else
                     lock (displays)
                         displays[alarm.DeviceId].State = DeviceDisplay.LinkState.Running;
-            }
         }
 
         public void SetAck(int id)
@@ -298,7 +285,7 @@ namespace MicrowaveMonitor.Managers
 
         public void DeviceDownTrigger(int deviceId)
         {
-            lock (downTriggers)
+            lock (downLocker)
             {
                 if (downTriggers.ContainsKey(deviceId))
                     downTriggers[deviceId]++;
@@ -312,7 +299,7 @@ namespace MicrowaveMonitor.Managers
 
         public void DeviceUpTrigger(int deviceId)
         {
-            lock (downTriggers)
+            lock (downLocker)
             {
                 if (downTriggers.ContainsKey(deviceId))
                 {
@@ -411,6 +398,8 @@ namespace MicrowaveMonitor.Managers
                     ids.count--;
                     if (ids.count == 0)
                         tresholdIds.Remove(deviceId);
+                    else
+                        tresholdIds[deviceId] = ids;
                 }
             }
 

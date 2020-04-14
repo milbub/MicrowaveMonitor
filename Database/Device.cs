@@ -37,7 +37,7 @@ namespace MicrowaveMonitor.Database
         public bool IsWatchedTempOdu { get; set; } = false;
         public bool IsWatchedTempIdu { get; set; } = false;
         public bool IsWatchedVoltage { get; set; } = false;
-        public bool IsWatchedPing { get; set; } = true;
+        public bool IsWatchedPing { get; set; } = false;
 
         public bool TresholdSignal { get; set; } = false;
         public bool TresholdSignalQ { get; set; } = false;
@@ -46,7 +46,7 @@ namespace MicrowaveMonitor.Database
         public bool TresholdTempOdu { get; set; } = false;
         public bool TresholdTempIdu { get; set; } = false;
         public bool TresholdVoltage { get; set; } = false;
-        public bool TresholdPing { get; set; } = true;
+        public bool TresholdPing { get; set; } = false;
 
         /* Model specifics */
         public int SignalQDivisor { get; set; } = 10;

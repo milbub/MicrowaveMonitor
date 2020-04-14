@@ -6,5 +6,5 @@
         xmlns:wpf="clr-namespace:CefSharp.Wpf;assembly=CefSharp.Wpf"
         mc:Ignorable="d"
         Title="Link Map" Height="600" Width="750">
-    <wpf:ChromiumWebBrowser x:Name="mapBrowser" Loaded="MapBrowser_Loaded"></wpf:ChromiumWebBrowser>
+    <wpf:ChromiumWebBrowser x:Name="mapBrowser"></wpf:ChromiumWebBrowser>
 </Window>
