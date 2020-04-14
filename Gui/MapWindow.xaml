@@ -3,8 +3,8 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:WPF="clr-namespace:Microsoft.Toolkit.Wpf.UI.Controls;assembly=Microsoft.Toolkit.Wpf.UI.Controls.WebView"
+        xmlns:wpf="clr-namespace:CefSharp.Wpf;assembly=CefSharp.Wpf"
         mc:Ignorable="d"
         Title="Link Map" Height="600" Width="750">
-    <WPF:WebView x:Name="mapBrowser" Loaded="MapBrowser_Loaded"></WPF:WebView>
+    <wpf:ChromiumWebBrowser x:Name="mapBrowser" Loaded="MapBrowser_Loaded"></wpf:ChromiumWebBrowser>
 </Window>

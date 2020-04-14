@@ -63,14 +63,14 @@ namespace MicrowaveMonitor.Managers
 
         public void Test() /////////////////////////////////////////////////////////////////////////////////////
         {
-            TreshExcTrigger(1, Measurement.TempODU, 50.36, true);
-            //DeviceDownTrigger(1);
+            //TreshExcTrigger(1, Measurement.TempODU, 50.36, true);
+            DeviceDownTrigger(17);
         }
 
         public void Test2() /////////////////////////////////////////////////////////////////////////////////////
         {
-            //DeviceUpTrigger(1);
-            TreshSettTrigger(1, Measurement.TempODU, 30.2);
+            DeviceUpTrigger(17);
+            //TreshSettTrigger(1, Measurement.TempODU, 30.2);
         }
 
         private int GenerateAlarmDispatched(int deviceId, AlarmRank rank, Measurement measure, AlarmType method, bool trend, double measValue)
@@ -266,18 +266,34 @@ namespace MicrowaveMonitor.Managers
 
         public void SetAck(int id)
         {
-            AlarmDisplay display = alarmsCurrent.First(v => (v.Id == id));
-            alarmsCurrent.Remove(display);
+            AlarmDisplay display;
+            
+            lock (alarmsCurrent)
+            {
+                display = alarmsCurrent.First(v => (v.Id == id));
+                alarmsCurrent.Remove(display);
+            }
+
             display.Ack = true;
-            alarmsAck.Add(display);
+
+            lock (alarmsAck)
+                alarmsAck.Add(display);
         }
 
         public void UnsetAck(int id)
         {
-            AlarmDisplay display = alarmsAck.First(v => (v.Id == id));
-            alarmsAck.Remove(display);
+            AlarmDisplay display;
+
+            lock (alarmsAck)
+            {
+                display = alarmsAck.First(v => (v.Id == id));
+                alarmsAck.Remove(display);
+            }
+
             display.Ack = false;
-            alarmsCurrent.Add(display);
+
+            lock (alarmsCurrent)
+                alarmsCurrent.Add(display);
         }
 
         public void DeviceDownTrigger(int deviceId)

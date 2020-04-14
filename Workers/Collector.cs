@@ -23,7 +23,7 @@ namespace MicrowaveMonitor.Workers
         protected Thread tCollector;
 
         private readonly AlarmManager alarmMan;
-        private readonly Measurement measureType;
+        protected readonly Measurement measureType;
         
         private readonly bool checkTresh;
         private readonly float trUp;
@@ -57,6 +57,7 @@ namespace MicrowaveMonitor.Workers
 
         protected void HasResponded(bool responded)
         {
+            /*
             if (responded)
             {
                 if (timeoutCount < MaxTimeoutCount)
@@ -77,6 +78,31 @@ namespace MicrowaveMonitor.Workers
                     alarmMan.DeviceDownTrigger(DeviceId);
                     RefreshInterval *= 2;
                 }
+            }*/
+
+            if (responded && timeoutCount <= MaxTimeoutCount)
+            {
+                timeoutCount = 0;
+                return;
+            }
+
+            if (responded && timeoutCount > MaxTimeoutCount)
+            {
+                alarmMan.DeviceUpTrigger(DeviceId);
+                timeoutCount = 0;
+                return;
+            }
+
+            if (!responded && timeoutCount < MaxTimeoutCount)
+            {
+                timeoutCount++;
+                return;
+            }
+
+            if (!responded && timeoutCount == MaxTimeoutCount)
+            {
+                alarmMan.DeviceDownTrigger(DeviceId);
+                timeoutCount++;
             }
         }
 

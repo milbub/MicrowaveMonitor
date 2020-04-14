@@ -12,6 +12,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using CefSharp;
 
 namespace MicrowaveMonitor.Gui
 {
@@ -40,7 +41,7 @@ namespace MicrowaveMonitor.Gui
         private void MapBrowser_Loaded(object sender, RoutedEventArgs e)
         {
             string page = PageBuilder();
-            mapBrowser.NavigateToString(page);
+            mapBrowser.LoadHtml(page, "https://www.vutbr.cz");
         }
 
         private string PageBuilder()

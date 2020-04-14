@@ -85,7 +85,7 @@ namespace MicrowaveMonitor.Workers
                             if (e is ErrorException)
                             {
                                 IsRunning = false;
-                                Console.WriteLine("SNMP Error. Collector suspended. " + e.Message);
+                                Console.WriteLine("SNMP Error: " + e.Message + ". Collector " + measureType.ToString() + " on device " + DeviceId + " suspended. Check SNMP credentials and OID configuration.");
                                 // TODO - exception handling
                             }
                             else
