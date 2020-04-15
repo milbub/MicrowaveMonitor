@@ -51,6 +51,7 @@ namespace MicrowaveMonitor.Managers
         {
             databaseClient = new InfluxClient(new Uri(serverAddress), user, pass);
             databaseClient.DefaultWriteOptions.Precision = TimestampPrecision.Millisecond;
+            databaseClient.DefaultWriteOptions.RetentionPolicy = retention;
             databaseClient.DefaultQueryOptions.Precision = TimestampPrecision.Millisecond;
             Console.WriteLine("0InfluxDB client initialized.");
         }
