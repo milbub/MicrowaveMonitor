@@ -56,7 +56,7 @@
                         <GridViewColumn Width="27">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <Button ToolTip="Hide Alarm" Click="HideButtonFired" Tag="{Binding Id}" VerticalAlignment="Center">
+                                    <Button ToolTip="Hide Alarm" Click="HideButtonFired" Name="bAc" Tag="{Binding Id}" VerticalAlignment="Center">
                                         <Image Source="/Gui/Icons/clear.png"></Image>
                                     </Button>
                                 </DataTemplate>
@@ -65,7 +65,7 @@
                         <GridViewColumn Header="Rank" Width="48" DisplayMemberBinding="{Binding Rank}"></GridViewColumn>
                         <GridViewColumn Header="Beginning Timestamp" Width="127" DisplayMemberBinding="{Binding StartTimestamp}"></GridViewColumn>
                         <GridViewColumn Header="End Timestamp" Width="127" DisplayMemberBinding="{Binding EndTimestamp}"></GridViewColumn>
-                        <GridViewColumn Header="Link" Width="170" DisplayMemberBinding="{Binding Link}"></GridViewColumn>
+                        <GridViewColumn Header="Link" Width="230" DisplayMemberBinding="{Binding Link}"></GridViewColumn>
                         <GridViewColumn Header="Site" Width="50" DisplayMemberBinding="{Binding Device}"></GridViewColumn>
                         <GridViewColumn Header="Measurement" Width="87" DisplayMemberBinding="{Binding Measurement}"></GridViewColumn>
                         <GridViewColumn Header="Description" Width="300" DisplayMemberBinding="{Binding Problem}"></GridViewColumn>
@@ -82,7 +82,7 @@
                         <GridViewColumn Width="27">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <Button ToolTip="Hide Alarm" Click="HideButtonFired" Tag="{Binding Id}" VerticalAlignment="Center">
+                                    <Button ToolTip="Hide Alarm" Click="HideButtonFired" Name="bUn" Tag="{Binding Id}" VerticalAlignment="Center">
                                         <Image Source="/Gui/Icons/clear.png"></Image>
                                     </Button>
                                 </DataTemplate>
@@ -91,7 +91,7 @@
                         <GridViewColumn Header="Rank" Width="48" DisplayMemberBinding="{Binding Rank}"></GridViewColumn>
                         <GridViewColumn Header="Begin Timestamp" Width="127" DisplayMemberBinding="{Binding Timestamp}"></GridViewColumn>
                         <GridViewColumn Header="End Timestamp" Width="127" DisplayMemberBinding="{Binding EndTimestamp}"></GridViewColumn>
-                        <GridViewColumn Header="Link" Width="170" DisplayMemberBinding="{Binding Link}"></GridViewColumn>
+                        <GridViewColumn Header="Link" Width="230" DisplayMemberBinding="{Binding Link}"></GridViewColumn>
                         <GridViewColumn Header="Site" Width="50" DisplayMemberBinding="{Binding Device}"></GridViewColumn>
                         <GridViewColumn Header="Measurement" Width="87" DisplayMemberBinding="{Binding Measurement}"></GridViewColumn>
                         <GridViewColumn Header="Description" Width="300" DisplayMemberBinding="{Binding Problem}"></GridViewColumn>

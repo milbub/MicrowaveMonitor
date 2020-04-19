@@ -48,7 +48,11 @@ namespace MicrowaveMonitor.Gui
 
         private void HideButtonFired(object sender, RoutedEventArgs e)
         {
-            Button butt= (Button)sender;
+            Button butt = (Button)sender;
+            if (butt.Name == "bUn")
+                alarmM.SetHide((int)butt.Tag, false);
+            else
+                alarmM.SetHide((int)butt.Tag, true);
         }
     }
 }

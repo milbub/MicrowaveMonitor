@@ -44,6 +44,7 @@ namespace MicrowaveMonitor.Database
         public AlarmRank Rank { get; set; } = AlarmRank.Info;
         public bool IsActive { get; set; } = false;
         public bool IsAck { get; set; } = false;
+        public bool IsShowed { get; set; } = false;
         public DateTime GenerTime { get; set; }
         public DateTime SettledTime { get; set; }
         [Indexed]

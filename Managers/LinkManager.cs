@@ -135,6 +135,18 @@ namespace MicrowaveMonitor.Managers
                 return AlarmDatabase.Get<Alarm>(id);
         }
 
+        public TableQuery<Alarm> GetListedAlarmsTable()
+        {
+            TableQuery<Alarm> query;
+
+            lock (AlarmDatabase)
+            {
+                query = AlarmDatabase.Table<Alarm>().Where(v => v.IsActive || v.IsShowed);
+            }
+
+            return query;
+        }
+
         public void UpdateAlarm(Alarm alarm)
         {
             lock (AlarmDatabase)

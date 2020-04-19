@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Windows.Threading;
+using SQLite;
 
 namespace MicrowaveMonitor.Managers
 {
@@ -60,6 +61,7 @@ namespace MicrowaveMonitor.Managers
         {
             linkM = linkManager;
             displays = deviceDisplays;
+            LoadAlarmsOnStart();
         }
 
         private int GenerateAlarmDispatched(int deviceId, AlarmRank rank, Measurement measure, AlarmType method, bool trend, double measValue)
@@ -95,6 +97,7 @@ namespace MicrowaveMonitor.Managers
                 Rank = rank,
                 IsActive = true,
                 IsAck = false,
+                IsShowed = true,
                 GenerTime = DateTime.Now,
                 LinkId = link,
                 DeviceId = deviceId,
@@ -106,66 +109,22 @@ namespace MicrowaveMonitor.Managers
             };
 
             linkM.AddAlarm(alarm);
-            string text = string.Empty;
 
-            switch (method)
-            {
-                case AlarmType.Down:
-                    text = "Device is not responding.";
-                    break;
-                case AlarmType.Treshold:
-                    if (trend)
-                        text = "Value exceeded setted treshold.";
-                    else
-                        text = "Value dropped below setted treshold.";
-                    break;
-                case AlarmType.AvgLong:
-                    if (trend)
-                        text = "Value exceeded longterm average.";
-                    else
-                        text = "Value dropped below longterm average.";
-                    break;
-                case AlarmType.AvgShort:
-                    if (trend)
-                        text = "Value exceeded shortterm average.";
-                    else
-                        text = "Value dropped below shortterm average.";
-                    break;
-                case AlarmType.Retrospecitve:
-                    if (trend)
-                        text = "Value significantly exceeded values from the last days.";
-                    else
-                        text = "Value significantly dropped below values from the last days.";
-                    break;
-                case AlarmType.Repetition:
-                    if (trend)
-                        text = "Values are peaking on a regular basis.";
-                    else
-                        text = "Values ​​are dropping on a regular basis.";
-                    break;
-                case AlarmType.TempCorrel:
-                    if (trend)
-                        text = "The temperature is over the safe corresponding ambient temperature.";
-                    else
-                        text = "The temperature is below the safe corresponding ambient temperature.";
-                    break;
-                default:
-                    break;
-            }
+            string text = TextFiller(method, trend);
 
-            AlarmDisplay alarmDisplay = new AlarmDisplay();
+            AlarmDisplay disp = new AlarmDisplay();
             if (method == AlarmType.Down)
-                alarmDisplay.Value = "-";
+                disp.Value = "-";
             else
-                alarmDisplay.Value = measValue.ToString("0.00");
-            alarmDisplay.Id = alarm.Id;
-            alarmDisplay.Rank = rank.ToString();
-            alarmDisplay.Timestamp = alarm.GenerTime.ToString("dd.MM.yyyy HH:mm:ss");
-            alarmDisplay.Link = linkName;
-            alarmDisplay.Device = deviceType;
-            alarmDisplay.Measurement = measure.ToString();
-            alarmDisplay.Problem = text;
-            alarmDisplay.Ack = false;
+                disp.Value = measValue.ToString("0.00");
+            disp.Id = alarm.Id;
+            disp.Rank = rank.ToString();
+            disp.Timestamp = alarm.GenerTime.ToString("dd.MM.yyyy HH:mm:ss");
+            disp.Link = linkName;
+            disp.Device = deviceType;
+            disp.Measurement = measure.ToString();
+            disp.Problem = text;
+            disp.Ack = false;
 
             lock (displays)
             {
@@ -176,7 +135,7 @@ namespace MicrowaveMonitor.Managers
             Console.WriteLine(((int)rank + 1).ToString() + " Link: " + linkName + "; Device: " + deviceType + "; Measure: " + measure.ToString() + ". " + text);
 
             lock (alarmsCurrent)
-                alarmsCurrent.Add(alarmDisplay);
+                alarmsCurrent.Add(disp);
             return alarm.Id;
         }
 
@@ -247,6 +206,105 @@ namespace MicrowaveMonitor.Managers
                         displays[alarm.DeviceId].State = DeviceDisplay.LinkState.Running;
         }
 
+        private string TextFiller(AlarmType method, bool trend)
+        {
+            string text = string.Empty;
+
+            switch (method)
+            {
+                case AlarmType.Down:
+                    text = "Device is not responding.";
+                    break;
+                case AlarmType.Treshold:
+                    if (trend)
+                        text = "Value exceeded setted treshold.";
+                    else
+                        text = "Value dropped below setted treshold.";
+                    break;
+                case AlarmType.AvgLong:
+                    if (trend)
+                        text = "Value exceeded longterm average.";
+                    else
+                        text = "Value dropped below longterm average.";
+                    break;
+                case AlarmType.AvgShort:
+                    if (trend)
+                        text = "Value exceeded shortterm average.";
+                    else
+                        text = "Value dropped below shortterm average.";
+                    break;
+                case AlarmType.Retrospecitve:
+                    if (trend)
+                        text = "Value significantly exceeded values from the last days.";
+                    else
+                        text = "Value significantly dropped below values from the last days.";
+                    break;
+                case AlarmType.Repetition:
+                    if (trend)
+                        text = "Values are peaking on a regular basis.";
+                    else
+                        text = "Values ​​are dropping on a regular basis.";
+                    break;
+                case AlarmType.TempCorrel:
+                    if (trend)
+                        text = "The temperature is over the safe corresponding ambient temperature.";
+                    else
+                        text = "The temperature is below the safe corresponding ambient temperature.";
+                    break;
+                default:
+                    break;
+            }
+
+            return text;
+        }
+
+        private void LoadAlarmsOnStart()
+        {
+            TableQuery<Alarm> alarms = linkM.GetListedAlarmsTable();
+
+            foreach (Alarm alarm in alarms.Where(v => v.IsActive))
+            {
+                alarm.SettledTime = DateTime.Now;
+                alarm.SettledValue = 0;
+                alarm.IsActive = false;
+                linkM.UpdateAlarm(alarm);
+            }
+
+            foreach (Alarm alarm in alarms.Where(v => v.IsShowed))
+            {
+                string text = TextFiller(alarm.Type, alarm.Trend);
+
+                AlarmDisplay disp = new AlarmDisplay();
+
+                if (alarm.Type == AlarmType.Down)
+                {
+                    disp.Value = "-";
+                    disp.SettledValue = "-";
+                }
+                else
+                {
+                    disp.Value = alarm.GenerValue.ToString("0.00");
+                    disp.SettledValue = alarm.SettledValue.ToString("0.00");
+                }
+                disp.Id = alarm.Id;
+                disp.Rank = alarm.Rank.ToString();
+                disp.Timestamp = alarm.GenerTime.ToString("dd.MM.yyyy HH:mm:ss");
+                disp.EndTimestamp = alarm.SettledTime.ToString("dd.MM.yyyy HH:mm:ss");
+                disp.Link = linkM.LinkNames[alarm.LinkId];
+                disp.Device = alarm.DeviceType;
+                disp.Measurement = alarm.Measure.ToString();
+                disp.Problem = text;
+                disp.Ack = false;
+
+                if (alarm.IsAck)
+                    lock (alarmsSettledAck)
+                        alarmsSettledAck.Add(disp);
+                else
+                    lock (alarmsSettledUnack)
+                        alarmsSettledUnack.Add(disp);
+            }
+        }
+
         public void DeviceStopped(int id)
         {
             lock (downLocker)
@@ -263,6 +321,30 @@ namespace MicrowaveMonitor.Managers
             {
                 TreshSettTrigger(id, measure, 0);
             }
+        }
+
+        public void SetHide(int id, bool ack)
+        {
+            if (ack)
+            {
+                lock (alarmsSettledAck)
+                {
+                    AlarmDisplay display = alarmsSettledAck.First(v => (v.Id == id));
+                    alarmsSettledAck.Remove(display);
+                }
+            }
+            else
+            {
+                lock (alarmsSettledUnack)
+                {
+                    AlarmDisplay display = alarmsSettledUnack.First(v => (v.Id == id));
+                    alarmsSettledUnack.Remove(display);
+                }
+            }
+
+            Alarm alarm = linkM.GetAlarm(id);
+            alarm.IsShowed = false;
+            linkM.UpdateAlarm(alarm);
         }
 
         public void SetAck(int id)
