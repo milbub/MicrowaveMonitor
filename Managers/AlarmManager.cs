@@ -76,11 +76,11 @@ namespace MicrowaveMonitor.Managers
             return (int)obj;
         }
 
-        private void SettleAlarmDispatched(int alarmId, double settledValue)
+        private void SettleAlarmDispatched(int alarmId, double settledValue, bool stopping)
         {
             App.Current.Dispatcher.Invoke(delegate
             {
-                SettleAlarm(alarmId, settledValue);
+                SettleAlarm(alarmId, settledValue, stopping);
             });
         }
 
@@ -160,7 +160,7 @@ namespace MicrowaveMonitor.Managers
                 alarmDisplay.Value = measValue.ToString("0.00");
             alarmDisplay.Id = alarm.Id;
             alarmDisplay.Rank = rank.ToString();
-            alarmDisplay.Timestamp = alarm.GenerTime.ToString("dd.MM.yyyy HH:mm");
+            alarmDisplay.Timestamp = alarm.GenerTime.ToString("dd.MM.yyyy HH:mm:ss");
             alarmDisplay.Link = linkName;
             alarmDisplay.Device = deviceType;
             alarmDisplay.Measurement = measure.ToString();
@@ -180,7 +180,7 @@ namespace MicrowaveMonitor.Managers
             return alarm.Id;
         }
 
-        private void SettleAlarm(int alarmId, double settledValue)
+        private void SettleAlarm(int alarmId, double settledValue, bool stopping)
         {
             if (alarmId == 0)
                 return;
@@ -214,26 +214,22 @@ namespace MicrowaveMonitor.Managers
             alarm.SettledTime = DateTime.Now;
             alarm.SettledValue = settledValue;
 
-            if (alarm.Type == AlarmType.Down)
+            if (stopping)
+                display.SettledValue = "Stopped.";
+            else if (alarm.Type == AlarmType.Down)
                 display.SettledValue = "-";
             else
                 display.SettledValue = settledValue.ToString("0.00");
-            display.EndTimestamp = alarm.SettledTime.ToString("dd.MM.yyyy HH:mm");
+            display.EndTimestamp = alarm.SettledTime.ToString("dd.MM.yyyy HH:mm:ss");
 
             lock (destination)
                 destination.Add(display);
             linkM.UpdateAlarm(alarm);
 
-            Console.WriteLine(6.ToString() + " Link: " + linkName + "; Device: " + alarm.DeviceType + "; Measure: " + alarm.Measure.ToString() + ".");
+            if (stopping)
+                return;
 
-            lock (displays)
-            {
-                if (displays[alarm.DeviceId].State == DeviceDisplay.LinkState.Paused)
-                {
-                    Console.WriteLine("blekeke");
-                    return;
-                }
-            }
+            Console.WriteLine(6.ToString() + " Link: " + linkName + "; Device: " + alarm.DeviceType + "; Measure: " + alarm.Measure.ToString() + ".");
 
             /* TODO REWRITE !!! */
             lock (downTriggers)
@@ -249,6 +245,24 @@ namespace MicrowaveMonitor.Managers
                 else
                     lock (displays)
                         displays[alarm.DeviceId].State = DeviceDisplay.LinkState.Running;
+        }
+
+        public void DeviceStopped(int id)
+        {
+            lock (downLocker)
+            {
+                if (downTriggers.ContainsKey(id))
+                {
+                    downTriggers.Remove(id);
+                    SettleAlarmDispatched(downIds[id], 0, true);
+                    downIds.Remove(id);
+                }
+            }
+            
+            foreach (Measurement measure in (Measurement[])Enum.GetValues(typeof(Measurement)))
+            {
+                TreshSettTrigger(id, measure, 0);
+            }
         }
 
         public void SetAck(int id)
@@ -283,6 +297,9 @@ namespace MicrowaveMonitor.Managers
                 alarmsCurrent.Add(display);
         }
 
+        /////////////////////////////
+        //* Device down triggers *//
+
         public void DeviceDownTrigger(int deviceId)
         {
             lock (downLocker)
@@ -308,12 +325,15 @@ namespace MicrowaveMonitor.Managers
                     if (downTriggers[deviceId] < 1)
                     {
                         downTriggers.Remove(deviceId);
-                        SettleAlarmDispatched(downIds[deviceId], 0);
+                        SettleAlarmDispatched(downIds[deviceId], 0, false);
                         downIds.Remove(deviceId);
                     }
                 }
             }
         }
+
+        /////////////////////////
+        //* Treshold triggers *//
 
         public void TreshExcTrigger(int deviceId, Measurement measurement, double value, bool trend)
         {
@@ -322,7 +342,7 @@ namespace MicrowaveMonitor.Managers
             lock (tresholdIds)
             {
                 if (!tresholdIds.ContainsKey(deviceId))
-                    tresholdIds.Add(deviceId, new AlarmIdAssign() { count = 0 });
+                    tresholdIds.Add(deviceId, new AlarmIdAssign() {});
 
                 AlarmIdAssign ids = tresholdIds[deviceId];
 
@@ -404,7 +424,7 @@ namespace MicrowaveMonitor.Managers
             }
 
             if (alarmId > 0)
-                SettleAlarmDispatched(alarmId, value);
+                SettleAlarmDispatched(alarmId, value, false);
         }
     }
 }

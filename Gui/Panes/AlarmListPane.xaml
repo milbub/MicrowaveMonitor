@@ -3,20 +3,12 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:MicrowaveMonitor.Gui"
              mc:Ignorable="d">
     <TabControl x:Name="warningsTabControl" Background="LightGray" Margin="5" Padding="2">
         <TabItem Header="Current">
-            <ListView x:Name="viewCurrent" Margin="0" Background="LightGray">
+            <ListView x:Name="viewCurrent" Margin="0" Background="LightGray" Focusable="False">
                 <ListView.View>
                     <GridView>
-                        <GridViewColumn Header="Rank" Width="48" DisplayMemberBinding="{Binding Rank}"></GridViewColumn>
-                        <GridViewColumn Header="Timestamp" Width="102" DisplayMemberBinding="{Binding Timestamp}"></GridViewColumn>
-                        <GridViewColumn Header="Link" Width="170" DisplayMemberBinding="{Binding Link}"></GridViewColumn>
-                        <GridViewColumn Header="Site" Width="50" DisplayMemberBinding="{Binding Device}"></GridViewColumn>
-                        <GridViewColumn Header="Measurement" Width="87" DisplayMemberBinding="{Binding Measurement}"></GridViewColumn>
-                        <GridViewColumn Header="Description" Width="212" DisplayMemberBinding="{Binding Problem}"></GridViewColumn>
-                        <GridViewColumn Header="Value" Width="40" DisplayMemberBinding="{Binding Value}"></GridViewColumn>
                         <GridViewColumn Header="ACK" Width="27">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
@@ -24,6 +16,13 @@
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
+                        <GridViewColumn Header="Rank" Width="48" DisplayMemberBinding="{Binding Rank}"></GridViewColumn>
+                        <GridViewColumn Header="Timestamp" Width="117" DisplayMemberBinding="{Binding Timestamp}"></GridViewColumn>
+                        <GridViewColumn Header="Link" Width="170" DisplayMemberBinding="{Binding Link}"></GridViewColumn>
+                        <GridViewColumn Header="Site" Width="50" DisplayMemberBinding="{Binding Device}"></GridViewColumn>
+                        <GridViewColumn Header="Measurement" Width="87" DisplayMemberBinding="{Binding Measurement}"></GridViewColumn>
+                        <GridViewColumn Header="Description" Width="212" DisplayMemberBinding="{Binding Problem}"></GridViewColumn>
+                        <GridViewColumn Header="Value" Width="40" DisplayMemberBinding="{Binding Value}"></GridViewColumn>
                     </GridView>
                 </ListView.View>
             </ListView>
@@ -32,13 +31,6 @@
             <ListView x:Name="viewAck" Margin="0" Background="LightGray">
                 <ListView.View>
                     <GridView>
-                        <GridViewColumn Header="Rank" Width="48" DisplayMemberBinding="{Binding Rank}"></GridViewColumn>
-                        <GridViewColumn Header="Timestamp" Width="102" DisplayMemberBinding="{Binding Timestamp}"></GridViewColumn>
-                        <GridViewColumn Header="Link" Width="170" DisplayMemberBinding="{Binding Link}"></GridViewColumn>
-                        <GridViewColumn Header="Site" Width="50" DisplayMemberBinding="{Binding Device}"></GridViewColumn>
-                        <GridViewColumn Header="Measurement" Width="87" DisplayMemberBinding="{Binding Measurement}"></GridViewColumn>
-                        <GridViewColumn Header="Description" Width="212" DisplayMemberBinding="{Binding Problem}"></GridViewColumn>
-                        <GridViewColumn Header="Value" Width="40" DisplayMemberBinding="{Binding Value}"></GridViewColumn>
                         <GridViewColumn Header="ACK" Width="27">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
@@ -46,6 +38,13 @@
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
+                        <GridViewColumn Header="Rank" Width="48" DisplayMemberBinding="{Binding Rank}"></GridViewColumn>
+                        <GridViewColumn Header="Timestamp" Width="117" DisplayMemberBinding="{Binding Timestamp}"></GridViewColumn>
+                        <GridViewColumn Header="Link" Width="170" DisplayMemberBinding="{Binding Link}"></GridViewColumn>
+                        <GridViewColumn Header="Site" Width="50" DisplayMemberBinding="{Binding Device}"></GridViewColumn>
+                        <GridViewColumn Header="Measurement" Width="87" DisplayMemberBinding="{Binding Measurement}"></GridViewColumn>
+                        <GridViewColumn Header="Description" Width="212" DisplayMemberBinding="{Binding Problem}"></GridViewColumn>
+                        <GridViewColumn Header="Value" Width="40" DisplayMemberBinding="{Binding Value}"></GridViewColumn>
                     </GridView>
                 </ListView.View>
             </ListView>
@@ -54,6 +53,15 @@
             <ListView x:Name="viewSettledAck" Margin="0" Background="LightGray">
                 <ListView.View>
                     <GridView>
+                        <GridViewColumn Width="27">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button ToolTip="Hide Alarm" Click="HideButtonFired" Tag="{Binding Id}" VerticalAlignment="Center">
+                                        <Image Source="/Gui/Icons/clear.png"></Image>
+                                    </Button>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
                         <GridViewColumn Header="Rank" Width="48" DisplayMemberBinding="{Binding Rank}"></GridViewColumn>
                         <GridViewColumn Header="Beginning Timestamp" Width="127" DisplayMemberBinding="{Binding StartTimestamp}"></GridViewColumn>
                         <GridViewColumn Header="End Timestamp" Width="127" DisplayMemberBinding="{Binding EndTimestamp}"></GridViewColumn>
@@ -71,6 +79,15 @@
             <ListView x:Name="viewSettledUnack" Margin="0" Background="LightGray">
                 <ListView.View>
                     <GridView>
+                        <GridViewColumn Width="27">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button ToolTip="Hide Alarm" Click="HideButtonFired" Tag="{Binding Id}" VerticalAlignment="Center">
+                                        <Image Source="/Gui/Icons/clear.png"></Image>
+                                    </Button>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
                         <GridViewColumn Header="Rank" Width="48" DisplayMemberBinding="{Binding Rank}"></GridViewColumn>
                         <GridViewColumn Header="Begin Timestamp" Width="127" DisplayMemberBinding="{Binding Timestamp}"></GridViewColumn>
                         <GridViewColumn Header="End Timestamp" Width="127" DisplayMemberBinding="{Binding EndTimestamp}"></GridViewColumn>

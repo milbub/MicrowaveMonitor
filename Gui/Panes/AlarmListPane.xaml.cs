@@ -45,5 +45,10 @@ namespace MicrowaveMonitor.Gui
             CheckBox box = (CheckBox)sender;
             alarmM.UnsetAck((int)box.Tag);
         }
+
+        private void HideButtonFired(object sender, RoutedEventArgs e)
+        {
+            Button butt= (Button)sender;
+        }
     }
 }
