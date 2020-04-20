@@ -329,7 +329,6 @@ namespace MicrowaveMonitor.Gui
         private void StopButtonFired(object sender, RoutedEventArgs e)
         {
             workerM.StopDevice(linkM.GetDevice(viewedDeviceId));
-            alarmM.DeviceStopped(viewedDeviceId);
             ChartsChangeDevice(viewedDeviceId, linkM.GetDevice(viewedDeviceId));
         }
 

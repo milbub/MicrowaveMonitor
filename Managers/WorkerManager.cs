@@ -51,13 +51,16 @@ namespace MicrowaveMonitor.Managers
 
         public void InitDevice(Device device)
         {
-            DeviceToFront.Add(device.Id, new DeviceDisplay());
+            DeviceToFront.Add(device.Id, new DeviceDisplay() { Id = device.Id });
+            
             if (!device.IsPaused)
             {
                 StartDevice(device);
             }
             else
                 DeviceToFront[device.Id].State = DeviceDisplay.LinkState.Paused;
+
+            alarms.RegisterListener(device.Id);
         }
 
         public void StartDevice(Device device)
@@ -149,6 +152,7 @@ namespace MicrowaveMonitor.Managers
                 device.IsPaused = true;
                 links.UpdateDevice(device);
                 DeviceToFront[device.Id].State = DeviceDisplay.LinkState.Paused;
+                alarms.DeviceStopped(device.Id);
             }
         }
 
@@ -156,6 +160,7 @@ namespace MicrowaveMonitor.Managers
         {
             StopDevice(device);
             DeviceToFront.Remove(device.Id);
+            alarms.UnregisterListener(device.Id);
         }
 
         public void RestartDevice(Device device)

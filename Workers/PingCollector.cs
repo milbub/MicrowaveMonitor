@@ -64,6 +64,7 @@ namespace MicrowaveMonitor.Workers
         protected virtual void RecordData(PingReply result)
         {
             Display.DataPing = new Record<double>(DateTime.Now, result.RoundtripTime);
+            TresholdCheck(result.RoundtripTime);
             DynamicInfluxRow row = new DynamicInfluxRow();
             row.Timestamp = DateTime.Now.ToUniversalTime();
             row.Fields.Add("value", result.RoundtripTime);

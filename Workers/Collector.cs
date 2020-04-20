@@ -10,8 +10,9 @@ namespace MicrowaveMonitor.Workers
 {
     public abstract class Collector
     {
-        public static int MaxTimeoutCount { get; set; } = 8;
+        public static int MaxTimeoutCount { get; set; } = 10;
         public static int MaxTimeout { get; private set; } = 5000;   // ms
+        public static int MaxDownRefresh { get; private set; } = 30000;   // ms
         public int RefreshInterval { get; protected set; }
 
         public int DeviceId { get; protected set; }
@@ -32,7 +33,7 @@ namespace MicrowaveMonitor.Workers
         private bool treshOver = false;
 
         private int timeoutCount = 0;
-        private bool up = true;
+        private int origRefresh;
 
         public Collector(string address, int deviceId, int refreshInterval, DeviceDisplay display, AlarmManager alarmManager, bool checkTresholds, float treshUp, float treshDown, Measurement measurement)
         {
@@ -58,7 +59,6 @@ namespace MicrowaveMonitor.Workers
 
         protected void HasResponded(bool responded)
         {
-            /*
             if (responded)
             {
                 if (timeoutCount < MaxTimeoutCount)
@@ -66,7 +66,7 @@ namespace MicrowaveMonitor.Workers
                 else
                 {
                     alarmMan.DeviceUpTrigger(DeviceId);
-                    RefreshInterval /= 2;
+                    RefreshInterval = origRefresh;
                     timeoutCount = 0;
                 }
             }
@@ -77,35 +77,13 @@ namespace MicrowaveMonitor.Workers
                 if (timeoutCount == MaxTimeoutCount)
                 {
                     alarmMan.DeviceDownTrigger(DeviceId);
+                    origRefresh = RefreshInterval;
                     RefreshInterval *= 2;
                 }
-            }*/
-
-            if (responded && up)
-            {
-                timeoutCount = 0;
-            }
-            else if (!responded && up)
-            {
-                timeoutCount++;
-
-                if (timeoutCount == MaxTimeoutCount)
+                else if (timeoutCount == MaxTimeoutCount * 2)
                 {
-                    alarmMan.DeviceDownTrigger(DeviceId);
-                    RefreshInterval *= 3;
-                    up = false;
+                    RefreshInterval = MaxDownRefresh;
                 }
-            }
-            else if (responded && !up)
-            {
-                timeoutCount = 0;
-                up = true;
-                alarmMan.DeviceUpTrigger(DeviceId);
-                RefreshInterval /= 3;
-            }
-            else if (!responded && !up)
-            {
-                timeoutCount++;
             }
         }
 
@@ -117,11 +95,11 @@ namespace MicrowaveMonitor.Workers
                 {
                     if (trDown < value && !treshOver)
                     {
-                        alarmMan.TreshSettTrigger(DeviceId, measureType, value);
+                        alarmMan.TreshSettTrigger(DeviceId, measureType, value, false);
                         treshActive = false;
                     } else if (trUp > value && treshOver)
                     {
-                        alarmMan.TreshSettTrigger(DeviceId, measureType, value);
+                        alarmMan.TreshSettTrigger(DeviceId, measureType, value, false);
                         treshActive = false;
                     }
                     

@@ -14,6 +14,8 @@ namespace MicrowaveMonitor.Database
             AlarmDown = 4
         }
 
+        public int Id { get; set; }
+
         private Record<double> _dataSig;
         private Record<double> _dataSigQ;
         private Record<uint> _dataTx;

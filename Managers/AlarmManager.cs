@@ -7,6 +7,7 @@ using System.Net;
 using System.Threading;
 using System.Windows.Threading;
 using SQLite;
+using System.ComponentModel;
 
 namespace MicrowaveMonitor.Managers
 {
@@ -62,6 +63,33 @@ namespace MicrowaveMonitor.Managers
             linkM = linkManager;
             displays = deviceDisplays;
             LoadAlarmsOnStart();
+        }
+
+        private void DataChanged(object sender, PropertyChangedEventArgs e)
+        {
+            DeviceDisplay disp = (DeviceDisplay)sender;
+
+            switch (e.PropertyName)
+            {
+                case "State":
+                    break;
+                case "Uptime":
+                    break;
+                case "DataPing":
+                    break;
+                case "DataSig":
+                    break;
+                case "DataSigQ":
+                    break;
+                case "DataTempOdu":
+                    break;
+                case "DataTempIdu":
+                    break;
+                case "DataVoltage":
+                    break;
+                default:
+                    return;
+            }
         }
 
         private int GenerateAlarmDispatched(int deviceId, AlarmRank rank, Measurement measure, AlarmType method, bool trend, double measValue)
@@ -305,6 +333,16 @@ namespace MicrowaveMonitor.Managers
             }
         }
 
+        public void RegisterListener(int id)
+        {
+            displays[id].PropertyChanged += DataChanged;
+        }
+
+        public void UnregisterListener(int id)
+        {
+            displays[id].PropertyChanged -= DataChanged;
+        }
+
         public void DeviceStopped(int id)
         {
             lock (downLocker)
@@ -319,7 +357,7 @@ namespace MicrowaveMonitor.Managers
             
             foreach (Measurement measure in (Measurement[])Enum.GetValues(typeof(Measurement)))
             {
-                TreshSettTrigger(id, measure, 0);
+                TreshSettTrigger(id, measure, 0, true);
             }
         }
 
@@ -457,7 +495,7 @@ namespace MicrowaveMonitor.Managers
             }
         }
 
-        public void TreshSettTrigger(int deviceId, Measurement measurement, double value)
+        public void TreshSettTrigger(int deviceId, Measurement measurement, double value, bool stopping)
         {
             int alarmId = 0;
             AlarmIdAssign ids;
@@ -497,7 +535,9 @@ namespace MicrowaveMonitor.Managers
                             return;
                     }
 
-                    ids.count--;
+                    if (alarmId > 0)
+                        ids.count--;
+
                     if (ids.count == 0)
                         tresholdIds.Remove(deviceId);
                     else
@@ -506,7 +546,7 @@ namespace MicrowaveMonitor.Managers
             }
 
             if (alarmId > 0)
-                SettleAlarmDispatched(alarmId, value, false);
+                SettleAlarmDispatched(alarmId, value, stopping);
         }
     }
 }

@@ -322,5 +322,8 @@
   <ItemGroup>
     <Resource Include="Gui\Icons\clear.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Analysers\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
