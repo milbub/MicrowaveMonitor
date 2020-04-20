@@ -296,12 +296,16 @@ namespace MicrowaveMonitor.Gui
         private void MapButtonFired(object sender, RoutedEventArgs e)
         {
             Device a = linkM.GetDevice(viewedLink.DeviceBaseId);
-            Device b = linkM.GetDevice(viewedLink.DeviceEndId);
             MapWindow map;
-            if (viewedLink.HopCount > 0)
-                map = new MapWindow(a.Latitude, a.Longitude, b.Latitude, b.Longitude);
-            else
+
+            if (viewedLink.HopCount < 1)
                 map = new MapWindow(a.Latitude, a.Longitude);
+            else
+            {
+                Device b = linkM.GetDevice(viewedLink.DeviceEndId);
+                map = new MapWindow(a.Latitude, a.Longitude, b.Latitude, b.Longitude);
+            }
+
             map.Show();
         }
 

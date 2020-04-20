@@ -399,6 +399,10 @@ namespace MicrowaveMonitor.Managers
 
             lock (alarmsAck)
                 alarmsAck.Add(display);
+
+            Alarm alarm = linkM.GetAlarm(id);
+            alarm.IsAck = true;
+            linkM.UpdateAlarm(alarm);
         }
 
         public void UnsetAck(int id)
@@ -415,6 +419,10 @@ namespace MicrowaveMonitor.Managers
 
             lock (alarmsCurrent)
                 alarmsCurrent.Add(display);
+
+            Alarm alarm = linkM.GetAlarm(id);
+            alarm.IsAck = false;
+            linkM.UpdateAlarm(alarm);
         }
 
         /////////////////////////////
