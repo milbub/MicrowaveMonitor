@@ -432,6 +432,7 @@ namespace MicrowaveMonitor.Gui
 
             linkM.UpdateLink(viewedLink);
             ChangeLink(viewedLink);
+            Console.WriteLine("0Configuration saved. Link monitoring restarted.");
         }
 
         private void SearchButtonFired(object sender, RoutedEventArgs e)
