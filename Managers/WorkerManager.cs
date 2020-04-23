@@ -60,7 +60,7 @@ namespace MicrowaveMonitor.Managers
             else
                 DeviceToFront[device.Id].State = DeviceDisplay.LinkState.Paused;
 
-            alarms.RegisterListener(device.Id);
+            alarms.RegisterListener(device);
         }
 
         public void StartDevice(Device device)
@@ -160,7 +160,7 @@ namespace MicrowaveMonitor.Managers
         {
             StopDevice(device);
             DeviceToFront.Remove(device.Id);
-            alarms.UnregisterListener(device.Id);
+            alarms.UnregisterListener(device);
         }
 
         public void RestartDevice(Device device)

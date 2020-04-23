@@ -5,7 +5,7 @@ using MicrowaveMonitor.Managers;
 using System;
 using System.Collections.Generic;
 using System.Threading;
-using Vibrant.InfluxDB.Client.Rows;
+using System.Net.Sockets;
 
 namespace MicrowaveMonitor.Workers
 {
@@ -86,14 +86,17 @@ namespace MicrowaveMonitor.Workers
                             {
                                 IsRunning = false;
                                 Console.WriteLine("SNMP Error: " + e.Message + ". Collector: " + measureType.ToString() + "; device ID: " + DeviceId + ". Collector suspended. Check SNMP credentials and OID configuration.");
-                                // TODO - exception handling
                             }
                             else
                             {
-                                Thread.Sleep(RefreshInterval);
                                 Console.WriteLine(e.Message);
-                                // TODO - exception handling
+                                Thread.Sleep(RefreshInterval);
                             }
+                        }
+                        catch (SocketException e)
+                        {
+                            Console.WriteLine("Socket Error: " + e.Message + ". Collector: " + measureType.ToString() + "; device ID: " + DeviceId + ". Will try again in 10 s...");
+                            Thread.Sleep(10000);
                         }
                         catch (ThreadAbortException)
                         { }

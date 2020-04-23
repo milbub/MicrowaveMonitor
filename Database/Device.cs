@@ -32,8 +32,6 @@ namespace MicrowaveMonitor.Database
 
         public bool IsWatchedSignal { get; set; } = false;
         public bool IsWatchedSignalQ { get; set; } = false;
-        public bool IsWatchedTx { get; set; } = false;
-        public bool IsWatchedRx { get; set; } = false;
         public bool IsWatchedTempOdu { get; set; } = false;
         public bool IsWatchedTempIdu { get; set; } = false;
         public bool IsWatchedVoltage { get; set; } = false;

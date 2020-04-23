@@ -77,6 +77,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Analysers\Analyser.cs" />
+    <Compile Include="Analysers\AverageAnalyser.cs" />
+    <Compile Include="Analysers\TemperatureAnalyser.cs" />
     <Compile Include="Database\Alarm.cs" />
     <Compile Include="Database\DeviceDisplay.cs" />
     <Compile Include="Database\Record.cs" />
@@ -322,8 +325,6 @@
   <ItemGroup>
     <Resource Include="Gui\Icons\clear.png" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Analysers\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

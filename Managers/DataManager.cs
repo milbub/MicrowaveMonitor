@@ -13,18 +13,23 @@ namespace MicrowaveMonitor.Managers
 {
     public class DataManager
     {
-        public static int DbWriteInterval { get; } = 10000;      // 10000 msec
+        public static int DbWriteInterval { get; } = 10000;      // 10 sec
         private static float weatherCycles = (WeatherCollector.MinRefresh * 60000) / DbWriteInterval;
 
-        public readonly string measLat = "latency";
-        public readonly string measSig = "signal";
-        public readonly string measSigQ = "signalQ";
-        public readonly string measTx = "tx";
-        public readonly string measRx = "rx";
-        public readonly string measTmpO = "tempOdu";
-        public readonly string measTmpI = "tempIdu";
-        public readonly string measVolt = "voltage";
-        public readonly string measTmpA = "tempAir";
+        public const int contQueryCycle = 30000;                 // 30 sec
+
+        public const string measLat = "latency";
+        public const string measSig = "signal";
+        public const string measSigQ = "signalQ";
+        public const string measTx = "tx";
+        public const string measRx = "rx";
+        public const string measTmpO = "tempOdu";
+        public const string measTmpI = "tempIdu";
+        public const string measVolt = "voltage";
+        public const string measTmpA = "tempAir";
+
+        public const string defaultValueName = "value";
+        public const string meanValueName = "mean_value";
 
         public Queue<DynamicInfluxRow> PingTransactions = new Queue<DynamicInfluxRow>();
         public Queue<DynamicInfluxRow> SignalTransactions = new Queue<DynamicInfluxRow>();
@@ -36,79 +41,88 @@ namespace MicrowaveMonitor.Managers
         public Queue<DynamicInfluxRow> VoltageTransactions = new Queue<DynamicInfluxRow>();
         public Queue<DynamicInfluxRow> WeatherTempTransactions = new Queue<DynamicInfluxRow>();
 
-        public readonly string serverAddress = ConfigurationManager.ConnectionStrings["InfluxServer"].ConnectionString;
-        public readonly string databaseName = ConfigurationManager.ConnectionStrings["InfluxData"].ConnectionString;
-        public readonly string retention = ConfigurationManager.ConnectionStrings["InfluxRetention"].ConnectionString;
-        private readonly string user = ConfigurationManager.ConnectionStrings["InfluxUser"].ConnectionString;
-        private readonly string pass = ConfigurationManager.ConnectionStrings["InfluxPass"].ConnectionString;
+        public static string serverAddress = ConfigurationManager.ConnectionStrings["InfluxServer"].ConnectionString;
+        public static string databaseName = ConfigurationManager.ConnectionStrings["InfluxData"].ConnectionString;
+        public static string writeRetention = ConfigurationManager.ConnectionStrings["InfluxWriteRetention"].ConnectionString;
+        private static string user = ConfigurationManager.ConnectionStrings["InfluxUser"].ConnectionString;
+        private static string pass = ConfigurationManager.ConnectionStrings["InfluxPass"].ConnectionString;
+        public static string retentionWeek = ConfigurationManager.AppSettings.Get("InfluxRetentionWeek");
+        public static string retentionMonth = ConfigurationManager.AppSettings.Get("InfluxRetentionMonth");
+        public static string retentionYear = ConfigurationManager.AppSettings.Get("InfluxRetentionYear");
 
         private readonly InfluxClient databaseClient;
         private Thread writer;
 
-        public bool IsRunning { get; set; } = false;
+        private bool _isRunning = false;
+        public bool IsRunning
+        {
+            get => _isRunning;
+            set
+            {
+                _isRunning = value;
+                if (value)
+                    StartDatabaseWriter();
+            }
+        }
 
         public DataManager()
         {
             databaseClient = new InfluxClient(new Uri(serverAddress), user, pass);
             databaseClient.DefaultWriteOptions.Precision = TimestampPrecision.Millisecond;
-            databaseClient.DefaultWriteOptions.RetentionPolicy = retention;
+            databaseClient.DefaultWriteOptions.RetentionPolicy = writeRetention;
             databaseClient.DefaultQueryOptions.Precision = TimestampPrecision.Millisecond;
             Console.WriteLine("0InfluxDB client initialized.");
         }
 
         public void StartDatabaseWriter()
         {
-            if (IsRunning == false)
+            int writeCyckles = 0;
+            writer = new Thread(async () =>
             {
-                int writeCyckles = 0;
-                IsRunning = true;
-                writer = new Thread(async () =>
+                while (IsRunning)
                 {
-                    while (IsRunning)
+                    Thread.Sleep(DbWriteInterval);
+                    try
                     {
-                        Thread.Sleep(DbWriteInterval);
-                        try
-                        {
-                            Task writePing = databaseClient.WriteAsync(databaseName, measLat, VerifyRows(PingTransactions));
-                            Task writeSig = databaseClient.WriteAsync(databaseName, measSig, VerifyRows(SignalTransactions));
-                            Task writeSigQ = databaseClient.WriteAsync(databaseName, measSigQ, VerifyRows(SignalQTransactions));
-                            Task writeTx = databaseClient.WriteAsync(databaseName, measTx, VerifyRows(TxTransactions));
-                            Task writeRx = databaseClient.WriteAsync(databaseName, measRx, VerifyRows(RxTransactions));
-                            Task writeTempOdu = databaseClient.WriteAsync(databaseName, measTmpO, VerifyRows(TempOduTransactions));
-                            Task writeTempIdu = databaseClient.WriteAsync(databaseName, measTmpI, VerifyRows(TempIduTransactions));
-                            Task writeVoltage = databaseClient.WriteAsync(databaseName, measVolt, VerifyRows(VoltageTransactions));
+                        Task writePing = databaseClient.WriteAsync(databaseName, measLat, VerifyRows(PingTransactions));
+                        Task writeSig = databaseClient.WriteAsync(databaseName, measSig, VerifyRows(SignalTransactions));
+                        Task writeSigQ = databaseClient.WriteAsync(databaseName, measSigQ, VerifyRows(SignalQTransactions));
+                        Task writeTx = databaseClient.WriteAsync(databaseName, measTx, VerifyRows(TxTransactions));
+                        Task writeRx = databaseClient.WriteAsync(databaseName, measRx, VerifyRows(RxTransactions));
+                        Task writeTempOdu = databaseClient.WriteAsync(databaseName, measTmpO, VerifyRows(TempOduTransactions));
+                        Task writeTempIdu = databaseClient.WriteAsync(databaseName, measTmpI, VerifyRows(TempIduTransactions));
+                        Task writeVoltage = databaseClient.WriteAsync(databaseName, measVolt, VerifyRows(VoltageTransactions));
 
-                            if (++writeCyckles > weatherCycles)
-                            {
-                                Task writeWeaTemp = databaseClient.WriteAsync(databaseName, measTmpA, VerifyRows(WeatherTempTransactions));
-                                weatherCycles = 0;
-                                await writeWeaTemp;
-                            }
-                            
-                            await writePing;
-                            await writeSig;
-                            await writeSigQ;
-                            await writeTx;
-                            await writeRx;
-                            await writeTempOdu;
-                            await writeTempIdu;
-                            await writeVoltage;
-                        }
-                        catch (InfluxException e)
+                        if (++writeCyckles > weatherCycles)
                         {
-                            if (e.InnerException != null)
-                            {
-                                if (e.InnerException.InnerException != null)
-                                    Console.WriteLine(e.InnerException.InnerException.Message);
-                                else
-                                    Console.WriteLine(e.Message);
-                            } else
-                                Console.WriteLine(e.Message);
+                            Task writeWeaTemp = databaseClient.WriteAsync(databaseName, measTmpA, VerifyRows(WeatherTempTransactions));
+                            weatherCycles = 0;
+                            await writeWeaTemp;
                         }
+                        
+                        await writePing;
+                        await writeSig;
+                        await writeSigQ;
+                        await writeTx;
+                        await writeRx;
+                        await writeTempOdu;
+                        await writeTempIdu;
+                        await writeVoltage;
                     }
-                });
-                writer.Start();
-            }
+                    catch (InfluxException e)
+                    {
+                        if (e.InnerException != null)
+                        {
+                            if (e.InnerException.InnerException != null)
+                                Console.WriteLine(e.InnerException.InnerException.Message);
+                            else
+                                Console.WriteLine(e.Message);
+                        } else
+                            Console.WriteLine(e.Message);
+                    }
+                }
+            });
+            writer.Start();
         }
 
         private List<DynamicInfluxRow> VerifyRows(Queue<DynamicInfluxRow> rows)
@@ -126,12 +140,22 @@ namespace MicrowaveMonitor.Managers
             return verified;
         }
 
-        public async Task<InfluxSeries<DynamicInfluxRow>> QuerySeries(string query)
+        public async Task<List<DynamicInfluxRow>> QueryRows(string query)
         {
             InfluxResultSet<DynamicInfluxRow> resultSet = await databaseClient.ReadAsync<DynamicInfluxRow>(databaseName, query);
             if (resultSet != null)
-                if (resultSet.Results.First().Series.Count > 0)
-                    return resultSet.Results.First().Series.First();
+                if (resultSet.Results.Count > 0)
+                    if (resultSet.Results.First().Series.Count > 0)
+                        return resultSet.Results.First().Series.First().Rows;
+            return null;
+        }
+
+        public async Task<List<InfluxSeries<DynamicInfluxRow>>> QuerySeries(string query)
+        {
+            InfluxResultSet<DynamicInfluxRow> resultSet = await databaseClient.ReadAsync<DynamicInfluxRow>(databaseName, query);
+            if (resultSet != null)
+                if (resultSet.Results.Count > 0)
+                    return resultSet.Results.First().Series;
             return null;
         }
 
@@ -139,9 +163,10 @@ namespace MicrowaveMonitor.Managers
         {
             InfluxResultSet<DynamicInfluxRow> resultSet = await databaseClient.ReadAsync<DynamicInfluxRow>(databaseName, query);
             if (resultSet != null)
-                if (resultSet.Results.First().Series.Count > 0)
-                    if (resultSet.Results.First().Series.First().Rows.Count > 0)
-                        return resultSet.Results.First().Series.First().Rows.First();
+                if (resultSet.Results.Count > 0)
+                    if (resultSet.Results.First().Series.Count > 0)
+                        if (resultSet.Results.First().Series.First().Rows.Count > 0)
+                            return resultSet.Results.First().Series.First().Rows.First();
             return null;
         }
     }

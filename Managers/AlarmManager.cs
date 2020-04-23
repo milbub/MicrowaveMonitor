@@ -1,4 +1,5 @@
 ﻿using MicrowaveMonitor.Database;
+using MicrowaveMonitor.Analysers;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -39,9 +40,27 @@ namespace MicrowaveMonitor.Managers
             public bool Ack { get; set; }
         }
 
-        public bool IsRunning { get; set; }
+        private bool _isRunning;
+        public bool IsRunning
+        { 
+            get => _isRunning;
+            set
+            {
+                _isRunning = value;
+                if (value)
+                {
+                    longAverage.IsRunning = true;
+                    shortAverage.IsRunning = true;
+                } else
+                {
+                    longAverage.IsRunning = false;
+                    shortAverage.IsRunning = false;
+                }
+            } 
+        }
 
         private readonly LinkManager linkM;
+        private readonly DataManager dataM;
         private readonly Dictionary<int, DeviceDisplay> displays;
 
         public readonly ObservableCollection<AlarmDisplay> alarmsCurrent = new ObservableCollection<AlarmDisplay>();
@@ -52,17 +71,33 @@ namespace MicrowaveMonitor.Managers
         /* Device down detection */
         private readonly Dictionary<int, byte> downTriggers = new Dictionary<int, byte>();
         private readonly Dictionary<int, int> downIds = new Dictionary<int, int>();
-        private object downLocker = new object();
+        private readonly object downLocker = new object();
 
         /* Treshold exceed detection */
         private readonly Dictionary<int, AlarmIdAssign> tresholdIds = new Dictionary<int, AlarmIdAssign>();
 
+        /* Average limits exceed detection */
+        private readonly AverageAnalyser longAverage;
+        private readonly AverageAnalyser shortAverage;
 
-        public AlarmManager(LinkManager linkManager, Dictionary<int, DeviceDisplay> deviceDisplays)
+        public AlarmManager(DataManager dataManager, LinkManager linkManager, Dictionary<int, DeviceDisplay> deviceDisplays)
         {
             linkM = linkManager;
+            dataM = dataManager;
             displays = deviceDisplays;
             LoadAlarmsOnStart();
+
+            AverageAnalyser.PercentDiff AvgPercentDiff = new AverageAnalyser.PercentDiff()
+            {
+                Signal = 0.1,
+                SignalQ = 0.1,
+                TempIdu = 0.5,
+                Voltage = 0.0275,
+                Latency = 2.5
+            };
+
+            longAverage = new AverageAnalyser(this, dataM, 1800000, 60000, 604800000, 1800000, AvgPercentDiff, AlarmType.AvgLong);
+            shortAverage = new AverageAnalyser(this, dataM, 300000, 60000, 3600000, 60000, AvgPercentDiff, AlarmType.AvgShort);
         }
 
         private void DataChanged(object sender, PropertyChangedEventArgs e)
@@ -92,7 +127,7 @@ namespace MicrowaveMonitor.Managers
             }
         }
 
-        private int GenerateAlarmDispatched(int deviceId, AlarmRank rank, Measurement measure, AlarmType method, bool trend, double measValue)
+        public int GenerateAlarmDispatched(int deviceId, AlarmRank rank, Measurement measure, AlarmType method, bool trend, double measValue)
         {
             object obj = null;
 
@@ -106,7 +141,7 @@ namespace MicrowaveMonitor.Managers
             return (int)obj;
         }
 
-        private void SettleAlarmDispatched(int alarmId, double settledValue, bool stopping)
+        public void SettleAlarmDispatched(int alarmId, double settledValue, bool stopping)
         {
             App.Current.Dispatcher.Invoke(delegate
             {
@@ -322,7 +357,7 @@ namespace MicrowaveMonitor.Managers
                 disp.Device = alarm.DeviceType;
                 disp.Measurement = alarm.Measure.ToString();
                 disp.Problem = text;
-                disp.Ack = false;
+                disp.Ack = alarm.IsAck;
 
                 if (alarm.IsAck)
                     lock (alarmsSettledAck)
@@ -333,14 +368,34 @@ namespace MicrowaveMonitor.Managers
             }
         }
 
-        public void RegisterListener(int id)
+        public void RegisterListener(Device device)
         {
-            displays[id].PropertyChanged += DataChanged;
+            lock (Analyser.watchLocker)
+            {
+                Analyser.WatchSignal.Add(device.Id, device.IsWatchedSignal);
+                Analyser.WatchSignalQ.Add(device.Id, device.IsWatchedSignalQ);
+                Analyser.WatchTempOdu.Add(device.Id, device.IsWatchedTempOdu);
+                Analyser.WatchTempIdu.Add(device.Id, device.IsWatchedTempIdu);
+                Analyser.WatchVoltage.Add(device.Id, device.IsWatchedVoltage);
+                Analyser.WatchPing.Add(device.Id, device.IsWatchedPing);
+            }
+            
+            displays[device.Id].PropertyChanged += DataChanged;
         }
 
-        public void UnregisterListener(int id)
+        public void UnregisterListener(Device device)
         {
-            displays[id].PropertyChanged -= DataChanged;
+            displays[device.Id].PropertyChanged -= DataChanged;
+            
+            lock (Analyser.watchLocker)
+            {
+                Analyser.WatchSignal.Remove(device.Id);
+                Analyser.WatchSignalQ.Remove(device.Id);
+                Analyser.WatchTempOdu.Remove(device.Id);
+                Analyser.WatchTempIdu.Remove(device.Id);
+                Analyser.WatchVoltage.Remove(device.Id);
+                Analyser.WatchPing.Remove(device.Id);
+            }
         }
 
         public void DeviceStopped(int id)
@@ -385,40 +440,64 @@ namespace MicrowaveMonitor.Managers
             linkM.UpdateAlarm(alarm);
         }
 
-        public void SetAck(int id)
+        public void SetAck(int id, bool active)
         {
+            ObservableCollection<AlarmDisplay> now, intended;
+            if (active)
+            {
+                now = alarmsCurrent;
+                intended = alarmsAck;
+            }
+            else
+            {
+                now = alarmsSettledUnack;
+                intended = alarmsSettledAck;
+            }
+
             AlarmDisplay display;
             
-            lock (alarmsCurrent)
+            lock (now)
             {
-                display = alarmsCurrent.First(v => (v.Id == id));
-                alarmsCurrent.Remove(display);
+                display = now.First(v => (v.Id == id));
+                now.Remove(display);
             }
 
             display.Ack = true;
 
-            lock (alarmsAck)
-                alarmsAck.Add(display);
+            lock (intended)
+                intended.Add(display);
 
             Alarm alarm = linkM.GetAlarm(id);
             alarm.IsAck = true;
             linkM.UpdateAlarm(alarm);
         }
 
-        public void UnsetAck(int id)
+        public void UnsetAck(int id, bool active)
         {
+            ObservableCollection<AlarmDisplay> now, intended;
+            if (active)
+            {
+                now = alarmsAck;
+                intended = alarmsCurrent;
+            }
+            else
+            {
+                now = alarmsSettledAck;
+                intended = alarmsSettledUnack;
+            }
+
             AlarmDisplay display;
 
-            lock (alarmsAck)
+            lock (now)
             {
-                display = alarmsAck.First(v => (v.Id == id));
-                alarmsAck.Remove(display);
+                display = now.First(v => (v.Id == id));
+                now.Remove(display);
             }
 
             display.Ack = false;
 
-            lock (alarmsCurrent)
-                alarmsCurrent.Add(display);
+            lock (intended)
+                intended.Add(display);
 
             Alarm alarm = linkM.GetAlarm(id);
             alarm.IsAck = false;

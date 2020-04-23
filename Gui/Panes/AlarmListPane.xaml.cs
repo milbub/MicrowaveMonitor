@@ -37,13 +37,25 @@ namespace MicrowaveMonitor.Gui
         private void AckCheckFired(object sender, RoutedEventArgs e)
         {
             CheckBox box = (CheckBox)sender;
-            alarmM.SetAck((int)box.Tag);
+            alarmM.SetAck((int)box.Tag, true);
         }
 
         private void AckUncheckFired(object sender, RoutedEventArgs e)
         {
             CheckBox box = (CheckBox)sender;
-            alarmM.UnsetAck((int)box.Tag);
+            alarmM.UnsetAck((int)box.Tag, true);
+        }
+
+        private void SettlAckCheckFired(object sender, RoutedEventArgs e)
+        {
+            CheckBox box = (CheckBox)sender;
+            alarmM.SetAck((int)box.Tag, false);
+        }
+
+        private void SettlAckUncheckFired(object sender, RoutedEventArgs e)
+        {
+            CheckBox box = (CheckBox)sender;
+            alarmM.UnsetAck((int)box.Tag, false);
         }
 
         private void HideButtonFired(object sender, RoutedEventArgs e)

@@ -62,8 +62,15 @@
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
+                        <GridViewColumn Header="ACK" Width="27">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <CheckBox Tag="{Binding Id}" IsChecked="{Binding Ack}" Click="SettlAckUncheckFired"/>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
                         <GridViewColumn Header="Rank" Width="48" DisplayMemberBinding="{Binding Rank}"></GridViewColumn>
-                        <GridViewColumn Header="Beginning Timestamp" Width="127" DisplayMemberBinding="{Binding StartTimestamp}"></GridViewColumn>
+                        <GridViewColumn Header="Beginning Timestamp" Width="127" DisplayMemberBinding="{Binding Timestamp}"></GridViewColumn>
                         <GridViewColumn Header="End Timestamp" Width="127" DisplayMemberBinding="{Binding EndTimestamp}"></GridViewColumn>
                         <GridViewColumn Header="Link" Width="230" DisplayMemberBinding="{Binding Link}"></GridViewColumn>
                         <GridViewColumn Header="Site" Width="50" DisplayMemberBinding="{Binding Device}"></GridViewColumn>
@@ -85,6 +92,13 @@
                                     <Button ToolTip="Hide Alarm" Click="HideButtonFired" Name="bUn" Tag="{Binding Id}" VerticalAlignment="Center">
                                         <Image Source="/Gui/Icons/clear.png"></Image>
                                     </Button>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="ACK" Width="27">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <CheckBox Tag="{Binding Id}" IsChecked="{Binding Ack}" Click="SettlAckCheckFired"/>
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>

@@ -516,14 +516,14 @@ namespace MicrowaveMonitor.Gui
 
         private void RegisterCharts()
         {
-            signal.RegisterChart("Signal Strength", "dBm", "[dBm]", dataM.measSig, viewedDeviceId, dataM.SignalTransactions, dataM);
-            signalQ.RegisterChart("Signal Quality", "dB", "[dB]", dataM.measSigQ, viewedDeviceId, dataM.SignalQTransactions, dataM);
-            tempOdu.RegisterChart("Outdoor Unit Temperature", "°C", "[°C]", dataM.measTmpO, viewedDeviceId, dataM.TempOduTransactions, dataM);
-            tempIdu.RegisterChart("Outdoor Unit Temperature", "°C", "[°C]", dataM.measTmpI, viewedDeviceId, dataM.TempIduTransactions, dataM);
-            voltage.RegisterChart("Power Voltage", "V", "[V]", dataM.measVolt, viewedDeviceId, dataM.VoltageTransactions, dataM);
-            tx.RegisterChart("Transmit Data Rate", "kb/s", "[kbit/s]", dataM.measTx, viewedDeviceId, dataM.TxTransactions, dataM);
-            rx.RegisterChart("Receive Data Rate", "kb/s", "[kbit/s]", dataM.measRx, viewedDeviceId, dataM.RxTransactions, dataM);
-            latency.RegisterChart("Round/trip Time", "ms", "[ms]", dataM.measLat, viewedDeviceId, dataM.PingTransactions, dataM);
+            signal.RegisterChart("Signal Strength", "dBm", "[dBm]", DataManager.measSig, viewedDeviceId, dataM.SignalTransactions, dataM);
+            signalQ.RegisterChart("Signal Quality", "dB", "[dB]", DataManager.measSigQ, viewedDeviceId, dataM.SignalQTransactions, dataM);
+            tempOdu.RegisterChart("Outdoor Unit Temperature", "°C", "[°C]", DataManager.measTmpO, viewedDeviceId, dataM.TempOduTransactions, dataM);
+            tempIdu.RegisterChart("Indoor Unit Temperature", "°C", "[°C]", DataManager.measTmpI, viewedDeviceId, dataM.TempIduTransactions, dataM);
+            voltage.RegisterChart("Power Voltage", "V", "[V]", DataManager.measVolt, viewedDeviceId, dataM.VoltageTransactions, dataM);
+            tx.RegisterChart("Transmit Data Rate", "kb/s", "[kbit/s]", DataManager.measTx, viewedDeviceId, dataM.TxTransactions, dataM);
+            rx.RegisterChart("Receive Data Rate", "kb/s", "[kbit/s]", DataManager.measRx, viewedDeviceId, dataM.RxTransactions, dataM);
+            latency.RegisterChart("Round/trip Time", "ms", "[ms]", DataManager.measLat, viewedDeviceId, dataM.PingTransactions, dataM);
         }
 
         private void ChartsChangeDevice(int id, Device device)

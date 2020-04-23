@@ -118,7 +118,7 @@ namespace MicrowaveMonitor.Gui
 
         private async Task UpdateAvg(string query)
         {
-            string pre = $@"SELECT mean(""value"") FROM ""{DataM.databaseName}"".""{DataM.retention}"".";
+            string pre = $@"SELECT mean(""value"") FROM ""{DataManager.databaseName}"".""{DataManager.writeRetention}"".";
             query = pre + $@"""{Measurement}"" " + query;
 
             dynamic row = await DataM.QueryValue(query);
@@ -160,7 +160,7 @@ namespace MicrowaveMonitor.Gui
                     return;
             }
 
-            query = $@"SELECT mean(""value"") FROM ""{DataM.databaseName}"".""{DataM.retention}""." + $@"""{Measurement}"" " + query;
+            query = $@"SELECT mean(""value"") FROM ""{DataManager.databaseName}"".""{DataManager.writeRetention}""." + $@"""{Measurement}"" " + query;
 
             chart.SetAxisGrid(step, unit);
 
@@ -170,9 +170,9 @@ namespace MicrowaveMonitor.Gui
 
             List<Record<double>> records = new List<Record<double>>();
 
-            InfluxSeries<DynamicInfluxRow> series = await DataM.QuerySeries(query);
-            if (series != null)
-                foreach (dynamic row in series.Rows)
+            List<DynamicInfluxRow> rows = await DataM.QueryRows(query);
+            if (rows != null)
+                foreach (dynamic row in rows)
                 {
                     records.Add(new Record<double>(row.time.ToLocalTime(), row.mean));
                 }

@@ -27,14 +27,15 @@ namespace MicrowaveMonitor
             linkManager = new LinkManager();
             dataManager = new DataManager();
             deviceDisplays = new Dictionary<int, DeviceDisplay>();
-            alarmManager = new AlarmManager(linkManager, deviceDisplays);
+            alarmManager = new AlarmManager(dataManager, linkManager, deviceDisplays);
             workerManager = new WorkerManager(dataManager, linkManager, alarmManager, deviceDisplays);
         }
 
         private void Application_Startup(object sender, StartupEventArgs e)
         {
             workerManager.InitWorkers(linkManager.GetDeviceTable());
-            dataManager.StartDatabaseWriter();
+            dataManager.IsRunning = true;
+            alarmManager.IsRunning = true;
 
             MonitoringWindow monitoringWindow = new MonitoringWindow(linkManager, workerManager, alarmManager, dataManager);
             monitoringWindow.Show();
