@@ -446,7 +446,7 @@ namespace MicrowaveMonitor.Gui
             
             foreach (string name in linkM.LinkNames.Values)
             {
-                if (name.IndexOf(searchBox.Text, StringComparison.CurrentCultureIgnoreCase) > 0)
+                if (name.IndexOf(searchBox.Text, StringComparison.CurrentCultureIgnoreCase) >= 0)
                 {
                     LinksList.Items.Add(name);
                 }
