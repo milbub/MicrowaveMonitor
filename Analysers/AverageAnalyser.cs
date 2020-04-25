@@ -47,6 +47,7 @@ namespace MicrowaveMonitor.Analysers
         //private static readonly Dictionary<int, bool> isIndicatedTempIdu = new Dictionary<int, bool>();
         private static readonly Dictionary<int, bool> isIndicatedVoltage = new Dictionary<int, bool>();
         private static readonly Dictionary<int, bool> isIndicatedPing = new Dictionary<int, bool>();
+        private static readonly object indiLocker = new object();
 
         private Thread tComparator;
         private readonly AlarmType alarmType;
@@ -201,29 +202,30 @@ namespace MicrowaveMonitor.Analysers
 
             if (alarmType == AlarmType.AvgLong)
             {
-                if (!indication.ContainsKey(devId))
-                    indication.Add(devId, true);
+                lock (indiLocker)
+                    if (!indication.ContainsKey(devId))
+                        indication.Add(devId, true);
 
                 id = alarmMan.GenerateAlarmDispatched(devId, AlarmRank.Warning, measure, alarmType, trend, value);
                 return id;
             }
             else
             {
-                if (indication.ContainsKey(devId))
-                    return 0;
-                else
-                {
-                    id = alarmMan.GenerateAlarmDispatched(devId, AlarmRank.Warning, measure, alarmType, trend, value);
-                    return id;
-                }
+                lock (indiLocker)
+                    if (indication.ContainsKey(devId))
+                        return 0;
+
+                id = alarmMan.GenerateAlarmDispatched(devId, AlarmRank.Warning, measure, alarmType, trend, value);
+                return id;
             }
         }
 
         private void CheckedSettle(int alarmId, double value, Dictionary<int, bool> indication, int devId)
         {
             if (alarmType == AlarmType.AvgLong)
-                if (indication.ContainsKey(devId))
-                    indication.Remove(devId);
+                lock (indiLocker)
+                    if (indication.ContainsKey(devId))
+                        indication.Remove(devId);
 
             alarmMan.SettleAlarmDispatched(alarmId, value, false);
         }
