@@ -87,17 +87,26 @@ namespace MicrowaveMonitor.Managers
             displays = deviceDisplays;
             LoadAlarmsOnStart();
 
-            AverageAnalyser.PercentDiff AvgPercentDiff = new AverageAnalyser.PercentDiff()
+            AverageAnalyser.PercentDiff LongAvgPercentDiff = new AverageAnalyser.PercentDiff()
             {
                 Signal = 0.1,
                 SignalQ = 0.1,
                 TempIdu = 0.5,
-                Voltage = 0.0275,
+                Voltage = 0.031,
                 Latency = 2.5
             };
 
-            longAverage = new AverageAnalyser(this, dataM, 1800000, 60000, 604800000, 1800000, AvgPercentDiff, AlarmType.AvgLong);
-            shortAverage = new AverageAnalyser(this, dataM, 300000, 60000, 3600000, 60000, AvgPercentDiff, AlarmType.AvgShort);
+            AverageAnalyser.PercentDiff ShortAvgPercentDiff = new AverageAnalyser.PercentDiff()
+            {
+                Signal = 0.15,
+                SignalQ = 0.15,
+                TempIdu = 0.5,
+                Voltage = 0.031,
+                Latency = 2.5
+            };
+
+            longAverage = new AverageAnalyser(this, dataM, 1800000, 60000, 604800000, 1800000, LongAvgPercentDiff, AlarmType.AvgLong);
+            shortAverage = new AverageAnalyser(this, dataM, 300000, 60000, 3600000, 300000, ShortAvgPercentDiff, AlarmType.AvgShort);
         }
 
         private void DataChanged(object sender, PropertyChangedEventArgs e)

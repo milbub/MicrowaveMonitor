@@ -23,24 +23,30 @@ namespace MicrowaveMonitor.Analysers
             public double Latency { get; set; }
         }
 
-        public override TimeSpan RefreshInterval { get; set; }// = 1800000;
-        public TimeSpan CompareInterval { get; set; }// = 60000;
-        public int LongLimit { get; set; }// = 604800000;
-        public int ShortLimit { get; set; }// = 1800000;
+        public override TimeSpan RefreshInterval { get; set; }
+        public TimeSpan CompareInterval { get; set; }
+        public int LongLimit { get; set; }
+        public int ShortLimit { get; set; }
         public PercentDiff Percentages { get; set; }
 
-        private Dictionary<int, double> dataSignalAvg = new Dictionary<int, double>();
-        private Dictionary<int, double> dataSignalQAvg = new Dictionary<int, double>();
-        //private Dictionary<int, double> dataTempIduAvg = new Dictionary<int, double>();
-        private Dictionary<int, double> dataVoltageAvg = new Dictionary<int, double>();
-        private Dictionary<int, double> dataPingAvg = new Dictionary<int, double>();
-        private object dataLocker = new object();
+        private readonly Dictionary<int, double> dataSignalAvg = new Dictionary<int, double>();
+        private readonly Dictionary<int, double> dataSignalQAvg = new Dictionary<int, double>();
+        //private readonly Dictionary<int, double> dataTempIduAvg = new Dictionary<int, double>();
+        private readonly Dictionary<int, double> dataVoltageAvg = new Dictionary<int, double>();
+        private readonly Dictionary<int, double> dataPingAvg = new Dictionary<int, double>();
+        private readonly object dataLocker = new object();
 
         private readonly Dictionary<int, int> idsSignal = new Dictionary<int, int>();
         private readonly Dictionary<int, int> idsSignalQ = new Dictionary<int, int>();
         //private readonly Dictionary<int, int> idsTempIdu = new Dictionary<int, int>();
         private readonly Dictionary<int, int> idsVoltage = new Dictionary<int, int>();
         private readonly Dictionary<int, int> idsPing = new Dictionary<int, int>();
+
+        private static readonly Dictionary<int, bool> isIndicatedSignal = new Dictionary<int, bool>();
+        private static readonly Dictionary<int, bool> isIndicatedSignalQ = new Dictionary<int, bool>();
+        //private static readonly Dictionary<int, bool> isIndicatedTempIdu = new Dictionary<int, bool>();
+        private static readonly Dictionary<int, bool> isIndicatedVoltage = new Dictionary<int, bool>();
+        private static readonly Dictionary<int, bool> isIndicatedPing = new Dictionary<int, bool>();
 
         private Thread tComparator;
         private readonly AlarmType alarmType;
@@ -127,22 +133,23 @@ namespace MicrowaveMonitor.Analysers
 
         private void ShortAverage()
         {
+            Thread.Sleep(CompareInterval);
             while (IsRunning)
             {
                 DateTime start = DateTime.Now;
 
-                CompareAvg(DataManager.measSig, idsSignal, Measurement.Strength, Percentages.Signal, dataSignalAvg);
-                CompareAvg(DataManager.measSigQ, idsSignalQ, Measurement.Quality, Percentages.SignalQ, dataSignalQAvg);
-                //CompareAvg(DataManager.measTmpI, idsTempIdu, Measurement.TempIDU, Percentages.TempIdu, dataTempIduAvg);
-                CompareAvg(DataManager.measVolt, idsVoltage, Measurement.Voltage, Percentages.Voltage, dataVoltageAvg);
-                CompareAvg(DataManager.measLat, idsPing, Measurement.Latency, Percentages.Latency, dataPingAvg);
+                CompareAvg(DataManager.measSig, idsSignal, Measurement.Strength, Percentages.Signal, dataSignalAvg, isIndicatedSignal);
+                CompareAvg(DataManager.measSigQ, idsSignalQ, Measurement.Quality, Percentages.SignalQ, dataSignalQAvg, isIndicatedSignalQ);
+                //CompareAvg(DataManager.measTmpI, idsTempIdu, Measurement.TempIDU, Percentages.TempIdu, dataTempIduAvg, isIndicatedTempIdu);
+                CompareAvg(DataManager.measVolt, idsVoltage, Measurement.Voltage, Percentages.Voltage, dataVoltageAvg, isIndicatedVoltage);
+                CompareAvg(DataManager.measLat, idsPing, Measurement.Latency, Percentages.Latency, dataPingAvg, isIndicatedPing);
 
                 TimeSpan diff = DateTime.Now - start;
                 Thread.Sleep(CompareInterval - diff);
             }
         }
 
-        private async void CompareAvg(string meas, Dictionary<int, int> ids, Measurement measure, double percentage, Dictionary<int, double> data)
+        private async void CompareAvg(string meas, Dictionary<int, int> ids, Measurement measure, double percentage, Dictionary<int, double> data, Dictionary<int, bool> indication)
         {
             string query = $@"SELECT mean(""{DataManager.defaultValueName}"") FROM ""{DataManager.databaseName}"".""{DataManager.retentionWeek}"".""{meas}"" WHERE time > now() - {ShortLimit}ms AND time < now() GROUP BY ""device"" FILL(none)";
 
@@ -167,9 +174,11 @@ namespace MicrowaveMonitor.Analysers
                                     int id;
 
                                     if (diff > 0)
-                                        id = alarmMan.GenerateAlarmDispatched(devId, AlarmRank.Warning, measure, alarmType, false, value);
+                                        //id = alarmMan.GenerateAlarmDispatched(devId, AlarmRank.Warning, measure, alarmType, false, value);
+                                        id = CheckedGenerate(devId, measure, false, value, indication);
                                     else
-                                        id = alarmMan.GenerateAlarmDispatched(devId, AlarmRank.Warning, measure, alarmType, true, value);
+                                        //id = alarmMan.GenerateAlarmDispatched(devId, AlarmRank.Warning, measure, alarmType, true, value);
+                                        id = CheckedGenerate(devId, measure, true, value, indication);
 
                                     ids.Add(devId, id);
                                 }
@@ -178,12 +187,45 @@ namespace MicrowaveMonitor.Analysers
                             {
                                 if (ids.ContainsKey(devId))
                                 {
-                                    alarmMan.SettleAlarmDispatched(ids[devId], value, false);
+                                    CheckedSettle(ids[devId], value, indication, devId);
                                     ids.Remove(devId);
                                 }
                             }
                         }
                     }
+        }
+
+        private int CheckedGenerate(int devId, Measurement measure, bool trend, double value, Dictionary<int, bool> indication)
+        {
+            int id;
+
+            if (alarmType == AlarmType.AvgLong)
+            {
+                if (!indication.ContainsKey(devId))
+                    indication.Add(devId, true);
+
+                id = alarmMan.GenerateAlarmDispatched(devId, AlarmRank.Warning, measure, alarmType, trend, value);
+                return id;
+            }
+            else
+            {
+                if (indication.ContainsKey(devId))
+                    return 0;
+                else
+                {
+                    id = alarmMan.GenerateAlarmDispatched(devId, AlarmRank.Warning, measure, alarmType, trend, value);
+                    return id;
+                }
+            }
+        }
+
+        private void CheckedSettle(int alarmId, double value, Dictionary<int, bool> indication, int devId)
+        {
+            if (alarmType == AlarmType.AvgLong)
+                if (indication.ContainsKey(devId))
+                    indication.Remove(devId);
+
+            alarmMan.SettleAlarmDispatched(alarmId, value, false);
         }
     }
 }

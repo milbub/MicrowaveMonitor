@@ -16,7 +16,7 @@
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
-                        <GridViewColumn Header="Rank" Width="48" DisplayMemberBinding="{Binding Rank}"></GridViewColumn>
+                        <GridViewColumn Header="Rank" Width="65" DisplayMemberBinding="{Binding Rank}"></GridViewColumn>
                         <GridViewColumn Header="Timestamp" Width="117" DisplayMemberBinding="{Binding Timestamp}"></GridViewColumn>
                         <GridViewColumn Header="Link" Width="170" DisplayMemberBinding="{Binding Link}"></GridViewColumn>
                         <GridViewColumn Header="Site" Width="50" DisplayMemberBinding="{Binding Device}"></GridViewColumn>
@@ -38,7 +38,7 @@
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
-                        <GridViewColumn Header="Rank" Width="48" DisplayMemberBinding="{Binding Rank}"></GridViewColumn>
+                        <GridViewColumn Header="Rank" Width="65" DisplayMemberBinding="{Binding Rank}"></GridViewColumn>
                         <GridViewColumn Header="Timestamp" Width="117" DisplayMemberBinding="{Binding Timestamp}"></GridViewColumn>
                         <GridViewColumn Header="Link" Width="170" DisplayMemberBinding="{Binding Link}"></GridViewColumn>
                         <GridViewColumn Header="Site" Width="50" DisplayMemberBinding="{Binding Device}"></GridViewColumn>
@@ -69,7 +69,7 @@
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
-                        <GridViewColumn Header="Rank" Width="48" DisplayMemberBinding="{Binding Rank}"></GridViewColumn>
+                        <GridViewColumn Header="Rank" Width="65" DisplayMemberBinding="{Binding Rank}"></GridViewColumn>
                         <GridViewColumn Header="Beginning Timestamp" Width="127" DisplayMemberBinding="{Binding Timestamp}"></GridViewColumn>
                         <GridViewColumn Header="End Timestamp" Width="127" DisplayMemberBinding="{Binding EndTimestamp}"></GridViewColumn>
                         <GridViewColumn Header="Link" Width="230" DisplayMemberBinding="{Binding Link}"></GridViewColumn>
@@ -102,7 +102,7 @@
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
-                        <GridViewColumn Header="Rank" Width="48" DisplayMemberBinding="{Binding Rank}"></GridViewColumn>
+                        <GridViewColumn Header="Rank" Width="65" DisplayMemberBinding="{Binding Rank}"></GridViewColumn>
                         <GridViewColumn Header="Begin Timestamp" Width="127" DisplayMemberBinding="{Binding Timestamp}"></GridViewColumn>
                         <GridViewColumn Header="End Timestamp" Width="127" DisplayMemberBinding="{Binding EndTimestamp}"></GridViewColumn>
                         <GridViewColumn Header="Link" Width="230" DisplayMemberBinding="{Binding Link}"></GridViewColumn>
