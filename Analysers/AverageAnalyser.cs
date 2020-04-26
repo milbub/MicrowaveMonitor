@@ -41,6 +41,7 @@ namespace MicrowaveMonitor.Analysers
         //private readonly Dictionary<int, int> idsTempIdu = new Dictionary<int, int>();
         private readonly Dictionary<int, int> idsVoltage = new Dictionary<int, int>();
         private readonly Dictionary<int, int> idsPing = new Dictionary<int, int>();
+        private readonly object idsLocker = new object();
 
         private static readonly Dictionary<int, bool> isIndicatedSignal = new Dictionary<int, bool>();
         private static readonly Dictionary<int, bool> isIndicatedSignalQ = new Dictionary<int, bool>();
@@ -170,30 +171,35 @@ namespace MicrowaveMonitor.Analysers
 
                             if (Math.Abs(diff) > maxDiff)
                             {
-                                if (!ids.ContainsKey(devId))
-                                {
-                                    int id;
+                                lock (idsLocker)
+                                    if (!ids.ContainsKey(devId))
+                                    {
+                                        int id;
 
-                                    if (diff > 0)
-                                        //id = alarmMan.GenerateAlarmDispatched(devId, AlarmRank.Warning, measure, alarmType, false, value);
-                                        id = CheckedGenerate(devId, measure, false, value, indication);
-                                    else
-                                        //id = alarmMan.GenerateAlarmDispatched(devId, AlarmRank.Warning, measure, alarmType, true, value);
-                                        id = CheckedGenerate(devId, measure, true, value, indication);
+                                        if (diff > 0)
+                                            id = CheckedGenerate(devId, measure, false, value, indication);
+                                        else
+                                            id = CheckedGenerate(devId, measure, true, value, indication);
 
-                                    ids.Add(devId, id);
-                                }
+                                        ids.Add(devId, id);
+                                    }
                             }
                             else
                             {
-                                if (ids.ContainsKey(devId))
-                                {
-                                    CheckedSettle(ids[devId], value, indication, devId);
-                                    ids.Remove(devId);
-                                }
+                                TrySettle(devId, ids, value, indication, false);
                             }
                         }
                     }
+        }
+
+        private void TrySettle (int devId, Dictionary<int, int> ids, double value, Dictionary<int, bool> indication, bool stopping)
+        {
+            lock (idsLocker)
+                if (ids.ContainsKey(devId))
+                {
+                    CheckedSettle(ids[devId], value, indication, devId, stopping);
+                    ids.Remove(devId);
+                }
         }
 
         private int CheckedGenerate(int devId, Measurement measure, bool trend, double value, Dictionary<int, bool> indication)
@@ -220,14 +226,23 @@ namespace MicrowaveMonitor.Analysers
             }
         }
 
-        private void CheckedSettle(int alarmId, double value, Dictionary<int, bool> indication, int devId)
+        private void CheckedSettle(int alarmId, double value, Dictionary<int, bool> indication, int devId, bool stopping)
         {
             if (alarmType == AlarmType.AvgLong)
                 lock (indiLocker)
                     if (indication.ContainsKey(devId))
                         indication.Remove(devId);
 
-            alarmMan.SettleAlarmDispatched(alarmId, value, false);
+            alarmMan.SettleAlarmDispatched(alarmId, value, stopping);
+        }
+
+        public void DeviceStopped(int devId)
+        {
+            TrySettle(devId, idsSignal, 0, isIndicatedSignal, true);
+            TrySettle(devId, idsSignalQ, 0, isIndicatedSignalQ, true);
+            TrySettle(devId, idsVoltage, 0, isIndicatedVoltage, true);
+            TrySettle(devId, idsPing, 0, isIndicatedPing, true);
+            //TrySettle(devId, idsTempIdu, 0, isIndcatedTempIdu, true);
         }
     }
 }

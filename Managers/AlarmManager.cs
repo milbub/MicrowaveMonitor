@@ -40,6 +40,15 @@ namespace MicrowaveMonitor.Managers
             public bool Ack { get; set; }
         }
 
+        public struct AlarmTimes
+        {
+            public int linkId;
+            public int devId;
+            public bool isActive;
+            public DateTime start;
+            public DateTime end;
+        }
+
         private bool _isRunning;
         public bool IsRunning
         { 
@@ -68,17 +77,24 @@ namespace MicrowaveMonitor.Managers
         public readonly ObservableCollection<AlarmDisplay> alarmsSettledAck = new ObservableCollection<AlarmDisplay>();
         public readonly ObservableCollection<AlarmDisplay> alarmsSettledUnack = new ObservableCollection<AlarmDisplay>();
 
-        /* Device down detection */
+        /* Statistics for analysers */
+        public readonly Dictionary<int, AlarmTimes> downTimes = new Dictionary<int, AlarmTimes>();
+        private readonly object downTimesLocker = new object();
+
+        /** Device down detection **/
         private readonly Dictionary<int, byte> downTriggers = new Dictionary<int, byte>();
         private readonly Dictionary<int, int> downIds = new Dictionary<int, int>();
         private readonly object downLocker = new object();
 
-        /* Treshold exceed detection */
+        /** Treshold exceed detection **/
         private readonly Dictionary<int, AlarmIdAssign> tresholdIds = new Dictionary<int, AlarmIdAssign>();
 
-        /* Average limits exceed detection */
+        /*** Average exceed analysers ***/
         private readonly AverageAnalyser longAverage;
         private readonly AverageAnalyser shortAverage;
+
+        // TEMP TODO CONFIG
+        private const int longAvgLim = 604800000;
 
         public AlarmManager(DataManager dataManager, LinkManager linkManager, Dictionary<int, DeviceDisplay> deviceDisplays)
         {
@@ -105,7 +121,7 @@ namespace MicrowaveMonitor.Managers
                 Latency = 2.5
             };
 
-            longAverage = new AverageAnalyser(this, dataM, 1800000, 60000, 604800000, 1800000, LongAvgPercentDiff, AlarmType.AvgLong);
+            longAverage = new AverageAnalyser(this, dataM, 1800000, 60000, longAvgLim, 1800000, LongAvgPercentDiff, AlarmType.AvgLong);
             shortAverage = new AverageAnalyser(this, dataM, 300000, 60000, 3600000, 300000, ShortAvgPercentDiff, AlarmType.AvgShort);
         }
 
@@ -342,39 +358,63 @@ namespace MicrowaveMonitor.Managers
                 linkM.UpdateAlarm(alarm);
             }
 
-            foreach (Alarm alarm in alarms.Where(v => v.IsShowed))
+            DateTime limit = DateTime.Now - TimeSpan.FromMilliseconds(longAvgLim);
+
+            foreach (Alarm alarm in alarms)
             {
-                string text = TextFiller(alarm.Type, alarm.Trend);
+                if (alarm.IsShowed)
+                    FillSettledList(alarm);
 
-                AlarmDisplay disp = new AlarmDisplay();
-
-                if (alarm.Type == AlarmType.Down)
-                {
-                    disp.Value = "-";
-                    disp.SettledValue = "-";
-                }
-                else
-                {
-                    disp.Value = alarm.GenerValue.ToString("0.00");
-                    disp.SettledValue = alarm.SettledValue.ToString("0.00");
-                }
-                disp.Id = alarm.Id;
-                disp.Rank = alarm.Rank.ToString();
-                disp.Timestamp = alarm.GenerTime.ToString("dd.MM.yyyy HH:mm:ss");
-                disp.EndTimestamp = alarm.SettledTime.ToString("dd.MM.yyyy HH:mm:ss");
-                disp.Link = linkM.LinkNames[alarm.LinkId];
-                disp.Device = alarm.DeviceType;
-                disp.Measurement = alarm.Measure.ToString();
-                disp.Problem = text;
-                disp.Ack = alarm.IsAck;
-
-                if (alarm.IsAck)
-                    lock (alarmsSettledAck)
-                        alarmsSettledAck.Add(disp);
-                else
-                    lock (alarmsSettledUnack)
-                        alarmsSettledUnack.Add(disp);
+                if (alarm.Type == AlarmType.Down && alarm.GenerTime > limit)
+                    AddToDownTimes(alarm, false);
             }
+        }
+
+        private void FillSettledList(Alarm alarm)
+        {
+            string text = TextFiller(alarm.Type, alarm.Trend);
+
+            AlarmDisplay disp = new AlarmDisplay();
+
+            if (alarm.Type == AlarmType.Down)
+            {
+                disp.Value = "-";
+                disp.SettledValue = "-";
+            }
+            else
+            {
+                disp.Value = alarm.GenerValue.ToString("0.00");
+                disp.SettledValue = alarm.SettledValue.ToString("0.00");
+            }
+            disp.Id = alarm.Id;
+            disp.Rank = alarm.Rank.ToString();
+            disp.Timestamp = alarm.GenerTime.ToString("dd.MM.yyyy HH:mm:ss");
+            disp.EndTimestamp = alarm.SettledTime.ToString("dd.MM.yyyy HH:mm:ss");
+            disp.Link = linkM.LinkNames[alarm.LinkId];
+            disp.Device = alarm.DeviceType;
+            disp.Measurement = alarm.Measure.ToString();
+            disp.Problem = text;
+            disp.Ack = alarm.IsAck;
+
+            if (alarm.IsAck)
+                lock (alarmsSettledAck)
+                    alarmsSettledAck.Add(disp);
+            else
+                lock (alarmsSettledUnack)
+                    alarmsSettledUnack.Add(disp);
+        }
+
+        private void AddToDownTimes(Alarm alarm, bool active)
+        {
+            AlarmTimes times = new AlarmTimes()
+            {
+                linkId = alarm.LinkId,
+                devId = alarm.DeviceId,
+                isActive = active,
+                start = alarm.GenerTime,
+                end = alarm.SettledTime
+            };
+            downTimes.Add(alarm.Id, times);
         }
 
         public void RegisterListener(Device device)
@@ -409,20 +449,16 @@ namespace MicrowaveMonitor.Managers
 
         public void DeviceStopped(int id)
         {
-            lock (downLocker)
-            {
-                if (downTriggers.ContainsKey(id))
-                {
-                    downTriggers.Remove(id);
-                    SettleAlarmDispatched(downIds[id], 0, true);
-                    downIds.Remove(id);
-                }
-            }
+            while (DeviceUpTrigger(id, true))
+                DeviceUpTrigger(id, true);
             
             foreach (Measurement measure in (Measurement[])Enum.GetValues(typeof(Measurement)))
             {
                 TreshSettTrigger(id, measure, 0, true);
             }
+
+            longAverage.DeviceStopped(id);
+            shortAverage.DeviceStopped(id);
         }
 
         public void SetHide(int id, bool ack)
@@ -525,12 +561,15 @@ namespace MicrowaveMonitor.Managers
                 else
                 {
                     downTriggers.Add(deviceId, 1);
-                    downIds.Add(deviceId, GenerateAlarmDispatched(deviceId, AlarmRank.Down, Measurement.All, AlarmType.Down, false, 0));
+                    int id = GenerateAlarmDispatched(deviceId, AlarmRank.Down, Measurement.All, AlarmType.Down, false, 0);
+                    downIds.Add(deviceId, id);
+                    
+                    AddToDownTimes(linkM.GetAlarm(id), true);
                 }
             }
         }
 
-        public void DeviceUpTrigger(int deviceId)
+        public bool DeviceUpTrigger(int deviceId, bool stopping)
         {
             lock (downLocker)
             {
@@ -541,10 +580,22 @@ namespace MicrowaveMonitor.Managers
                     if (downTriggers[deviceId] < 1)
                     {
                         downTriggers.Remove(deviceId);
-                        SettleAlarmDispatched(downIds[deviceId], 0, false);
+                        SettleAlarmDispatched(downIds[deviceId], 0, stopping);
+
+                        AlarmTimes times = downTimes[downIds[deviceId]];
+                        times.end = DateTime.Now;
+                        times.isActive = false;
+                        downTimes[downIds[deviceId]] = times;
+
                         downIds.Remove(deviceId);
+
+                        return false;
                     }
+
+                    return true;
                 }
+                else
+                    return false;
             }
         }
 

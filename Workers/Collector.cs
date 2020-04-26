@@ -65,7 +65,7 @@ namespace MicrowaveMonitor.Workers
                     timeoutCount = 0;
                 else
                 {
-                    alarmMan.DeviceUpTrigger(DeviceId);
+                    alarmMan.DeviceUpTrigger(DeviceId, false);
                     RefreshInterval = origRefresh;
                     timeoutCount = 0;
                 }
