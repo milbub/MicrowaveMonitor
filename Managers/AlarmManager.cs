@@ -94,7 +94,7 @@ namespace MicrowaveMonitor.Managers
         private readonly AverageAnalyser shortAverage;
 
         // TEMP TODO CONFIG
-        private const int longAvgLim = 604800000;
+        public static readonly TimeSpan longAvgLim = TimeSpan.FromMilliseconds(604800000);
 
         public AlarmManager(DataManager dataManager, LinkManager linkManager, Dictionary<int, DeviceDisplay> deviceDisplays)
         {
@@ -121,8 +121,8 @@ namespace MicrowaveMonitor.Managers
                 Latency = 2.5
             };
 
-            longAverage = new AverageAnalyser(this, dataM, 1800000, 60000, longAvgLim, 1800000, LongAvgPercentDiff, AlarmType.AvgLong);
-            shortAverage = new AverageAnalyser(this, dataM, 300000, 60000, 3600000, 300000, ShortAvgPercentDiff, AlarmType.AvgShort);
+            longAverage = new AverageAnalyser(this, dataM, linkM, 1800000, 60000, (int)longAvgLim.TotalMilliseconds, 1800000, LongAvgPercentDiff, AlarmType.AvgLong);
+            shortAverage = new AverageAnalyser(this, dataM, linkM, 300000, 60000, 3600000, 300000, ShortAvgPercentDiff, AlarmType.AvgShort);
         }
 
         private void DataChanged(object sender, PropertyChangedEventArgs e)
@@ -358,7 +358,7 @@ namespace MicrowaveMonitor.Managers
                 linkM.UpdateAlarm(alarm);
             }
 
-            DateTime limit = DateTime.Now - TimeSpan.FromMilliseconds(longAvgLim);
+            DateTime limit = DateTime.Now - longAvgLim;
 
             foreach (Alarm alarm in alarms)
             {
@@ -414,7 +414,8 @@ namespace MicrowaveMonitor.Managers
                 start = alarm.GenerTime,
                 end = alarm.SettledTime
             };
-            downTimes.Add(alarm.Id, times);
+            lock (downTimesLocker)
+                downTimes.Add(alarm.Id, times);
         }
 
         public void RegisterListener(Device device)
@@ -582,10 +583,13 @@ namespace MicrowaveMonitor.Managers
                         downTriggers.Remove(deviceId);
                         SettleAlarmDispatched(downIds[deviceId], 0, stopping);
 
-                        AlarmTimes times = downTimes[downIds[deviceId]];
-                        times.end = DateTime.Now;
-                        times.isActive = false;
-                        downTimes[downIds[deviceId]] = times;
+                        lock (downTimesLocker)
+                        {
+                            AlarmTimes times = downTimes[downIds[deviceId]];
+                            times.end = DateTime.Now;
+                            times.isActive = false;
+                            downTimes[downIds[deviceId]] = times;
+                        }
 
                         downIds.Remove(deviceId);
 

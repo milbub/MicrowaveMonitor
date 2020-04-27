@@ -267,14 +267,20 @@ namespace MicrowaveMonitor.Gui
                 case DeviceDisplay.LinkState.AlarmWarning:
                     linkState.Content = "warning";
                     linkState.Foreground = System.Windows.Media.Brushes.Blue;
+                    buttonStart.IsEnabled = false;
+                    buttonPause.IsEnabled = true;
                     break;
                 case DeviceDisplay.LinkState.AlarmCritical:
                     linkState.Content = "critical";
                     linkState.Foreground = System.Windows.Media.Brushes.Purple;
+                    buttonStart.IsEnabled = false;
+                    buttonPause.IsEnabled = true;
                     break;
                 case DeviceDisplay.LinkState.AlarmDown:
                     linkState.Content = "down";
                     linkState.Foreground = System.Windows.Media.Brushes.DarkRed;
+                    buttonStart.IsEnabled = false;
+                    buttonPause.IsEnabled = true;
                     break;
                 default:
                     break;

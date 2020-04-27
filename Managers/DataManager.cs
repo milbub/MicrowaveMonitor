@@ -169,5 +169,10 @@ namespace MicrowaveMonitor.Managers
                             return resultSet.Results.First().Series.First().Rows.First();
             return null;
         }
+
+        public static long TimeToInfluxTime(DateTime timestamp)
+        {
+            return ((DateTimeOffset)timestamp.ToUniversalTime()).ToUnixTimeSeconds() * 1000000000;
+        }
     }
 }

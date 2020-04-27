@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using MicrowaveMonitor.Database;
 using Vibrant.InfluxDB.Client.Rows;
 using Vibrant.InfluxDB.Client;
-using Microsoft.CSharp.RuntimeBinder;
+using Itenso.TimePeriod;
 
 namespace MicrowaveMonitor.Analysers
 {
@@ -50,13 +50,17 @@ namespace MicrowaveMonitor.Analysers
         private static readonly Dictionary<int, bool> isIndicatedPing = new Dictionary<int, bool>();
         private static readonly object indiLocker = new object();
 
+        private readonly LinkManager linkMan;
+
         private Thread tComparator;
         private readonly AlarmType alarmType;
         private readonly string longRetention;
         private readonly string longValueName;
 
-        public AverageAnalyser(AlarmManager alarmManager, DataManager dataManager, int refreshInt, int compareInt, int longLim, int shortLim, PercentDiff percentDiff, AlarmType alarmType) : base(alarmManager, dataManager)
+        public AverageAnalyser(AlarmManager alarmManager, DataManager dataManager, LinkManager linkManager, int refreshInt, int compareInt, int longLim, int shortLim, PercentDiff percentDiff, AlarmType alarmType) : base(alarmManager, dataManager)
         {
+            linkMan = linkManager;
+
             RefreshInterval = TimeSpan.FromMilliseconds(refreshInt);
             CompareInterval = TimeSpan.FromMilliseconds(compareInt);
             LongLimit = longLim;
@@ -90,26 +94,92 @@ namespace MicrowaveMonitor.Analysers
             tComparator.Abort();
         }
 
+        private Dictionary<int, TimePeriodCollection> GetDownAffectedDevices(bool shortCompare)
+        {
+            Dictionary<int, TimePeriodCollection> linkDowns = new Dictionary<int, TimePeriodCollection>();
+            DateTime now = DateTime.Now;
+
+            foreach (AlarmManager.AlarmTimes downTime in alarmMan.downTimes.Values)
+            {
+                if (!linkDowns.ContainsKey(downTime.linkId))
+                {
+                    linkDowns.Add(downTime.linkId, new TimePeriodCollection());
+                }
+
+                if (downTime.isActive)
+                    linkDowns[downTime.linkId].Add(new TimeRange(downTime.start, now));
+                else
+                    linkDowns[downTime.linkId].Add(new TimeRange(downTime.start, downTime.end));
+            }
+
+            Dictionary<int, TimePeriodCollection> devices = new Dictionary<int, TimePeriodCollection>();
+            TimeGapCalculator<TimeRange> gapCalculator = new TimeGapCalculator<TimeRange>();
+            CalendarTimeRange limit;
+            if (shortCompare)
+                limit = new CalendarTimeRange(now - TimeSpan.FromMilliseconds(ShortLimit), now);
+            else
+                limit = new CalendarTimeRange(now - TimeSpan.FromMilliseconds(LongLimit), TimeSpan.FromMilliseconds(ShortLimit));
+
+            foreach (KeyValuePair<int, TimePeriodCollection> linkDownsPair in linkDowns)
+            {
+                TimePeriodCollection linkCorrectTimes = new TimePeriodCollection(gapCalculator.GetGaps(linkDownsPair.Value, limit));
+                
+                if (linkCorrectTimes.Count == 0)
+                    continue;
+
+                Link link = linkMan.GetLink(linkDownsPair.Key);
+                
+                if (link.DeviceBaseId > 0)
+                    devices.Add(link.DeviceBaseId, linkCorrectTimes);
+                if (link.DeviceEndId > 0)
+                    devices.Add(link.DeviceEndId, linkCorrectTimes);
+                if (link.DeviceR1Id > 0)
+                    devices.Add(link.DeviceR1Id, linkCorrectTimes);
+                if (link.DeviceR2Id > 0)
+                    devices.Add(link.DeviceR2Id, linkCorrectTimes);
+                if (link.DeviceR3Id > 0)
+                    devices.Add(link.DeviceR3Id, linkCorrectTimes);
+                if (link.DeviceR4Id > 0)
+                    devices.Add(link.DeviceR4Id, linkCorrectTimes);
+            }
+
+            return devices;
+        }
+
         private void LongAverage()
         {
             while (IsRunning)
             {
                 DateTime start = DateTime.Now;
 
-                GetLongAvg(DataManager.measSig, WatchSignal, dataSignalAvg);
-                GetLongAvg(DataManager.measSigQ, WatchSignalQ, dataSignalQAvg);
-                //GetLongAvg(DataManager.measTmpI, WatchTempIdu, dataTempIduAvg);
-                GetLongAvg(DataManager.measVolt, WatchVoltage, dataVoltageAvg);
-                GetLongAvg(DataManager.measLat, WatchPing, dataPingAvg);
+                Dictionary<int, TimePeriodCollection> affectedDevices = GetDownAffectedDevices(false);
+
+                GetLongAvg(DataManager.measSig, WatchSignal, dataSignalAvg, affectedDevices);
+                GetLongAvg(DataManager.measSigQ, WatchSignalQ, dataSignalQAvg, affectedDevices);
+                //GetLongAvg(DataManager.measTmpI, WatchTempIdu, dataTempIduAvg, affectedDevices);
+                GetLongAvg(DataManager.measVolt, WatchVoltage, dataVoltageAvg, affectedDevices);
+                GetLongAvg(DataManager.measLat, WatchPing, dataPingAvg, affectedDevices);
+
+                GetLongAvgAffected(DataManager.measSig, WatchSignal, dataSignalAvg, affectedDevices);
+                GetLongAvgAffected(DataManager.measSigQ, WatchSignalQ, dataSignalQAvg, affectedDevices);
+                //GetLongAvgAffected(DataManager.measTmpI, WatchTempIdu, dataTempIduAvg, affectedDevices);
+                GetLongAvgAffected(DataManager.measVolt, WatchVoltage, dataVoltageAvg, affectedDevices);
+                GetLongAvgAffected(DataManager.measLat, WatchPing, dataPingAvg, affectedDevices);
 
                 TimeSpan diff = DateTime.Now - start;
                 Thread.Sleep(RefreshInterval - diff);
             }
         }
 
-        private async void GetLongAvg(string meas, Dictionary<int, bool> watchInfo, Dictionary<int, double> data)
+        private async void GetLongAvg(string meas, Dictionary<int, bool> watchInfo, Dictionary<int, double> data, Dictionary<int, TimePeriodCollection> affected)
         {
-            string query = $@"SELECT mean(""{longValueName}"") FROM ""{DataManager.databaseName}"".""{longRetention}"".""{meas}"" WHERE time > now() - {LongLimit}ms AND time < now() - {ShortLimit}ms GROUP BY ""device"" FILL(none)";
+            string except = String.Empty;
+            foreach (int devId in affected.Keys)
+            {
+                except += $@"AND ""device""!='{devId}' ";
+            }
+
+            string query = $@"SELECT mean(""{longValueName}"") FROM ""{DataManager.databaseName}"".""{longRetention}"".""{meas}"" WHERE time > now() - {LongLimit}ms AND time < now() - {ShortLimit}ms {except}GROUP BY ""device"" FILL(none)";
 
             List<InfluxSeries<DynamicInfluxRow>> series = await dataMan.QuerySeries(query);
 
@@ -122,15 +192,48 @@ namespace MicrowaveMonitor.Analysers
                             int devId = Convert.ToInt32(ser.GroupedTags.Values.First());
                             double value = Convert.ToDouble(ser.Rows.First().Fields.First().Value);
 
-                            if (watchInfo.ContainsKey(devId))
-                            {
-                                if (data.ContainsKey(devId))
-                                    data[devId] = value;
-                                else
-                                    data.Add(devId, value);
-                            }
+                            WriteLongAvg(devId, value, watchInfo, data);
                         }
                 }
+        }
+
+        private async void GetLongAvgAffected(string meas, Dictionary<int, bool> watchInfo, Dictionary<int, double> data, Dictionary<int, TimePeriodCollection> affected)
+        {
+            foreach (KeyValuePair<int, TimePeriodCollection> dev in affected)
+            {
+                string subqueries = String.Empty;
+
+                bool next = false;
+                foreach (var period in dev.Value)
+                {
+                    if (next)
+                        subqueries += ", ";
+                    subqueries += $@"(SELECT mean(""{longValueName}"") FROM ""{DataManager.databaseName}"".""{longRetention}"".""{meas}"" WHERE time > {DataManager.TimeToInfluxTime(period.Start)} AND time < {DataManager.TimeToInfluxTime(period.End)} AND ""device""='{dev.Key}' FILL(none))";
+                    next = true;
+                }
+
+                string query = $@"SELECT mean(*) FROM {subqueries} FILL(none)";
+
+                DynamicInfluxRow row = await dataMan.QueryValue(query);
+
+                if (row != null)
+                {
+                    double value = Convert.ToDouble(row.Fields.First().Value);
+                    lock (dataLocker)
+                        WriteLongAvg(dev.Key, value, watchInfo, data);
+                }
+            }
+        }
+
+        private void WriteLongAvg(int devId, double value, Dictionary<int, bool> watchInfo, Dictionary<int, double> data)
+        {
+            if (watchInfo.ContainsKey(devId))
+            {
+                if (data.ContainsKey(devId))
+                    data[devId] = value;
+                else
+                    data.Add(devId, value);
+            }
         }
 
         private void ShortAverage()
@@ -140,20 +243,34 @@ namespace MicrowaveMonitor.Analysers
             {
                 DateTime start = DateTime.Now;
 
-                CompareAvg(DataManager.measSig, idsSignal, Measurement.Strength, Percentages.Signal, dataSignalAvg, isIndicatedSignal);
-                CompareAvg(DataManager.measSigQ, idsSignalQ, Measurement.Quality, Percentages.SignalQ, dataSignalQAvg, isIndicatedSignalQ);
-                //CompareAvg(DataManager.measTmpI, idsTempIdu, Measurement.TempIDU, Percentages.TempIdu, dataTempIduAvg, isIndicatedTempIdu);
-                CompareAvg(DataManager.measVolt, idsVoltage, Measurement.Voltage, Percentages.Voltage, dataVoltageAvg, isIndicatedVoltage);
-                CompareAvg(DataManager.measLat, idsPing, Measurement.Latency, Percentages.Latency, dataPingAvg, isIndicatedPing);
+                Dictionary<int, TimePeriodCollection> affectedDevices = GetDownAffectedDevices(true);
+
+                GetShortAvg(DataManager.measSig, idsSignal, Measurement.Strength, Percentages.Signal, dataSignalAvg, isIndicatedSignal, affectedDevices);
+                GetShortAvg(DataManager.measSigQ, idsSignalQ, Measurement.Quality, Percentages.SignalQ, dataSignalQAvg, isIndicatedSignalQ, affectedDevices);
+                //CompareAvg(DataManager.measTmpI, idsTempIdu, Measurement.TempIDU, Percentages.TempIdu, dataTempIduAvg, isIndicatedTempIdu, affectedDevices);
+                GetShortAvg(DataManager.measVolt, idsVoltage, Measurement.Voltage, Percentages.Voltage, dataVoltageAvg, isIndicatedVoltage, affectedDevices);
+                GetShortAvg(DataManager.measLat, idsPing, Measurement.Latency, Percentages.Latency, dataPingAvg, isIndicatedPing, affectedDevices);
+
+                GetShortAvgAffected(DataManager.measSig, idsSignal, Measurement.Strength, Percentages.Signal, dataSignalAvg, isIndicatedSignal, affectedDevices);
+                GetShortAvgAffected(DataManager.measSigQ, idsSignalQ, Measurement.Quality, Percentages.SignalQ, dataSignalQAvg, isIndicatedSignalQ, affectedDevices);
+                //GetShortAvgAffected(DataManager.measTmpI, idsTempIdu, Measurement.TempIDU, Percentages.TempIdu, dataTempIduAvg, isIndicatedTempIdu, affectedDevices);
+                GetShortAvgAffected(DataManager.measVolt, idsVoltage, Measurement.Voltage, Percentages.Voltage, dataVoltageAvg, isIndicatedVoltage, affectedDevices);
+                GetShortAvgAffected(DataManager.measLat, idsPing, Measurement.Latency, Percentages.Latency, dataPingAvg, isIndicatedPing, affectedDevices);
 
                 TimeSpan diff = DateTime.Now - start;
                 Thread.Sleep(CompareInterval - diff);
             }
         }
 
-        private async void CompareAvg(string meas, Dictionary<int, int> ids, Measurement measure, double percentage, Dictionary<int, double> data, Dictionary<int, bool> indication)
+        private async void GetShortAvg(string meas, Dictionary<int, int> ids, Measurement measure, double percentage, Dictionary<int, double> data, Dictionary<int, bool> indication, Dictionary<int, TimePeriodCollection> affected)
         {
-            string query = $@"SELECT mean(""{DataManager.defaultValueName}"") FROM ""{DataManager.databaseName}"".""{DataManager.retentionWeek}"".""{meas}"" WHERE time > now() - {ShortLimit}ms AND time < now() GROUP BY ""device"" FILL(none)";
+            string except = String.Empty;
+            foreach (int devId in affected.Keys)
+            {
+                except += $@"AND ""device""!='{devId}' ";
+            }
+
+            string query = $@"SELECT mean(""{DataManager.defaultValueName}"") FROM ""{DataManager.databaseName}"".""{DataManager.retentionWeek}"".""{meas}"" WHERE time > now() - {ShortLimit}ms AND time < now() {except}GROUP BY ""device"" FILL(none)";
 
             List<InfluxSeries<DynamicInfluxRow>> series = await dataMan.QuerySeries(query);
 
@@ -164,32 +281,65 @@ namespace MicrowaveMonitor.Analysers
                         int devId = Convert.ToInt32(ser.GroupedTags.Values.First());
                         double value = Convert.ToDouble(ser.Rows.First().Fields.First().Value);
 
-                        if (data.ContainsKey(devId))
-                        {
-                            double diff = data[devId] - value;
-                            double maxDiff = data[devId] * percentage;
-
-                            if (Math.Abs(diff) > maxDiff)
-                            {
-                                lock (idsLocker)
-                                    if (!ids.ContainsKey(devId))
-                                    {
-                                        int id;
-
-                                        if (diff > 0)
-                                            id = CheckedGenerate(devId, measure, false, value, indication);
-                                        else
-                                            id = CheckedGenerate(devId, measure, true, value, indication);
-
-                                        ids.Add(devId, id);
-                                    }
-                            }
-                            else
-                            {
-                                TrySettle(devId, ids, value, indication, false);
-                            }
-                        }
+                        CompareAvg(devId, value, ids, measure, percentage, data, indication);
                     }
+        }
+
+        private async void GetShortAvgAffected(string meas, Dictionary<int, int> ids, Measurement measure, double percentage, Dictionary<int, double> data, Dictionary<int, bool> indication, Dictionary<int, TimePeriodCollection> affected)
+        {
+            foreach (KeyValuePair<int, TimePeriodCollection> dev in affected)
+            {
+                string subqueries = String.Empty;
+
+                bool next = false;
+                foreach (var period in dev.Value)
+                {
+                    if (next)
+                        subqueries += ", ";
+                    subqueries += $@"(SELECT mean(""{DataManager.defaultValueName}"") FROM ""{DataManager.databaseName}"".""{DataManager.retentionWeek}"".""{meas}"" WHERE time > {DataManager.TimeToInfluxTime(period.Start)} AND time < {DataManager.TimeToInfluxTime(period.End)} AND ""device""='{dev.Key}' FILL(none))";
+                    next = true;
+                }
+
+                string query = $@"SELECT mean(*) FROM {subqueries} FILL(none)";
+
+                DynamicInfluxRow row = await dataMan.QueryValue(query);
+
+                if (row != null)
+                {
+                    double value = Convert.ToDouble(row.Fields.First().Value);
+                    lock (dataLocker)
+                        CompareAvg(dev.Key, value, ids, measure, percentage, data, indication);
+                }
+            }
+        }
+
+        private void CompareAvg(int devId, double value, Dictionary<int, int> ids, Measurement measure, double percentage, Dictionary<int, double> data, Dictionary<int, bool> indication)
+        {
+            if (data.ContainsKey(devId))
+            {
+                double diff = data[devId] - value;
+                double maxDiff = data[devId] * percentage;
+
+                if (Math.Abs(diff) > maxDiff)
+                {
+                    lock (idsLocker)
+                        if (!ids.ContainsKey(devId))
+                        {
+                            int id;
+
+                            if (diff > 0)
+                                id = CheckedGenerate(devId, measure, false, value, indication);
+                            else
+                                id = CheckedGenerate(devId, measure, true, value, indication);
+
+                            ids.Add(devId, id);
+                        }
+                }
+                else
+                {
+                    TrySettle(devId, ids, value, indication, false);
+                }
+            }
         }
 
         private void TrySettle (int devId, Dictionary<int, int> ids, double value, Dictionary<int, bool> indication, bool stopping)
