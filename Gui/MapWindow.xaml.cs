@@ -28,7 +28,6 @@ namespace MicrowaveMonitor.Gui
         public MapWindow(string latitude, string longitude)
         {
             InitializeComponent();
-            //Cef.Initialize(new CefSettings());
             
             latitudeA = latitude;
             longitudeA = longitude;

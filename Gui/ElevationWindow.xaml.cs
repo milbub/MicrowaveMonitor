@@ -101,11 +101,11 @@ namespace MicrowaveMonitor.Gui
 
         private LocationCoord GetDestinationLatLng(double lat, double lng, double azimuth, double distance)
         {
-            double radiusKm = EarthRadius / 1000; //Radius of the Earth in km
-            double brng = ToRadians(azimuth); //Bearing is degrees converted to radians.
-            double d = distance / 1000; //Distance m converted to km
-            double lat1 = ToRadians(lat); //Current dd lat point converted to radians
-            double lon1 = ToRadians(lng); //Current dd long point converted to radians
+            double radiusKm = EarthRadius / 1000;   // Radius of the Earth in km
+            double brng = ToRadians(azimuth);       // Bearing is degrees converted to radians
+            double d = distance / 1000;             // Distance m converted to km
+            double lat1 = ToRadians(lat);           // Current dd lat point converted to radians
+            double lon1 = ToRadians(lng);           // Current dd long point converted to radians
             double lat2 = Math.Asin(Math.Sin(lat1) * Math.Cos(d / radiusKm) + Math.Cos(lat1) * Math.Sin(d / radiusKm) * Math.Cos(brng));
             double lon2 = lon1 + Math.Atan2(Math.Sin(brng) * Math.Sin(d / radiusKm) * Math.Cos(lat1), Math.Cos(d / radiusKm) - Math.Sin(lat1) * Math.Sin(lat2));
             lat2 = ToDegrees(lat2);
