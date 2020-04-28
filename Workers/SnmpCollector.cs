@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Net.Sockets;
+using System.Net;
 
 namespace MicrowaveMonitor.Workers
 {
@@ -47,6 +48,9 @@ namespace MicrowaveMonitor.Workers
                 else
                     timeout = RefreshInterval * 2;
 
+                IPEndPoint endPoint = new IPEndPoint(Address, Port);
+                List<Variable> variables = new List<Variable> { new Variable(CollectedOid) };
+
                 IsRunning = true;
 
                 tCollector = new Thread(() =>
@@ -56,14 +60,7 @@ namespace MicrowaveMonitor.Workers
                         beginTime = DateTime.Now;
                         try
                         {
-                            var result = Messenger.Get
-                            (
-                                VersionCode.V1,
-                                new System.Net.IPEndPoint(Address, Port),
-                                Community,
-                                new List<Variable> { new Variable(CollectedOid) },
-                                timeout
-                            );
+                            var result = Messenger.Get(VersionCode.V1, endPoint, Community, variables, timeout);
 
                             finishTime = DateTime.Now;
 
