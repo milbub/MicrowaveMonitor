@@ -192,13 +192,19 @@
                     </TabItem>
                     <TabItem>
                         <TabItem.Header>
-                            <Image ToolTip="Historical Data" Source="/Gui/Icons/timeline.png" Width="22" Height="22" Margin="3,0,3,0"></Image>
+                            <Image ToolTip="Alarm History" Source="/Gui/Icons/alarm.png" Width="24" Height="24" Margin="3,0,3,0"></Image>
                         </TabItem.Header>
                         <Label Content="Not implemented yet."></Label>
                     </TabItem>
                     <TabItem>
                         <TabItem.Header>
-                            <Image ToolTip="Link Settings" Source="/Gui/Icons/adjust.png" Width="20" Height="20" Margin="3,0,3,0"></Image>
+                            <Image ToolTip="Historical Data" Source="/Gui/Icons/timeline.png" Width="24" Height="24" Margin="3,0,3,0"></Image>
+                        </TabItem.Header>
+                        <Label Content="Not implemented yet."></Label>
+                    </TabItem>
+                    <TabItem>
+                        <TabItem.Header>
+                            <Image ToolTip="Link Settings" Source="/Gui/Icons/adjust.png" Width="21" Height="21" Margin="3,0,3,0"></Image>
                         </TabItem.Header>
                         <ScrollViewer VerticalScrollBarVisibility="Visible">
                             <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5,5,5,5">

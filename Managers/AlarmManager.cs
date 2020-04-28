@@ -1,5 +1,6 @@
 ﻿using MicrowaveMonitor.Database;
 using MicrowaveMonitor.Analysers;
+using MicrowaveMonitor.Workers;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -118,7 +119,7 @@ namespace MicrowaveMonitor.Managers
                 SignalQ = 0.15,
                 TempIdu = 0.5,
                 Voltage = 0.031,
-                Latency = 2.5
+                Latency = 3.0
             };
 
             longAverage = new AverageAnalyser(this, dataM, linkM, 1800000, 60000, (int)longAvgLim.TotalMilliseconds, 1800000, LongAvgPercentDiff, AlarmType.AvgLong);
@@ -406,12 +407,14 @@ namespace MicrowaveMonitor.Managers
 
         private void AddToDownTimes(Alarm alarm, bool active)
         {
+            DateTime virtualStart = alarm.GenerTime - TimeSpan.FromMilliseconds(Collector.MaxTimeoutCount * Collector.MaxTimeout);
+
             AlarmTimes times = new AlarmTimes()
             {
                 linkId = alarm.LinkId,
                 devId = alarm.DeviceId,
                 isActive = active,
-                start = alarm.GenerTime,
+                start = virtualStart,
                 end = alarm.SettledTime
             };
             lock (downTimesLocker)

@@ -328,6 +328,8 @@
   <ItemGroup>
     <Resource Include="Gui\Icons\clear.png" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="Gui\Icons\alarm.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

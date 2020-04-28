@@ -123,9 +123,6 @@ namespace MicrowaveMonitor.Analysers
             foreach (KeyValuePair<int, TimePeriodCollection> linkDownsPair in linkDowns)
             {
                 TimePeriodCollection linkCorrectTimes = new TimePeriodCollection(gapCalculator.GetGaps(linkDownsPair.Value, limit));
-                
-                if (linkCorrectTimes.Count == 0)
-                    continue;
 
                 Link link = linkMan.GetLink(linkDownsPair.Key);
                 
@@ -201,6 +198,9 @@ namespace MicrowaveMonitor.Analysers
         {
             foreach (KeyValuePair<int, TimePeriodCollection> dev in affected)
             {
+                if (dev.Value.Count == 0)
+                    continue;
+
                 string subqueries = String.Empty;
 
                 bool next = false;
@@ -289,6 +289,9 @@ namespace MicrowaveMonitor.Analysers
         {
             foreach (KeyValuePair<int, TimePeriodCollection> dev in affected)
             {
+                if (dev.Value.Count == 0)
+                    continue;
+
                 string subqueries = String.Empty;
 
                 bool next = false;
