@@ -62,6 +62,14 @@ namespace MicrowaveMonitor.Workers
                         {
                             var result = Messenger.Get(VersionCode.V1, endPoint, Community, variables, timeout);
 
+                            // null = timeout
+                            if (result == null)
+                            {
+                                TimeoutCounter();
+                                HasResponded(false);
+                                continue;
+                            }
+
                             finishTime = DateTime.Now;
 
                             RecordData(result, finishTime);
@@ -73,13 +81,6 @@ namespace MicrowaveMonitor.Workers
                         }
                         catch (OperationException e)
                         {
-                            if (e is Lextm.SharpSnmpLib.Messaging.TimeoutException)
-                            {
-                                TimeoutCounter();
-                                HasResponded(false);
-                                continue;
-                            }
-
                             if (e is ErrorException ex)
                             {
                                 if (ex.Body != null && ex.Body.Scope != null && ex.Body.Scope.Pdu != null && ex.Body.Scope.Pdu.ErrorStatus != null)

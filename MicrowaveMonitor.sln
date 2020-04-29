@@ -5,6 +5,8 @@ VisualStudioVersion = 16.0.29424.173
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MicrowaveMonitor", "MicrowaveMonitor.csproj", "{6A48BF9E-F36A-4468-B966-D8CF3287ADE6}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharpSnmpLib", "Libs\sharpsnmplib-11.3.0\SharpSnmpLib\SharpSnmpLib.csproj", "{CDD068CF-2511-43CA-8F4E-26516AECED14}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,14 @@ Global
 		{6A48BF9E-F36A-4468-B966-D8CF3287ADE6}.Release|Any CPU.Build.0 = Release|Any CPU
 		{6A48BF9E-F36A-4468-B966-D8CF3287ADE6}.Release|x64.ActiveCfg = Release|x64
 		{6A48BF9E-F36A-4468-B966-D8CF3287ADE6}.Release|x64.Build.0 = Release|x64
+		{CDD068CF-2511-43CA-8F4E-26516AECED14}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CDD068CF-2511-43CA-8F4E-26516AECED14}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CDD068CF-2511-43CA-8F4E-26516AECED14}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{CDD068CF-2511-43CA-8F4E-26516AECED14}.Debug|x64.Build.0 = Debug|Any CPU
+		{CDD068CF-2511-43CA-8F4E-26516AECED14}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CDD068CF-2511-43CA-8F4E-26516AECED14}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CDD068CF-2511-43CA-8F4E-26516AECED14}.Release|x64.ActiveCfg = Release|Any CPU
+		{CDD068CF-2511-43CA-8F4E-26516AECED14}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
