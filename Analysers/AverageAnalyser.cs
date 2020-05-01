@@ -171,9 +171,15 @@ namespace MicrowaveMonitor.Analysers
         private async void GetLongAvg(string meas, Dictionary<int, bool> watchInfo, Dictionary<int, double> data, Dictionary<int, TimePeriodCollection> affected)
         {
             string except = String.Empty;
+            
             foreach (int devId in affected.Keys)
             {
                 except += $@"AND ""device""!='{devId}' ";
+            }
+
+            foreach (KeyValuePair<int, bool> info in watchInfo.Where(x => (x.Value == false)))
+            {
+                except += $@"AND ""device""!='{info.Key}' ";
             }
 
             string query = $@"SELECT mean(""{longValueName}"") FROM ""{DataManager.databaseName}"".""{longRetention}"".""{meas}"" WHERE time > now() - {LongLimit}ms AND time < now() - {ShortLimit}ms {except}GROUP BY ""device"" FILL(none)";
@@ -181,17 +187,14 @@ namespace MicrowaveMonitor.Analysers
             List<InfluxSeries<DynamicInfluxRow>> series = await dataMan.QuerySeries(query);
 
             if (series != null)
-                lock (watchLocker)
-                {
-                    lock (dataLocker)
-                        foreach (InfluxSeries<DynamicInfluxRow> ser in series)
-                        {
-                            int devId = Convert.ToInt32(ser.GroupedTags.Values.First());
-                            double value = Convert.ToDouble(ser.Rows.First().Fields.First().Value);
+                lock (dataLocker)
+                    foreach (InfluxSeries<DynamicInfluxRow> ser in series)
+                    {
+                        int devId = Convert.ToInt32(ser.GroupedTags.Values.First());
+                        double value = Convert.ToDouble(ser.Rows.First().Fields.First().Value);
 
-                            WriteLongAvg(devId, value, watchInfo, data);
-                        }
-                }
+                        WriteLongAvg(devId, value, data);
+                    }
         }
 
         private async void GetLongAvgAffected(string meas, Dictionary<int, bool> watchInfo, Dictionary<int, double> data, Dictionary<int, TimePeriodCollection> affected)
@@ -200,6 +203,10 @@ namespace MicrowaveMonitor.Analysers
             {
                 if (dev.Value.Count == 0)
                     continue;
+
+                if (watchInfo.ContainsKey(dev.Key))
+                    if (!watchInfo[dev.Key])
+                        continue;
 
                 string subqueries = String.Empty;
 
@@ -220,20 +227,17 @@ namespace MicrowaveMonitor.Analysers
                 {
                     double value = Convert.ToDouble(row.Fields.First().Value);
                     lock (dataLocker)
-                        WriteLongAvg(dev.Key, value, watchInfo, data);
+                        WriteLongAvg(dev.Key, value, data);
                 }
             }
         }
 
-        private void WriteLongAvg(int devId, double value, Dictionary<int, bool> watchInfo, Dictionary<int, double> data)
+        private void WriteLongAvg(int devId, double value, Dictionary<int, double> data)
         {
-            if (watchInfo.ContainsKey(devId))
-            {
-                if (data.ContainsKey(devId))
-                    data[devId] = value;
-                else
-                    data.Add(devId, value);
-            }
+            if (data.ContainsKey(devId))
+                data[devId] = value;
+            else
+                data.Add(devId, value);
         }
 
         private void ShortAverage()
@@ -245,29 +249,35 @@ namespace MicrowaveMonitor.Analysers
 
                 Dictionary<int, TimePeriodCollection> affectedDevices = GetDownAffectedDevices(true);
 
-                GetShortAvg(DataManager.measSig, idsSignal, Measurement.Strength, Percentages.Signal, dataSignalAvg, isIndicatedSignal, affectedDevices);
-                GetShortAvg(DataManager.measSigQ, idsSignalQ, Measurement.Quality, Percentages.SignalQ, dataSignalQAvg, isIndicatedSignalQ, affectedDevices);
-                //CompareAvg(DataManager.measTmpI, idsTempIdu, Measurement.TempIDU, Percentages.TempIdu, dataTempIduAvg, isIndicatedTempIdu, affectedDevices);
-                GetShortAvg(DataManager.measVolt, idsVoltage, Measurement.Voltage, Percentages.Voltage, dataVoltageAvg, isIndicatedVoltage, affectedDevices);
-                GetShortAvg(DataManager.measLat, idsPing, Measurement.Latency, Percentages.Latency, dataPingAvg, isIndicatedPing, affectedDevices);
+                GetShortAvg(DataManager.measSig, idsSignal, Measurement.Strength, Percentages.Signal, dataSignalAvg, isIndicatedSignal, affectedDevices, WatchSignal);
+                GetShortAvg(DataManager.measSigQ, idsSignalQ, Measurement.Quality, Percentages.SignalQ, dataSignalQAvg, isIndicatedSignalQ, affectedDevices, WatchSignalQ);
+                //CompareAvg(DataManager.measTmpI, idsTempIdu, Measurement.TempIDU, Percentages.TempIdu, dataTempIduAvg, isIndicatedTempIdu, affectedDevices, WatchTempIdu);
+                GetShortAvg(DataManager.measVolt, idsVoltage, Measurement.Voltage, Percentages.Voltage, dataVoltageAvg, isIndicatedVoltage, affectedDevices, WatchVoltage);
+                GetShortAvg(DataManager.measLat, idsPing, Measurement.Latency, Percentages.Latency, dataPingAvg, isIndicatedPing, affectedDevices, WatchPing);
 
-                GetShortAvgAffected(DataManager.measSig, idsSignal, Measurement.Strength, Percentages.Signal, dataSignalAvg, isIndicatedSignal, affectedDevices);
-                GetShortAvgAffected(DataManager.measSigQ, idsSignalQ, Measurement.Quality, Percentages.SignalQ, dataSignalQAvg, isIndicatedSignalQ, affectedDevices);
-                //GetShortAvgAffected(DataManager.measTmpI, idsTempIdu, Measurement.TempIDU, Percentages.TempIdu, dataTempIduAvg, isIndicatedTempIdu, affectedDevices);
-                GetShortAvgAffected(DataManager.measVolt, idsVoltage, Measurement.Voltage, Percentages.Voltage, dataVoltageAvg, isIndicatedVoltage, affectedDevices);
-                GetShortAvgAffected(DataManager.measLat, idsPing, Measurement.Latency, Percentages.Latency, dataPingAvg, isIndicatedPing, affectedDevices);
+                GetShortAvgAffected(DataManager.measSig, idsSignal, Measurement.Strength, Percentages.Signal, dataSignalAvg, isIndicatedSignal, affectedDevices, WatchSignal);
+                GetShortAvgAffected(DataManager.measSigQ, idsSignalQ, Measurement.Quality, Percentages.SignalQ, dataSignalQAvg, isIndicatedSignalQ, affectedDevices, WatchSignalQ);
+                //GetShortAvgAffected(DataManager.measTmpI, idsTempIdu, Measurement.TempIDU, Percentages.TempIdu, dataTempIduAvg, isIndicatedTempIdu, affctedDevices, WatchTempIdu);
+                GetShortAvgAffected(DataManager.measVolt, idsVoltage, Measurement.Voltage, Percentages.Voltage, dataVoltageAvg, isIndicatedVoltage, affectedDevices, WatchVoltage);
+                GetShortAvgAffected(DataManager.measLat, idsPing, Measurement.Latency, Percentages.Latency, dataPingAvg, isIndicatedPing, affectedDevices, WatchPing);
 
                 TimeSpan diff = DateTime.Now - start;
                 Thread.Sleep(CompareInterval - diff);
             }
         }
 
-        private async void GetShortAvg(string meas, Dictionary<int, int> ids, Measurement measure, double percentage, Dictionary<int, double> data, Dictionary<int, bool> indication, Dictionary<int, TimePeriodCollection> affected)
+        private async void GetShortAvg(string meas, Dictionary<int, int> ids, Measurement measure, double percentage, Dictionary<int, double> data, Dictionary<int, bool> indication, Dictionary<int, TimePeriodCollection> affected, Dictionary<int, bool> watchInfo)
         {
             string except = String.Empty;
+            
             foreach (int devId in affected.Keys)
             {
                 except += $@"AND ""device""!='{devId}' ";
+            }
+
+            foreach (KeyValuePair<int, bool> info in watchInfo.Where(x => (x.Value == false)))
+            {
+                except += $@"AND ""device""!='{info.Key}' ";
             }
 
             string query = $@"SELECT mean(""{DataManager.defaultValueName}"") FROM ""{DataManager.databaseName}"".""{DataManager.retentionWeek}"".""{meas}"" WHERE time > now() - {ShortLimit}ms AND time < now() {except}GROUP BY ""device"" FILL(none)";
@@ -285,12 +295,16 @@ namespace MicrowaveMonitor.Analysers
                     }
         }
 
-        private async void GetShortAvgAffected(string meas, Dictionary<int, int> ids, Measurement measure, double percentage, Dictionary<int, double> data, Dictionary<int, bool> indication, Dictionary<int, TimePeriodCollection> affected)
+        private async void GetShortAvgAffected(string meas, Dictionary<int, int> ids, Measurement measure, double percentage, Dictionary<int, double> data, Dictionary<int, bool> indication, Dictionary<int, TimePeriodCollection> affected, Dictionary<int, bool> watchInfo)
         {
             foreach (KeyValuePair<int, TimePeriodCollection> dev in affected)
             {
                 if (dev.Value.Count == 0)
                     continue;
+
+                if (watchInfo.ContainsKey(dev.Key))
+                    if (!watchInfo[dev.Key])
+                        continue;
 
                 string subqueries = String.Empty;
 

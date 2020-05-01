@@ -451,6 +451,19 @@ namespace MicrowaveMonitor.Managers
             }
         }
 
+        public void UpdateDeviceWatch(Device device)
+        {
+            lock (Analyser.watchLocker)
+            {
+                Analyser.WatchSignal[device.Id] = device.IsWatchedSignal;
+                Analyser.WatchSignalQ[device.Id] = device.IsWatchedSignalQ;
+                Analyser.WatchTempOdu[device.Id] = device.IsWatchedTempOdu;
+                Analyser.WatchTempIdu[device.Id] = device.IsWatchedTempIdu;
+                Analyser.WatchVoltage[device.Id] = device.IsWatchedVoltage;
+                Analyser.WatchPing[device.Id] = device.IsWatchedPing;
+            }
+        }
+
         public void DeviceStopped(int id)
         {
             while (DeviceUpTrigger(id, true))

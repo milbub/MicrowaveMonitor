@@ -165,6 +165,7 @@ namespace MicrowaveMonitor.Managers
 
         public void RestartDevice(Device device)
         {
+            alarms.UpdateDeviceWatch(device);
             StopDevice(device);
             StartDevice(device);
         }
