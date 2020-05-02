@@ -83,6 +83,7 @@
     <Compile Include="Database\Alarm.cs" />
     <Compile Include="Database\DeviceDisplay.cs" />
     <Compile Include="Database\Record.cs" />
+    <Compile Include="Gui\Converters\IduLabelConvertor.cs" />
     <Compile Include="Gui\DeleteWindow.xaml.cs">
       <DependentUpon>DeleteWindow.xaml</DependentUpon>
     </Compile>
@@ -110,6 +111,7 @@
     <Compile Include="Gui\Panes\DeviceSettingsPane.xaml.cs">
       <DependentUpon>DeviceSettingsPane.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Gui\Converters\VersionConverter.cs" />
     <Compile Include="Managers\AlarmManager.cs" />
     <Compile Include="Managers\DataManager.cs" />
     <Compile Include="Managers\LinkManager.cs" />

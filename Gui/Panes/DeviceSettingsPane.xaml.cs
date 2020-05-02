@@ -1,7 +1,8 @@
 ﻿using System.Globalization;
 using System.Windows.Controls;
 using MicrowaveMonitor.Database;
-using Lextm.SharpSnmpLib;
+using System.Windows.Data;
+using System;
 
 namespace MicrowaveMonitor.Gui
 {
