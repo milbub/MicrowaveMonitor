@@ -10,9 +10,12 @@ namespace MicrowaveMonitor.Workers
 {
     class SnmpTempOdu : SnmpCollector
     {
+        protected override Measurement MeasureType { get { return measureType; } }
+        private static readonly Measurement measureType = Measurement.TempODU;
+
         private readonly Queue<DynamicInfluxRow> database;
 
-        public SnmpTempOdu(Queue<DynamicInfluxRow> dbRows, string oid, int port, string community, string address, int deviceId, int refreshInterval, DeviceDisplay display, AlarmManager alarmManager, bool checkTresholds, float treshUp, float treshDown, Measurement measurement) : base(oid, port, community, address, deviceId, refreshInterval, display, alarmManager, checkTresholds, treshUp, treshDown, measurement)
+        public SnmpTempOdu(Queue<DynamicInfluxRow> dbRows, string oid, int port, string community, string address, int deviceId, int refreshInterval, DeviceDisplay display, AlarmManager alarmManager, bool checkTresholds, float treshUp, float treshDown) : base(oid, port, community, address, deviceId, refreshInterval, display, alarmManager, checkTresholds, treshUp, treshDown)
         {
             database = dbRows;
         }

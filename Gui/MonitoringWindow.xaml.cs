@@ -238,10 +238,12 @@ namespace MicrowaveMonitor.Gui
                         weatherDesc.Content = display.WeatherDesc.ToString();
                         break;
                     case "WeatherTemp":
-                        weatherTemp.Content = String.Format("{0:0} °C", display.WeatherTemp);
+                        string tempAir = display.WeatherTemp != null ? display.WeatherTemp.ToString() : "-";
+                        weatherTemp.Content = String.Format("{0:0} °C", tempAir);
                         break;
                     case "WeatherWind":
-                        weatherWind.Content = display.WeatherWind.ToString() + " m/s";
+                        string wind = display.WeatherWind != null ? display.WeatherWind.ToString() : "-";
+                        weatherWind.Content = wind + " m/s";
                         break;
                     default:
                         throw new InvalidEnumArgumentException();

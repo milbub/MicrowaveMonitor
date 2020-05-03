@@ -65,63 +65,63 @@ namespace MicrowaveMonitor.Managers
 
         public void StartDevice(Device device)
         {
-            PingCollector pingCollector = new PingCollector(data.PingTransactions, device.Address, device.Id, device.RefreshPing, DeviceToFront[device.Id], alarms, device.TresholdPing, device.TreshUpPing, device.TreshDownPing, Measurement.Latency);
+            PingCollector pingCollector = new PingCollector(data.PingTransactions, device.Address, device.Id, device.RefreshPing, DeviceToFront[device.Id], alarms, device.TresholdPing, device.TreshUpPing, device.TreshDownPing);
             pingCollector.Start();
             workers.Add(pingCollector);
 
-            SnmpSysName snmpSysName = new SnmpSysName(Device.OidSysName_s, device.SnmpPort, device.CommunityString, device.Address, device.Id, Device.RefreshSysName, DeviceToFront[device.Id], alarms, false, 0, 0, Measurement.All);
+            SnmpSysName snmpSysName = new SnmpSysName(Device.OidSysName_s, device.SnmpPort, device.CommunityString, device.Address, device.Id, Device.RefreshSysName, DeviceToFront[device.Id], alarms, false, 0, 0);
             snmpSysName.Start();
             workers.Add(snmpSysName);
 
-            SnmpUptime snmpUptime = new SnmpUptime(Device.OidUptime_s, device.SnmpPort, device.CommunityString, device.Address, device.Id, Device.RefreshUptime, DeviceToFront[device.Id], alarms, false, 0, 0, Measurement.All);
+            SnmpUptime snmpUptime = new SnmpUptime(Device.OidUptime_s, device.SnmpPort, device.CommunityString, device.Address, device.Id, Device.RefreshUptime, DeviceToFront[device.Id], alarms, false, 0, 0);
             snmpUptime.Start();
             workers.Add(snmpUptime);
 
             if (device.IsEnabledSignal)
             {
-                SnmpSignal snmpSignal = new SnmpSignal(data.SignalTransactions, device.OidSignal_s, device.SnmpPort, device.CommunityString, device.Address, device.Id, device.RefreshSignal, DeviceToFront[device.Id], alarms, device.TresholdSignal, device.TreshUpSignal, device.TreshDownSignal, Measurement.Strength);
+                SnmpSignal snmpSignal = new SnmpSignal(data.SignalTransactions, device.OidSignal_s, device.SnmpPort, device.CommunityString, device.Address, device.Id, device.RefreshSignal, DeviceToFront[device.Id], alarms, device.TresholdSignal, device.TreshUpSignal, device.TreshDownSignal);
                 snmpSignal.Start();
                 workers.Add(snmpSignal);
             }
 
             if (device.IsEnabledSignalQ)
             {
-                SnmpSignalQ snmpSignalQ = new SnmpSignalQ(data.SignalQTransactions, device.SignalQDivisor, device.OidSignalQ_s, device.SnmpPort, device.CommunityString, device.Address, device.Id, device.RefreshSignalQ, DeviceToFront[device.Id], alarms, device.TresholdSignalQ, device.TreshUpSignalQ, device.TreshDownSignalQ, Measurement.Quality);
+                SnmpSignalQ snmpSignalQ = new SnmpSignalQ(data.SignalQTransactions, device.SignalQDivisor, device.OidSignalQ_s, device.SnmpPort, device.CommunityString, device.Address, device.Id, device.RefreshSignalQ, DeviceToFront[device.Id], alarms, device.TresholdSignalQ, device.TreshUpSignalQ, device.TreshDownSignalQ);
                 snmpSignalQ.Start();
                 workers.Add(snmpSignalQ);
             }
 
             if (device.IsEnabledTx)
             {
-                SnmpTx snmpTx = new SnmpTx(data.TxTransactions, device.OidTxDataRate_s, device.SnmpPort, device.CommunityString, device.Address, device.Id, device.RefreshTx, DeviceToFront[device.Id], alarms, false, 0, 0, Measurement.All);
+                SnmpTx snmpTx = new SnmpTx(data.TxTransactions, device.OidTxDataRate_s, device.SnmpPort, device.CommunityString, device.Address, device.Id, device.RefreshTx, DeviceToFront[device.Id], alarms, false, 0, 0);
                 snmpTx.Start();
                 workers.Add(snmpTx);
             }
 
             if (device.IsEnabledRx)
             {
-                SnmpRx snmpRx = new SnmpRx(data.RxTransactions, device.OidRxDataRate_s, device.SnmpPort, device.CommunityString, device.Address, device.Id, device.RefreshRx, DeviceToFront[device.Id], alarms, false, 0, 0, Measurement.All);
+                SnmpRx snmpRx = new SnmpRx(data.RxTransactions, device.OidRxDataRate_s, device.SnmpPort, device.CommunityString, device.Address, device.Id, device.RefreshRx, DeviceToFront[device.Id], alarms, false, 0, 0);
                 snmpRx.Start();
                 workers.Add(snmpRx);
             }
 
             if (device.IsEnabledTempOdu)
             {
-                SnmpTempOdu snmpTempOdu = new SnmpTempOdu(data.TempOduTransactions, device.OidTempOdu_s, device.SnmpPort, device.CommunityString, device.Address, device.Id, device.RefreshTempOdu, DeviceToFront[device.Id], alarms, device.TresholdTempOdu, device.TreshUpTempOdu, device.TreshDownTempOdu, Measurement.TempODU);
+                SnmpTempOdu snmpTempOdu = new SnmpTempOdu(data.TempOduTransactions, device.OidTempOdu_s, device.SnmpPort, device.CommunityString, device.Address, device.Id, device.RefreshTempOdu, DeviceToFront[device.Id], alarms, device.TresholdTempOdu, device.TreshUpTempOdu, device.TreshDownTempOdu);
                 snmpTempOdu.Start();
                 workers.Add(snmpTempOdu);
             }
 
             if (device.IsEnabledTempIdu)
             {
-                SnmpTempIdu snmpTempIdu = new SnmpTempIdu(data.TempIduTransactions, device.OidTempIdu_s, device.SnmpPort, device.CommunityString, device.Address, device.Id, device.RefreshTempIdu, DeviceToFront[device.Id], alarms, device.TresholdTempIdu, device.TreshUpTempIdu, device.TreshDownTempIdu, Measurement.TempIDU);
+                SnmpTempIdu snmpTempIdu = new SnmpTempIdu(data.TempIduTransactions, device.OidTempIdu_s, device.SnmpPort, device.CommunityString, device.Address, device.Id, device.RefreshTempIdu, DeviceToFront[device.Id], alarms, device.TresholdTempIdu, device.TreshUpTempIdu, device.TreshDownTempIdu, device.IsTempIduOutdoor);
                 snmpTempIdu.Start();
                 workers.Add(snmpTempIdu);
             }
 
             if (device.IsEnabledVoltage)
             {
-                SnmpVoltage snmpVoltage = new SnmpVoltage(data.VoltageTransactions, device.OidVoltage_s, device.SnmpPort, device.CommunityString, device.Address, device.Id, device.RefreshVoltage, DeviceToFront[device.Id], alarms, device.TresholdVoltage, device.TreshUpVoltage, device.TreshDownVoltage, Measurement.Voltage);
+                SnmpVoltage snmpVoltage = new SnmpVoltage(data.VoltageTransactions, device.OidVoltage_s, device.SnmpPort, device.CommunityString, device.Address, device.Id, device.RefreshVoltage, DeviceToFront[device.Id], alarms, device.TresholdVoltage, device.TreshUpVoltage, device.TreshDownVoltage);
                 snmpVoltage.Start();
                 workers.Add(snmpVoltage);
             }

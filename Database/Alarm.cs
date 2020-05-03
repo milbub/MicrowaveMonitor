@@ -13,6 +13,7 @@ namespace MicrowaveMonitor.Database
 
     public enum Measurement
     {
+        Traffic = -1,
         All = 0,
         Latency = 1,
         Strength = 2,

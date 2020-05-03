@@ -11,9 +11,12 @@ namespace MicrowaveMonitor.Workers
 {
     public class SnmpRx : SnmpCollector
     {
+        protected override Measurement MeasureType { get { return measureType; } }
+        private static readonly Measurement measureType = Measurement.Traffic;
+
         private readonly Queue<DynamicInfluxRow> database;
 
-        public SnmpRx(Queue<DynamicInfluxRow> dbRows, string oid, int port, string community, string address, int deviceId, int refreshInterval, DeviceDisplay display, AlarmManager alarmManager, bool checkTresholds, float treshUp, float treshDown, Measurement measurement) : base(oid, port, community, address, deviceId, refreshInterval, display, alarmManager, checkTresholds, treshUp, treshDown, measurement)
+        public SnmpRx(Queue<DynamicInfluxRow> dbRows, string oid, int port, string community, string address, int deviceId, int refreshInterval, DeviceDisplay display, AlarmManager alarmManager, bool checkTresholds, float treshUp, float treshDown) : base(oid, port, community, address, deviceId, refreshInterval, display, alarmManager, checkTresholds, treshUp, treshDown)
         {
             database = dbRows;
         }

@@ -9,7 +9,10 @@ namespace MicrowaveMonitor.Workers
 {
     public class SnmpSysName : SnmpCollector
     {
-        public SnmpSysName(string oid, int port, string community, string address, int deviceId, int refreshInterval, DeviceDisplay display, AlarmManager alarmManager, bool checkTresholds, float treshUp, float treshDown, Measurement measurement) : base(oid, port, community, address, deviceId, refreshInterval, display, alarmManager, checkTresholds, treshUp, treshDown, measurement)
+        protected override Measurement MeasureType { get { return measureType; } }
+        private static readonly Measurement measureType = Measurement.All;
+
+        public SnmpSysName(string oid, int port, string community, string address, int deviceId, int refreshInterval, DeviceDisplay display, AlarmManager alarmManager, bool checkTresholds, float treshUp, float treshDown) : base(oid, port, community, address, deviceId, refreshInterval, display, alarmManager, checkTresholds, treshUp, treshDown)
         { }
 
         protected override void RecordData(IList<Variable> result, DateTime resultTime)

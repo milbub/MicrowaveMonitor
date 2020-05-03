@@ -10,9 +10,12 @@ namespace MicrowaveMonitor.Workers
 {
     public class PingCollector : Collector
     {
+        protected override Measurement MeasureType { get { return measureType; } }
+        private static readonly Measurement measureType = Measurement.Latency;
+
         private readonly Queue<DynamicInfluxRow> database;
 
-        public PingCollector(Queue<DynamicInfluxRow> dbRows, string address, int deviceId, int refreshInterval, DeviceDisplay display, AlarmManager alarmManager, bool checkTresholds, float treshUp, float treshDown, Measurement measurement) : base(address, deviceId, refreshInterval, display, alarmManager, checkTresholds, treshUp, treshDown, measurement)
+        public PingCollector(Queue<DynamicInfluxRow> dbRows, string address, int deviceId, int refreshInterval, DeviceDisplay display, AlarmManager alarmManager, bool checkTresholds, float treshUp, float treshDown) : base(address, deviceId, refreshInterval, display, alarmManager, checkTresholds, treshUp, treshDown)
         {
             database = dbRows;
         }

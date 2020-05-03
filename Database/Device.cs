@@ -48,6 +48,7 @@ namespace MicrowaveMonitor.Database
 
         /* Model specifics */
         public int SignalQDivisor { get; set; } = 10;
+        public bool IsTempIduOutdoor { get; set; } = false;
 
         /* SNMP OIDs */
         public static string OidSysName_s { get; } = "1.3.6.1.2.1.1.5.0";   // RFC 1213

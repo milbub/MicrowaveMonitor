@@ -66,6 +66,7 @@ namespace MicrowaveMonitor.Gui
             tminTempOdu.Text = device.TreshDownTempOdu.ToString(CultureInfo.InvariantCulture);
 
             enaTempIdu.IsChecked = device.IsEnabledTempIdu;
+            outdoorIdu.IsChecked = device.IsTempIduOutdoor;
             monTempIdu.IsChecked = device.IsWatchedTempIdu;
             refTempIdu.Text = (device.RefreshTempIdu / 1000).ToString(CultureInfo.InvariantCulture);
             boxTempIdu.Text = device.OidTempIdu_s;
@@ -151,6 +152,7 @@ namespace MicrowaveMonitor.Gui
             device.TreshDownTempOdu = ParseFloat(tminTempOdu.Text);
 
             device.IsEnabledTempIdu = (bool)enaTempIdu.IsChecked;
+            device.IsTempIduOutdoor = (bool)outdoorIdu.IsChecked;
             device.IsWatchedTempIdu = (bool)monTempIdu.IsChecked;
             device.RefreshTempIdu = (int)(ParseFloat(refTempIdu.Text) * 1000);
             device.OidTempIdu_s = boxTempIdu.Text;
@@ -217,6 +219,7 @@ namespace MicrowaveMonitor.Gui
             tminTempOdu.Text = string.Empty;
 
             enaTempIdu.IsChecked = false;
+            outdoorIdu.IsChecked = false;
             monTempIdu.IsChecked = false;
             refTempIdu.Text = string.Empty;
             boxTempIdu.Text = string.Empty;

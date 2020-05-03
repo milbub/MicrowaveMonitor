@@ -11,7 +11,7 @@ namespace MicrowaveMonitor.Workers
     public abstract class Collector
     {
         public static int MaxTimeoutCount { get; set; } = 10;
-        public static int MaxTimeout { get; private set; } = 5000;   // ms
+        public static int MaxTimeout { get; private set; } = 5000;        // ms
         public static int MaxDownRefresh { get; private set; } = 30000;   // ms
         public int RefreshInterval { get; protected set; }
 
@@ -20,22 +20,22 @@ namespace MicrowaveMonitor.Workers
         public DeviceDisplay Display { get; protected set; }
 
         public bool IsRunning { get; protected set; } = false;
+        protected abstract Measurement MeasureType { get; }
 
         protected Thread tCollector;
 
-        private readonly AlarmManager alarmMan;
-        protected readonly Measurement measureType;
+        protected readonly AlarmManager alarmMan;
         
-        private readonly bool checkTresh;
-        private readonly float trUp;
-        private readonly float trDown;
-        private bool treshActive = false;
-        private bool treshOver = false;
+        protected readonly bool checkTresh;
+        protected readonly float trUp;
+        protected readonly float trDown;
+        protected bool treshActive = false;
+        protected bool treshOver = false;
 
         private int timeoutCount = 0;
         private int origRefresh;
 
-        public Collector(string address, int deviceId, int refreshInterval, DeviceDisplay display, AlarmManager alarmManager, bool checkTresholds, float treshUp, float treshDown, Measurement measurement)
+        public Collector(string address, int deviceId, int refreshInterval, DeviceDisplay display, AlarmManager alarmManager, bool checkTresholds, float treshUp, float treshDown)
         {
             Address = IPAddress.Parse(address);
             DeviceId = deviceId;
@@ -45,7 +45,6 @@ namespace MicrowaveMonitor.Workers
             checkTresh = checkTresholds;
             trUp = treshUp;
             trDown = treshDown;
-            measureType = measurement;
         }
 
         public abstract void Start();
@@ -57,7 +56,7 @@ namespace MicrowaveMonitor.Workers
                 tCollector.Abort();
         }
 
-        protected void HasResponded(bool responded)
+        protected virtual void HasResponded(bool responded)
         {
             if (responded)
             {
@@ -87,7 +86,7 @@ namespace MicrowaveMonitor.Workers
             }
         }
 
-        protected void TresholdCheck(double value)
+        protected virtual void TresholdCheck(double value)
         {
             if (checkTresh)
             {
@@ -95,11 +94,11 @@ namespace MicrowaveMonitor.Workers
                 {
                     if (trDown < value && !treshOver)
                     {
-                        alarmMan.TreshSettTrigger(DeviceId, measureType, value, false);
+                        alarmMan.TreshSettTrigger(DeviceId, MeasureType, value, false);
                         treshActive = false;
                     } else if (trUp > value && treshOver)
                     {
-                        alarmMan.TreshSettTrigger(DeviceId, measureType, value, false);
+                        alarmMan.TreshSettTrigger(DeviceId, MeasureType, value, false);
                         treshActive = false;
                     }
                     
@@ -108,13 +107,13 @@ namespace MicrowaveMonitor.Workers
 
                 if (value < trDown)
                 {
-                    alarmMan.TreshExcTrigger(DeviceId, measureType, value, false);
+                    alarmMan.TreshExcTrigger(DeviceId, MeasureType, value, false);
                     treshActive = true;
                     treshOver = false;
                 }
                 else if (value > trUp)
                 {
-                    alarmMan.TreshExcTrigger(DeviceId, measureType, value, true);
+                    alarmMan.TreshExcTrigger(DeviceId, MeasureType, value, true);
                     treshActive = true;
                     treshOver = true;
                 }

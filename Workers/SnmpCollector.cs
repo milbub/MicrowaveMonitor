@@ -27,7 +27,7 @@ namespace MicrowaveMonitor.Workers
             lastMessage = DateTime.Now;
         }
 
-        public SnmpCollector(string oid, int port, string community, string address, int deviceId, int refreshInterval, DeviceDisplay display, AlarmManager alarmManager, bool checkTresholds, float treshUp, float treshDown, Measurement measurement) : base(address, deviceId, refreshInterval, display, alarmManager, checkTresholds, treshUp, treshDown, measurement)
+        public SnmpCollector(string oid, int port, string community, string address, int deviceId, int refreshInterval, DeviceDisplay display, AlarmManager alarmManager, bool checkTresholds, float treshUp, float treshDown) : base(address, deviceId, refreshInterval, display, alarmManager, checkTresholds, treshUp, treshDown)
         {
             CollectedOid = new ObjectIdentifier(oid);
             Port = port;
@@ -87,23 +87,23 @@ namespace MicrowaveMonitor.Workers
                                     if (ex.Body.Scope.Pdu.ErrorStatus.ToInt32() == 2)
                                     {
                                         IsRunning = false;
-                                        Console.WriteLine("2SNMP OID not found! Collector: " + measureType.ToString() + "; device ID: " + DeviceId + ", IP: " + Address + ". Collector suspended. Please check device OID configuration.");
+                                        Console.WriteLine("2SNMP OID not found! Collector: " + MeasureType.ToString() + "; device ID: " + DeviceId + ", IP: " + Address + ". Collector suspended. Please check device OID configuration.");
                                     }
                                 else
                                 {
-                                    Console.WriteLine("SNMP Exception: " + e.Message + ". Collector: " + measureType.ToString() + "; device ID: " + DeviceId + ", IP: " + Address + ". Will try again in 10 seconds...");
+                                    Console.WriteLine("SNMP Exception: " + e.Message + ". Collector: " + MeasureType.ToString() + "; device ID: " + DeviceId + ", IP: " + Address + ". Will try again in 10 seconds...");
                                     Thread.Sleep(10000);
                                 }
                             }
                             else
                             {
-                                Console.WriteLine("Operation Exception: " + e.Message + ". Collector: " + measureType.ToString() + "; device ID: " + DeviceId + ", IP: " + Address + ". Will try again in 10 seconds...");
+                                Console.WriteLine("Operation Exception: " + e.Message + ". Collector: " + MeasureType.ToString() + "; device ID: " + DeviceId + ", IP: " + Address + ". Will try again in 10 seconds...");
                                 Thread.Sleep(10000);
                             }
                         }
                         catch (SocketException e)
                         {
-                            Console.WriteLine("Socket Exception: " + e.Message + ". Collector: " + measureType.ToString() + "; device ID: " + DeviceId + ", IP: " + Address + ". Will try again in 10 seconds...");
+                            Console.WriteLine("Socket Exception: " + e.Message + ". Collector: " + MeasureType.ToString() + "; device ID: " + DeviceId + ", IP: " + Address + ". Will try again in 10 seconds...");
                             Thread.Sleep(10000);
                         }
                         catch (ThreadAbortException)
