@@ -53,6 +53,7 @@ namespace MicrowaveMonitor.Gui
             monSignalQ_A.IsChecked = device.IsWatchedSignalQ;
             refSignalQ_A.Text = (device.RefreshSignalQ / 1000).ToString(CultureInfo.InvariantCulture);
             boxSignalQ_A.Text = device.OidSignalQ_s;
+            divisorSignalQ.Text = device.SignalQDivisor.ToString(CultureInfo.InvariantCulture);
             tSigQCheck.IsChecked = device.TresholdSignalQ;
             tmaxSigQ.Text = device.TreshUpSignalQ.ToString(CultureInfo.InvariantCulture);
             tminSigQ.Text = device.TreshDownSignalQ.ToString(CultureInfo.InvariantCulture);
@@ -139,6 +140,7 @@ namespace MicrowaveMonitor.Gui
             device.IsWatchedSignalQ = (bool)monSignalQ_A.IsChecked;
             device.RefreshSignalQ = (int)(ParseFloat(refSignalQ_A.Text) * 1000);
             device.OidSignalQ_s = boxSignalQ_A.Text;
+            device.SignalQDivisor = ParseInt(divisorSignalQ.Text);
             device.TresholdSignalQ = (bool)tSigQCheck.IsChecked;
             device.TreshUpSignalQ = ParseFloat(tmaxSigQ.Text);
             device.TreshDownSignalQ = ParseFloat(tminSigQ.Text);
@@ -206,6 +208,7 @@ namespace MicrowaveMonitor.Gui
             monSignalQ_A.IsChecked = false;
             refSignalQ_A.Text = string.Empty;
             boxSignalQ_A.Text = string.Empty;
+            divisorSignalQ.Text = string.Empty;
             tSigQCheck.IsChecked = false;
             tmaxSigQ.Text = string.Empty;
             tminSigQ.Text = string.Empty;
