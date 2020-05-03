@@ -46,7 +46,6 @@ namespace MicrowaveMonitor
         private void Application_Exit(object sender, ExitEventArgs e)
         {
             logManager.IsExiting = true;
-            workerManager.PauseWorkers();
             dataManager.IsRunning = false;
             alarmManager.IsRunning = false;
         }

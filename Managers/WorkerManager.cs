@@ -36,17 +36,7 @@ namespace MicrowaveMonitor.Managers
                 InitDevice(device);
             }
 
-            weatherCollector.Start();
-        }
-
-        public void PauseWorkers()
-        {
-            foreach (Collector worker in workers)
-            {
-                worker.Stop();
-            }
-            
-            weatherCollector.Stop();
+            weatherCollector.IsRunning = true;
         }
 
         public void InitDevice(Device device)

@@ -74,7 +74,7 @@ namespace MicrowaveMonitor.Managers
             Console.WriteLine("0InfluxDB client initialized.");
         }
 
-        public void StartDatabaseWriter()
+        private void StartDatabaseWriter()
         {
             int writeCyckles = 0;
             writer = new Thread(async () =>
@@ -99,7 +99,7 @@ namespace MicrowaveMonitor.Managers
                             weatherCycles = 0;
                             await writeWeaTemp;
                         }
-                        
+
                         await writePing;
                         await writeSig;
                         await writeSigQ;
@@ -117,11 +117,12 @@ namespace MicrowaveMonitor.Managers
                                 Console.WriteLine(e.InnerException.InnerException.Message);
                             else
                                 Console.WriteLine(e.Message);
-                        } else
+                        }
+                        else
                             Console.WriteLine(e.Message);
                     }
                 }
-            });
+            }){ Name = "influxWriter", Priority = ThreadPriority.AboveNormal };
             writer.Start();
         }
 

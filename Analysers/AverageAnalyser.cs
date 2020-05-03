@@ -82,8 +82,8 @@ namespace MicrowaveMonitor.Analysers
 
         protected override void Start()
         {
-            tQueryer = new Thread(LongAverage);
-            tComparator = new Thread(ShortAverage);
+            tQueryer = new Thread(LongAverage) { IsBackground = true, Name = "analyserAverage_queryer" } ;
+            tComparator = new Thread(ShortAverage) { IsBackground = true, Name = "analyserAverage_comparator" };
             tQueryer.Start();
             tComparator.Start();
         }

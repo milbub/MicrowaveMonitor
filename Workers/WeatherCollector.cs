@@ -21,9 +21,20 @@ namespace MicrowaveMonitor.Workers
         private readonly Dictionary<int, string> deviceLatitude = new Dictionary<int, string>();
         private readonly Dictionary<int, string> deviceLongitude = new Dictionary<int, string>();
 
-        public bool IsRunning { get; set; }
         private Thread tCollector;
         private readonly OpenWeather weatherApi = new OpenWeather(ConfigurationManager.AppSettings.Get("WeatherApiKey"));
+
+        private bool _isRunning = false;
+        public bool IsRunning
+        {
+            get => _isRunning;
+            set
+            {
+                _isRunning = value;
+                if (value)
+                    Start();
+            }
+        }
 
         public WeatherCollector(Queue<DynamicInfluxRow> dbRows, Dictionary<int, DeviceDisplay> deviceDisplays)
         {
@@ -47,7 +58,7 @@ namespace MicrowaveMonitor.Workers
                 deviceLongitude.Remove(deviceId);
         }
 
-        public void Start()
+        private void Start()
         {
             if (IsRunning == false)
             {
@@ -59,11 +70,11 @@ namespace MicrowaveMonitor.Workers
                         DateTime startCycle = DateTime.Now;
                         TimeSpan refresh = new TimeSpan(0, MinRefresh, 0);
                         TimeSpan apiWaitTime = new TimeSpan(0, 0, 0, 0, ApiWaitTime);
-
+                
                         int[] keys;
                         lock (deviceLatitude)
                             keys = deviceLatitude.Keys.ToArray();
-
+                
                         foreach (int devId in keys)
                         {
                             DateTime startIter = DateTime.Now;
@@ -72,12 +83,12 @@ namespace MicrowaveMonitor.Workers
                             {
                                 string lat;
                                 string longi;
-
+                
                                 lock (deviceLatitude)
                                     lat = deviceLatitude[devId];
                                 lock (deviceLongitude)
                                     longi = deviceLongitude[devId];
-
+                
                                 query = weatherApi.Query(lat, longi);
                             }
                             catch (System.Net.WebException)
@@ -95,47 +106,42 @@ namespace MicrowaveMonitor.Workers
                                 Thread.Sleep(refresh);
                                 continue;
                             }
-
+                
                             float temperature = (float)query.Main.Temperature;
-
+                
                             try
                             {
                                 displays[devId].WeatherIcon = query.Weathers[0].Icon;
                                 displays[devId].WeatherDesc = query.Weathers[0].Description;
                                 displays[devId].WeatherTemp = temperature;
                                 displays[devId].WeatherWind = query.Wind.SpeedMetersPerSecond;
-                            } catch (KeyNotFoundException)
+                            }
+                            catch (KeyNotFoundException)
                             {
                                 Thread.Sleep(refresh);
                                 continue;
                             }
-
+                
                             DynamicInfluxRow row = new DynamicInfluxRow();
                             row.Timestamp = startIter.ToUniversalTime();
                             row.Fields.Add("value", temperature);
                             row.Tags.Add("device", devId.ToString());
-
+                
                             lock (database)
                                 database.Enqueue(row);
-                            
+                
                             TimeSpan diffIter = DateTime.Now - startIter;
                             if (diffIter < apiWaitTime)
                                 Thread.Sleep(apiWaitTime - diffIter);
                         }
-
+                
                         TimeSpan diffCycle = DateTime.Now - startCycle;
                         if (diffCycle < refresh)
                             Thread.Sleep(refresh - diffCycle);
                     }
-                });
+                }){ IsBackground = true, Name = "weatherCollector" };
                 tCollector.Start();
             }
-        }
-
-        public void Stop()
-        {
-            IsRunning = false;
-                tCollector.Abort();
         }
     }
 }

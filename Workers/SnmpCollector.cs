@@ -89,11 +89,11 @@ namespace MicrowaveMonitor.Workers
                                         IsRunning = false;
                                         Console.WriteLine("2SNMP OID not found! Collector: " + MeasureType.ToString() + "; device ID: " + DeviceId + ", IP: " + Address + ". Collector suspended. Please check device OID configuration.");
                                     }
-                                else
-                                {
-                                    Console.WriteLine("SNMP Exception: " + e.Message + ". Collector: " + MeasureType.ToString() + "; device ID: " + DeviceId + ", IP: " + Address + ". Will try again in 10 seconds...");
-                                    Thread.Sleep(10000);
-                                }
+                                    else
+                                    {
+                                        Console.WriteLine("SNMP Exception: " + e.Message + ". Collector: " + MeasureType.ToString() + "; device ID: " + DeviceId + ", IP: " + Address + ". Will try again in 10 seconds...");
+                                        Thread.Sleep(10000);
+                                    }
                             }
                             else
                             {
@@ -109,7 +109,7 @@ namespace MicrowaveMonitor.Workers
                         catch (ThreadAbortException)
                         { }
                     }
-                });
+                }){ IsBackground = true, Name = "SNMP_" + MeasureType + "_device:" + DeviceId, Priority = ThreadPriority.Lowest };
                 tCollector.Start();
             }
         }

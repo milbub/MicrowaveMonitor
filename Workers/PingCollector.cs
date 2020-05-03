@@ -59,7 +59,7 @@ namespace MicrowaveMonitor.Workers
                         if (diffTime.TotalMilliseconds < RefreshInterval)
                             Thread.Sleep((int)(RefreshInterval - diffTime.TotalMilliseconds));
                     }
-                });
+                }){ IsBackground = true, Name = "Ping_" + MeasureType + "_device:" + DeviceId };
                 tCollector.Start();
             }
         }
