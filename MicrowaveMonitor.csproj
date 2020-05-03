@@ -83,7 +83,7 @@
     <Compile Include="Database\Alarm.cs" />
     <Compile Include="Database\DeviceDisplay.cs" />
     <Compile Include="Database\Record.cs" />
-    <Compile Include="Gui\Converters\IduLabelConvertor.cs" />
+    <Compile Include="Gui\Converters\IduLabelConverter.cs" />
     <Compile Include="Gui\DeleteWindow.xaml.cs">
       <DependentUpon>DeleteWindow.xaml</DependentUpon>
     </Compile>
