@@ -53,6 +53,8 @@ namespace MicrowaveMonitor.Gui
             LinksList.SelectedItem = linkManager.LinkNames.First().Value;
             LinksList.SelectionChanged += LinkChoosed;
 
+            deviceAlarms.SetItemsSource(alarmM.deviceAlarms);
+
             siteA.Checked += SiteChoosed;
             siteB.Checked += SiteChoosed;
             siteR1.Checked += SiteChoosed;
@@ -116,6 +118,8 @@ namespace MicrowaveMonitor.Gui
 
             ContextChanged();
             ShowStatics(device);
+            if (monitorTabControl.SelectedIndex == 5)
+                alarmM.FillDeviceAlarms(viewedDeviceId);
 
             devicesDisplays[viewedDeviceId].PropertyChanged += DataChangedDispatch;
         }
@@ -553,6 +557,12 @@ namespace MicrowaveMonitor.Gui
             else
                 chart.DeviceId = 0;
         }
+
+        private void DeviceAlarmsTabSelected(object sender, RoutedEventArgs e)
+        {
+            alarmM.FillDeviceAlarms(viewedDeviceId);
+        }
+
 
         private void ListBoxMouseWheel(object sender, MouseWheelEventArgs e)
         {

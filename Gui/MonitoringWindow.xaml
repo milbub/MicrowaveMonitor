@@ -190,11 +190,11 @@
                             <Label Grid.Row="1" Content="If you are connected into the devices management network via tunneling through public networks, the measurement may not be meaningful." FontSize="10" HorizontalAlignment="Center"></Label>
                         </Grid>
                     </TabItem>
-                    <TabItem>
+                    <TabItem Selector.Selected="DeviceAlarmsTabSelected">
                         <TabItem.Header>
                             <Image ToolTip="Alarm History" Source="/Gui/Icons/alarm.png" Width="24" Height="24" Margin="3,0,3,0"></Image>
                         </TabItem.Header>
-                        <Label Content="Not implemented yet."></Label>
+                        <gui:DeviceAlarmListPane x:Name="deviceAlarms"></gui:DeviceAlarmListPane>
                     </TabItem>
                     <TabItem>
                         <TabItem.Header>

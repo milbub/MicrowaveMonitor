@@ -99,6 +99,9 @@
     <Compile Include="Gui\Panes\ChartRealtimePane.xaml.cs">
       <DependentUpon>ChartRealtimePane.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Gui\Panes\DeviceAlarmListPane.xaml.cs">
+      <DependentUpon>DeviceAlarmListPane.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Gui\Panes\EventLogPane.xaml.cs">
       <DependentUpon>EventLogPane.xaml</DependentUpon>
     </Compile>
@@ -157,6 +160,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Gui\Panes\ChartRealtimePane.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\Panes\DeviceAlarmListPane.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

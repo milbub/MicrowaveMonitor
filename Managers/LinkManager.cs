@@ -147,6 +147,18 @@ namespace MicrowaveMonitor.Managers
             return query;
         }
 
+        public TableQuery<Alarm> GetDeviceAlarmsTable(int devId, int limit)
+        {
+            TableQuery<Alarm> query;
+
+            lock (AlarmDatabase)
+            {
+                query = AlarmDatabase.Table<Alarm>().Where(v => v.DeviceId == devId).OrderByDescending(x => x.GenerTime).Take(limit);
+            }
+
+            return query;
+        }
+
         public void UpdateAlarm(Alarm alarm)
         {
             lock (AlarmDatabase)

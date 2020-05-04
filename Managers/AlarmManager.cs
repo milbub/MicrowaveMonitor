@@ -78,6 +78,10 @@ namespace MicrowaveMonitor.Managers
         public readonly ObservableCollection<AlarmDisplay> alarmsSettledAck = new ObservableCollection<AlarmDisplay>();
         public readonly ObservableCollection<AlarmDisplay> alarmsSettledUnack = new ObservableCollection<AlarmDisplay>();
 
+        public readonly ObservableCollection<AlarmDisplay> deviceAlarms = new ObservableCollection<AlarmDisplay>();
+        private int viewedDevice = 0;
+        private readonly object deviceAlarmsLocker = new object();
+
         /* Statistics for analysers */
         public readonly Dictionary<int, AlarmTimes> downTimes = new Dictionary<int, AlarmTimes>();
         private readonly object downTimesLocker = new object();
@@ -225,6 +229,11 @@ namespace MicrowaveMonitor.Managers
 
             lock (alarmsCurrent)
                 alarmsCurrent.Add(disp);
+
+            if (viewedDevice == deviceId)
+                lock (deviceAlarmsLocker)
+                    deviceAlarms.Insert(0, MakeAlarmDisplay(alarm));
+
             return alarm.Id;
         }
 
@@ -364,14 +373,23 @@ namespace MicrowaveMonitor.Managers
             foreach (Alarm alarm in alarms)
             {
                 if (alarm.IsShowed)
-                    FillSettledList(alarm);
+                {
+                    AlarmDisplay disp = MakeAlarmDisplay(alarm);
+                    
+                    if (alarm.IsAck)
+                        lock (alarmsSettledAck)
+                            alarmsSettledAck.Add(disp);
+                    else
+                        lock (alarmsSettledUnack)
+                            alarmsSettledUnack.Add(disp);
+                }
 
                 if (alarm.Type == AlarmType.Down && alarm.GenerTime > limit)
                     AddToDownTimes(alarm, false);
             }
         }
 
-        private void FillSettledList(Alarm alarm)
+        private AlarmDisplay MakeAlarmDisplay(Alarm alarm)
         {
             string text = TextFiller(alarm.Type, alarm.Trend);
 
@@ -387,22 +405,27 @@ namespace MicrowaveMonitor.Managers
                 disp.Value = alarm.GenerValue.ToString("0.00");
                 disp.SettledValue = alarm.SettledValue.ToString("0.00");
             }
+
+            if (alarm.IsActive)
+            {
+                disp.EndTimestamp = "ACTIVE";
+                disp.SettledValue = "ACTIVE";
+            }
+            else
+            {
+                disp.EndTimestamp = alarm.SettledTime.ToString("dd.MM.yyyy HH:mm:ss");
+            }
+
             disp.Id = alarm.Id;
             disp.Rank = alarm.Rank.ToString();
             disp.Timestamp = alarm.GenerTime.ToString("dd.MM.yyyy HH:mm:ss");
-            disp.EndTimestamp = alarm.SettledTime.ToString("dd.MM.yyyy HH:mm:ss");
             disp.Link = linkM.LinkNames[alarm.LinkId];
             disp.Device = alarm.DeviceType;
             disp.Measurement = alarm.Measure.ToString();
             disp.Problem = text;
             disp.Ack = alarm.IsAck;
 
-            if (alarm.IsAck)
-                lock (alarmsSettledAck)
-                    alarmsSettledAck.Add(disp);
-            else
-                lock (alarmsSettledUnack)
-                    alarmsSettledUnack.Add(disp);
+            return disp;
         }
 
         private void AddToDownTimes(Alarm alarm, bool active)
@@ -419,6 +442,23 @@ namespace MicrowaveMonitor.Managers
             };
             lock (downTimesLocker)
                 downTimes.Add(alarm.Id, times);
+        }
+
+        public void FillDeviceAlarms(int devId)
+        {
+            if (devId == viewedDevice)
+                return;
+
+            TableQuery<Alarm> alarms = linkM.GetDeviceAlarmsTable(devId, 500);
+
+            deviceAlarms.Clear();
+            viewedDevice = devId;
+            
+            lock (deviceAlarmsLocker)
+                foreach (Alarm alarm in alarms)
+                {
+                    deviceAlarms.Add(MakeAlarmDisplay(alarm));
+                }
         }
 
         public void RegisterListener(Device device)
