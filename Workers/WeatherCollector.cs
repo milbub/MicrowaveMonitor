@@ -60,88 +60,84 @@ namespace MicrowaveMonitor.Workers
 
         private void Start()
         {
-            if (IsRunning == false)
+            tCollector = new Thread(() =>
             {
-                IsRunning = true;
-                tCollector = new Thread(() =>
+                while (IsRunning)
                 {
-                    while (IsRunning)
+                    DateTime startCycle = DateTime.Now;
+                    TimeSpan refresh = new TimeSpan(0, MinRefresh, 0);
+                    TimeSpan apiWaitTime = new TimeSpan(0, 0, 0, 0, ApiWaitTime);
+            
+                    int[] keys;
+                    lock (deviceLatitude)
+                        keys = deviceLatitude.Keys.ToArray();
+            
+                    foreach (int devId in keys)
                     {
-                        DateTime startCycle = DateTime.Now;
-                        TimeSpan refresh = new TimeSpan(0, MinRefresh, 0);
-                        TimeSpan apiWaitTime = new TimeSpan(0, 0, 0, 0, ApiWaitTime);
-                
-                        int[] keys;
-                        lock (deviceLatitude)
-                            keys = deviceLatitude.Keys.ToArray();
-                
-                        foreach (int devId in keys)
+                        DateTime startIter = DateTime.Now;
+                        Query query;
+                        try
                         {
-                            DateTime startIter = DateTime.Now;
-                            Query query;
-                            try
-                            {
-                                string lat;
-                                string longi;
-                
-                                lock (deviceLatitude)
-                                    lat = deviceLatitude[devId];
-                                lock (deviceLongitude)
-                                    longi = deviceLongitude[devId];
-                
-                                query = weatherApi.Query(lat, longi);
-                            }
-                            catch (System.Net.WebException)
-                            {
-                                Console.WriteLine("2Connection to weather API server is not available.");
-                                continue;
-                            }
-                            catch (Newtonsoft.Json.JsonReaderException)
-                            {
-                                Console.WriteLine("2Bad format of JSON weather data.");
-                                continue;
-                            }
-                            catch (KeyNotFoundException)
-                            {
-                                Thread.Sleep(refresh);
-                                continue;
-                            }
-                
-                            float temperature = (float)query.Main.Temperature;
-                
-                            try
-                            {
-                                displays[devId].WeatherIcon = query.Weathers[0].Icon;
-                                displays[devId].WeatherDesc = query.Weathers[0].Description;
-                                displays[devId].WeatherTemp = temperature;
-                                displays[devId].WeatherWind = query.Wind.SpeedMetersPerSecond;
-                            }
-                            catch (KeyNotFoundException)
-                            {
-                                Thread.Sleep(refresh);
-                                continue;
-                            }
-                
-                            DynamicInfluxRow row = new DynamicInfluxRow();
-                            row.Timestamp = startIter.ToUniversalTime();
-                            row.Fields.Add("value", temperature);
-                            row.Tags.Add("device", devId.ToString());
-                
-                            lock (database)
-                                database.Enqueue(row);
-                
-                            TimeSpan diffIter = DateTime.Now - startIter;
-                            if (diffIter < apiWaitTime)
-                                Thread.Sleep(apiWaitTime - diffIter);
+                            string lat;
+                            string longi;
+            
+                            lock (deviceLatitude)
+                                lat = deviceLatitude[devId];
+                            lock (deviceLongitude)
+                                longi = deviceLongitude[devId];
+            
+                            query = weatherApi.Query(lat, longi);
                         }
-                
-                        TimeSpan diffCycle = DateTime.Now - startCycle;
-                        if (diffCycle < refresh)
-                            Thread.Sleep(refresh - diffCycle);
+                        catch (System.Net.WebException)
+                        {
+                            Console.WriteLine("2Connection to weather API server is not available.");
+                            continue;
+                        }
+                        catch (Newtonsoft.Json.JsonReaderException)
+                        {
+                            Console.WriteLine("2Bad format of JSON weather data.");
+                            continue;
+                        }
+                        catch (KeyNotFoundException)
+                        {
+                            Thread.Sleep(refresh);
+                            continue;
+                        }
+            
+                        float temperature = (float)query.Main.Temperature;
+            
+                        try
+                        {
+                            displays[devId].WeatherIcon = query.Weathers[0].Icon;
+                            displays[devId].WeatherDesc = query.Weathers[0].Description;
+                            displays[devId].WeatherTemp = temperature;
+                            displays[devId].WeatherWind = query.Wind.SpeedMetersPerSecond;
+                        }
+                        catch (KeyNotFoundException)
+                        {
+                            Thread.Sleep(refresh);
+                            continue;
+                        }
+            
+                        DynamicInfluxRow row = new DynamicInfluxRow();
+                        row.Timestamp = startIter.ToUniversalTime();
+                        row.Fields.Add("value", temperature);
+                        row.Tags.Add("device", devId.ToString());
+            
+                        lock (database)
+                            database.Enqueue(row);
+            
+                        TimeSpan diffIter = DateTime.Now - startIter;
+                        if (diffIter < apiWaitTime)
+                            Thread.Sleep(apiWaitTime - diffIter);
                     }
-                }){ IsBackground = true, Name = "weatherCollector" };
-                tCollector.Start();
-            }
+            
+                    TimeSpan diffCycle = DateTime.Now - startCycle;
+                    if (diffCycle < refresh)
+                        Thread.Sleep(refresh - diffCycle);
+                }
+            }){ IsBackground = true, Name = "weatherCollector" };
+            tCollector.Start();
         }
     }
 }

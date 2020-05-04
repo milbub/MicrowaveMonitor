@@ -33,7 +33,8 @@ namespace MicrowaveMonitor.Analysers
         public static Dictionary<int, bool> WatchSignal = new Dictionary<int, bool>();
         public static Dictionary<int, bool> WatchSignalQ = new Dictionary<int, bool>();
         public static Dictionary<int, bool> WatchTempOdu = new Dictionary<int, bool>();
-        public static Dictionary<int, bool> WatchTempIdu = new Dictionary<int, bool>();
+        public static Dictionary<int, bool> WatchTempIduIn = new Dictionary<int, bool>();
+        public static Dictionary<int, bool> WatchTempIduOut = new Dictionary<int, bool>();
         public static Dictionary<int, bool> WatchVoltage = new Dictionary<int, bool>();
         public static Dictionary<int, bool> WatchPing = new Dictionary<int, bool>();
         public static readonly object watchLocker = new object();

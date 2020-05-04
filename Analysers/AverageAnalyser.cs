@@ -31,21 +31,21 @@ namespace MicrowaveMonitor.Analysers
 
         private readonly Dictionary<int, double> dataSignalAvg = new Dictionary<int, double>();
         private readonly Dictionary<int, double> dataSignalQAvg = new Dictionary<int, double>();
-        //private readonly Dictionary<int, double> dataTempIduAvg = new Dictionary<int, double>();
+        private readonly Dictionary<int, double> dataTempIduAvg = new Dictionary<int, double>();
         private readonly Dictionary<int, double> dataVoltageAvg = new Dictionary<int, double>();
         private readonly Dictionary<int, double> dataPingAvg = new Dictionary<int, double>();
         private readonly object dataLocker = new object();
 
         private readonly Dictionary<int, int> idsSignal = new Dictionary<int, int>();
         private readonly Dictionary<int, int> idsSignalQ = new Dictionary<int, int>();
-        //private readonly Dictionary<int, int> idsTempIdu = new Dictionary<int, int>();
+        private readonly Dictionary<int, int> idsTempIdu = new Dictionary<int, int>();
         private readonly Dictionary<int, int> idsVoltage = new Dictionary<int, int>();
         private readonly Dictionary<int, int> idsPing = new Dictionary<int, int>();
         private readonly object idsLocker = new object();
 
         private static readonly Dictionary<int, bool> isIndicatedSignal = new Dictionary<int, bool>();
         private static readonly Dictionary<int, bool> isIndicatedSignalQ = new Dictionary<int, bool>();
-        //private static readonly Dictionary<int, bool> isIndicatedTempIdu = new Dictionary<int, bool>();
+        private static readonly Dictionary<int, bool> isIndicatedTempIdu = new Dictionary<int, bool>();
         private static readonly Dictionary<int, bool> isIndicatedVoltage = new Dictionary<int, bool>();
         private static readonly Dictionary<int, bool> isIndicatedPing = new Dictionary<int, bool>();
         private static readonly object indiLocker = new object();
@@ -153,13 +153,13 @@ namespace MicrowaveMonitor.Analysers
 
                 GetLongAvg(DataManager.measSig, WatchSignal, dataSignalAvg, affectedDevices);
                 GetLongAvg(DataManager.measSigQ, WatchSignalQ, dataSignalQAvg, affectedDevices);
-                //GetLongAvg(DataManager.measTmpI, WatchTempIdu, dataTempIduAvg, affectedDevices);
+                GetLongAvg(DataManager.measTmpI, WatchTempIduIn, dataTempIduAvg, affectedDevices);
                 GetLongAvg(DataManager.measVolt, WatchVoltage, dataVoltageAvg, affectedDevices);
                 GetLongAvg(DataManager.measLat, WatchPing, dataPingAvg, affectedDevices);
 
                 GetLongAvgAffected(DataManager.measSig, WatchSignal, dataSignalAvg, affectedDevices);
                 GetLongAvgAffected(DataManager.measSigQ, WatchSignalQ, dataSignalQAvg, affectedDevices);
-                //GetLongAvgAffected(DataManager.measTmpI, WatchTempIdu, dataTempIduAvg, affectedDevices);
+                GetLongAvgAffected(DataManager.measTmpI, WatchTempIduIn, dataTempIduAvg, affectedDevices);
                 GetLongAvgAffected(DataManager.measVolt, WatchVoltage, dataVoltageAvg, affectedDevices);
                 GetLongAvgAffected(DataManager.measLat, WatchPing, dataPingAvg, affectedDevices);
 
@@ -251,13 +251,13 @@ namespace MicrowaveMonitor.Analysers
 
                 GetShortAvg(DataManager.measSig, idsSignal, Measurement.Strength, Percentages.Signal, dataSignalAvg, isIndicatedSignal, affectedDevices, WatchSignal);
                 GetShortAvg(DataManager.measSigQ, idsSignalQ, Measurement.Quality, Percentages.SignalQ, dataSignalQAvg, isIndicatedSignalQ, affectedDevices, WatchSignalQ);
-                //CompareAvg(DataManager.measTmpI, idsTempIdu, Measurement.TempIDU, Percentages.TempIdu, dataTempIduAvg, isIndicatedTempIdu, affectedDevices, WatchTempIdu);
+                GetShortAvg(DataManager.measTmpI, idsTempIdu, Measurement.TempIDU, Percentages.TempIdu, dataTempIduAvg, isIndicatedTempIdu, affectedDevices, WatchTempIduIn);
                 GetShortAvg(DataManager.measVolt, idsVoltage, Measurement.Voltage, Percentages.Voltage, dataVoltageAvg, isIndicatedVoltage, affectedDevices, WatchVoltage);
                 GetShortAvg(DataManager.measLat, idsPing, Measurement.Latency, Percentages.Latency, dataPingAvg, isIndicatedPing, affectedDevices, WatchPing);
 
                 GetShortAvgAffected(DataManager.measSig, idsSignal, Measurement.Strength, Percentages.Signal, dataSignalAvg, isIndicatedSignal, affectedDevices, WatchSignal);
                 GetShortAvgAffected(DataManager.measSigQ, idsSignalQ, Measurement.Quality, Percentages.SignalQ, dataSignalQAvg, isIndicatedSignalQ, affectedDevices, WatchSignalQ);
-                //GetShortAvgAffected(DataManager.measTmpI, idsTempIdu, Measurement.TempIDU, Percentages.TempIdu, dataTempIduAvg, isIndicatedTempIdu, affctedDevices, WatchTempIdu);
+                GetShortAvgAffected(DataManager.measTmpI, idsTempIdu, Measurement.TempIDU, Percentages.TempIdu, dataTempIduAvg, isIndicatedTempIdu, affectedDevices, WatchTempIduIn);
                 GetShortAvgAffected(DataManager.measVolt, idsVoltage, Measurement.Voltage, Percentages.Voltage, dataVoltageAvg, isIndicatedVoltage, affectedDevices, WatchVoltage);
                 GetShortAvgAffected(DataManager.measLat, idsPing, Measurement.Latency, Percentages.Latency, dataPingAvg, isIndicatedPing, affectedDevices, WatchPing);
 
@@ -409,7 +409,7 @@ namespace MicrowaveMonitor.Analysers
             TrySettle(devId, idsSignalQ, 0, isIndicatedSignalQ, true);
             TrySettle(devId, idsVoltage, 0, isIndicatedVoltage, true);
             TrySettle(devId, idsPing, 0, isIndicatedPing, true);
-            //TrySettle(devId, idsTempIdu, 0, isIndcatedTempIdu, true);
+            TrySettle(devId, idsTempIdu, 0, isIndicatedTempIdu, true);
         }
     }
 }

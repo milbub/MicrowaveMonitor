@@ -108,7 +108,7 @@ namespace MicrowaveMonitor.Managers
             {
                 Signal = 0.1,
                 SignalQ = 0.1,
-                TempIdu = 0.5,
+                TempIdu = 0.11,
                 Voltage = 0.031,
                 Latency = 2.5
             };
@@ -117,7 +117,7 @@ namespace MicrowaveMonitor.Managers
             {
                 Signal = 0.15,
                 SignalQ = 0.15,
-                TempIdu = 0.5,
+                TempIdu = 0.11,
                 Voltage = 0.031,
                 Latency = 3.0
             };
@@ -428,7 +428,24 @@ namespace MicrowaveMonitor.Managers
                 Analyser.WatchSignal.Add(device.Id, device.IsWatchedSignal);
                 Analyser.WatchSignalQ.Add(device.Id, device.IsWatchedSignalQ);
                 Analyser.WatchTempOdu.Add(device.Id, device.IsWatchedTempOdu);
-                Analyser.WatchTempIdu.Add(device.Id, device.IsWatchedTempIdu);
+                if (device.IsWatchedTempIdu)
+                {
+                    if (device.IsTempIduOutdoor)
+                    {
+                        Analyser.WatchTempIduOut.Add(device.Id, true);
+                        Analyser.WatchTempIduIn.Add(device.Id, false);
+                    }
+                    else
+                    {
+                        Analyser.WatchTempIduOut.Add(device.Id, false);
+                        Analyser.WatchTempIduIn.Add(device.Id, true);
+                    }
+                }
+                else
+                {
+                    Analyser.WatchTempIduOut.Add(device.Id, false);
+                    Analyser.WatchTempIduIn.Add(device.Id, false);
+                }
                 Analyser.WatchVoltage.Add(device.Id, device.IsWatchedVoltage);
                 Analyser.WatchPing.Add(device.Id, device.IsWatchedPing);
             }
@@ -445,7 +462,8 @@ namespace MicrowaveMonitor.Managers
                 Analyser.WatchSignal.Remove(device.Id);
                 Analyser.WatchSignalQ.Remove(device.Id);
                 Analyser.WatchTempOdu.Remove(device.Id);
-                Analyser.WatchTempIdu.Remove(device.Id);
+                Analyser.WatchTempIduIn.Remove(device.Id);
+                Analyser.WatchTempIduOut.Remove(device.Id);
                 Analyser.WatchVoltage.Remove(device.Id);
                 Analyser.WatchPing.Remove(device.Id);
             }
@@ -458,7 +476,24 @@ namespace MicrowaveMonitor.Managers
                 Analyser.WatchSignal[device.Id] = device.IsWatchedSignal;
                 Analyser.WatchSignalQ[device.Id] = device.IsWatchedSignalQ;
                 Analyser.WatchTempOdu[device.Id] = device.IsWatchedTempOdu;
-                Analyser.WatchTempIdu[device.Id] = device.IsWatchedTempIdu;
+                if (device.IsWatchedTempIdu)
+                {
+                    if (device.IsTempIduOutdoor)
+                    {
+                        Analyser.WatchTempIduOut[device.Id] = true;
+                        Analyser.WatchTempIduIn[device.Id] = false;
+                    }
+                    else
+                    {
+                        Analyser.WatchTempIduOut[device.Id] = false;
+                        Analyser.WatchTempIduIn[device.Id] = true;
+                    }
+                }
+                else
+                {
+                    Analyser.WatchTempIduOut[device.Id] = false;
+                    Analyser.WatchTempIduIn[device.Id] = false;
+                }
                 Analyser.WatchVoltage[device.Id] = device.IsWatchedVoltage;
                 Analyser.WatchPing[device.Id] = device.IsWatchedPing;
             }
