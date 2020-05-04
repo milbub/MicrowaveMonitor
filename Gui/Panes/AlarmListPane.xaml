@@ -25,6 +25,24 @@
                         <GridViewColumn Header="Value" Width="40" DisplayMemberBinding="{Binding Value}"></GridViewColumn>
                     </GridView>
                 </ListView.View>
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Rank}" Value="Info">
+                                <Setter Property="Background" Value="Aqua"></Setter>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Rank}" Value="Warning">
+                                <Setter Property="Background" Value="Wheat"></Setter>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Rank}" Value="Critical">
+                                <Setter Property="Background" Value="PaleVioletRed"></Setter>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Rank}" Value="Down">
+                                <Setter Property="Background" Value="Peru"></Setter>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </ListView.ItemContainerStyle>
             </ListView>
         </TabItem>
         <TabItem Header="Acknowledged">
@@ -47,6 +65,24 @@
                         <GridViewColumn Header="Value" Width="40" DisplayMemberBinding="{Binding Value}"></GridViewColumn>
                     </GridView>
                 </ListView.View>
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Rank}" Value="Info">
+                                <Setter Property="Background" Value="Aqua"></Setter>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Rank}" Value="Warning">
+                                <Setter Property="Background" Value="Wheat"></Setter>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Rank}" Value="Critical">
+                                <Setter Property="Background" Value="PaleVioletRed"></Setter>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Rank}" Value="Down">
+                                <Setter Property="Background" Value="Peru"></Setter>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </ListView.ItemContainerStyle>
             </ListView>
         </TabItem>
         <TabItem Header="Settled (acknowledged)">
@@ -80,6 +116,24 @@
                         <GridViewColumn Header="End Value" Width="95" DisplayMemberBinding="{Binding SettledValue}"></GridViewColumn>
                     </GridView>
                 </ListView.View>
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Rank}" Value="Info">
+                                <Setter Property="Background" Value="Aqua"></Setter>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Rank}" Value="Warning">
+                                <Setter Property="Background" Value="Wheat"></Setter>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Rank}" Value="Critical">
+                                <Setter Property="Background" Value="PaleVioletRed"></Setter>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Rank}" Value="Down">
+                                <Setter Property="Background" Value="Peru"></Setter>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </ListView.ItemContainerStyle>
             </ListView>
         </TabItem>
         <TabItem Header="Settled (unaddressed)">
@@ -113,6 +167,24 @@
                         <GridViewColumn Header="End Value" Width="95" DisplayMemberBinding="{Binding SettledValue}"></GridViewColumn>
                     </GridView>
                 </ListView.View>
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Rank}" Value="Info">
+                                <Setter Property="Background" Value="Aqua"></Setter>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Rank}" Value="Warning">
+                                <Setter Property="Background" Value="Wheat"></Setter>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Rank}" Value="Critical">
+                                <Setter Property="Background" Value="PaleVioletRed"></Setter>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Rank}" Value="Down">
+                                <Setter Property="Background" Value="Peru"></Setter>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </ListView.ItemContainerStyle>
             </ListView>
         </TabItem>
     </TabControl>
