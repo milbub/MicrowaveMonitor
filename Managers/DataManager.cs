@@ -14,7 +14,7 @@ namespace MicrowaveMonitor.Managers
     public class DataManager
     {
         public static int DbWriteInterval { get; } = 10000;      // 10 sec
-        private static float weatherCycles = (WeatherCollector.MinRefresh * 60000) / DbWriteInterval;
+        private static float weatherCycles = WeatherCollector.MinRefresh / DbWriteInterval;
 
         public const int contQueryCycle = 30000;                 // 30 sec
 
@@ -27,6 +27,7 @@ namespace MicrowaveMonitor.Managers
         public const string measTmpI = "tempIdu";
         public const string measVolt = "voltage";
         public const string measTmpA = "tempAir";
+        public const string measWeath = "weather";
 
         public const string defaultValueName = "value";
         public const string meanValueName = "mean_value";
@@ -40,6 +41,7 @@ namespace MicrowaveMonitor.Managers
         public Queue<DynamicInfluxRow> TempIduTransactions = new Queue<DynamicInfluxRow>();
         public Queue<DynamicInfluxRow> VoltageTransactions = new Queue<DynamicInfluxRow>();
         public Queue<DynamicInfluxRow> WeatherTempTransactions = new Queue<DynamicInfluxRow>();
+        public Queue<DynamicInfluxRow> WeatherOtherTransactions = new Queue<DynamicInfluxRow>();
 
         public static string serverAddress = ConfigurationManager.ConnectionStrings["InfluxServer"].ConnectionString;
         public static string databaseName = ConfigurationManager.ConnectionStrings["InfluxData"].ConnectionString;
@@ -96,8 +98,11 @@ namespace MicrowaveMonitor.Managers
                         if (++writeCyckles > weatherCycles)
                         {
                             Task writeWeaTemp = databaseClient.WriteAsync(databaseName, measTmpA, VerifyRows(WeatherTempTransactions));
+                            Task writeWeather = databaseClient.WriteAsync(databaseName, measWeath, VerifyRows(WeatherOtherTransactions));
+
                             weatherCycles = 0;
                             await writeWeaTemp;
+                            await writeWeather;
                         }
 
                         await writePing;

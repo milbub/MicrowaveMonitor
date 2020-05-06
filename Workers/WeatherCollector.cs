@@ -13,11 +13,12 @@ namespace MicrowaveMonitor.Workers
 {
     public class WeatherCollector
     {
-        public static int MinRefresh { get; } = 5;          // 5 min
-        public static int ApiWaitTime { get; } = 1200;      // 1200 msec
+        public static int MinRefresh { get; } = 300000;     // 5 min
+        public static int ApiWaitTime { get; } = 1200;      // 1.2 sec (1 sec limit + 0.2 sec protect interval)
 
         private readonly Dictionary<int, DeviceDisplay> displays;
-        private readonly Queue<DynamicInfluxRow> database;
+        private readonly Queue<DynamicInfluxRow> airTempDatabase;
+        private readonly Queue<DynamicInfluxRow> weatherDatabase;
         private readonly Dictionary<int, string> deviceLatitude = new Dictionary<int, string>();
         private readonly Dictionary<int, string> deviceLongitude = new Dictionary<int, string>();
 
@@ -36,10 +37,11 @@ namespace MicrowaveMonitor.Workers
             }
         }
 
-        public WeatherCollector(Queue<DynamicInfluxRow> dbRows, Dictionary<int, DeviceDisplay> deviceDisplays)
+        public WeatherCollector(Queue<DynamicInfluxRow> airTempDb, Queue<DynamicInfluxRow> weatherDb, Dictionary<int, DeviceDisplay> deviceDisplays)
         {
             displays = deviceDisplays;
-            database = dbRows;
+            airTempDatabase = airTempDb;
+            weatherDatabase = weatherDb;
         }
 
         public void AddDevice(int deviceId, string latitude, string longitude)
@@ -65,8 +67,8 @@ namespace MicrowaveMonitor.Workers
                 while (IsRunning)
                 {
                     DateTime startCycle = DateTime.Now;
-                    TimeSpan refresh = new TimeSpan(0, MinRefresh, 0);
-                    TimeSpan apiWaitTime = new TimeSpan(0, 0, 0, 0, ApiWaitTime);
+                    TimeSpan refresh = TimeSpan.FromMilliseconds(MinRefresh);
+                    TimeSpan apiWaitTime = TimeSpan.FromMilliseconds(ApiWaitTime);
             
                     int[] keys;
                     lock (deviceLatitude)
@@ -119,14 +121,23 @@ namespace MicrowaveMonitor.Workers
                             continue;
                         }
             
-                        DynamicInfluxRow row = new DynamicInfluxRow();
-                        row.Timestamp = startIter.ToUniversalTime();
-                        row.Fields.Add("value", temperature);
-                        row.Tags.Add("device", devId.ToString());
+                        DynamicInfluxRow rowTemp = new DynamicInfluxRow();
+                        rowTemp.Timestamp = startIter.ToUniversalTime();
+                        rowTemp.Fields.Add("value", temperature);
+                        rowTemp.Tags.Add("device", devId.ToString());
             
-                        lock (database)
-                            database.Enqueue(row);
-            
+                        lock (airTempDatabase)
+                            airTempDatabase.Enqueue(rowTemp);
+
+                        DynamicInfluxRow rowOther = new DynamicInfluxRow();
+                        rowOther.Timestamp = startIter.ToUniversalTime();
+                        rowOther.Fields.Add("condition", query.Weathers[0].ID);
+                        rowOther.Fields.Add("wind", query.Wind.SpeedMetersPerSecond);
+                        rowOther.Tags.Add("device", devId.ToString());
+
+                        lock (weatherDatabase)
+                            weatherDatabase.Enqueue(rowOther);
+
                         TimeSpan diffIter = DateTime.Now - startIter;
                         if (diffIter < apiWaitTime)
                             Thread.Sleep(apiWaitTime - diffIter);

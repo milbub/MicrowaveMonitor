@@ -29,7 +29,7 @@ namespace MicrowaveMonitor.Managers
 
         public void InitWorkers(TableQuery<Device> devices)
         {
-            weatherCollector = new WeatherCollector(data.WeatherTempTransactions, DeviceToFront);
+            weatherCollector = new WeatherCollector(data.WeatherTempTransactions, data.WeatherOtherTransactions, DeviceToFront);
 
             foreach (Device device in devices)
             {
