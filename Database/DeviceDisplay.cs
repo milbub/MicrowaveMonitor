@@ -31,6 +31,7 @@ namespace MicrowaveMonitor.Database
         private string _weatherDesc = "no data";
         private float? _weatherTemp;
         private double? _weatherWind;
+        private int? _weatherId;
 
         public Record<double> DataSig
         {
@@ -221,6 +222,19 @@ namespace MicrowaveMonitor.Database
                 {
                     _weatherWind = value;
                     OnPropertyChanged("WeatherWind");
+                }
+            }
+        }
+
+        public int? WeatherId
+        {
+            get => _weatherId;
+            set
+            {
+                if (value != _weatherId)
+                {
+                    _weatherId = value;
+                    OnPropertyChanged("WeatherId");
                 }
             }
         }

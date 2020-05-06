@@ -250,7 +250,7 @@ namespace MicrowaveMonitor.Gui
                         weatherWind.Content = wind + " m/s";
                         break;
                     default:
-                        throw new InvalidEnumArgumentException();
+                        break;
                 }
         }
 

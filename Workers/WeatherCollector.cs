@@ -112,6 +112,7 @@ namespace MicrowaveMonitor.Workers
                         {
                             displays[devId].WeatherIcon = query.Weathers[0].Icon;
                             displays[devId].WeatherDesc = query.Weathers[0].Description;
+                            displays[devId].WeatherId = query.Weathers[0].ID;
                             displays[devId].WeatherTemp = temperature;
                             displays[devId].WeatherWind = query.Wind.SpeedMetersPerSecond;
                         }
