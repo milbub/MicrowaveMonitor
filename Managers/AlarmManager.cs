@@ -158,8 +158,8 @@ namespace MicrowaveMonitor.Managers
                 storm = 0.98f
             };
 
-            OduTemperAna = new TemperatureAnalyser(this, dataM, Analyser.WatchTempOdu, Measurement.TempODU, 1.2, 0.2, TimeSpan.FromMinutes(45), 20, 0, coeffsClear, coeffsClouds);
-            IduTemperAna = new TemperatureAnalyser(this, dataM, Analyser.WatchTempIduOut, Measurement.TempIDU, 1.2, 0.2, TimeSpan.FromMinutes(45), 20, 0, coeffsClear, coeffsClouds);
+            OduTemperAna = new TemperatureAnalyser(this, dataM, Analyser.WatchTempOdu, Measurement.TempODU, 1.2, 0.2, TimeSpan.FromMinutes(100), 20, 0, coeffsClear, coeffsClouds, 5);
+            IduTemperAna = new TemperatureAnalyser(this, dataM, Analyser.WatchTempIduOut, Measurement.TempIDU, 1.2, 0.2, TimeSpan.FromMinutes(100), 20, 0, coeffsClear, coeffsClouds, 5);
         }
 
         private void DataChanged(object sender, PropertyChangedEventArgs e)

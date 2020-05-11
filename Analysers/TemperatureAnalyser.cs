@@ -1,16 +1,11 @@
-﻿using Itenso.TimePeriod;
-using MicrowaveMonitor.Database;
+﻿using MicrowaveMonitor.Database;
 using MicrowaveMonitor.Managers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
 using System.Threading.Tasks;
 using Vibrant.InfluxDB.Client.Rows;
 using CoordinateSharp;
-using OpenWeatherApi;
-using System.Runtime.InteropServices;
 
 namespace MicrowaveMonitor.Analysers
 {
@@ -27,10 +22,10 @@ namespace MicrowaveMonitor.Analysers
             public float storm;
         }
 
-        private struct TimeVal
+        private struct TimeWind
         {
             public DateTime? dateTime;
-            public double? value;
+            public double? wind;
         }
 
         private readonly AlarmManager alarmMan;
@@ -47,6 +42,7 @@ namespace MicrowaveMonitor.Analysers
         public Measurement Measure { get; private set; }
         public DefaultWeatherCoeffs CoeffsClear { get; set; }
         public DefaultWeatherCoeffs CoeffsClouds { get; set; }
+        public int AvgDaysCount { get; set; }
 
         private readonly string measureName;
 
@@ -58,7 +54,7 @@ namespace MicrowaveMonitor.Analysers
         private readonly Dictionary<int, int> ids = new Dictionary<int, int>();
         private readonly object idsLocker = new object();
 
-        public TemperatureAnalyser(AlarmManager alarmManager, DataManager dataManager, Dictionary<int, bool> watched, Measurement measure, double percentDiff, double degressPerWindMeter, TimeSpan maxAge, int backDaysCount, int skippedDaysCount, DefaultWeatherCoeffs coeffsClear, DefaultWeatherCoeffs coeffsClouds)
+        public TemperatureAnalyser(AlarmManager alarmManager, DataManager dataManager, Dictionary<int, bool> watched, Measurement measure, double percentDiff, double degressPerWindMeter, TimeSpan maxAge, int backDaysCount, int skippedDaysCount, DefaultWeatherCoeffs coeffsClear, DefaultWeatherCoeffs coeffsClouds, int averageDaysCount)
         {
             alarmMan = alarmManager;
             dataMan = dataManager;
@@ -72,6 +68,7 @@ namespace MicrowaveMonitor.Analysers
             Measure = measure;
             CoeffsClear = coeffsClear;
             CoeffsClouds = coeffsClouds;
+            AvgDaysCount = averageDaysCount;
 
             if (measure == Measurement.TempIDU)
                 measureName = DataManager.measTmpI;
@@ -160,30 +157,30 @@ namespace MicrowaveMonitor.Analysers
         {
             int originalWeather = weatherId;
 
-            TimeVal selection = await GetBestTime(devId, weatherId, wind, DateTime.Now.TimeOfDay);
+            List<TimeWind> selection = await GetBestDays(devId, weatherId, wind, DateTime.Now.TimeOfDay);
 
-            if (selection.dateTime == null && (originalWeather < 801 || originalWeather == 803))
+            if (selection == null && (originalWeather < 801 || originalWeather == 803))
             {
                 weatherId = 804;
-                selection = await GetBestTime(devId, weatherId, wind, DateTime.Now.TimeOfDay);
+                selection = await GetBestDays(devId, weatherId, wind, DateTime.Now.TimeOfDay);
             }
 
-            if (selection.dateTime == null && originalWeather != 800)
+            if (selection == null && originalWeather != 800)
             {
                 weatherId = 800;
-                selection = await GetBestTime(devId, weatherId, wind, DateTime.Now.TimeOfDay);
+                selection = await GetBestDays(devId, weatherId, wind, DateTime.Now.TimeOfDay);
             }
 
-            if (selection.dateTime == null && !(originalWeather < 801 || originalWeather == 803) && originalWeather != 804)
+            if (selection == null && !(originalWeather < 801 || originalWeather == 803) && originalWeather != 804)
             {
                 weatherId = 804;
-                selection = await GetBestTime(devId, weatherId, wind, DateTime.Now.TimeOfDay);
+                selection = await GetBestDays(devId, weatherId, wind, DateTime.Now.TimeOfDay);
             }
 
-            if (selection.dateTime == null)
-                selection = await GetBestTime(devId, 0, wind, DateTime.Now.TimeOfDay);
+            if (selection == null)
+                selection = await GetBestDays(devId, 0, wind, DateTime.Now.TimeOfDay);
 
-            if (selection.dateTime == null)
+            if (selection == null)
                 return;                             // no comparable data exists, abort
 
             double alternateWeatherCoeff = 1;
@@ -196,7 +193,7 @@ namespace MicrowaveMonitor.Analysers
 
                 List<DynamicInfluxRow> results = await dataMan.QueryRows(query);
 
-                Coordinate coord = new Coordinate(latitude, longitude, (DateTime)selection.dateTime);
+                Coordinate coord = new Coordinate(latitude, longitude, DateTime.Now);
                 bool isSunUp = coord.CelestialInfo.IsSunUp;
 
                 if (results != null)
@@ -218,20 +215,32 @@ namespace MicrowaveMonitor.Analysers
 
                         if (results.Count > 0)
                         {
-                            DynamicInfluxRow best = GetBestRow(results, wind);
+                            DynamicInfluxRow best = results.OrderBy(w => Math.Abs(Convert.ToDouble(w.Fields.First().Value) - wind)).First();
 
-                            TimeVal compareX = new TimeVal { dateTime = (DateTime)best.Timestamp, value = Convert.ToDouble(best.Fields.Values.First()) };
-                            TimeVal compareY = await GetBestTime(devId, weatherId, (double)compareX.value, ((DateTime)compareX.dateTime).TimeOfDay);
+                            TimeWind compareX = new TimeWind { dateTime = (DateTime)best.Timestamp, wind = Convert.ToDouble(best.Fields.Values.First()) };
+                            List<TimeWind> compareYs = await GetBestDays(devId, weatherId, (double)compareX.wind, ((DateTime)compareX.dateTime).TimeOfDay);
 
-                            if (compareY.dateTime != null)
+                            if (compareYs != null)
                             {
-                                double ratioX = await GetTemperaturesRatio(devId, (DateTime)compareX.dateTime, 0);
-                                double ratioY = await GetTemperaturesRatio(devId, (DateTime)compareY.dateTime, WindTempCorrection(compareX.value, compareY.value));
-
-                                if (ratioX > 0 && ratioY > 0)
+                                if (compareYs.Count > 0)
                                 {
-                                    alternateWeatherCoeff += ratioX - ratioY;
-                                    failed = false;
+                                    double ratioX = await GetTemperaturesRatio(devId, (DateTime)compareX.dateTime, 0);
+                                    double ratioYsAvg = 0;
+
+                                    List<double> ratioYs = new List<double>();
+                                    foreach (TimeWind day in compareYs)
+                                    {
+                                        ratioYs.Add(await GetTemperaturesRatio(devId, (DateTime)day.dateTime, WindTempCorrection(compareX.wind, day.wind)));
+                                    }
+
+                                    if (ratioYs.Count > 0)
+                                        ratioYsAvg = ratioYs.Average();
+
+                                    if (ratioX > 0 && ratioYsAvg > 0)
+                                    {
+                                        alternateWeatherCoeff += ratioX - ratioYsAvg;
+                                        failed = false;
+                                    }
                                 }
                             }
                         }
@@ -276,30 +285,46 @@ namespace MicrowaveMonitor.Analysers
                 }
             }
 
-            double ratio = await GetTemperaturesRatio(devId, (DateTime)selection.dateTime, WindTempCorrection(wind, selection.value)) * alternateWeatherCoeff;
-            if (ratio == 0)
+            List<double> ratios = new List<double>();
+            List<double> winds = new List<double>();
+
+            foreach (TimeWind day in selection)
+            {
+                ratios.Add(await GetTemperaturesRatio(devId, (DateTime)day.dateTime, WindTempCorrection(wind, day.wind)));
+                if (day.wind != null)
+                    winds.Add((double)day.wind);
+            }
+
+            double ratioAvg;
+            if (ratios.Count > 0)
+                ratioAvg = ratios.Average() * alternateWeatherCoeff;
+            else
                 return;
+
+            double windAvg;
+            if (winds.Count > 0)
+                windAvg = winds.Average();
+            else
+                windAvg = 0;
 
             lock (coefficientsLocker)
                 if (deviceCoefficients.ContainsKey(devId))
                 {
-                    deviceCoefficients[devId] = ratio;
-                    if (selection.value != null)
-                        deviceWinds[devId] = (double)selection.value;
+                    deviceCoefficients[devId] = ratioAvg;
+                    deviceWinds[devId] = windAvg;
                     lastUpdate[devId] = DateTime.Now;
                 }
                 else
                 {
-                    deviceCoefficients.Add(devId, ratio);
-                    if (selection.value != null)
-                        deviceWinds.Add(devId, (double)selection.value);
+                    deviceCoefficients.Add(devId, ratioAvg);
+                    deviceWinds.Add(devId, windAvg);
                     lastUpdate.Add(devId, DateTime.Now);
                 }
 
-            Console.WriteLine("0" + devId + " " + ratio + " " + selection.value + " " + alternateWeatherCoeff);
+            Console.WriteLine("0" + devId + " " + ratioAvg + " " + windAvg + " " + alternateWeatherCoeff);
         }
 
-        private async Task<TimeVal> GetBestTime(int devId, int weatherId, double wind, TimeSpan searchedTimeOfDay)
+        private async Task<List<TimeWind>> GetBestDays(int devId, int weatherId, double wind, TimeSpan searchedTimeOfDay)
         {
             List<DynamicInfluxRow> days = new List<DynamicInfluxRow>();
 
@@ -318,20 +343,26 @@ namespace MicrowaveMonitor.Analysers
                 if (results is null)
                     continue;
                 else if (results.Count > 0)
-                    days.Add(GetBestRow(results, wind));
+                    days.Add(results.OrderBy(w => Math.Abs(Convert.ToDouble(w.Fields.First().Value) - wind)).First());
             }
 
-            double? selectedWind = null;
-            DateTime? selectedTime = null;
+            List<TimeWind> bestDays = new List<TimeWind>();
 
             if (days.Count > 0)
             {
-                DynamicInfluxRow best = GetBestRow(days, wind);
-                selectedWind = Convert.ToDouble(best.Fields.First().Value);
-                selectedTime = best.Timestamp;
-            }
+                foreach (DynamicInfluxRow row in days.OrderBy(w => Math.Abs(Convert.ToDouble(w.Fields.First().Value) - wind)).Take(AvgDaysCount))
+                {
+                    bestDays.Add(new TimeWind
+                    { 
+                        dateTime = row.Timestamp,
+                        wind = Convert.ToDouble(row.Fields.First().Value)
+                    });
+                }
 
-            return new TimeVal { dateTime = selectedTime, value = selectedWind };
+                return bestDays;
+            }
+            else
+                return null;
         }
 
         private async Task<double> GetTemperaturesRatio(int devId, DateTime searchedTime, double measTempOffset)
@@ -366,28 +397,6 @@ namespace MicrowaveMonitor.Analysers
             }
             
             return 0;
-        }
-
-        private DynamicInfluxRow GetBestRow(List<DynamicInfluxRow> inputResults, double wind)
-        {
-            DynamicInfluxRow best = null;
-            double min = double.MaxValue;
-
-            for (int i = 0; i < inputResults.Count; i++)
-            {
-                if (inputResults[i] != null)
-                {
-                    double diff = Math.Abs(Convert.ToDouble(inputResults[i].Fields.First().Value) - wind);
-
-                    if (diff < min)
-                    {
-                        min = diff;
-                        best = inputResults[i];
-                    }
-                }
-            }
-
-            return best;
         }
 
         private double WindTempCorrection(double? originalWind, double? newWind)
