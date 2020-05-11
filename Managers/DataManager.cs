@@ -31,6 +31,10 @@ namespace MicrowaveMonitor.Managers
 
         public const string defaultValueName = "value";
         public const string meanValueName = "mean_value";
+        public const string defaultWindName = "wind";
+        public const string meanWindName = "mean_wind";
+        public const string defaultCondiName = "condition";
+        public const string medianCondiName = "median_condition";
 
         public Queue<DynamicInfluxRow> PingTransactions = new Queue<DynamicInfluxRow>();
         public Queue<DynamicInfluxRow> SignalTransactions = new Queue<DynamicInfluxRow>();

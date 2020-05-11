@@ -7,9 +7,12 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Threading;
 using SQLite;
 using System.ComponentModel;
+using System.Windows.Forms.Layout;
+using System.Globalization;
 
 namespace MicrowaveMonitor.Managers
 {
@@ -98,6 +101,10 @@ namespace MicrowaveMonitor.Managers
         private readonly AverageAnalyser longAverage;
         private readonly AverageAnalyser shortAverage;
 
+        /*** Temperature weather-based analysers ***/
+        private readonly TemperatureAnalyser OduTemperAna;
+        private readonly TemperatureAnalyser IduTemperAna;
+
         // TEMP TODO CONFIG
         public static readonly TimeSpan longAvgLim = TimeSpan.FromMilliseconds(604800000);
 
@@ -128,6 +135,31 @@ namespace MicrowaveMonitor.Managers
 
             longAverage = new AverageAnalyser(this, dataM, linkM, 1800000, 60000, (int)longAvgLim.TotalMilliseconds, 1800000, LongAvgPercentDiff, AlarmType.AvgLong);
             shortAverage = new AverageAnalyser(this, dataM, linkM, 300000, 60000, 3600000, 300000, ShortAvgPercentDiff, AlarmType.AvgShort);
+
+            TemperatureAnalyser.DefaultWeatherCoeffs coeffsClear = new TemperatureAnalyser.DefaultWeatherCoeffs()
+            {
+                clear = 1,
+                clouds = 0.98f,
+                atmosphere = 0.98f,
+                snow = 0.94f,
+                rain = 0.96f,
+                drizzle = 0.97f,
+                storm = 0.96f
+            };
+
+            TemperatureAnalyser.DefaultWeatherCoeffs coeffsClouds = new TemperatureAnalyser.DefaultWeatherCoeffs()
+            {
+                clear = 1.02f,
+                clouds = 1,
+                atmosphere = 0.99f,
+                snow = 0.95f,
+                rain = 0.98f,
+                drizzle = 0.99f,
+                storm = 0.98f
+            };
+
+            OduTemperAna = new TemperatureAnalyser(this, dataM, Analyser.WatchTempOdu, Measurement.TempODU, 1.2, 0.2, TimeSpan.FromMinutes(45), 20, 0, coeffsClear, coeffsClouds);
+            IduTemperAna = new TemperatureAnalyser(this, dataM, Analyser.WatchTempIduOut, Measurement.TempIDU, 1.2, 0.2, TimeSpan.FromMinutes(45), 20, 0, coeffsClear, coeffsClouds);
         }
 
         private void DataChanged(object sender, PropertyChangedEventArgs e)
@@ -136,21 +168,38 @@ namespace MicrowaveMonitor.Managers
 
             switch (e.PropertyName)
             {
-                case "State":
-                    break;
-                case "Uptime":
-                    break;
-                case "DataPing":
-                    break;
-                case "DataSig":
-                    break;
-                case "DataSigQ":
-                    break;
                 case "DataTempOdu":
+                    if (disp.WeatherTemp is null || disp.WeatherId is null || disp.WeatherWind is null)
+                        break;
+                    double la;
+                    if (!double.TryParse(WeatherCollector.DeviceLatitude[disp.Id], NumberStyles.Float, CultureInfo.InvariantCulture.NumberFormat, out la))
+                        break;
+                    double lo;
+                    if (!double.TryParse(WeatherCollector.DeviceLongitude[disp.Id], NumberStyles.Float, CultureInfo.InvariantCulture.NumberFormat, out lo))
+                        break;
+                    OduTemperAna.Compare(disp.Id, disp.DataTempOdu.Data, (float)disp.WeatherTemp, (int)disp.WeatherId, (double)disp.WeatherWind, la, lo);
                     break;
                 case "DataTempIdu":
+                    if (disp.WeatherTemp is null || disp.WeatherId is null || disp.WeatherWind is null)
+                        break;
+                    double lat;
+                    if (!double.TryParse(WeatherCollector.DeviceLatitude[disp.Id], NumberStyles.Float, CultureInfo.InvariantCulture.NumberFormat, out lat))
+                        break;
+                    double lon;
+                    if (!double.TryParse(WeatherCollector.DeviceLongitude[disp.Id], NumberStyles.Float, CultureInfo.InvariantCulture.NumberFormat, out lon))
+                        break;
+                    IduTemperAna.Compare(disp.Id, disp.DataTempIdu.Data, (float)disp.WeatherTemp, (int)disp.WeatherId, (double)disp.WeatherWind, lat, lon);
                     break;
-                case "DataVoltage":
+                case "WeatherId":
+                    if (disp.WeatherTemp is null || disp.WeatherId is null || disp.WeatherWind is null)
+                        break;
+                    double lati;
+                    if (!double.TryParse(WeatherCollector.DeviceLatitude[disp.Id], NumberStyles.Float, CultureInfo.InvariantCulture.NumberFormat, out lati))
+                        break;
+                    double longi;
+                    if (!double.TryParse(WeatherCollector.DeviceLongitude[disp.Id], NumberStyles.Float, CultureInfo.InvariantCulture.NumberFormat, out longi))
+                        break;
+                    OduTemperAna.WeatherChanged(disp.Id, (int)disp.WeatherId, (double)disp.WeatherWind, lati, longi);
                     break;
                 default:
                     return;
@@ -345,9 +394,9 @@ namespace MicrowaveMonitor.Managers
                     break;
                 case AlarmType.TempCorrel:
                     if (trend)
-                        text = "The temperature is over the safe corresponding ambient temperature.";
+                        text = "Temperature exceeded safe limit based on corresponding ambient temperature.";
                     else
-                        text = "The temperature is below the safe corresponding ambient temperature.";
+                        text = "Temperature dropped below ambient temperature.";
                     break;
                 default:
                     break;
