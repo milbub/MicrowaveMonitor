@@ -25,12 +25,12 @@
  * 
  * To change this template use Tools | Options | Coding | Edit Standard Headers.
  */
+using Lextm.SharpSnmpLib.Security;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Net;
-using Lextm.SharpSnmpLib.Security;
 using System.Threading.Tasks;
 
 namespace Lextm.SharpSnmpLib.Messaging
@@ -328,7 +328,7 @@ namespace Lextm.SharpSnmpLib.Messaging
                 message = data.Item3;
             }
 
-            end:
+        end:
             return result;
         }
 
@@ -390,7 +390,7 @@ namespace Lextm.SharpSnmpLib.Messaging
         [CLSCompliant(false)]
         [Obsolete("Please use other overloading ones.")]
         public static async Task SendInformAsync(int requestId, VersionCode version, IPEndPoint receiver, OctetString community, ObjectIdentifier enterprise, uint timestamp, IList<Variable> variables, IPrivacyProvider privacy, ISnmpMessage report)
-            => await SendInformAsync(requestId, version, receiver, community, OctetString.Empty,  enterprise, timestamp, variables, privacy, report);
+            => await SendInformAsync(requestId, version, receiver, community, OctetString.Empty, enterprise, timestamp, variables, privacy, report);
 
         /// <summary>
         /// Sends INFORM message.
@@ -916,7 +916,7 @@ namespace Lextm.SharpSnmpLib.Messaging
         [Obsolete("Please use other overloading ones.")]
         public static void SendInform(int requestId, VersionCode version, IPEndPoint receiver, OctetString community, ObjectIdentifier enterprise, uint timestamp, IList<Variable> variables, int timeout, IPrivacyProvider privacy, ISnmpMessage report)
             => SendInform(requestId, version, receiver, community, OctetString.Empty, enterprise, timestamp, variables, timeout, privacy, report);
-     
+
         /// <summary>
         /// Sends INFORM message.
         /// </summary>

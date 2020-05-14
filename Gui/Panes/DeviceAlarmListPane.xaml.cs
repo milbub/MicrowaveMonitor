@@ -1,6 +1,6 @@
-﻿using System.Collections.ObjectModel;
+﻿using MicrowaveMonitor.Managers;
+using System.Collections.ObjectModel;
 using System.Windows.Controls;
-using MicrowaveMonitor.Managers;
 
 namespace MicrowaveMonitor.Gui
 {

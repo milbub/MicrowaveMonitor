@@ -1,10 +1,9 @@
-﻿using System;
+﻿using MicrowaveMonitor.Gui;
+using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
 using System.Windows.Media;
-using MicrowaveMonitor.Gui;
 
 public class LogManager : TextWriter
 {

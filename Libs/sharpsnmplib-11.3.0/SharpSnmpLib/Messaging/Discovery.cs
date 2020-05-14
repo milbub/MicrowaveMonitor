@@ -26,11 +26,11 @@
  * To change this template use Tools | Options | Coding | Edit Standard Headers.
  */
 
+using Lextm.SharpSnmpLib.Security;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Net;
-using Lextm.SharpSnmpLib.Security;
 using System.Threading.Tasks;
 
 namespace Lextm.SharpSnmpLib.Messaging

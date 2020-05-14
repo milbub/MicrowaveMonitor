@@ -17,10 +17,10 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+using Lextm.SharpSnmpLib.Security;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using Lextm.SharpSnmpLib.Security;
 
 namespace Lextm.SharpSnmpLib.Messaging
 {
@@ -44,17 +44,17 @@ namespace Lextm.SharpSnmpLib.Messaging
             {
                 throw new ArgumentNullException(nameof(variables));
             }
-            
+
             if (community == null)
             {
                 throw new ArgumentNullException(nameof(community));
             }
-            
+
             if (version == VersionCode.V3)
             {
                 throw new ArgumentException("Only v1 and v2c are supported.", nameof(version));
             }
-            
+
             Version = version;
             Header = Header.Empty;
             Parameters = SecurityParameters.Create(community);
@@ -63,7 +63,7 @@ namespace Lextm.SharpSnmpLib.Messaging
                 variables);
             Scope = new Scope(pdu);
             Privacy = DefaultPrivacyProvider.DefaultPair;
- 
+
             _bytes = this.PackMessage(null).ToBytes();
         }
 
@@ -100,7 +100,7 @@ namespace Lextm.SharpSnmpLib.Messaging
             {
                 throw new ArgumentNullException(nameof(variables));
             }
-            
+
             if (userName == null)
             {
                 throw new ArgumentNullException(nameof(userName));
@@ -110,7 +110,7 @@ namespace Lextm.SharpSnmpLib.Messaging
             {
                 throw new ArgumentNullException(nameof(contextName));
             }
-            
+
             if (version != VersionCode.V3)
             {
                 throw new ArgumentException("Only v3 is supported.", nameof(version));
@@ -120,7 +120,7 @@ namespace Lextm.SharpSnmpLib.Messaging
             {
                 throw new ArgumentNullException(nameof(report));
             }
-            
+
             if (privacy == null)
             {
                 throw new ArgumentNullException(nameof(privacy));
@@ -219,17 +219,17 @@ namespace Lextm.SharpSnmpLib.Messaging
             {
                 throw new ArgumentNullException(nameof(scope));
             }
-            
+
             if (parameters == null)
             {
                 throw new ArgumentNullException(nameof(parameters));
             }
-            
+
             if (header == null)
             {
                 throw new ArgumentNullException(nameof(header));
             }
-            
+
             if (privacy == null)
             {
                 throw new ArgumentNullException(nameof(privacy));
@@ -248,13 +248,13 @@ namespace Lextm.SharpSnmpLib.Messaging
         /// Gets the header.
         /// </summary>
         public Header Header { get; private set; }
-        
+
         /// <summary>
         /// Gets the privacy provider.
         /// </summary>
         /// <value>The privacy provider.</value>
         public IPrivacyProvider Privacy { get; private set; }
-        
+
         /// <summary>
         /// Returns a <see cref="string"/> that represents this <see cref="SetRequestMessage"/>.
         /// </summary>

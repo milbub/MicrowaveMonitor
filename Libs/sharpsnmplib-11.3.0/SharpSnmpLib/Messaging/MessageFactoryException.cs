@@ -40,14 +40,14 @@ namespace Lextm.SharpSnmpLib.Messaging
     public sealed class MessageFactoryException : SnmpException
     {
         private byte[] _bytes;
-        
+
         /// <summary>
         /// Creates a <see cref="MessageFactoryException"/>.
         /// </summary>
         public MessageFactoryException()
         {
         }
-        
+
         /// <summary>
         /// Creates a <see cref="MessageFactoryException"/> instance with a specific <see cref="String"/>.
         /// </summary>
@@ -55,7 +55,7 @@ namespace Lextm.SharpSnmpLib.Messaging
         public MessageFactoryException(string message) : base(message)
         {
         }
-        
+
         /// <summary>
         /// Creates a <see cref="MessageFactoryException"/> instance with a specific <see cref="String"/> and an <see cref="Exception"/>.
         /// </summary>
@@ -71,9 +71,9 @@ namespace Lextm.SharpSnmpLib.Messaging
         /// </summary>        
         public byte[] GetBytes()
         {
-            return _bytes; 
+            return _bytes;
         }
-        
+
         /// <summary>
         /// Sets the bytes.
         /// </summary>
@@ -82,7 +82,7 @@ namespace Lextm.SharpSnmpLib.Messaging
         {
             _bytes = value;
         }
-        
+
         /// <summary>
         /// Returns a <see cref="String"/> that represents this <see cref="MessageFactoryException"/>.
         /// </summary>

@@ -46,10 +46,10 @@ namespace Lextm.SharpSnmpLib.Messaging
         /// <summary>
         /// Creates a <see cref="TimeoutException"/> instance.
         /// </summary>
-        public TimeoutException() 
+        public TimeoutException()
         {
         }
-        
+
         /// <summary>
         /// Creates a <see cref="TimeoutException"/> instance with a specific <see cref="string"/>.
         /// </summary>
@@ -57,7 +57,7 @@ namespace Lextm.SharpSnmpLib.Messaging
         public TimeoutException(string message) : base(message)
         {
         }
-        
+
         /// <summary>
         /// Creates a <see cref="TimeoutException"/> instance with a specific <see cref="string"/> and an <see cref="Exception"/> instance.
         /// </summary>
@@ -75,7 +75,7 @@ namespace Lextm.SharpSnmpLib.Messaging
         {
             return string.Format(CultureInfo.InvariantCulture, "TimeoutException: timeout: {0}", Timeout.ToString(CultureInfo.InvariantCulture));
         }
-        
+
         /// <summary>
         /// Creates a <see cref="TimeoutException"/>.
         /// </summary>
@@ -88,7 +88,7 @@ namespace Lextm.SharpSnmpLib.Messaging
             {
                 throw new ArgumentNullException(nameof(agent));
             }
-            
+
             var ex = new TimeoutException($"Request timed out after {timeout}-ms.") { Agent = agent, Timeout = timeout };
             return ex;
         }

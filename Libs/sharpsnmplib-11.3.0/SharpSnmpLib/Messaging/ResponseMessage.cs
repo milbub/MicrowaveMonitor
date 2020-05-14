@@ -25,10 +25,10 @@
  * 
  * To change this template use Tools | Options | Coding | Edit Standard Headers.
  */
+using Lextm.SharpSnmpLib.Security;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using Lextm.SharpSnmpLib.Security;
 
 namespace Lextm.SharpSnmpLib.Messaging
 {
@@ -129,7 +129,7 @@ namespace Lextm.SharpSnmpLib.Messaging
         /// Gets the header.
         /// </summary>
         public Header Header { get; private set; }
-        
+
         /// <summary>
         /// Gets the privacy provider.
         /// </summary>

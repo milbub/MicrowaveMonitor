@@ -271,7 +271,7 @@ namespace Lextm.SharpSnmpLib.Security
             get { return 32; }
         }
 
-#region IPrivacyProvider Members
+        #region IPrivacyProvider Members
 
         /// <summary>
         /// Decrypts the specified data.
@@ -304,7 +304,7 @@ namespace Lextm.SharpSnmpLib.Security
             try
             {
                 // decode encrypted packet
-                var decrypted = Decrypt(bytes, pkey, parameters.PrivacyParameters.GetRaw());            
+                var decrypted = Decrypt(bytes, pkey, parameters.PrivacyParameters.GetRaw());
                 var result = DataFactory.CreateSnmpData(decrypted);
                 if (result.TypeCode != SnmpType.Sequence)
                 {

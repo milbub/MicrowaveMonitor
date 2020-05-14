@@ -26,11 +26,11 @@
  * To change this template use Tools | Options | Coding | Edit Standard Headers.
  */
 
+using Lextm.SharpSnmpLib.Security;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using Lextm.SharpSnmpLib.Security;
 
 namespace Lextm.SharpSnmpLib.Messaging
 {
@@ -51,12 +51,12 @@ namespace Lextm.SharpSnmpLib.Messaging
             {
                 throw new ArgumentNullException(nameof(bytes));
             }
-            
+
             if (registry == null)
             {
                 throw new ArgumentNullException(nameof(registry));
             }
-            
+
             return ParseMessages(ByteTool.Convert(bytes), registry);
         }
 
@@ -95,7 +95,7 @@ namespace Lextm.SharpSnmpLib.Messaging
             {
                 throw new ArgumentNullException(nameof(buffer));
             }
-            
+
             if (registry == null)
             {
                 throw new ArgumentNullException(nameof(registry));
@@ -112,7 +112,7 @@ namespace Lextm.SharpSnmpLib.Messaging
                     {
                         continue;
                     }
-                    
+
                     result.Add(message);
                 }
             }

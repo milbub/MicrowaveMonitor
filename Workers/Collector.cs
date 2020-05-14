@@ -1,10 +1,7 @@
 ﻿using MicrowaveMonitor.Database;
 using MicrowaveMonitor.Managers;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Collections.ObjectModel;
 using System.Net;
+using System.Threading;
 
 namespace MicrowaveMonitor.Workers
 {
@@ -25,7 +22,7 @@ namespace MicrowaveMonitor.Workers
         protected Thread tCollector;
 
         protected readonly AlarmManager alarmMan;
-        
+
         protected readonly bool checkTresh;
         protected readonly float trUp;
         protected readonly float trDown;
@@ -96,12 +93,13 @@ namespace MicrowaveMonitor.Workers
                     {
                         alarmMan.TreshSettTrigger(DeviceId, MeasureType, value, false);
                         treshActive = false;
-                    } else if (trUp > value && treshOver)
+                    }
+                    else if (trUp > value && treshOver)
                     {
                         alarmMan.TreshSettTrigger(DeviceId, MeasureType, value, false);
                         treshActive = false;
                     }
-                    
+
                     return;
                 }
 

@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Configuration;
-using MicrowaveMonitor.Database;
-using Vibrant.InfluxDB.Client.Rows;
+﻿using MicrowaveMonitor.Database;
 using OpenWeatherApi;
+using System;
+using System.Collections.Generic;
+using System.Configuration;
+using System.Linq;
+using System.Threading;
+using Vibrant.InfluxDB.Client.Rows;
 
 namespace MicrowaveMonitor.Workers
 {
@@ -70,11 +68,11 @@ namespace MicrowaveMonitor.Workers
                     DateTime startCycle = DateTime.Now;
                     TimeSpan refresh = TimeSpan.FromMilliseconds(MinRefresh);
                     TimeSpan apiWaitTime = TimeSpan.FromMilliseconds(ApiWaitTime);
-            
+
                     int[] keys;
                     lock (DeviceLatitude)
                         keys = DeviceLatitude.Keys.ToArray();
-            
+
                     foreach (int devId in keys)
                     {
                         DateTime startIter = DateTime.Now;
@@ -83,12 +81,12 @@ namespace MicrowaveMonitor.Workers
                         {
                             string lat;
                             string longi;
-            
+
                             lock (DeviceLatitude)
                                 lat = DeviceLatitude[devId];
                             lock (DeviceLongitude)
                                 longi = DeviceLongitude[devId];
-            
+
                             query = weatherApi.Query(lat, longi);
                         }
                         catch (System.Net.WebException)
@@ -106,9 +104,9 @@ namespace MicrowaveMonitor.Workers
                             Thread.Sleep(refresh);
                             continue;
                         }
-            
+
                         float temperature = (float)query.Main.Temperature;
-            
+
                         try
                         {
                             displays[devId].WeatherIcon = query.Weathers[0].Icon;
@@ -122,17 +120,15 @@ namespace MicrowaveMonitor.Workers
                             Thread.Sleep(refresh);
                             continue;
                         }
-            
-                        DynamicInfluxRow rowTemp = new DynamicInfluxRow();
-                        rowTemp.Timestamp = startIter.ToUniversalTime();
+
+                        DynamicInfluxRow rowTemp = new DynamicInfluxRow { Timestamp = startIter.ToUniversalTime() };
                         rowTemp.Fields.Add("value", temperature);
                         rowTemp.Tags.Add("device", devId.ToString());
-            
+
                         lock (airTempDatabase)
                             airTempDatabase.Enqueue(rowTemp);
 
-                        DynamicInfluxRow rowOther = new DynamicInfluxRow();
-                        rowOther.Timestamp = startIter.ToUniversalTime();
+                        DynamicInfluxRow rowOther = new DynamicInfluxRow { Timestamp = startIter.ToUniversalTime() };
                         rowOther.Fields.Add("condition", query.Weathers[0].ID);
                         rowOther.Fields.Add("wind", query.Wind.SpeedMetersPerSecond);
                         rowOther.Tags.Add("device", devId.ToString());
@@ -144,12 +140,13 @@ namespace MicrowaveMonitor.Workers
                         if (diffIter < apiWaitTime)
                             Thread.Sleep(apiWaitTime - diffIter);
                     }
-            
+
                     TimeSpan diffCycle = DateTime.Now - startCycle;
                     if (diffCycle < refresh)
                         Thread.Sleep(refresh - diffCycle);
                 }
-            }){ IsBackground = true, Name = "weatherCollector" };
+            })
+            { IsBackground = true, Name = "weatherCollector" };
             tCollector.Start();
         }
     }

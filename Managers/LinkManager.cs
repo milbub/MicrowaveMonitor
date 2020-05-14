@@ -1,9 +1,8 @@
 ﻿using MicrowaveMonitor.Database;
+using SQLite;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
-using System.Linq;
-using SQLite;
 using System.IO;
 
 namespace MicrowaveMonitor.Managers

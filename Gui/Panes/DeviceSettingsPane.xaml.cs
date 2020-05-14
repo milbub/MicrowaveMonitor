@@ -1,8 +1,6 @@
-﻿using System.Globalization;
+﻿using MicrowaveMonitor.Database;
+using System.Globalization;
 using System.Windows.Controls;
-using MicrowaveMonitor.Database;
-using System.Windows.Data;
-using System;
 
 namespace MicrowaveMonitor.Gui
 {
@@ -90,7 +88,7 @@ namespace MicrowaveMonitor.Gui
             enaRx_A.IsChecked = device.IsEnabledRx;
             refRx_A.Text = (device.RefreshRx / 1000).ToString(CultureInfo.InvariantCulture);
             boxRx_A.Text = device.OidRxDataRate_s;
-            
+
             return true;
         }
 

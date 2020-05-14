@@ -25,9 +25,9 @@
  * 
  * To change this template use Tools | Options | Coding | Edit Standard Headers.
  */
+using Lextm.SharpSnmpLib.Security;
 using System;
 using System.Globalization;
-using Lextm.SharpSnmpLib.Security;
 
 namespace Lextm.SharpSnmpLib.Messaging
 {

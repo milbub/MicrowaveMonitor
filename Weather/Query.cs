@@ -1,44 +1,39 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Configuration;
-using Newtonsoft.Json.Linq;
 
 namespace OpenWeatherApi
 {
     public class Query
     {
-        private bool validRequest;
-        private Coord coord;
-        private List<Weather> weathers = new List<Weather>();
-        private string baseStr;
-        private Main main;
-        private double visibility;
-        private Wind wind;
-        private Rain rain;
-        private Snow snow;
-        private Clouds clouds;
-        private Sys sys;
-        private int id;
-        private string name;
-        private int cod;
+        private readonly bool validRequest;
+        private readonly Coord coord;
+        private readonly List<Weather> weathers = new List<Weather>();
+        private readonly string baseStr;
+        private readonly Main main;
+        private readonly double visibility;
+        private readonly Wind wind;
+        private readonly Rain rain;
+        private readonly Snow snow;
+        private readonly Clouds clouds;
+        private readonly Sys sys;
+        private readonly int id;
+        private readonly string name;
+        private readonly int cod;
 
-        public bool ValidRequest { get { return validRequest; } }
-        public Coord Coord { get { return coord; } }
-        public List<Weather> Weathers { get { return weathers; } }
-        public string Base { get { return baseStr; } }
-        public Main Main { get { return main; } }
-        public double Visibility { get { return visibility; } }
-        public Wind Wind { get { return wind; } }
-        public Rain Rain { get { return rain; } }
-        public Snow Snow { get { return snow; } }
-        public Clouds Clouds { get { return clouds; } }
-        public Sys Sys { get { return sys; } }
-        public int ID { get { return id; } }
-        public string Name { get { return name; } }
-        public int Cod { get { return cod; } }
+        public bool ValidRequest { get => validRequest; }
+        public Coord Coord { get => coord; }
+        public List<Weather> Weathers { get => weathers; }
+        public string Base { get => baseStr; }
+        public Main Main { get => main; }
+        public double Visibility { get => visibility; }
+        public Wind Wind { get => wind; }
+        public Rain Rain { get => rain; }
+        public Snow Snow { get => snow; }
+        public Clouds Clouds { get => clouds; }
+        public Sys Sys { get => sys; }
+        public int ID { get => id; }
+        public string Name { get => name; }
+        public int Cod { get => cod; }
 
         public Query(string apiKey, string latitude, string longitude)
         {
@@ -64,7 +59,8 @@ namespace OpenWeatherApi
                 id = int.Parse(jsonData.SelectToken("id").ToString());
                 name = jsonData.SelectToken("name").ToString();
                 cod = int.Parse(jsonData.SelectToken("cod").ToString());
-            } else
+            }
+            else
             {
                 validRequest = false;
             }

@@ -59,7 +59,8 @@ namespace MicrowaveMonitor.Workers
                         if (diffTime.TotalMilliseconds < RefreshInterval)
                             Thread.Sleep((int)(RefreshInterval - diffTime.TotalMilliseconds));
                     }
-                }){ IsBackground = true, Name = "Ping_" + MeasureType + "_device:" + DeviceId };
+                })
+                { IsBackground = true, Name = "Ping_" + MeasureType + "_device:" + DeviceId };
                 tCollector.Start();
             }
         }
@@ -68,8 +69,7 @@ namespace MicrowaveMonitor.Workers
         {
             Display.DataPing = new Record<double>(DateTime.Now, result.RoundtripTime);
             TresholdCheck(result.RoundtripTime);
-            DynamicInfluxRow row = new DynamicInfluxRow();
-            row.Timestamp = DateTime.Now.ToUniversalTime();
+            DynamicInfluxRow row = new DynamicInfluxRow { Timestamp = DateTime.Now.ToUniversalTime() };
             row.Fields.Add("value", result.RoundtripTime);
             row.Tags.Add("device", DeviceId.ToString());
 

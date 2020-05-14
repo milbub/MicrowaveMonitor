@@ -17,9 +17,9 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+using Lextm.SharpSnmpLib.Security;
 using System;
 using System.Globalization;
-using Lextm.SharpSnmpLib.Security;
 
 namespace Lextm.SharpSnmpLib.Messaging
 {
@@ -29,7 +29,7 @@ namespace Lextm.SharpSnmpLib.Messaging
     public sealed class MalformedMessage : ISnmpMessage
     {
         private static readonly Scope DefaultScope = new Scope(new MalformedPdu());
-        
+
         /// <summary>
         /// Initializes a new instance of the <see cref="MalformedMessage"/> class.
         /// </summary>

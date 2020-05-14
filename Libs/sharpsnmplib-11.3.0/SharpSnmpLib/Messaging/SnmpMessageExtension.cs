@@ -126,7 +126,7 @@ namespace Lextm.SharpSnmpLib.Messaging
             return message.Parameters.UserName;
         }
 
-#region sync methods
+        #region sync methods
 
         /// <summary>
         /// Sends an <see cref="ISnmpMessage"/>.
@@ -337,7 +337,7 @@ namespace Lextm.SharpSnmpLib.Messaging
 
             // Whatever you change, try to keep the Send and the Receive close to each other.
             udpSocket.SendTo(bytes, receiver);
-            
+
             DateTime sent = DateTime.Now;
             TimeSpan limit = TimeSpan.FromMilliseconds(timeout);
             int count = 0;
@@ -376,9 +376,9 @@ namespace Lextm.SharpSnmpLib.Messaging
             throw OperationException.Create(string.Format(CultureInfo.InvariantCulture, "wrong response type: {0}", responseCode), receiver.Address);
         }
 
-#endregion
+        #endregion
 
-#region async methods
+        #region async methods
 #if NET452
         /// <summary>
         /// Ends a pending asynchronous read.
@@ -393,16 +393,16 @@ namespace Lextm.SharpSnmpLib.Messaging
             {
                 throw new ArgumentNullException(nameof(asyncResult));
             }
-            
+
             if (request == null)
             {
                 throw new ArgumentNullException(nameof(request));
             }
-            
+
             var ar = (SnmpMessageAsyncResult)asyncResult;
             var s = ar.WorkSocket;
             var count = s.EndReceive(ar.Inner);
-            
+
             // Passing 'count' is not necessary because ParseMessages should ignore it, but it offer extra safety (and would avoid an issue if parsing >1 response).
             var response = MessageFactory.ParseMessages(ar.GetBuffer(), 0, count, ar.Users)[0];
             var responseCode = response.TypeCode();
@@ -742,7 +742,7 @@ namespace Lextm.SharpSnmpLib.Messaging
             throw OperationException.Create(string.Format(CultureInfo.InvariantCulture, "wrong response type: {0}", responseCode), receiver.Address);
         }
 
-#endregion
+        #endregion
 
         /// <summary>
         /// Tests if running on Mono.

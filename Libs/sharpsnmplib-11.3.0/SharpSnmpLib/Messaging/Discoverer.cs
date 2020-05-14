@@ -17,12 +17,12 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+using Lextm.SharpSnmpLib.Security;
 using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
-using Lextm.SharpSnmpLib.Security;
 using System.Threading.Tasks;
 
 namespace Lextm.SharpSnmpLib.Messaging
@@ -65,7 +65,7 @@ namespace Lextm.SharpSnmpLib.Messaging
             {
                 throw new ArgumentNullException(nameof(broadcastAddress));
             }
-            
+
             if (version != VersionCode.V3 && community == null)
             {
                 throw new ArgumentNullException(nameof(community));
@@ -217,7 +217,7 @@ namespace Lextm.SharpSnmpLib.Messaging
                     var buffer = new byte[_bufferSize];
                     EndPoint remote = new IPEndPoint(IPAddress.Any, 0);
                     var count = socket.ReceiveFrom(buffer, ref remote);
-                    Task.Factory.StartNew(()=> HandleMessage(buffer, count, (IPEndPoint)remote));
+                    Task.Factory.StartNew(() => HandleMessage(buffer, count, (IPEndPoint)remote));
                 }
                 catch (SocketException ex)
                 {
@@ -384,7 +384,7 @@ namespace Lextm.SharpSnmpLib.Messaging
                         count = await socket.ReceiveMessageFromAsync(awaitable);
                     }
 
-                    await Task.Factory.StartNew(() => HandleMessage(reply, count, (IPEndPoint) args.RemoteEndPoint))
+                    await Task.Factory.StartNew(() => HandleMessage(reply, count, (IPEndPoint)args.RemoteEndPoint))
                         .ConfigureAwait(false);
                 }
                 catch (SocketException ex)

@@ -36,7 +36,7 @@ namespace Lextm.SharpSnmpLib.Security
         /// <param name="users">The users.</param>
 // ReSharper disable ParameterTypeCanBeEnumerable.Local
         public UserRegistry(User[] users)
-// ReSharper restore ParameterTypeCanBeEnumerable.Local
+        // ReSharper restore ParameterTypeCanBeEnumerable.Local
         {
             if (users == null)
             {
@@ -55,7 +55,7 @@ namespace Lextm.SharpSnmpLib.Security
         public UserRegistry() : this(null)
         {
         }
-        
+
         /// <summary>
         /// Returns the user count.
         /// </summary>
@@ -84,7 +84,7 @@ namespace Lextm.SharpSnmpLib.Security
             {
                 return this;
             }
-            
+
             if (_users.ContainsKey(user.Name))
             {
                 _users.Remove(user.Name);

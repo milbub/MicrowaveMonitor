@@ -25,10 +25,10 @@
  * 
  * To change this template use Tools | Options | Coding | Edit Standard Headers.
  */
+using Lextm.SharpSnmpLib.Security;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using Lextm.SharpSnmpLib.Security;
 
 namespace Lextm.SharpSnmpLib.Messaging
 {
@@ -54,12 +54,12 @@ namespace Lextm.SharpSnmpLib.Messaging
             {
                 throw new ArgumentNullException(nameof(variables));
             }
-            
+
             if (community == null)
             {
                 throw new ArgumentNullException(nameof(community));
             }
-            
+
             if (version != VersionCode.V2)
             {
                 throw new ArgumentException("Only v2c are supported.", nameof(version));
@@ -204,7 +204,7 @@ namespace Lextm.SharpSnmpLib.Messaging
         /// <param name="privacy">The privacy provider.</param>
         /// <param name="maxMessageSize">Size of the max message.</param>
         /// <param name="report">The report.</param>
-        public GetBulkRequestMessage(VersionCode version, int messageId, int requestId, OctetString userName, int nonRepeaters, int maxRepetitions, IList<Variable> variables, IPrivacyProvider privacy, int maxMessageSize, ISnmpMessage report) 
+        public GetBulkRequestMessage(VersionCode version, int messageId, int requestId, OctetString userName, int nonRepeaters, int maxRepetitions, IList<Variable> variables, IPrivacyProvider privacy, int maxMessageSize, ISnmpMessage report)
             : this(version, messageId, requestId, userName, OctetString.Empty, nonRepeaters, maxRepetitions, variables, privacy, maxMessageSize, report)
         {
         }
@@ -215,17 +215,17 @@ namespace Lextm.SharpSnmpLib.Messaging
             {
                 throw new ArgumentNullException(nameof(scope));
             }
-            
+
             if (parameters == null)
             {
                 throw new ArgumentNullException(nameof(parameters));
             }
-            
+
             if (header == null)
             {
                 throw new ArgumentNullException(nameof(header));
             }
-            
+
             if (privacy == null)
             {
                 throw new ArgumentNullException(nameof(privacy));
@@ -244,7 +244,7 @@ namespace Lextm.SharpSnmpLib.Messaging
         /// Gets the header.
         /// </summary>
         public Header Header { get; private set; }
-        
+
         /// <summary>
         /// Gets the privacy provider.
         /// </summary>

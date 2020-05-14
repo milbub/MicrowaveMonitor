@@ -17,10 +17,10 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+using Lextm.SharpSnmpLib.Security;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using Lextm.SharpSnmpLib.Security;
 
 namespace Lextm.SharpSnmpLib.Messaging
 {
@@ -30,7 +30,7 @@ namespace Lextm.SharpSnmpLib.Messaging
     public sealed class GetRequestMessage : ISnmpMessage
     {
         private readonly byte[] _bytes;
-        
+
         /// <summary>
         /// Creates a <see cref="GetRequestMessage"/> with all contents.
         /// </summary>
@@ -44,17 +44,17 @@ namespace Lextm.SharpSnmpLib.Messaging
             {
                 throw new ArgumentNullException(nameof(variables));
             }
-            
+
             if (community == null)
             {
                 throw new ArgumentNullException(nameof(community));
             }
-            
+
             if (version == VersionCode.V3)
             {
                 throw new ArgumentException("Only v1 and v2c are supported.", nameof(version));
             }
-            
+
             Version = version;
             Header = Header.Empty;
             Parameters = SecurityParameters.Create(community);
@@ -174,17 +174,17 @@ namespace Lextm.SharpSnmpLib.Messaging
             {
                 throw new ArgumentNullException(nameof(scope));
             }
-            
+
             if (parameters == null)
             {
                 throw new ArgumentNullException(nameof(parameters));
             }
-            
+
             if (header == null)
             {
                 throw new ArgumentNullException(nameof(header));
             }
-            
+
             if (privacy == null)
             {
                 throw new ArgumentNullException(nameof(privacy));
@@ -203,7 +203,7 @@ namespace Lextm.SharpSnmpLib.Messaging
         /// Gets the header.
         /// </summary>
         public Header Header { get; private set; }
-        
+
         /// <summary>
         /// Gets the privacy provider.
         /// </summary>

@@ -1,11 +1,10 @@
 ﻿using Lextm.SharpSnmpLib;
 using MicrowaveMonitor.Database;
+using MicrowaveMonitor.Managers;
 using System;
-using System.Threading;
 using System.Collections.Generic;
 using System.Linq;
 using Vibrant.InfluxDB.Client.Rows;
-using MicrowaveMonitor.Managers;
 
 namespace MicrowaveMonitor.Workers
 {
@@ -26,8 +25,7 @@ namespace MicrowaveMonitor.Workers
             double resval = Math.Abs(double.Parse(result.First().Data.ToString()));
             TresholdCheck(resval);
             Display.DataSig = new Record<double>(resultTime, resval);
-            DynamicInfluxRow row = new DynamicInfluxRow();
-            row.Timestamp = resultTime.ToUniversalTime();
+            DynamicInfluxRow row = new DynamicInfluxRow { Timestamp = resultTime.ToUniversalTime() };
             row.Fields.Add("value", resval);
             row.Tags.Add("device", DeviceId.ToString());
 

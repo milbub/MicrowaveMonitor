@@ -51,7 +51,7 @@ namespace Lextm.SharpSnmpLib.Messaging
         /// </summary>
         /// <value>The scope.</value>
         Scope Scope { get; }
-        
+
         /// <summary>
         /// Converts to the bytes.
         /// </summary>

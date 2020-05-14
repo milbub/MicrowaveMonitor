@@ -1,14 +1,12 @@
-﻿using MicrowaveMonitor.Managers;
+﻿using Itenso.TimePeriod;
+using MicrowaveMonitor.Database;
+using MicrowaveMonitor.Managers;
 using System;
 using System.Collections.Generic;
-using System.Threading;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using MicrowaveMonitor.Database;
-using Vibrant.InfluxDB.Client.Rows;
+using System.Threading;
 using Vibrant.InfluxDB.Client;
-using Itenso.TimePeriod;
+using Vibrant.InfluxDB.Client.Rows;
 
 namespace MicrowaveMonitor.Analysers
 {
@@ -85,7 +83,7 @@ namespace MicrowaveMonitor.Analysers
 
         protected override void Start()
         {
-            tQueryer = new Thread(LongAverage) { IsBackground = true, Name = "analyserAverage_queryer" } ;
+            tQueryer = new Thread(LongAverage) { IsBackground = true, Name = "analyserAverage_queryer" };
             tComparator = new Thread(ShortAverage) { IsBackground = true, Name = "analyserAverage_comparator" };
             tQueryer.Start();
             tComparator.Start();
@@ -128,7 +126,7 @@ namespace MicrowaveMonitor.Analysers
                 TimePeriodCollection linkCorrectTimes = new TimePeriodCollection(gapCalculator.GetGaps(linkDownsPair.Value, limit));
 
                 Link link = linkMan.GetLink(linkDownsPair.Key);
-                
+
                 if (link.DeviceBaseId > 0)
                     devices.Add(link.DeviceBaseId, linkCorrectTimes);
                 if (link.DeviceEndId > 0)
@@ -174,7 +172,7 @@ namespace MicrowaveMonitor.Analysers
         private async void GetLongAvg(string meas, Dictionary<int, bool> watchInfo, Dictionary<int, double> data, Dictionary<int, TimePeriodCollection> affected)
         {
             string except = String.Empty;
-            
+
             foreach (int devId in affected.Keys)
             {
                 except += $@"AND ""device""!='{devId}' ";
@@ -272,7 +270,7 @@ namespace MicrowaveMonitor.Analysers
         private async void GetShortAvg(string meas, Dictionary<int, int> ids, Measurement measure, double percentage, Dictionary<int, double> data, Dictionary<int, bool> indication, Dictionary<int, TimePeriodCollection> affected, Dictionary<int, bool> watchInfo)
         {
             string except = String.Empty;
-            
+
             foreach (int devId in affected.Keys)
             {
                 except += $@"AND ""device""!='{devId}' ";
@@ -362,7 +360,7 @@ namespace MicrowaveMonitor.Analysers
             }
         }
 
-        private void TrySettle (int devId, Dictionary<int, int> ids, double value, Dictionary<int, bool> indication, bool stopping)
+        private void TrySettle(int devId, Dictionary<int, int> ids, double value, Dictionary<int, bool> indication, bool stopping)
         {
             lock (idsLocker)
                 if (ids.ContainsKey(devId))

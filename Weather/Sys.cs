@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json.Linq;
+using System;
 
 namespace OpenWeatherApi
 {
@@ -18,21 +14,21 @@ namespace OpenWeatherApi
 
         public Sys(JToken sysData)
         {
-            if(sysData.SelectToken("type") != null)
+            if (sysData.SelectToken("type") != null)
                 Type = int.Parse(sysData.SelectToken("type").ToString());
-            if(sysData.SelectToken("id") != null)
+            if (sysData.SelectToken("id") != null)
                 ID = int.Parse(sysData.SelectToken("id").ToString());
-            if(sysData.SelectToken("message") != null)
+            if (sysData.SelectToken("message") != null)
                 Message = double.Parse(sysData.SelectToken("message").ToString());
             if (sysData.SelectToken("country") != null)
                 Country = sysData.SelectToken("country").ToString();
             if (sysData.SelectToken("sunrise") != null)
-                Sunrise = convertUnixToDateTime(double.Parse(sysData.SelectToken("sunrise").ToString()));
+                Sunrise = ConvertUnixToDateTime(double.Parse(sysData.SelectToken("sunrise").ToString()));
             if (sysData.SelectToken("sunset") != null)
-                Sunset = convertUnixToDateTime(double.Parse(sysData.SelectToken("sunset").ToString()));
+                Sunset = ConvertUnixToDateTime(double.Parse(sysData.SelectToken("sunset").ToString()));
         }
 
-        private DateTime convertUnixToDateTime(double unixTime)
+        private DateTime ConvertUnixToDateTime(double unixTime)
         {
             DateTime dt = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
             return dt.AddSeconds(unixTime).ToLocalTime();

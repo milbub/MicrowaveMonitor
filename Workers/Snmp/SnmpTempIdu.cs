@@ -4,8 +4,6 @@ using MicrowaveMonitor.Managers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Vibrant.InfluxDB.Client.Rows;
 
 namespace MicrowaveMonitor.Workers
@@ -30,8 +28,7 @@ namespace MicrowaveMonitor.Workers
             double resval = double.Parse(result.First().Data.ToString());
             TresholdCheck(resval);
             Display.DataTempIdu = new Record<double>(resultTime, resval);
-            DynamicInfluxRow row = new DynamicInfluxRow();
-            row.Timestamp = resultTime.ToUniversalTime();
+            DynamicInfluxRow row = new DynamicInfluxRow { Timestamp = resultTime.ToUniversalTime() };
             row.Fields.Add("value", resval);
             row.Tags.Add("device", DeviceId.ToString());
 

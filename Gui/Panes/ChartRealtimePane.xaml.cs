@@ -1,15 +1,10 @@
-﻿using System;
+﻿using MicrowaveMonitor.Database;
+using MicrowaveMonitor.Managers;
+using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using LiveCharts;
-using LiveCharts.Configurations;
-using MicrowaveMonitor.Database;
-using MicrowaveMonitor.Managers;
-using Vibrant.InfluxDB.Client;
 using Vibrant.InfluxDB.Client.Rows;
 
 namespace MicrowaveMonitor.Gui
@@ -23,7 +18,7 @@ namespace MicrowaveMonitor.Gui
         public string AxisUnit { get; set; }
         public string Measurement { get; set; }
         public int DeviceId
-        { 
+        {
             get => _deviceId;
             set
             {

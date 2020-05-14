@@ -4,9 +4,9 @@ using MicrowaveMonitor.Database;
 using MicrowaveMonitor.Managers;
 using System;
 using System.Collections.Generic;
-using System.Threading;
-using System.Net.Sockets;
 using System.Net;
+using System.Net.Sockets;
+using System.Threading;
 
 namespace MicrowaveMonitor.Workers
 {
@@ -109,7 +109,8 @@ namespace MicrowaveMonitor.Workers
                         catch (ThreadAbortException)
                         { }
                     }
-                }){ IsBackground = true, Name = "SNMP_" + MeasureType + "_device:" + DeviceId, Priority = ThreadPriority.Lowest };
+                })
+                { IsBackground = true, Name = "SNMP_" + MeasureType + "_device:" + DeviceId, Priority = ThreadPriority.Lowest };
                 tCollector.Start();
             }
         }

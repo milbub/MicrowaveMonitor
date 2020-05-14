@@ -17,10 +17,10 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+using Lextm.SharpSnmpLib.Security;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using Lextm.SharpSnmpLib.Security;
 
 namespace Lextm.SharpSnmpLib.Messaging
 {
@@ -47,22 +47,22 @@ namespace Lextm.SharpSnmpLib.Messaging
             {
                 throw new ArgumentNullException(nameof(variables));
             }
-            
+
             if (enterprise == null)
             {
                 throw new ArgumentNullException(nameof(enterprise));
             }
-            
+
             if (community == null)
             {
                 throw new ArgumentNullException(nameof(community));
             }
-            
+
             if (version != VersionCode.V2)
             {
                 throw new ArgumentException("Only v2c are supported.", nameof(version));
             }
-            
+
             Version = version;
             Enterprise = enterprise;
             TimeStamp = time;
@@ -100,12 +100,12 @@ namespace Lextm.SharpSnmpLib.Messaging
             {
                 throw new ArgumentNullException(nameof(userName));
             }
-            
+
             if (variables == null)
             {
                 throw new ArgumentNullException(nameof(variables));
             }
-            
+
             if (version != VersionCode.V3)
             {
                 throw new ArgumentException("Only v3 is supported.", nameof(version));
@@ -120,7 +120,7 @@ namespace Lextm.SharpSnmpLib.Messaging
             {
                 throw new ArgumentNullException(nameof(engineId));
             }
-            
+
             if (privacy == null)
             {
                 throw new ArgumentNullException(nameof(privacy));
@@ -135,8 +135,8 @@ namespace Lextm.SharpSnmpLib.Messaging
             var authenticationProvider = Privacy.AuthenticationProvider;
             Parameters = new SecurityParameters(
                 engineId,
-                new Integer32(engineBoots), 
-                new Integer32(engineTime), 
+                new Integer32(engineBoots),
+                new Integer32(engineTime),
                 userName,
                 authenticationProvider.CleanDigest,
                 Privacy.Salt);
@@ -145,7 +145,7 @@ namespace Lextm.SharpSnmpLib.Messaging
                 enterprise,
                 time,
                 variables);
-            
+
             // TODO: may expose engine ID in the future.
             Scope = new Scope(OctetString.Empty, OctetString.Empty, pdu);
             Privacy.ComputeHash(Version, Header, Parameters, Scope);
@@ -158,17 +158,17 @@ namespace Lextm.SharpSnmpLib.Messaging
             {
                 throw new ArgumentNullException(nameof(scope));
             }
-            
+
             if (parameters == null)
             {
                 throw new ArgumentNullException(nameof(parameters));
             }
-            
+
             if (header == null)
             {
                 throw new ArgumentNullException(nameof(header));
             }
-            
+
             if (privacy == null)
             {
                 throw new ArgumentNullException(nameof(privacy));
@@ -184,14 +184,14 @@ namespace Lextm.SharpSnmpLib.Messaging
             TimeStamp = pdu.TimeStamp;
             _bytes = this.PackMessage(length).ToBytes();
         }
-        
+
         #region ISnmpMessage Members
 
         /// <summary>
         /// Gets the header.
         /// </summary>
         public Header Header { get; private set; }
-        
+
         /// <summary>
         /// Gets the privacy provider.
         /// </summary>

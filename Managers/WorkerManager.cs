@@ -1,10 +1,7 @@
 ﻿using MicrowaveMonitor.Database;
 using MicrowaveMonitor.Workers;
-using System;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 using SQLite;
+using System.Collections.Generic;
 
 namespace MicrowaveMonitor.Managers
 {
@@ -42,7 +39,7 @@ namespace MicrowaveMonitor.Managers
         public void InitDevice(Device device)
         {
             DeviceToFront.Add(device.Id, new DeviceDisplay() { Id = device.Id });
-            
+
             if (!device.IsPaused)
             {
                 StartDevice(device);

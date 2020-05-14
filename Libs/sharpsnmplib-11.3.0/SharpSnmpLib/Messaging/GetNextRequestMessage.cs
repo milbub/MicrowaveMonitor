@@ -26,10 +26,10 @@
  * To change this template use Tools | Options | Coding | Edit Standard Headers.
  */
 
+using Lextm.SharpSnmpLib.Security;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using Lextm.SharpSnmpLib.Security;
 
 namespace Lextm.SharpSnmpLib.Messaging
 {
@@ -104,7 +104,7 @@ namespace Lextm.SharpSnmpLib.Messaging
         /// <param name="privacy">The privacy provider.</param>
         /// <param name="maxMessageSize">Size of the max message.</param>
         /// <param name="report">The report.</param>
-        public GetNextRequestMessage(VersionCode version, int messageId, int requestId, OctetString userName,OctetString contextName, IList<Variable> variables, IPrivacyProvider privacy, int maxMessageSize, ISnmpMessage report)
+        public GetNextRequestMessage(VersionCode version, int messageId, int requestId, OctetString userName, OctetString contextName, IList<Variable> variables, IPrivacyProvider privacy, int maxMessageSize, ISnmpMessage report)
         {
             if (variables == null)
             {
@@ -174,7 +174,7 @@ namespace Lextm.SharpSnmpLib.Messaging
         /// <param name="report">The report.</param>
         public GetNextRequestMessage(VersionCode version, int messageId, int requestId, OctetString userName, IList<Variable> variables, IPrivacyProvider privacy, int maxMessageSize, ISnmpMessage report)
             : this(version, messageId, requestId, userName, OctetString.Empty, variables, privacy, maxMessageSize, report)
-        {}
+        { }
 
         internal GetNextRequestMessage(VersionCode version, Header header, SecurityParameters parameters, Scope scope, IPrivacyProvider privacy, byte[] length)
         {

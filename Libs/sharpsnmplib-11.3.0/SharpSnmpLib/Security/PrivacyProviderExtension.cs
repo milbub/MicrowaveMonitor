@@ -44,7 +44,7 @@ namespace Lextm.SharpSnmpLib.Security
             {
                 throw new ArgumentNullException(nameof(privacy));
             }
-                
+
             Levels flags;
             if (privacy.AuthenticationProvider == DefaultAuthenticationProvider.Instance)
             {

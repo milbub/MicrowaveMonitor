@@ -1,19 +1,14 @@
-﻿using MicrowaveMonitor.Database;
-using MicrowaveMonitor.Analysers;
-using MicrowaveMonitor.Workers;
+﻿using MicrowaveMonitor.Analysers;
+using MicrowaveMonitor.Database;
 using MicrowaveMonitor.Properties;
+using MicrowaveMonitor.Workers;
+using SQLite;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Net;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Windows.Threading;
-using SQLite;
 using System.ComponentModel;
-using System.Windows.Forms.Layout;
 using System.Globalization;
+using System.Linq;
 
 namespace MicrowaveMonitor.Managers
 {
@@ -56,7 +51,7 @@ namespace MicrowaveMonitor.Managers
 
         private bool _isRunning;
         public bool IsRunning
-        { 
+        {
             get => _isRunning;
             set
             {
@@ -65,12 +60,13 @@ namespace MicrowaveMonitor.Managers
                 {
                     longAverage.IsRunning = true;
                     shortAverage.IsRunning = true;
-                } else
+                }
+                else
                 {
                     longAverage.IsRunning = false;
                     shortAverage.IsRunning = false;
                 }
-            } 
+            }
         }
 
         private readonly LinkManager linkM;
@@ -111,7 +107,7 @@ namespace MicrowaveMonitor.Managers
             linkM = linkManager;
             dataM = dataManager;
             displays = deviceDisplays;
-            
+
             LoadAlarmsOnStart();
 
             longAverage = new AverageAnalyser(this, dataM, linkM, AlarmType.AvgLong);
@@ -328,7 +324,7 @@ namespace MicrowaveMonitor.Managers
 
             Alarm alarm = linkM.GetAlarm(alarmId);
             string linkName = linkM.LinkNames[alarm.LinkId];
-            
+
             AlarmDisplay display;
             ObservableCollection<AlarmDisplay> destination;
 
@@ -451,7 +447,7 @@ namespace MicrowaveMonitor.Managers
                 alarm.IsActive = false;
                 linkM.UpdateAlarm(alarm);
             }
-            
+
             DateTime limit = DateTime.Now - Properties.Settings.Default.a_longavg_longLimit;
 
             foreach (Alarm alarm in alarms)
@@ -459,7 +455,7 @@ namespace MicrowaveMonitor.Managers
                 if (alarm.IsShowed)
                 {
                     AlarmDisplay disp = MakeAlarmDisplay(alarm);
-                    
+
                     if (alarm.IsAck)
                         lock (alarmsSettledAck)
                             alarmsSettledAck.Add(disp);
@@ -537,7 +533,7 @@ namespace MicrowaveMonitor.Managers
 
             deviceAlarms.Clear();
             viewedDevice = devId;
-            
+
             lock (deviceAlarmsLocker)
                 foreach (Alarm alarm in alarms)
                 {
@@ -573,14 +569,14 @@ namespace MicrowaveMonitor.Managers
                 Analyser.WatchVoltage.Add(device.Id, device.IsWatchedVoltage);
                 Analyser.WatchPing.Add(device.Id, device.IsWatchedPing);
             }
-            
+
             displays[device.Id].PropertyChanged += DataChanged;
         }
 
         public void UnregisterListener(Device device)
         {
             displays[device.Id].PropertyChanged -= DataChanged;
-            
+
             lock (Analyser.watchLocker)
             {
                 Analyser.WatchSignal.Remove(device.Id);
@@ -627,7 +623,7 @@ namespace MicrowaveMonitor.Managers
         {
             while (DeviceUpTrigger(id, true))
                 DeviceUpTrigger(id, true);
-            
+
             foreach (Measurement measure in (Measurement[])Enum.GetValues(typeof(Measurement)))
             {
                 TreshSettTrigger(id, measure, 0, true);
@@ -676,7 +672,7 @@ namespace MicrowaveMonitor.Managers
             }
 
             AlarmDisplay display;
-            
+
             lock (now)
             {
                 display = now.First(v => (v.Id == id));
@@ -739,7 +735,7 @@ namespace MicrowaveMonitor.Managers
                     downTriggers.Add(deviceId, 1);
                     int id = GenerateAlarmDispatched(deviceId, AlarmRank.Down, Measurement.All, AlarmType.Down, false, 0);
                     downIds.Add(deviceId, id);
-                    
+
                     AddToDownTimes(linkM.GetAlarm(id), true);
                 }
             }
@@ -788,7 +784,7 @@ namespace MicrowaveMonitor.Managers
             lock (tresholdIds)
             {
                 if (!tresholdIds.ContainsKey(deviceId))
-                    tresholdIds.Add(deviceId, new AlarmIdAssign() {});
+                    tresholdIds.Add(deviceId, new AlarmIdAssign() { });
 
                 AlarmIdAssign ids = tresholdIds[deviceId];
 

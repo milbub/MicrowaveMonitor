@@ -1,9 +1,9 @@
-﻿using MicrowaveMonitor.Managers;
+﻿using MicrowaveMonitor.Database;
 using MicrowaveMonitor.Gui;
-using MicrowaveMonitor.Database;
+using MicrowaveMonitor.Managers;
 using System;
-using System.Windows;
 using System.Collections.Generic;
+using System.Windows;
 
 namespace MicrowaveMonitor
 {
@@ -14,13 +14,13 @@ namespace MicrowaveMonitor
         private readonly WorkerManager workerManager;
         private readonly AlarmManager alarmManager;
         private readonly LogManager logManager;
-        
+
         private readonly Dictionary<int, DeviceDisplay> deviceDisplays;
 
         public App()
         {
             logManager = new LogManager(Console.Out);
-            
+
             Console.SetOut(logManager);
             Console.WriteLine("0Application started.");
 

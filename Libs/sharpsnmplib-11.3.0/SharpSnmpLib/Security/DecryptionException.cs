@@ -35,8 +35,8 @@ namespace Lextm.SharpSnmpLib.Security
         /// <summary>
         /// Initializes a new instance of the <see cref="DecryptionException"/> class.
         /// </summary>
-        public DecryptionException() 
-        { 
+        public DecryptionException()
+        {
         }
 
         /// <summary>
@@ -46,7 +46,7 @@ namespace Lextm.SharpSnmpLib.Security
         public DecryptionException(string message) : base(message)
         {
         }
-        
+
         /// <summary>
         /// Creates a <see cref="DecryptionException"/> instance with a specific <see cref="String"/> and an <see cref="Exception"/>.
         /// </summary>
@@ -62,9 +62,9 @@ namespace Lextm.SharpSnmpLib.Security
         /// </summary>        
         public byte[] GetBytes()
         {
-            return _bytes; 
+            return _bytes;
         }
-        
+
         /// <summary>
         /// Sets the bytes.
         /// </summary>
@@ -73,7 +73,7 @@ namespace Lextm.SharpSnmpLib.Security
         {
             _bytes = value;
         }
-        
+
         /// <summary>
         /// Returns a <see cref="String"/> that represents this <see cref="DecryptionException"/>.
         /// </summary>

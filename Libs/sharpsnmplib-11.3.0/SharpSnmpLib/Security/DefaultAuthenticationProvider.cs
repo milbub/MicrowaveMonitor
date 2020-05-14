@@ -119,12 +119,12 @@ namespace Lextm.SharpSnmpLib.Security
             {
                 throw new ArgumentNullException(nameof(password));
             }
-            
+
             if (engineId == null)
             {
                 throw new ArgumentNullException(nameof(engineId));
             }
-            
+
             // IMPORTANT: this function is not used.
             return new byte[0];
         }

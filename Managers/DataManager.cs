@@ -1,11 +1,10 @@
-﻿using System;
+﻿using MicrowaveMonitor.Workers;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using MicrowaveMonitor.Workers;
 using Vibrant.InfluxDB.Client;
 using Vibrant.InfluxDB.Client.Rows;
 
@@ -50,8 +49,8 @@ namespace MicrowaveMonitor.Managers
         public static string serverAddress = ConfigurationManager.ConnectionStrings["InfluxServer"].ConnectionString;
         public static string databaseName = ConfigurationManager.ConnectionStrings["InfluxData"].ConnectionString;
         public static string writeRetention = ConfigurationManager.ConnectionStrings["InfluxWriteRetention"].ConnectionString;
-        private static string user = ConfigurationManager.ConnectionStrings["InfluxUser"].ConnectionString;
-        private static string pass = ConfigurationManager.ConnectionStrings["InfluxPass"].ConnectionString;
+        private static readonly string user = ConfigurationManager.ConnectionStrings["InfluxUser"].ConnectionString;
+        private static readonly string pass = ConfigurationManager.ConnectionStrings["InfluxPass"].ConnectionString;
         public static string retentionWeek = ConfigurationManager.AppSettings.Get("InfluxRetentionWeek");
         public static string retentionMonth = ConfigurationManager.AppSettings.Get("InfluxRetentionMonth");
         public static string retentionYear = ConfigurationManager.AppSettings.Get("InfluxRetentionYear");
@@ -131,7 +130,7 @@ namespace MicrowaveMonitor.Managers
                             Console.WriteLine(e.Message);
                     }
                 }
-            }){ Name = "influxWriter", Priority = ThreadPriority.AboveNormal };
+            }) { Name = "influxWriter", Priority = ThreadPriority.AboveNormal };
             writer.Start();
         }
 

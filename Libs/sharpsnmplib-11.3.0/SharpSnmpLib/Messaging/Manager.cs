@@ -111,7 +111,7 @@ namespace Lextm.SharpSnmpLib.Messaging
         {
             return GetSingle(IPAddress.Parse(address), community, variable);
         }
-        
+
         /// <summary>
         /// Gets a variable bind.
         /// </summary>
@@ -135,7 +135,7 @@ namespace Lextm.SharpSnmpLib.Messaging
         {
             return Messenger.Get(_version, endpoint, new OctetString(community), variables, _timeout);
         }
-        
+
         /// <summary>
         /// Gets a list of variable binds.
         /// </summary>
@@ -147,7 +147,7 @@ namespace Lextm.SharpSnmpLib.Messaging
         {
             return Get(IPAddress.Parse(address), community, variables);
         }
-        
+
         /// <summary>
         /// Gets a list of variable binds.
         /// </summary>
@@ -172,7 +172,7 @@ namespace Lextm.SharpSnmpLib.Messaging
             var variables = new List<Variable> { variable };
             return Messenger.Set(_version, endpoint, new OctetString(community), variables, _timeout)[0];
         }
-        
+
         /// <summary>
         /// Sets a variable bind.
         /// </summary>
@@ -184,7 +184,7 @@ namespace Lextm.SharpSnmpLib.Messaging
         {
             return SetSingle(new IPEndPoint(address, DefaultPort), community, variable);
         }
-        
+
         /// <summary>
         /// Sets a variable bind.
         /// </summary>
@@ -208,7 +208,7 @@ namespace Lextm.SharpSnmpLib.Messaging
         {
             return Messenger.Set(_version, endpoint, new OctetString(community), variables, _timeout);
         }
-        
+
         /// <summary>
         /// Sets a list of variable binds.
         /// </summary>
@@ -220,7 +220,7 @@ namespace Lextm.SharpSnmpLib.Messaging
         {
             return Set(IPAddress.Parse(address), community, variables);
         }
-        
+
         /// <summary>
         /// Sets a list of variable binds.
         /// </summary>
@@ -264,7 +264,7 @@ namespace Lextm.SharpSnmpLib.Messaging
         {
             return GetTable(new IPEndPoint(address, DefaultPort), community, table);
         }
-        
+
         /// <summary>
         /// Gets a table of variables.
         /// </summary>
@@ -285,7 +285,7 @@ namespace Lextm.SharpSnmpLib.Messaging
         public override string ToString()
         {
             return string.Format(CultureInfo.InvariantCulture, "SNMP manager: timeout: {0}; version: {1}", Timeout.ToString(CultureInfo.InvariantCulture), DefaultVersion);
-        }         
+        }
     }
 }
 #pragma warning restore 612,618

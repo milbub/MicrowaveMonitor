@@ -1,11 +1,11 @@
-﻿using MicrowaveMonitor.Database;
+﻿using CoordinateSharp;
+using MicrowaveMonitor.Database;
 using MicrowaveMonitor.Managers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Vibrant.InfluxDB.Client.Rows;
-using CoordinateSharp;
 
 namespace MicrowaveMonitor.Analysers
 {
@@ -120,7 +120,7 @@ namespace MicrowaveMonitor.Analysers
                         return;
                 }
                 else
-                    return; 
+                    return;
 
             if (DateTime.Now - last > MaxAge)
             {
@@ -262,12 +262,12 @@ namespace MicrowaveMonitor.Analysers
                 if (failed)
                 {
                     DefaultWeatherCoeffs coeffs;
-                    
+
                     if (weatherId == 800)
                         coeffs = CoeffsClear;
                     else
                         coeffs = CoeffsClouds;
-                    
+
                     switch (originalWeather)
                     {
                         case 800:
@@ -366,7 +366,7 @@ namespace MicrowaveMonitor.Analysers
                 foreach (DynamicInfluxRow row in days.OrderBy(w => Math.Abs(Convert.ToDouble(w.Fields.First().Value) - wind)).Take(AvgDaysCount))
                 {
                     bestDays.Add(new TimeWind
-                    { 
+                    {
                         dateTime = row.Timestamp,
                         wind = Convert.ToDouble(row.Fields.First().Value)
                     });
@@ -381,7 +381,7 @@ namespace MicrowaveMonitor.Analysers
         private async Task<double> GetTemperaturesRatio(int devId, DateTime searchedTime, double measTempOffset)
         {
             string query = $@"SELECT mean(""{DataManager.meanValueName}"") AS ""{DataManager.meanValueName}"" FROM ""{DataManager.databaseName}"".""{DataManager.retentionMonth}"".""{DataManager.measTmpA}"" WHERE time > {DataManager.TimeToInfluxTime(searchedTime - TimeSpan.FromMinutes(5))} AND time < {DataManager.TimeToInfluxTime(searchedTime + TimeSpan.FromMinutes(5))} AND ""device""='{devId}' FILL(linear)";
-            
+
             DynamicInfluxRow row = await dataMan.QueryValue(query);
 
             if (row.Fields.Count > 0)
@@ -403,12 +403,12 @@ namespace MicrowaveMonitor.Analysers
                     {
                         if (x - measTempOffset > valueAir)
                             x -= measTempOffset;
-                        
+
                         return x / valueAir;
                     }
                 }
             }
-            
+
             return 0;
         }
 
@@ -416,7 +416,7 @@ namespace MicrowaveMonitor.Analysers
         {
             if (originalWind != null || newWind != null)
                 return (double)(originalWind - newWind) * DegreesPerWindMeter;
-            else 
+            else
                 return 0;
         }
     }

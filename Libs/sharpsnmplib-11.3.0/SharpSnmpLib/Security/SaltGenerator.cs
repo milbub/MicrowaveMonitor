@@ -29,7 +29,7 @@ namespace Lextm.SharpSnmpLib.Security
     {
         private readonly object _root = new object();
         private long _salt = Convert.ToInt64(new Random().Next(1, int.MaxValue));
-        
+
         internal void SetSalt(long salt)
         {
             _salt = salt;

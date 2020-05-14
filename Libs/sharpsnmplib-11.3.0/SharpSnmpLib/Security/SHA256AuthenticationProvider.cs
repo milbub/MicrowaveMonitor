@@ -18,7 +18,6 @@
 // DEALINGS IN THE SOFTWARE.
 #if !NETFX_CORE
 using System;
-using System.Globalization;
 using System.IO;
 
 using System.Security.Cryptography;
@@ -32,7 +31,7 @@ namespace Lextm.SharpSnmpLib.Security
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "SHA", Justification = "definition")]
     public sealed class SHA256AuthenticationProvider : IAuthenticationProvider
     {
-        private const int Sha256KeyCacheCapacity = 100; 
+        private const int Sha256KeyCacheCapacity = 100;
         private static readonly CryptoKeyCache Sha256KeyCache = new CryptoKeyCache(Sha256KeyCacheCapacity);
         private static readonly Object Sha256KeyCacheLock = new object();
 
@@ -48,7 +47,7 @@ namespace Lextm.SharpSnmpLib.Security
             {
                 throw new ArgumentNullException(nameof(phrase));
             }
-            
+
             _password = phrase.GetRaw();
         }
 
@@ -84,7 +83,7 @@ namespace Lextm.SharpSnmpLib.Security
                 {
                     return cachedKey;
                 }
-                 
+
                 byte[] keyToCache = _PasswordToKey(password, engineId);
                 //Value not in cache compute and cache the value
                 Sha256KeyCache.AddValueToCache(password, engineId, keyToCache);
@@ -93,7 +92,7 @@ namespace Lextm.SharpSnmpLib.Security
         }
 
         private byte[] _PasswordToKey(byte[] password, byte[] engineId)
-        {          
+        {
             using (SHA256 sha = SHA256.Create())
             {
                 var passwordIndex = 0;
@@ -109,7 +108,7 @@ namespace Lextm.SharpSnmpLib.Security
                         // to the beginning of the password as necessary.
                         buf[i] = password[passwordIndex++ % password.Length];
                     }
-                    
+
                     Buffer.BlockCopy(buf, 0, sourceBuffer, count, buf.Length);
                     count += 64;
                 }
@@ -151,17 +150,17 @@ namespace Lextm.SharpSnmpLib.Security
             {
                 throw new ArgumentNullException(nameof(header));
             }
-            
+
             if (parameters == null)
             {
                 throw new ArgumentNullException(nameof(parameters));
             }
-            
+
             if (data == null)
             {
                 throw new ArgumentNullException(nameof(data));
             }
-            
+
             if (privacy == null)
             {
                 throw new ArgumentNullException(nameof(privacy));

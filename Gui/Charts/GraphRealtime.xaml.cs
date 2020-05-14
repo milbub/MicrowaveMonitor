@@ -1,13 +1,12 @@
-﻿using System;
+﻿using LiveCharts;
+using LiveCharts.Configurations;
+using MicrowaveMonitor.Database;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using LiveCharts;
-using LiveCharts.Configurations;
-using MicrowaveMonitor.Database;
 
 namespace MicrowaveMonitor.Gui
 {
@@ -52,7 +51,7 @@ namespace MicrowaveMonitor.Gui
             SetAxisLimits(record.TimeMark, span);
 
             if (ChartValues.Count > (resolution + 2))
-                    ChartValues.RemoveAt(0);
+                ChartValues.RemoveAt(0);
         }
 
         public void ReadMany(List<Record<double>> records, int resolution, int span, int device)

@@ -1,21 +1,17 @@
 ﻿using MicrowaveMonitor.Database;
-using MicrowaveMonitor.Gui;
-using MicrowaveMonitor.Properties;
 using MicrowaveMonitor.Managers;
 using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Media;
 using System.Windows.Controls;
-using System.Windows.Media.Imaging;
-using System.Drawing.Imaging;
-using System.IO;
-using System.Drawing;
 using System.Windows.Input;
+using System.Windows.Media.Imaging;
 
 namespace MicrowaveMonitor.Gui
 {
@@ -439,7 +435,7 @@ namespace MicrowaveMonitor.Gui
             workerM.RestartDevice(basedev);
 
             byte hopCount = 0;
-          
+
             if (boxLinkName.Text != string.Empty)
             {
                 linkM.LinkNames[viewedLink.Id] = boxLinkName.Text;
@@ -467,7 +463,7 @@ namespace MicrowaveMonitor.Gui
         {
             LinksList.SelectionChanged -= LinkChoosed;
             LinksList.Items.Clear();
-            
+
             foreach (string name in linkM.LinkNames.Values)
             {
                 if (name.IndexOf(searchBox.Text, StringComparison.CurrentCultureIgnoreCase) >= 0)

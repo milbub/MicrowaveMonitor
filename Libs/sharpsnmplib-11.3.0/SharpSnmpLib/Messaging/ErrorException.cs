@@ -49,7 +49,7 @@ namespace Lextm.SharpSnmpLib.Messaging
         public ErrorException()
         {
         }
-        
+
         /// <summary>
         /// Creates a <see cref="ErrorException"/> instance with a specific <see cref="string"/>.
         /// </summary>
@@ -57,7 +57,7 @@ namespace Lextm.SharpSnmpLib.Messaging
         public ErrorException(string message) : base(message)
         {
         }
-        
+
         /// <summary>
         /// Creates a <see cref="ErrorException"/> instance with a specific <see cref="string"/> and an <see cref="Exception"/>.
         /// </summary>
@@ -86,14 +86,14 @@ namespace Lextm.SharpSnmpLib.Messaging
                     index == 0 ? null : pdu.Variables[index - 1].Id);
             }
         }
-         
+
         /// <summary>
         /// Creates a <see cref="ErrorException"/>.
         /// </summary>
         /// <param name="message">Message.</param>
         /// <param name="agent">Agent address.</param>
         /// <param name="body">Error message body.</param>
-            /// <returns></returns>
+        /// <returns></returns>
         public static ErrorException Create(string message, IPAddress agent, ISnmpMessage body)
         {
             var ex = new ErrorException(message) { Agent = agent, Body = body };

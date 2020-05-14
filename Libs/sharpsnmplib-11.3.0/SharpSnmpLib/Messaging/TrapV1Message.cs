@@ -26,11 +26,11 @@
  * To change this template use Tools | Options | Coding | Edit Standard Headers.
  */
 
+using Lextm.SharpSnmpLib.Security;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Net;
-using Lextm.SharpSnmpLib.Security;
 
 namespace Lextm.SharpSnmpLib.Messaging
 {
@@ -61,27 +61,27 @@ namespace Lextm.SharpSnmpLib.Messaging
             {
                 throw new ArgumentNullException(nameof(variables));
             }
-            
+
             if (enterprise == null)
             {
                 throw new ArgumentNullException(nameof(enterprise));
             }
-            
+
             if (community == null)
             {
                 throw new ArgumentNullException(nameof(community));
             }
-            
+
             if (agent == null)
             {
                 throw new ArgumentNullException(nameof(agent));
             }
-            
+
             if (version != VersionCode.V1)
             {
                 throw new ArgumentException($"TRAP v1 is not supported in this SNMP version: {version}", nameof(version));
             }
-            
+
             Version = version;
             AgentAddress = agent;
             Community = community;
@@ -99,7 +99,7 @@ namespace Lextm.SharpSnmpLib.Messaging
             _pdu = pdu;
             Parameters = SecurityParameters.Create(Community);
         }
-        
+
         /// <summary>
         /// Creates a <see cref="TrapV1Message"/> instance with a message body.
         /// </summary>
@@ -110,21 +110,21 @@ namespace Lextm.SharpSnmpLib.Messaging
             {
                 throw new ArgumentNullException(nameof(body));
             }
-            
+
             if (body.Length != 3)
             {
                 throw new ArgumentException("Invalid message body.", nameof(body));
             }
-            
+
             Community = (OctetString)body[1];
             Version = (VersionCode)((Integer32)body[0]).ToInt32();
-            
+
             // IMPORTANT: comment this check out if you need to support 
             if (Version != VersionCode.V1)
             {
                 throw new ArgumentException($"TRAP v1 is not supported in this SNMP version: {Version}.", nameof(body));
             }
-                        
+
             _pdu = (ISnmpPdu)body[2];
             if (_pdu.TypeCode != SnmpType.TrapV1Pdu)
             {
@@ -180,11 +180,11 @@ namespace Lextm.SharpSnmpLib.Messaging
         /// <summary>
         /// Gets the header.
         /// </summary>
-        public Header Header 
-        { 
+        public Header Header
+        {
             get { throw new NotSupportedException(); }
         }
-        
+
         /// <summary>
         /// Gets the privacy provider.
         /// </summary>
@@ -218,7 +218,7 @@ namespace Lextm.SharpSnmpLib.Messaging
         {
             get { return _scope ?? (_scope = new Scope(_pdu)); }
         }
-        
+
         /// <summary>
         /// Returns a <see cref="string"/> that represents the current <see cref="TrapV1Message"/>.
         /// </summary>
@@ -252,7 +252,7 @@ namespace Lextm.SharpSnmpLib.Messaging
             {
                 throw new ArgumentNullException(nameof(data));
             }
-            
+
             var collection = new List<ISnmpData>(1 + data.Length) { new Integer32((int)version) };
             collection.AddRange(data);
             return new Sequence(collection);
