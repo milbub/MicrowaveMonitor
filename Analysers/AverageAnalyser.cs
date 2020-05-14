@@ -380,7 +380,7 @@ namespace MicrowaveMonitor.Analysers
                     if (!indication.ContainsKey(devId))
                         indication.Add(devId, true);
 
-                id = alarmMan.GenerateAlarmDispatched(devId, AlarmRank.Warning, measure, alarmType, trend, value);
+                id = alarmMan.GenerateAlarm(devId, AlarmRank.Warning, measure, alarmType, trend, value);
                 return id;
             }
             else
@@ -389,7 +389,7 @@ namespace MicrowaveMonitor.Analysers
                     if (indication.ContainsKey(devId))
                         return 0;
 
-                id = alarmMan.GenerateAlarmDispatched(devId, AlarmRank.Warning, measure, alarmType, trend, value);
+                id = alarmMan.GenerateAlarm(devId, AlarmRank.Warning, measure, alarmType, trend, value);
                 return id;
             }
         }
@@ -401,7 +401,7 @@ namespace MicrowaveMonitor.Analysers
                     if (indication.ContainsKey(devId))
                         indication.Remove(devId);
 
-            alarmMan.SettleAlarmDispatched(alarmId, value, stopping);
+            alarmMan.SettleAlarm(alarmId, value, stopping);
         }
 
         public void DeviceStopped(int devId)

@@ -135,7 +135,7 @@ namespace MicrowaveMonitor.Analysers
                 lock (idsLocker)
                     if (!ids.ContainsKey(devId))
                     {
-                        int alarm = alarmMan.GenerateAlarmDispatched(devId, AlarmRank.Critical, Measure, AlarmType.TempCorrel, true, temperature);
+                        int alarm = alarmMan.GenerateAlarm(devId, AlarmRank.Critical, Measure, AlarmType.TempCorrel, true, temperature);
                         ids.Add(devId, alarm);
                         if (DebugActive)
                             Console.WriteLine("7TA trigger " + measureName + " dev: " + devId + " temper: " + temperature + " tresh: " + upperLimit);
@@ -146,7 +146,7 @@ namespace MicrowaveMonitor.Analysers
                 lock (idsLocker)
                     if (!ids.ContainsKey(devId))
                     {
-                        int alarm = alarmMan.GenerateAlarmDispatched(devId, AlarmRank.Critical, Measure, AlarmType.TempCorrel, false, temperature);
+                        int alarm = alarmMan.GenerateAlarm(devId, AlarmRank.Critical, Measure, AlarmType.TempCorrel, false, temperature);
                         ids.Add(devId, alarm);
                         if (DebugActive)
                             Console.WriteLine("7TA trigger " + measureName + " dev: " + devId + " temper: " + temperature + " tresh: " + upperLimit);
@@ -157,7 +157,7 @@ namespace MicrowaveMonitor.Analysers
                 lock (idsLocker)
                     if (ids.ContainsKey(devId))
                     {
-                        alarmMan.SettleAlarmDispatched(ids[devId], temperature, false);
+                        alarmMan.SettleAlarm(ids[devId], temperature, false);
                         ids.Remove(devId);
                         if (DebugActive)
                             Console.WriteLine("7TA settle " + measureName + " dev: " + devId + " temper: " + temperature + " tresh: " + upperLimit);
