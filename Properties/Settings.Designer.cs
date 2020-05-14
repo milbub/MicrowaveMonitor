@@ -22,5 +22,473 @@ namespace MicrowaveMonitor.Properties {
                 return defaultInstance;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("00:30:00")]
+        public global::System.TimeSpan a_longavg_baseRefresh {
+            get {
+                return ((global::System.TimeSpan)(this["a_longavg_baseRefresh"]));
+            }
+            set {
+                this["a_longavg_baseRefresh"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("00:01:00")]
+        public global::System.TimeSpan a_longavg_compareRefresh {
+            get {
+                return ((global::System.TimeSpan)(this["a_longavg_compareRefresh"]));
+            }
+            set {
+                this["a_longavg_compareRefresh"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("7.00:00:00")]
+        public global::System.TimeSpan a_longavg_longLimit {
+            get {
+                return ((global::System.TimeSpan)(this["a_longavg_longLimit"]));
+            }
+            set {
+                this["a_longavg_longLimit"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("00:30:00")]
+        public global::System.TimeSpan a_longavg_shortLimit {
+            get {
+                return ((global::System.TimeSpan)(this["a_longavg_shortLimit"]));
+            }
+            set {
+                this["a_longavg_shortLimit"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0.1")]
+        public float a_longavg_percDiff_sig {
+            get {
+                return ((float)(this["a_longavg_percDiff_sig"]));
+            }
+            set {
+                this["a_longavg_percDiff_sig"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0.1")]
+        public float a_longavg_percDiff_sigQ {
+            get {
+                return ((float)(this["a_longavg_percDiff_sigQ"]));
+            }
+            set {
+                this["a_longavg_percDiff_sigQ"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0.11")]
+        public float a_longavg_percDiff_TmpI {
+            get {
+                return ((float)(this["a_longavg_percDiff_TmpI"]));
+            }
+            set {
+                this["a_longavg_percDiff_TmpI"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0.031")]
+        public float a_longavg_percDiff_volt {
+            get {
+                return ((float)(this["a_longavg_percDiff_volt"]));
+            }
+            set {
+                this["a_longavg_percDiff_volt"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("2.5")]
+        public float a_longavg_percDiff_late {
+            get {
+                return ((float)(this["a_longavg_percDiff_late"]));
+            }
+            set {
+                this["a_longavg_percDiff_late"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("00:05:00")]
+        public global::System.TimeSpan a_shortavg_baseRefresh {
+            get {
+                return ((global::System.TimeSpan)(this["a_shortavg_baseRefresh"]));
+            }
+            set {
+                this["a_shortavg_baseRefresh"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("00:01:00")]
+        public global::System.TimeSpan a_shortavg_compareRefresh {
+            get {
+                return ((global::System.TimeSpan)(this["a_shortavg_compareRefresh"]));
+            }
+            set {
+                this["a_shortavg_compareRefresh"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("01:00:00")]
+        public global::System.TimeSpan a_shortavg_longLimit {
+            get {
+                return ((global::System.TimeSpan)(this["a_shortavg_longLimit"]));
+            }
+            set {
+                this["a_shortavg_longLimit"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("00:05:00")]
+        public global::System.TimeSpan a_shortavg_shortLimit {
+            get {
+                return ((global::System.TimeSpan)(this["a_shortavg_shortLimit"]));
+            }
+            set {
+                this["a_shortavg_shortLimit"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0.15")]
+        public float a_shortavg_percDiff_sig {
+            get {
+                return ((float)(this["a_shortavg_percDiff_sig"]));
+            }
+            set {
+                this["a_shortavg_percDiff_sig"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0.15")]
+        public float a_shortavg_percDiff_sigQ {
+            get {
+                return ((float)(this["a_shortavg_percDiff_sigQ"]));
+            }
+            set {
+                this["a_shortavg_percDiff_sigQ"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0.11")]
+        public float a_shortavg_percDiff_TmpI {
+            get {
+                return ((float)(this["a_shortavg_percDiff_TmpI"]));
+            }
+            set {
+                this["a_shortavg_percDiff_TmpI"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0.031")]
+        public float a_shortavg_percDiff_volt {
+            get {
+                return ((float)(this["a_shortavg_percDiff_volt"]));
+            }
+            set {
+                this["a_shortavg_percDiff_volt"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("3")]
+        public float a_shortavg_percDiff_late {
+            get {
+                return ((float)(this["a_shortavg_percDiff_late"]));
+            }
+            set {
+                this["a_shortavg_percDiff_late"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1.5")]
+        public float a_temper_percDiff {
+            get {
+                return ((float)(this["a_temper_percDiff"]));
+            }
+            set {
+                this["a_temper_percDiff"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0.2")]
+        public float a_temper_degreesWind {
+            get {
+                return ((float)(this["a_temper_degreesWind"]));
+            }
+            set {
+                this["a_temper_degreesWind"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("00:45:00")]
+        public global::System.TimeSpan a_temper_maxAge {
+            get {
+                return ((global::System.TimeSpan)(this["a_temper_maxAge"]));
+            }
+            set {
+                this["a_temper_maxAge"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("25")]
+        public int a_temper_backDays {
+            get {
+                return ((int)(this["a_temper_backDays"]));
+            }
+            set {
+                this["a_temper_backDays"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
+        public int a_temper_skippedDays {
+            get {
+                return ((int)(this["a_temper_skippedDays"]));
+            }
+            set {
+                this["a_temper_skippedDays"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
+        public float a_temper_coeff_clear_clear {
+            get {
+                return ((float)(this["a_temper_coeff_clear_clear"]));
+            }
+            set {
+                this["a_temper_coeff_clear_clear"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0.98")]
+        public float a_temper_coeff_clear_cloud {
+            get {
+                return ((float)(this["a_temper_coeff_clear_cloud"]));
+            }
+            set {
+                this["a_temper_coeff_clear_cloud"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0.98")]
+        public float a_temper_coeff_clear_atmos {
+            get {
+                return ((float)(this["a_temper_coeff_clear_atmos"]));
+            }
+            set {
+                this["a_temper_coeff_clear_atmos"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0.94")]
+        public float a_temper_coeff_clear_snow {
+            get {
+                return ((float)(this["a_temper_coeff_clear_snow"]));
+            }
+            set {
+                this["a_temper_coeff_clear_snow"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0.96")]
+        public float a_temper_coeff_clear_rain {
+            get {
+                return ((float)(this["a_temper_coeff_clear_rain"]));
+            }
+            set {
+                this["a_temper_coeff_clear_rain"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0.97")]
+        public float a_temper_coeff_clear_drizz {
+            get {
+                return ((float)(this["a_temper_coeff_clear_drizz"]));
+            }
+            set {
+                this["a_temper_coeff_clear_drizz"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0.96")]
+        public float a_temper_coeff_clear_storm {
+            get {
+                return ((float)(this["a_temper_coeff_clear_storm"]));
+            }
+            set {
+                this["a_temper_coeff_clear_storm"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1.02")]
+        public float a_temper_coeff_cloud_clear {
+            get {
+                return ((float)(this["a_temper_coeff_cloud_clear"]));
+            }
+            set {
+                this["a_temper_coeff_cloud_clear"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
+        public float a_temper_coeff_cloud_cloud {
+            get {
+                return ((float)(this["a_temper_coeff_cloud_cloud"]));
+            }
+            set {
+                this["a_temper_coeff_cloud_cloud"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0.99")]
+        public float a_temper_coeff_cloud_atmos {
+            get {
+                return ((float)(this["a_temper_coeff_cloud_atmos"]));
+            }
+            set {
+                this["a_temper_coeff_cloud_atmos"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0.95")]
+        public float a_temper_coeff_cloud_snow {
+            get {
+                return ((float)(this["a_temper_coeff_cloud_snow"]));
+            }
+            set {
+                this["a_temper_coeff_cloud_snow"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0.98")]
+        public float a_temper_coeff_cloud_rain {
+            get {
+                return ((float)(this["a_temper_coeff_cloud_rain"]));
+            }
+            set {
+                this["a_temper_coeff_cloud_rain"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0.99")]
+        public float a_temper_coeff_cloud_drizz {
+            get {
+                return ((float)(this["a_temper_coeff_cloud_drizz"]));
+            }
+            set {
+                this["a_temper_coeff_cloud_drizz"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0.98")]
+        public float a_temper_coeff_cloud_storm {
+            get {
+                return ((float)(this["a_temper_coeff_cloud_storm"]));
+            }
+            set {
+                this["a_temper_coeff_cloud_storm"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool a_temper_debug {
+            get {
+                return ((bool)(this["a_temper_debug"]));
+            }
+            set {
+                this["a_temper_debug"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("7")]
+        public int a_temper_averageDays {
+            get {
+                return ((int)(this["a_temper_averageDays"]));
+            }
+            set {
+                this["a_temper_averageDays"] = value;
+            }
+        }
     }
 }

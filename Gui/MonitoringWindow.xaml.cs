@@ -354,11 +354,11 @@ namespace MicrowaveMonitor.Gui
             if (newLinkWindow.ShowDialog() == true)
             {
                 string name = newLinkWindow.NameAnswer;
-                
+
                 Device newDevice = new Device() { IsPaused = true };
                 linkM.AddDevice(newDevice);
                 workerM.InitDevice(newDevice);
-                
+
                 Link newLink = new Link() { Name = name, DeviceBaseId = newDevice.Id };
                 linkM.AddLink(newLink);
 
@@ -418,6 +418,18 @@ namespace MicrowaveMonitor.Gui
                 LinksList.Items.Remove(removing);
                 linksScroll.ScrollToTop();
             }
+        }
+
+        private void SettingsButtonFired(object sender, RoutedEventArgs e)
+        {
+            SettingsWindow settingsWindow = new SettingsWindow(alarmM);
+            settingsWindow.ShowDialog();
+        }
+
+        private void AboutButtonFired(object sender, RoutedEventArgs e)
+        {
+            AboutWindow aboutWindow = new AboutWindow();
+            aboutWindow.ShowDialog();
         }
 
         private void SaveButtonFired(object sender, RoutedEventArgs e)

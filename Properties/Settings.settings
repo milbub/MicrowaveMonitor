@@ -1,7 +1,123 @@
 ﻿<?xml version='1.0' encoding='utf-8'?>
-<SettingsFile xmlns="uri:settings" CurrentProfile="(Default)">
-  <Profiles>
-    <Profile Name="(Default)" />
-  </Profiles>
-  <Settings />
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="MicrowaveMonitor.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="a_longavg_baseRefresh" Type="System.TimeSpan" Scope="User">
+      <Value Profile="(Default)">00:30:00</Value>
+    </Setting>
+    <Setting Name="a_longavg_compareRefresh" Type="System.TimeSpan" Scope="User">
+      <Value Profile="(Default)">00:01:00</Value>
+    </Setting>
+    <Setting Name="a_longavg_longLimit" Type="System.TimeSpan" Scope="User">
+      <Value Profile="(Default)">7.00:00:00</Value>
+    </Setting>
+    <Setting Name="a_longavg_shortLimit" Type="System.TimeSpan" Scope="User">
+      <Value Profile="(Default)">00:30:00</Value>
+    </Setting>
+    <Setting Name="a_longavg_percDiff_sig" Type="System.Single" Scope="User">
+      <Value Profile="(Default)">0.1</Value>
+    </Setting>
+    <Setting Name="a_longavg_percDiff_sigQ" Type="System.Single" Scope="User">
+      <Value Profile="(Default)">0.1</Value>
+    </Setting>
+    <Setting Name="a_longavg_percDiff_TmpI" Type="System.Single" Scope="User">
+      <Value Profile="(Default)">0.11</Value>
+    </Setting>
+    <Setting Name="a_longavg_percDiff_volt" Type="System.Single" Scope="User">
+      <Value Profile="(Default)">0.031</Value>
+    </Setting>
+    <Setting Name="a_longavg_percDiff_late" Type="System.Single" Scope="User">
+      <Value Profile="(Default)">2.5</Value>
+    </Setting>
+    <Setting Name="a_shortavg_baseRefresh" Type="System.TimeSpan" Scope="User">
+      <Value Profile="(Default)">00:05:00</Value>
+    </Setting>
+    <Setting Name="a_shortavg_compareRefresh" Type="System.TimeSpan" Scope="User">
+      <Value Profile="(Default)">00:01:00</Value>
+    </Setting>
+    <Setting Name="a_shortavg_longLimit" Type="System.TimeSpan" Scope="User">
+      <Value Profile="(Default)">01:00:00</Value>
+    </Setting>
+    <Setting Name="a_shortavg_shortLimit" Type="System.TimeSpan" Scope="User">
+      <Value Profile="(Default)">00:05:00</Value>
+    </Setting>
+    <Setting Name="a_shortavg_percDiff_sig" Type="System.Single" Scope="User">
+      <Value Profile="(Default)">0.15</Value>
+    </Setting>
+    <Setting Name="a_shortavg_percDiff_sigQ" Type="System.Single" Scope="User">
+      <Value Profile="(Default)">0.15</Value>
+    </Setting>
+    <Setting Name="a_shortavg_percDiff_TmpI" Type="System.Single" Scope="User">
+      <Value Profile="(Default)">0.11</Value>
+    </Setting>
+    <Setting Name="a_shortavg_percDiff_volt" Type="System.Single" Scope="User">
+      <Value Profile="(Default)">0.031</Value>
+    </Setting>
+    <Setting Name="a_shortavg_percDiff_late" Type="System.Single" Scope="User">
+      <Value Profile="(Default)">3</Value>
+    </Setting>
+    <Setting Name="a_temper_percDiff" Type="System.Single" Scope="User">
+      <Value Profile="(Default)">1.5</Value>
+    </Setting>
+    <Setting Name="a_temper_degreesWind" Type="System.Single" Scope="User">
+      <Value Profile="(Default)">0.2</Value>
+    </Setting>
+    <Setting Name="a_temper_maxAge" Type="System.TimeSpan" Scope="User">
+      <Value Profile="(Default)">00:45:00</Value>
+    </Setting>
+    <Setting Name="a_temper_backDays" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">25</Value>
+    </Setting>
+    <Setting Name="a_temper_skippedDays" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">1</Value>
+    </Setting>
+    <Setting Name="a_temper_coeff_clear_clear" Type="System.Single" Scope="User">
+      <Value Profile="(Default)">1</Value>
+    </Setting>
+    <Setting Name="a_temper_coeff_clear_cloud" Type="System.Single" Scope="User">
+      <Value Profile="(Default)">0.98</Value>
+    </Setting>
+    <Setting Name="a_temper_coeff_clear_atmos" Type="System.Single" Scope="User">
+      <Value Profile="(Default)">0.98</Value>
+    </Setting>
+    <Setting Name="a_temper_coeff_clear_snow" Type="System.Single" Scope="User">
+      <Value Profile="(Default)">0.94</Value>
+    </Setting>
+    <Setting Name="a_temper_coeff_clear_rain" Type="System.Single" Scope="User">
+      <Value Profile="(Default)">0.96</Value>
+    </Setting>
+    <Setting Name="a_temper_coeff_clear_drizz" Type="System.Single" Scope="User">
+      <Value Profile="(Default)">0.97</Value>
+    </Setting>
+    <Setting Name="a_temper_coeff_clear_storm" Type="System.Single" Scope="User">
+      <Value Profile="(Default)">0.96</Value>
+    </Setting>
+    <Setting Name="a_temper_coeff_cloud_clear" Type="System.Single" Scope="User">
+      <Value Profile="(Default)">1.02</Value>
+    </Setting>
+    <Setting Name="a_temper_coeff_cloud_cloud" Type="System.Single" Scope="User">
+      <Value Profile="(Default)">1</Value>
+    </Setting>
+    <Setting Name="a_temper_coeff_cloud_atmos" Type="System.Single" Scope="User">
+      <Value Profile="(Default)">0.99</Value>
+    </Setting>
+    <Setting Name="a_temper_coeff_cloud_snow" Type="System.Single" Scope="User">
+      <Value Profile="(Default)">0.95</Value>
+    </Setting>
+    <Setting Name="a_temper_coeff_cloud_rain" Type="System.Single" Scope="User">
+      <Value Profile="(Default)">0.98</Value>
+    </Setting>
+    <Setting Name="a_temper_coeff_cloud_drizz" Type="System.Single" Scope="User">
+      <Value Profile="(Default)">0.99</Value>
+    </Setting>
+    <Setting Name="a_temper_coeff_cloud_storm" Type="System.Single" Scope="User">
+      <Value Profile="(Default)">0.98</Value>
+    </Setting>
+    <Setting Name="a_temper_debug" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="a_temper_averageDays" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">7</Value>
+    </Setting>
+  </Settings>
 </SettingsFile>

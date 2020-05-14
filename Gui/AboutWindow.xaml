@@ -1,0 +1,19 @@
+﻿<Window x:Class="MicrowaveMonitor.Gui.AboutWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="About Microwave Monitor" Height="300" Width="400"
+        ResizeMode="NoResize" WindowStartupLocation="CenterScreen">
+    <StackPanel>
+        <Label Content="Microwave Monitor" HorizontalAlignment="Center"></Label>
+        <Label Content="Bachelor Thesis" HorizontalAlignment="Center"></Label>
+        <Label Content="Milan Bubniak, FEEC BUT, 2020" HorizontalAlignment="Center"></Label>
+        <Label HorizontalAlignment="Center">
+            <Hyperlink NavigateUri="mailto:xbubni03@stud.feec.vutbr.cz">xbubni03@stud.feec.vutbr.cz</Hyperlink>
+        </Label>
+        <Label Content="...libs licenses placeholder..." HorizontalAlignment="Center" Margin="30"></Label>
+        <Button Content="OK" IsCancel="True" Width="80" Height="30" Margin="0,30,0,0"></Button>
+    </StackPanel>
+</Window>

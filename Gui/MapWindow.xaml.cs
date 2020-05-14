@@ -19,14 +19,17 @@ namespace MicrowaveMonitor.Gui
 {
     public partial class MapWindow : Window
     {
-        private string latitudeA;
-        private string longitudeA;
-        private string latitudeB;
-        private string longitudeB;
-        private bool dual = false;
+        private readonly string latitudeA;
+        private readonly string longitudeA;
+        private readonly string latitudeB;
+        private readonly string longitudeB;
+        private readonly bool dual = false;
 
         public MapWindow(string latitude, string longitude)
         {
+            CefSettings settings = new CefSettings { LogSeverity = LogSeverity.Disable };
+            Cef.Initialize(settings);
+
             InitializeComponent();
             
             latitudeA = latitude;

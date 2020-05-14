@@ -89,6 +89,10 @@ public class LogManager : TextWriter
                     levelColor = Brushes.Green;
                     level = " <ALARM> [SETTLE UP]";
                     break;
+                case '7':
+                    levelColor = Brushes.Blue;
+                    level = " <DEBUG> ";
+                    break;
                 default:
                     goto case '0';
             }

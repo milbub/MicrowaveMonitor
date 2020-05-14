@@ -34,8 +34,10 @@ namespace MicrowaveMonitor.Analysers
 
         private const int millisOfDay = 86400000;
 
+        public static bool DebugActive { get; set; }
+
         public double TolerancePerc { get; set; }
-        public double DegressPerWindMeter { get; set; }
+        public double DegreesPerWindMeter { get; set; }
         public TimeSpan MaxAge { get; set; }
         public int BackDaysCount { get; set; }
         public int SkippedDaysCount { get; set; } = 1;
@@ -54,26 +56,30 @@ namespace MicrowaveMonitor.Analysers
         private readonly Dictionary<int, int> ids = new Dictionary<int, int>();
         private readonly object idsLocker = new object();
 
-        public TemperatureAnalyser(AlarmManager alarmManager, DataManager dataManager, Dictionary<int, bool> watched, Measurement measure, double percentDiff, double degressPerWindMeter, TimeSpan maxAge, int backDaysCount, int skippedDaysCount, DefaultWeatherCoeffs coeffsClear, DefaultWeatherCoeffs coeffsClouds, int averageDaysCount)
+        public TemperatureAnalyser(AlarmManager alarmManager, DataManager dataManager, Dictionary<int, bool> watched, Measurement measure)
         {
             alarmMan = alarmManager;
             dataMan = dataManager;
             isWatched = watched;
-
-            TolerancePerc = percentDiff;
-            DegressPerWindMeter = degressPerWindMeter;
-            MaxAge = maxAge;
-            BackDaysCount = backDaysCount;
-            SkippedDaysCount = skippedDaysCount;
             Measure = measure;
-            CoeffsClear = coeffsClear;
-            CoeffsClouds = coeffsClouds;
-            AvgDaysCount = averageDaysCount;
 
             if (measure == Measurement.TempIDU)
                 measureName = DataManager.measTmpI;
             else
                 measureName = DataManager.measTmpO;
+        }
+
+        public void LoadSettings(DefaultWeatherCoeffs coeffsClear, DefaultWeatherCoeffs coeffsClouds, bool debug, double percentDiff, double degreesPerWindMeter, TimeSpan maxAge, int backDaysCount, int skippedDaysCount, int averageDaysCount)
+        {
+            DebugActive = debug;
+            TolerancePerc = percentDiff;
+            DegreesPerWindMeter = degreesPerWindMeter;
+            MaxAge = maxAge;
+            BackDaysCount = backDaysCount;
+            SkippedDaysCount = skippedDaysCount;
+            CoeffsClear = coeffsClear;
+            CoeffsClouds = coeffsClouds;
+            AvgDaysCount = averageDaysCount;
         }
 
         public void WeatherChanged(int devId, int weatherId, double wind, double latitude, double longitude)
@@ -131,6 +137,8 @@ namespace MicrowaveMonitor.Analysers
                     {
                         int alarm = alarmMan.GenerateAlarmDispatched(devId, AlarmRank.Critical, Measure, AlarmType.TempCorrel, true, temperature);
                         ids.Add(devId, alarm);
+                        if (DebugActive)
+                            Console.WriteLine("7TA trigger " + measureName + " dev: " + devId + " temper: " + temperature + " tresh: " + upperLimit);
                     }
             }
             else if (temperature < airTemp / TolerancePerc)
@@ -140,6 +148,8 @@ namespace MicrowaveMonitor.Analysers
                     {
                         int alarm = alarmMan.GenerateAlarmDispatched(devId, AlarmRank.Critical, Measure, AlarmType.TempCorrel, false, temperature);
                         ids.Add(devId, alarm);
+                        if (DebugActive)
+                            Console.WriteLine("7TA trigger " + measureName + " dev: " + devId + " temper: " + temperature + " tresh: " + upperLimit);
                     }
             }
             else
@@ -149,6 +159,8 @@ namespace MicrowaveMonitor.Analysers
                     {
                         alarmMan.SettleAlarmDispatched(ids[devId], temperature, false);
                         ids.Remove(devId);
+                        if (DebugActive)
+                            Console.WriteLine("7TA settle " + measureName + " dev: " + devId + " temper: " + temperature + " tresh: " + upperLimit);
                     }
             }
         }
@@ -321,7 +333,8 @@ namespace MicrowaveMonitor.Analysers
                     lastUpdate.Add(devId, DateTime.Now);
                 }
 
-            Console.WriteLine("0" + devId + " " + ratioAvg + " " + windAvg + " " + alternateWeatherCoeff);
+            if (DebugActive)
+                Console.WriteLine("7TA " + measureName + " dev: " + devId + " ratio: " + ratioAvg + " wind: " + windAvg + " alter: " + alternateWeatherCoeff);
         }
 
         private async Task<List<TimeWind>> GetBestDays(int devId, int weatherId, double wind, TimeSpan searchedTimeOfDay)
@@ -402,7 +415,7 @@ namespace MicrowaveMonitor.Analysers
         private double WindTempCorrection(double? originalWind, double? newWind)
         {
             if (originalWind != null || newWind != null)
-                return (double)(originalWind - newWind) * DegressPerWindMeter;
+                return (double)(originalWind - newWind) * DegreesPerWindMeter;
             else 
                 return 0;
         }

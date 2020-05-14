@@ -25,8 +25,8 @@ namespace MicrowaveMonitor.Analysers
 
         public override TimeSpan RefreshInterval { get; set; }
         public TimeSpan CompareInterval { get; set; }
-        public int LongLimit { get; set; }
-        public int ShortLimit { get; set; }
+        public TimeSpan LongLimit { get; set; }
+        public TimeSpan ShortLimit { get; set; }
         public PercentDiff Percentages { get; set; }
 
         private readonly Dictionary<int, double> dataSignalAvg = new Dictionary<int, double>();
@@ -51,24 +51,27 @@ namespace MicrowaveMonitor.Analysers
         private static readonly object indiLocker = new object();
 
         private readonly LinkManager linkMan;
+        private readonly AlarmType alarmType;
 
         private Thread tComparator;
-        private readonly AlarmType alarmType;
-        private readonly string longRetention;
-        private readonly string longValueName;
+        private string longRetention;
+        private string longValueName;
 
-        public AverageAnalyser(AlarmManager alarmManager, DataManager dataManager, LinkManager linkManager, int refreshInt, int compareInt, int longLim, int shortLim, PercentDiff percentDiff, AlarmType alarmType) : base(alarmManager, dataManager)
+        public AverageAnalyser(AlarmManager alarmManager, DataManager dataManager, LinkManager linkManager, AlarmType alarm) : base(alarmManager, dataManager)
         {
             linkMan = linkManager;
+            alarmType = alarm;
+        }
 
-            RefreshInterval = TimeSpan.FromMilliseconds(refreshInt);
-            CompareInterval = TimeSpan.FromMilliseconds(compareInt);
+        public void LoadSettings(PercentDiff percentDiff, TimeSpan refreshInt, TimeSpan compareInt, TimeSpan longLim, TimeSpan shortLim)
+        {
+            RefreshInterval = refreshInt;
+            CompareInterval = compareInt;
             LongLimit = longLim;
             ShortLimit = shortLim;
             Percentages = percentDiff;
-            this.alarmType = alarmType;
 
-            if (shortLim > DataManager.contQueryCycle * 2)
+            if (shortLim.TotalMilliseconds > DataManager.contQueryCycle * 2)
             {
                 longRetention = DataManager.retentionYear;
                 longValueName = DataManager.meanValueName;
@@ -116,9 +119,9 @@ namespace MicrowaveMonitor.Analysers
             TimeGapCalculator<TimeRange> gapCalculator = new TimeGapCalculator<TimeRange>();
             CalendarTimeRange limit;
             if (shortCompare)
-                limit = new CalendarTimeRange(now - TimeSpan.FromMilliseconds(ShortLimit), now);
+                limit = new CalendarTimeRange(now - ShortLimit, now);
             else
-                limit = new CalendarTimeRange(now - TimeSpan.FromMilliseconds(LongLimit), TimeSpan.FromMilliseconds(ShortLimit));
+                limit = new CalendarTimeRange(now - LongLimit, ShortLimit);
 
             foreach (KeyValuePair<int, TimePeriodCollection> linkDownsPair in linkDowns)
             {
@@ -182,7 +185,7 @@ namespace MicrowaveMonitor.Analysers
                 except += $@"AND ""device""!='{info.Key}' ";
             }
 
-            string query = $@"SELECT mean(""{longValueName}"") FROM ""{DataManager.databaseName}"".""{longRetention}"".""{meas}"" WHERE time > now() - {LongLimit}ms AND time < now() - {ShortLimit}ms {except}GROUP BY ""device"" FILL(none)";
+            string query = $@"SELECT mean(""{longValueName}"") FROM ""{DataManager.databaseName}"".""{longRetention}"".""{meas}"" WHERE time > now() - {LongLimit.TotalMilliseconds:0}ms AND time < now() - {ShortLimit.TotalMilliseconds:0}ms {except}GROUP BY ""device"" FILL(none)";
 
             List<InfluxSeries<DynamicInfluxRow>> series = await dataMan.QuerySeries(query);
 
@@ -280,7 +283,7 @@ namespace MicrowaveMonitor.Analysers
                 except += $@"AND ""device""!='{info.Key}' ";
             }
 
-            string query = $@"SELECT mean(""{DataManager.defaultValueName}"") FROM ""{DataManager.databaseName}"".""{DataManager.retentionWeek}"".""{meas}"" WHERE time > now() - {ShortLimit}ms AND time < now() {except}GROUP BY ""device"" FILL(none)";
+            string query = $@"SELECT mean(""{DataManager.defaultValueName}"") FROM ""{DataManager.databaseName}"".""{DataManager.retentionWeek}"".""{meas}"" WHERE time > now() - {ShortLimit.TotalMilliseconds:0}ms AND time < now() {except}GROUP BY ""device"" FILL(none)";
 
             List<InfluxSeries<DynamicInfluxRow>> series = await dataMan.QuerySeries(query);
 

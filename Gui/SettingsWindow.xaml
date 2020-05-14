@@ -1,0 +1,365 @@
+﻿<Window x:Class="MicrowaveMonitor.Gui.SettingsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+        mc:Ignorable="d"
+        Title="Settings" Height="620" Width="500"
+        ResizeMode="NoResize" WindowStartupLocation="CenterScreen">
+    <StackPanel Orientation="Vertical" Background="Silver">
+        <TabControl Height="520" Margin="5" Background="LightGray">
+            <TabItem Header="Average Analyser">
+                <ScrollViewer>
+                    <StackPanel Orientation="Vertical">
+                        <Label Content="Long-term" HorizontalAlignment="Center" FontWeight="Bold"></Label>
+                        <Button Click="LoadDefaultLongAvgFired" Content="Load Defaults" Margin="5"></Button>
+                        <Grid Margin="0,3,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition></ColumnDefinition>
+                                <ColumnDefinition></ColumnDefinition>
+                                <ColumnDefinition Width="70"></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <Label Content="Base average refresh interval: "></Label>
+                            <xctk:DoubleUpDown x:Name="avgXbaseRefresh" Grid.Column="1" HorizontalAlignment="Right" FormatString="F1" Value="1.0" Increment="1.0"  Minimum="1.0" Maximum="10080.0" Width="100"/>
+                            <Label Content="minutes" Grid.Column="2"></Label>
+                        </Grid>
+                        <Grid Margin="0,3,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition></ColumnDefinition>
+                                <ColumnDefinition></ColumnDefinition>
+                                <ColumnDefinition Width="70"></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <Label Content="Compare refresh interval: "></Label>
+                            <xctk:DoubleUpDown x:Name="avgXcompareRefresh" Grid.Column="1" HorizontalAlignment="Right" FormatString="F1" Value="1.0" Increment="1.0"  Minimum="1.0" Maximum="1440.0" Width="100"/>
+                            <Label Content="minutes" Grid.Column="2"></Label>
+                        </Grid>
+                        <Grid Margin="0,3,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition></ColumnDefinition>
+                                <ColumnDefinition></ColumnDefinition>
+                                <ColumnDefinition Width="70"></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <Label Content="Bottom time limit: "></Label>
+                            <xctk:DoubleUpDown x:Name="avgXlongLimit" Grid.Column="1" HorizontalAlignment="Right" FormatString="F1" Value="10.0" Increment="1.0"  Minimum="10.0" Maximum="43200.0" Width="100"/>
+                            <Label Content="minutes" Grid.Column="2"></Label>
+                        </Grid>
+                        <Grid Margin="0,3,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition></ColumnDefinition>
+                                <ColumnDefinition></ColumnDefinition>
+                                <ColumnDefinition Width="70"></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <Label Content="Upper time limit: "></Label>
+                            <xctk:DoubleUpDown x:Name="avgXshortLimit" Grid.Column="1" HorizontalAlignment="Right" FormatString="F1" Value="1.0" Increment="1.0"  Minimum="1.0" Maximum="10080.0" Width="100"/>
+                            <Label Content="minutes" Grid.Column="2"></Label>
+                        </Grid>
+                        <Grid Margin="0,3,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition></ColumnDefinition>
+                                <ColumnDefinition></ColumnDefinition>
+                                <ColumnDefinition Width="70"></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <Label Content="Signal Strenght alarm treshold: "></Label>
+                            <xctk:DoubleUpDown x:Name="avgXpercSignal" Grid.Column="1" HorizontalAlignment="Right" FormatString="P2" Value="0.01" Increment=".001" Minimum="0.001" Maximum="10.00"  Width="100"/>
+                        </Grid>
+                        <Grid Margin="0,3,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition></ColumnDefinition>
+                                <ColumnDefinition></ColumnDefinition>
+                                <ColumnDefinition Width="70"></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <Label Content="Signal Quality alarm treshold: "></Label>
+                            <xctk:DoubleUpDown x:Name="avgXpercSignalQ" Grid.Column="1" HorizontalAlignment="Right" FormatString="P2" Value="0.01" Increment=".001" Minimum="0.001" Maximum="10.00"  Width="100"/>
+                        </Grid>
+                        <Grid Margin="0,3,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition></ColumnDefinition>
+                                <ColumnDefinition></ColumnDefinition>
+                                <ColumnDefinition Width="70"></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <Label Content="IDU Temperature alarm treshold: "></Label>
+                            <xctk:DoubleUpDown x:Name="avgXpercTempIdu" Grid.Column="1" HorizontalAlignment="Right" FormatString="P2" Value="0.01" Increment=".001" Minimum="0.001" Maximum="10.00"  Width="100"/>
+                        </Grid>
+                        <Grid Margin="0,3,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition></ColumnDefinition>
+                                <ColumnDefinition></ColumnDefinition>
+                                <ColumnDefinition Width="70"></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <Label Content="Voltage alarm treshold: "></Label>
+                            <xctk:DoubleUpDown x:Name="avgXpercVolt" Grid.Column="1" HorizontalAlignment="Right" FormatString="P2" Value="0.01" Increment=".001" Minimum="0.001" Maximum="10.00"  Width="100"/>
+                        </Grid>
+                        <Grid Margin="0,3,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition></ColumnDefinition>
+                                <ColumnDefinition></ColumnDefinition>
+                                <ColumnDefinition Width="70"></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <Label Content="Latency alarm treshold: "></Label>
+                            <xctk:DoubleUpDown x:Name="avgXpercPing" Grid.Column="1" HorizontalAlignment="Right" FormatString="P2" Value="0.01" Increment=".001" Minimum="0.001" Maximum="10.00"  Width="100"/>
+                        </Grid>
+
+                        <Separator Margin="5"></Separator>
+
+                        <Label Content="Short-term" HorizontalAlignment="Center" FontWeight="Bold"></Label>
+                        <Button Click="LoadDefaultShortAvgFired" Content="Load Defaults" Margin="5"></Button>
+                        <Grid Margin="0,3,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition></ColumnDefinition>
+                                <ColumnDefinition></ColumnDefinition>
+                                <ColumnDefinition Width="70"></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <Label Content="Base average refresh interval: "></Label>
+                            <xctk:DoubleUpDown x:Name="avgYbaseRefresh" Grid.Column="1" HorizontalAlignment="Right" FormatString="F1" Value="1.0" Increment="1.0"  Minimum="1.0" Maximum="10080.0" Width="100"/>
+                            <Label Content="minutes" Grid.Column="2"></Label>
+                        </Grid>
+                        <Grid Margin="0,3,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition></ColumnDefinition>
+                                <ColumnDefinition></ColumnDefinition>
+                                <ColumnDefinition Width="70"></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <Label Content="Compare refresh interval: "></Label>
+                            <xctk:DoubleUpDown x:Name="avgYcompareRefresh" Grid.Column="1" HorizontalAlignment="Right" FormatString="F1" Value="1.0" Increment="1.0"  Minimum="1.0" Maximum="1440.0" Width="100"/>
+                            <Label Content="minutes" Grid.Column="2"></Label>
+                        </Grid>
+                        <Grid Margin="0,3,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition></ColumnDefinition>
+                                <ColumnDefinition></ColumnDefinition>
+                                <ColumnDefinition Width="70"></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <Label Content="Bottom time limit: "></Label>
+                            <xctk:DoubleUpDown x:Name="avgYlongLimit" Grid.Column="1" HorizontalAlignment="Right" FormatString="F1" Value="10.0" Increment="1.0"  Minimum="10.0" Maximum="302400.0" Width="100"/>
+                            <Label Content="minutes" Grid.Column="2"></Label>
+                        </Grid>
+                        <Grid Margin="0,3,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition></ColumnDefinition>
+                                <ColumnDefinition></ColumnDefinition>
+                                <ColumnDefinition Width="70"></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <Label Content="Upper time limit: "></Label>
+                            <xctk:DoubleUpDown x:Name="avgYshortLimit" Grid.Column="1" HorizontalAlignment="Right" FormatString="F1" Value="1.0" Increment="1.0"  Minimum="1.0" Maximum="10080.0" Width="100"/>
+                            <Label Content="minutes" Grid.Column="2"></Label>
+                        </Grid>
+                        <Grid Margin="0,3,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition></ColumnDefinition>
+                                <ColumnDefinition></ColumnDefinition>
+                                <ColumnDefinition Width="70"></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <Label Content="Signal Strenght alarm treshold: "></Label>
+                            <xctk:DoubleUpDown x:Name="avgYpercSignal" Grid.Column="1" HorizontalAlignment="Right" FormatString="P2" Value="0.01" Increment=".001" Minimum="0.001" Maximum="10.00"  Width="100"/>
+                        </Grid>
+                        <Grid Margin="0,3,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition></ColumnDefinition>
+                                <ColumnDefinition></ColumnDefinition>
+                                <ColumnDefinition Width="70"></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <Label Content="Signal Quality alarm treshold: "></Label>
+                            <xctk:DoubleUpDown x:Name="avgYpercSignalQ" Grid.Column="1" HorizontalAlignment="Right" FormatString="P2" Value="0.01" Increment=".001" Minimum="0.001" Maximum="10.00"  Width="100"/>
+                        </Grid>
+                        <Grid Margin="0,3,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition></ColumnDefinition>
+                                <ColumnDefinition></ColumnDefinition>
+                                <ColumnDefinition Width="70"></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <Label Content="IDU Temperature alarm treshold: "></Label>
+                            <xctk:DoubleUpDown x:Name="avgYpercTempIdu" Grid.Column="1" HorizontalAlignment="Right" FormatString="P2" Value="0.01" Increment=".001" Minimum="0.001" Maximum="10.00"  Width="100"/>
+                        </Grid>
+                        <Grid Margin="0,3,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition></ColumnDefinition>
+                                <ColumnDefinition></ColumnDefinition>
+                                <ColumnDefinition Width="70"></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <Label Content="Voltage alarm treshold: "></Label>
+                            <xctk:DoubleUpDown x:Name="avgYpercVolt" Grid.Column="1" HorizontalAlignment="Right" FormatString="P2" Value="0.01" Increment=".001" Minimum="0.001" Maximum="10.00"  Width="100"/>
+                        </Grid>
+                        <Grid Margin="0,3,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition></ColumnDefinition>
+                                <ColumnDefinition></ColumnDefinition>
+                                <ColumnDefinition Width="70"></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <Label Content="Latency alarm treshold: "></Label>
+                            <xctk:DoubleUpDown x:Name="avgYpercPing" Grid.Column="1" HorizontalAlignment="Right" FormatString="P2" Value="0.01" Increment=".001" Minimum="0.001" Maximum="10.00"  Width="100"/>
+                        </Grid>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+            <TabItem Header="Retro-Time Analyser">
+                
+            </TabItem>
+            <TabItem Header="Periodicity Analyser">
+                
+            </TabItem>
+            <TabItem Header="Temperature Analyser">
+                <StackPanel Orientation="Vertical">
+                    <Button Click="LoadDefaultTemperFired" Content="Load Defaults" Margin="5"></Button>
+                    <Grid Margin="0,3,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition></ColumnDefinition>
+                            <ColumnDefinition></ColumnDefinition>
+                            <ColumnDefinition Width="70"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        <Label Content="Alarm treshold: "></Label>
+                        <xctk:DoubleUpDown x:Name="temperPerc" Grid.Column="1" HorizontalAlignment="Right" FormatString="P2" Value="0.40" Increment=".001" Minimum="0.001" Maximum="10.00"  Width="100"/>
+                    </Grid>
+                    <Grid Margin="0,3,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition></ColumnDefinition>
+                            <ColumnDefinition></ColumnDefinition>
+                            <ColumnDefinition Width="70"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        <Label Content="°C per wind m/s: "></Label>
+                        <xctk:DoubleUpDown x:Name="temperDegreesWind" Grid.Column="1" HorizontalAlignment="Right" FormatString="F3" Value="0.2" Increment="0.1"  Minimum="0.001" Maximum="1" Width="100"/>
+                        <Label Content="degrees" Grid.Column="2"></Label>
+                    </Grid>
+                    <Grid Margin="0,3,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="290"></ColumnDefinition>
+                            <ColumnDefinition></ColumnDefinition>
+                            <ColumnDefinition Width="70"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        <Label Content="Maximum daytime difference of compared weather: "></Label>
+                        <xctk:DoubleUpDown x:Name="temperMaxAge" Grid.Column="1" HorizontalAlignment="Right" FormatString="F1" Value="30.0" Increment="1.0"  Minimum="1.0" Maximum="720.0" Width="100"/>
+                        <Label Content="minutes" Grid.Column="2"></Label>
+                    </Grid>
+                    <Grid Margin="0,3,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="220"></ColumnDefinition>
+                            <ColumnDefinition></ColumnDefinition>
+                            <ColumnDefinition Width="70"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        <Label Content="Maximum age of compared weather: "></Label>
+                        <xctk:DoubleUpDown x:Name="temperBackDaysCount" Grid.Column="1" HorizontalAlignment="Right" FormatString="F0" Value="25" Increment="1"  Minimum="1" Maximum="30" Width="100"/>
+                        <Label Content="days" Grid.Column="2"></Label>
+                    </Grid>
+                    <Grid Margin="0,3,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="220"></ColumnDefinition>
+                            <ColumnDefinition></ColumnDefinition>
+                            <ColumnDefinition Width="70"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        <Label Content="Skip most recent days: "></Label>
+                        <xctk:DoubleUpDown x:Name="temperSkippedDays" Grid.Column="1" HorizontalAlignment="Right" FormatString="F0" Value="2" Increment="1"  Minimum="0" Maximum="29" Width="100"/>
+                        <Label Content="days" Grid.Column="2"></Label>
+                    </Grid>
+                    <Grid Margin="0,3,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="220"></ColumnDefinition>
+                            <ColumnDefinition></ColumnDefinition>
+                            <ColumnDefinition Width="70"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        <Label Content="Number of days forming mean ratio:"></Label>
+                        <xctk:DoubleUpDown x:Name="temperAvgDayCount" Grid.Column="1" HorizontalAlignment="Right" FormatString="F0" Value="7" Increment="1"  Minimum="0" Maximum="29" Width="100"/>
+                        <Label Content="days" Grid.Column="2"></Label>
+                    </Grid>
+
+                    <Separator Margin="5"></Separator>
+                    <Grid Margin="0,3,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition></ColumnDefinition>
+                            <ColumnDefinition></ColumnDefinition>
+                            <ColumnDefinition></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        <Label Content="Alternation: "></Label>
+                        <Label Content="Clear sky" Grid.Column="1" HorizontalAlignment="Center" FontStyle="Italic"></Label>
+                        <Label Content="Clouds" Grid.Column="2" HorizontalAlignment="Center" FontStyle="Italic"></Label>
+                    </Grid>
+                    <Grid Margin="0,3,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition></ColumnDefinition>
+                            <ColumnDefinition></ColumnDefinition>
+                            <ColumnDefinition></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        <Label Content="Clear sky coefficient: "></Label>
+                        <xctk:DoubleUpDown x:Name="temperCoeffClear_Clear" IsEnabled="False" Grid.Column="1" HorizontalAlignment="Center" FormatString="P2" Value="1.000" Increment="0.001"  Minimum="0.0001" Maximum="10.000" Width="100"/>
+                        <xctk:DoubleUpDown x:Name="temperCoeffClear_Clouds" Grid.Column="2" HorizontalAlignment="Center" FormatString="P2" Value="1.020" Increment="0.001"  Minimum="0.001" Maximum="10.000" Width="100"/>
+                    </Grid>
+                    <Grid Margin="0,3,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition></ColumnDefinition>
+                            <ColumnDefinition></ColumnDefinition>
+                            <ColumnDefinition></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        <Label Content="Clouds coefficient: "></Label>
+                        <xctk:DoubleUpDown x:Name="temperCoeffClouds_Clear" Grid.Column="1" HorizontalAlignment="Center" FormatString="P2" Value="0.980" Increment="0.001"  Minimum="0.0001" Maximum="10.000" Width="100"/>
+                        <xctk:DoubleUpDown x:Name="temperCoeffClouds_Clouds" Grid.Column="2" IsEnabled="False" HorizontalAlignment="Center" FormatString="P2" Value="1.000" Increment="0.001"  Minimum="0.001" Maximum="10.000" Width="100"/>
+                    </Grid>
+                    <Grid Margin="0,3,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition></ColumnDefinition>
+                            <ColumnDefinition></ColumnDefinition>
+                            <ColumnDefinition></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        <Label Content="Fog/mist/misc. coefficient: "></Label>
+                        <xctk:DoubleUpDown x:Name="temperCoeffAtmo_Clear" Grid.Column="1" HorizontalAlignment="Center" FormatString="P2" Value="0.980" Increment="0.001"  Minimum="0.0001" Maximum="10.000" Width="100"/>
+                        <xctk:DoubleUpDown x:Name="temperCoeffAtmo_Clouds" Grid.Column="2" HorizontalAlignment="Center" FormatString="P2" Value="0.990" Increment="0.001"  Minimum="0.001" Maximum="10.000" Width="100"/>
+                    </Grid>
+                    <Grid Margin="0,3,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition></ColumnDefinition>
+                            <ColumnDefinition></ColumnDefinition>
+                            <ColumnDefinition></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        <Label Content="Snow coefficient: "></Label>
+                        <xctk:DoubleUpDown x:Name="temperCoeffSnow_Clear" Grid.Column="1" HorizontalAlignment="Center" FormatString="P2" Value="0.940" Increment="0.001"  Minimum="0.0001" Maximum="10.000" Width="100"/>
+                        <xctk:DoubleUpDown x:Name="temperCoeffSnow_Clouds" Grid.Column="2" HorizontalAlignment="Center" FormatString="P2" Value="0.950" Increment="0.001"  Minimum="0.001" Maximum="10.000" Width="100"/>
+                    </Grid>
+                    <Grid Margin="0,3,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition></ColumnDefinition>
+                            <ColumnDefinition></ColumnDefinition>
+                            <ColumnDefinition></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        <Label Content="Rain coefficient: "></Label>
+                        <xctk:DoubleUpDown x:Name="temperCoeffRain_Clear" Grid.Column="1" HorizontalAlignment="Center" FormatString="P2" Value="0.960" Increment="0.001"  Minimum="0.0001" Maximum="10.000" Width="100"/>
+                        <xctk:DoubleUpDown x:Name="temperCoeffRain_Clouds" Grid.Column="2" HorizontalAlignment="Center" FormatString="P2" Value="0.980" Increment="0.001"  Minimum="0.001" Maximum="10.000" Width="100"/>
+                    </Grid>
+                    <Grid Margin="0,3,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition></ColumnDefinition>
+                            <ColumnDefinition></ColumnDefinition>
+                            <ColumnDefinition></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        <Label Content="Drizzle coefficient: "></Label>
+                        <xctk:DoubleUpDown x:Name="temperCoeffDrizzle_Clear" Grid.Column="1" HorizontalAlignment="Center" FormatString="P2" Value="0.970" Increment="0.001"  Minimum="0.0001" Maximum="10.000" Width="100"/>
+                        <xctk:DoubleUpDown x:Name="temperCoeffDrizzle_Clouds" Grid.Column="2" HorizontalAlignment="Center" FormatString="P2" Value="0.990" Increment="0.001"  Minimum="0.001" Maximum="10.000" Width="100"/>
+                    </Grid>
+                    <Grid Margin="0,3,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition></ColumnDefinition>
+                            <ColumnDefinition></ColumnDefinition>
+                            <ColumnDefinition></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        <Label Content="Thunderstorm coefficient: "></Label>
+                        <xctk:DoubleUpDown x:Name="temperCoeffStorm_Clear" Grid.Column="1" HorizontalAlignment="Center" FormatString="P2" Value="0.960" Increment="0.001"  Minimum="0.0001" Maximum="10.000" Width="100"/>
+                        <xctk:DoubleUpDown x:Name="temperCoeffStorm_Clouds" Grid.Column="2" HorizontalAlignment="Center" FormatString="P2" Value="0.980" Increment="0.001"  Minimum="0.001" Maximum="10.000" Width="100"/>
+                    </Grid>
+                    
+                    <Separator Margin="5"></Separator>
+                    
+                    <Grid Margin="0,3,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition></ColumnDefinition>
+                            <ColumnDefinition></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        <Label Content="Debug mode: "></Label>
+                        <CheckBox x:Name="temperDebug" Grid.Column="1" Content="Enabled" VerticalAlignment="Center" HorizontalAlignment="Center"></CheckBox>
+                    </Grid>
+                </StackPanel>
+            </TabItem>
+        </TabControl>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,7,7,0">
+            <Button Content="Save Defaults" Click="SaveDefaultsFired" Width="80" Height="30" Margin="0,0,7,0"></Button>
+            <Button Content="Save" IsDefault="True" Click="SaveFired" Width="80" Height="30" Margin="7,0,7,0"></Button>
+            <Button Content="Cancel" IsCancel="True" Width="80" Height="30" Margin="7,0,0,0"></Button>
+        </StackPanel>
+    </StackPanel>
+</Window>

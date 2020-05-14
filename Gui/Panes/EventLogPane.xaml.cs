@@ -43,10 +43,10 @@ namespace MicrowaveMonitor.Gui
             {
                 if (!Dispatcher.CheckAccess())
                 {
-                    Dispatcher.Invoke(() =>
+                    Dispatcher.BeginInvoke(new Action(() =>
                     {
                         AppendNotification(row);
-                    });
+                    }));
                 }
                 else
                 {
@@ -65,10 +65,10 @@ namespace MicrowaveMonitor.Gui
             {
                 if (!Dispatcher.CheckAccess())
                 {
-                    Dispatcher.Invoke(() =>
+                    Dispatcher.BeginInvoke(new Action(() =>
                     {
                         AppendText(text, color);
-                    });
+                    }));
                 }
                 else
                 {

@@ -105,10 +105,10 @@
                 <Button Grid.Column="2" ToolTip="Delete Link" Click="DeleteButtonFired" x:Name="buttonDelete" FontSize="15" HorizontalAlignment="Right" Width="29" Height="27" Margin="0,0,74,0" Padding="0,0,0,1">
                     <Image Source="/Gui/Icons/delete.png" Height="25" Margin="0,0,0,0"></Image>
                 </Button>
-                <Button Grid.Column="2" ToolTip="Settings" IsEnabled="False" x:Name="buttonSettings" FontSize="17" HorizontalAlignment="Right" Width="28" Height="27" Margin="0,0,42,0" Padding="0,0,1,1" FontWeight="Bold">
+                <Button Grid.Column="2" ToolTip="Settings" Click="SettingsButtonFired" x:Name="buttonSettings" FontSize="17" HorizontalAlignment="Right" Width="28" Height="27" Margin="0,0,42,0" Padding="0,0,1,1" FontWeight="Bold">
                     <Image Source="/Gui/Icons/settings.png" Margin="1,1,0,0" Height="24"></Image>
                 </Button>
-                <Button Grid.Column="2" ToolTip="About" IsEnabled="False" x:Name="buttonInfo" HorizontalAlignment="Right" Width="28" Height="27" Margin="0,0,10,0">
+                <Button Grid.Column="2" ToolTip="About" Click="AboutButtonFired" x:Name="buttonInfo" HorizontalAlignment="Right" Width="28" Height="27" Margin="0,0,10,0">
                     <Image Source="/Gui/Icons/help.png" Height="24"></Image>
                 </Button>
 

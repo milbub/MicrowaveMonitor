@@ -1,6 +1,7 @@
 ﻿using MicrowaveMonitor.Database;
 using MicrowaveMonitor.Analysers;
 using MicrowaveMonitor.Workers;
+using MicrowaveMonitor.Properties;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -105,61 +106,94 @@ namespace MicrowaveMonitor.Managers
         private readonly TemperatureAnalyser OduTemperAna;
         private readonly TemperatureAnalyser IduTemperAna;
 
-        // TEMP TODO CONFIG
-        public static readonly TimeSpan longAvgLim = TimeSpan.FromMilliseconds(604800000);
-
         public AlarmManager(DataManager dataManager, LinkManager linkManager, Dictionary<int, DeviceDisplay> deviceDisplays)
         {
             linkM = linkManager;
             dataM = dataManager;
             displays = deviceDisplays;
+            
             LoadAlarmsOnStart();
 
+            longAverage = new AverageAnalyser(this, dataM, linkM, AlarmType.AvgLong);
+            shortAverage = new AverageAnalyser(this, dataM, linkM, AlarmType.AvgShort);
+
+            OduTemperAna = new TemperatureAnalyser(this, dataM, Analyser.WatchTempOdu, Measurement.TempODU);
+            IduTemperAna = new TemperatureAnalyser(this, dataM, Analyser.WatchTempIduOut, Measurement.TempIDU);
+
+            LoadSettings();
+        }
+
+        public void LoadSettings()
+        {
             AverageAnalyser.PercentDiff LongAvgPercentDiff = new AverageAnalyser.PercentDiff()
             {
-                Signal = 0.1,
-                SignalQ = 0.1,
-                TempIdu = 0.11,
-                Voltage = 0.031,
-                Latency = 2.5
+                Signal = Settings.Default.a_longavg_percDiff_sig,
+                SignalQ = Settings.Default.a_longavg_percDiff_sigQ,
+                TempIdu = Settings.Default.a_longavg_percDiff_TmpI,
+                Voltage = Settings.Default.a_longavg_percDiff_volt,
+                Latency = Settings.Default.a_longavg_percDiff_late
             };
 
             AverageAnalyser.PercentDiff ShortAvgPercentDiff = new AverageAnalyser.PercentDiff()
             {
-                Signal = 0.15,
-                SignalQ = 0.15,
-                TempIdu = 0.11,
-                Voltage = 0.031,
-                Latency = 3.0
+                Signal = Settings.Default.a_shortavg_percDiff_sig,
+                SignalQ = Settings.Default.a_shortavg_percDiff_sigQ,
+                TempIdu = Settings.Default.a_shortavg_percDiff_TmpI,
+                Voltage = Settings.Default.a_shortavg_percDiff_volt,
+                Latency = Settings.Default.a_shortavg_percDiff_late
             };
 
-            longAverage = new AverageAnalyser(this, dataM, linkM, 1800000, 60000, (int)longAvgLim.TotalMilliseconds, 1800000, LongAvgPercentDiff, AlarmType.AvgLong);
-            shortAverage = new AverageAnalyser(this, dataM, linkM, 300000, 60000, 3600000, 300000, ShortAvgPercentDiff, AlarmType.AvgShort);
+            longAverage.LoadSettings(LongAvgPercentDiff,
+                Settings.Default.a_longavg_baseRefresh,
+                Settings.Default.a_longavg_compareRefresh,
+                Settings.Default.a_longavg_longLimit,
+                Settings.Default.a_longavg_shortLimit);
+
+            shortAverage.LoadSettings(ShortAvgPercentDiff,
+                Settings.Default.a_shortavg_baseRefresh,
+                Settings.Default.a_shortavg_compareRefresh,
+                Settings.Default.a_shortavg_longLimit,
+                Settings.Default.a_shortavg_shortLimit);
 
             TemperatureAnalyser.DefaultWeatherCoeffs coeffsClear = new TemperatureAnalyser.DefaultWeatherCoeffs()
             {
-                clear = 1,
-                clouds = 0.98f,
-                atmosphere = 0.98f,
-                snow = 0.94f,
-                rain = 0.96f,
-                drizzle = 0.97f,
-                storm = 0.96f
+                clear = Settings.Default.a_temper_coeff_clear_clear,
+                clouds = Settings.Default.a_temper_coeff_clear_cloud,
+                atmosphere = Settings.Default.a_temper_coeff_clear_atmos,
+                snow = Settings.Default.a_temper_coeff_clear_snow,
+                rain = Settings.Default.a_temper_coeff_clear_rain,
+                drizzle = Settings.Default.a_temper_coeff_clear_drizz,
+                storm = Settings.Default.a_temper_coeff_clear_storm
             };
 
             TemperatureAnalyser.DefaultWeatherCoeffs coeffsClouds = new TemperatureAnalyser.DefaultWeatherCoeffs()
             {
-                clear = 1.02f,
-                clouds = 1,
-                atmosphere = 0.99f,
-                snow = 0.95f,
-                rain = 0.98f,
-                drizzle = 0.99f,
-                storm = 0.98f
+                clear = Settings.Default.a_temper_coeff_cloud_clear,
+                clouds = Settings.Default.a_temper_coeff_cloud_cloud,
+                atmosphere = Settings.Default.a_temper_coeff_cloud_atmos,
+                snow = Settings.Default.a_temper_coeff_cloud_snow,
+                rain = Settings.Default.a_temper_coeff_cloud_rain,
+                drizzle = Settings.Default.a_temper_coeff_cloud_drizz,
+                storm = Settings.Default.a_temper_coeff_cloud_storm
             };
 
-            OduTemperAna = new TemperatureAnalyser(this, dataM, Analyser.WatchTempOdu, Measurement.TempODU, 1.2, 0.2, TimeSpan.FromMinutes(100), 20, 0, coeffsClear, coeffsClouds, 5);
-            IduTemperAna = new TemperatureAnalyser(this, dataM, Analyser.WatchTempIduOut, Measurement.TempIDU, 1.2, 0.2, TimeSpan.FromMinutes(100), 20, 0, coeffsClear, coeffsClouds, 5);
+            OduTemperAna.LoadSettings(coeffsClear, coeffsClouds,
+                Settings.Default.a_temper_debug,
+                Settings.Default.a_temper_percDiff,
+                Settings.Default.a_temper_degreesWind,
+                Settings.Default.a_temper_maxAge,
+                Settings.Default.a_temper_backDays,
+                Settings.Default.a_temper_skippedDays,
+                Settings.Default.a_temper_averageDays);
+
+            IduTemperAna.LoadSettings(coeffsClear, coeffsClouds,
+                Settings.Default.a_temper_debug,
+                Settings.Default.a_temper_percDiff,
+                Settings.Default.a_temper_degreesWind,
+                Settings.Default.a_temper_maxAge,
+                Settings.Default.a_temper_backDays,
+                Settings.Default.a_temper_skippedDays,
+                Settings.Default.a_temper_averageDays);
         }
 
         private void DataChanged(object sender, PropertyChangedEventArgs e)
@@ -200,6 +234,7 @@ namespace MicrowaveMonitor.Managers
                     if (!double.TryParse(WeatherCollector.DeviceLongitude[disp.Id], NumberStyles.Float, CultureInfo.InvariantCulture.NumberFormat, out longi))
                         break;
                     OduTemperAna.WeatherChanged(disp.Id, (int)disp.WeatherId, (double)disp.WeatherWind, lati, longi);
+                    IduTemperAna.WeatherChanged(disp.Id, (int)disp.WeatherId, (double)disp.WeatherWind, lati, longi);
                     break;
                 default:
                     return;
@@ -208,16 +243,16 @@ namespace MicrowaveMonitor.Managers
 
         public int GenerateAlarmDispatched(int deviceId, AlarmRank rank, Measurement measure, AlarmType method, bool trend, double measValue)
         {
-            object obj = null;
+            int? id = null;
 
             App.Current.Dispatcher.Invoke(delegate
             {
-                return obj = GenerateAlarm(deviceId, rank, measure, method, trend, measValue);
+                return id = GenerateAlarm(deviceId, rank, measure, method, trend, measValue);
             });
 
-            if (obj == null)
+            if (id == null)
                 return 0;
-            return (int)obj;
+            return (int)id;
         }
 
         public void SettleAlarmDispatched(int alarmId, double settledValue, bool stopping)
@@ -416,8 +451,8 @@ namespace MicrowaveMonitor.Managers
                 alarm.IsActive = false;
                 linkM.UpdateAlarm(alarm);
             }
-
-            DateTime limit = DateTime.Now - longAvgLim;
+            
+            DateTime limit = DateTime.Now - Properties.Settings.Default.a_longavg_longLimit;
 
             foreach (Alarm alarm in alarms)
             {
