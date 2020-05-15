@@ -60,7 +60,7 @@
                                 <ColumnDefinition></ColumnDefinition>
                                 <ColumnDefinition Width="70"></ColumnDefinition>
                             </Grid.ColumnDefinitions>
-                            <Label Content="Signal Strenght alarm treshold: "></Label>
+                            <Label Content="Signal Strenght alarm threshold: "></Label>
                             <xctk:DoubleUpDown x:Name="avgXpercSignal" Grid.Column="1" HorizontalAlignment="Right" FormatString="P2" Value="0.01" Increment=".001" Minimum="0.001" Maximum="10.00"  Width="100"/>
                         </Grid>
                         <Grid Margin="0,3,0,0">
@@ -69,7 +69,7 @@
                                 <ColumnDefinition></ColumnDefinition>
                                 <ColumnDefinition Width="70"></ColumnDefinition>
                             </Grid.ColumnDefinitions>
-                            <Label Content="Signal Quality alarm treshold: "></Label>
+                            <Label Content="Signal Quality alarm threshold: "></Label>
                             <xctk:DoubleUpDown x:Name="avgXpercSignalQ" Grid.Column="1" HorizontalAlignment="Right" FormatString="P2" Value="0.01" Increment=".001" Minimum="0.001" Maximum="10.00"  Width="100"/>
                         </Grid>
                         <Grid Margin="0,3,0,0">
@@ -78,7 +78,7 @@
                                 <ColumnDefinition></ColumnDefinition>
                                 <ColumnDefinition Width="70"></ColumnDefinition>
                             </Grid.ColumnDefinitions>
-                            <Label Content="IDU Temperature alarm treshold: "></Label>
+                            <Label Content="IDU Temperature alarm threshold: "></Label>
                             <xctk:DoubleUpDown x:Name="avgXpercTempIdu" Grid.Column="1" HorizontalAlignment="Right" FormatString="P2" Value="0.01" Increment=".001" Minimum="0.001" Maximum="10.00"  Width="100"/>
                         </Grid>
                         <Grid Margin="0,3,0,0">
@@ -87,7 +87,7 @@
                                 <ColumnDefinition></ColumnDefinition>
                                 <ColumnDefinition Width="70"></ColumnDefinition>
                             </Grid.ColumnDefinitions>
-                            <Label Content="Voltage alarm treshold: "></Label>
+                            <Label Content="Voltage alarm threshold: "></Label>
                             <xctk:DoubleUpDown x:Name="avgXpercVolt" Grid.Column="1" HorizontalAlignment="Right" FormatString="P2" Value="0.01" Increment=".001" Minimum="0.001" Maximum="10.00"  Width="100"/>
                         </Grid>
                         <Grid Margin="0,3,0,0">
@@ -96,7 +96,7 @@
                                 <ColumnDefinition></ColumnDefinition>
                                 <ColumnDefinition Width="70"></ColumnDefinition>
                             </Grid.ColumnDefinitions>
-                            <Label Content="Latency alarm treshold: "></Label>
+                            <Label Content="Latency alarm threshold: "></Label>
                             <xctk:DoubleUpDown x:Name="avgXpercPing" Grid.Column="1" HorizontalAlignment="Right" FormatString="P2" Value="0.01" Increment=".001" Minimum="0.001" Maximum="10.00"  Width="100"/>
                         </Grid>
 
@@ -150,7 +150,7 @@
                                 <ColumnDefinition></ColumnDefinition>
                                 <ColumnDefinition Width="70"></ColumnDefinition>
                             </Grid.ColumnDefinitions>
-                            <Label Content="Signal Strenght alarm treshold: "></Label>
+                            <Label Content="Signal Strenght alarm threshold: "></Label>
                             <xctk:DoubleUpDown x:Name="avgYpercSignal" Grid.Column="1" HorizontalAlignment="Right" FormatString="P2" Value="0.01" Increment=".001" Minimum="0.001" Maximum="10.00"  Width="100"/>
                         </Grid>
                         <Grid Margin="0,3,0,0">
@@ -159,7 +159,7 @@
                                 <ColumnDefinition></ColumnDefinition>
                                 <ColumnDefinition Width="70"></ColumnDefinition>
                             </Grid.ColumnDefinitions>
-                            <Label Content="Signal Quality alarm treshold: "></Label>
+                            <Label Content="Signal Quality alarm threshold: "></Label>
                             <xctk:DoubleUpDown x:Name="avgYpercSignalQ" Grid.Column="1" HorizontalAlignment="Right" FormatString="P2" Value="0.01" Increment=".001" Minimum="0.001" Maximum="10.00"  Width="100"/>
                         </Grid>
                         <Grid Margin="0,3,0,0">
@@ -168,7 +168,7 @@
                                 <ColumnDefinition></ColumnDefinition>
                                 <ColumnDefinition Width="70"></ColumnDefinition>
                             </Grid.ColumnDefinitions>
-                            <Label Content="IDU Temperature alarm treshold: "></Label>
+                            <Label Content="IDU Temperature alarm threshold: "></Label>
                             <xctk:DoubleUpDown x:Name="avgYpercTempIdu" Grid.Column="1" HorizontalAlignment="Right" FormatString="P2" Value="0.01" Increment=".001" Minimum="0.001" Maximum="10.00"  Width="100"/>
                         </Grid>
                         <Grid Margin="0,3,0,0">
@@ -177,7 +177,7 @@
                                 <ColumnDefinition></ColumnDefinition>
                                 <ColumnDefinition Width="70"></ColumnDefinition>
                             </Grid.ColumnDefinitions>
-                            <Label Content="Voltage alarm treshold: "></Label>
+                            <Label Content="Voltage alarm threshold: "></Label>
                             <xctk:DoubleUpDown x:Name="avgYpercVolt" Grid.Column="1" HorizontalAlignment="Right" FormatString="P2" Value="0.01" Increment=".001" Minimum="0.001" Maximum="10.00"  Width="100"/>
                         </Grid>
                         <Grid Margin="0,3,0,0">
@@ -186,17 +186,66 @@
                                 <ColumnDefinition></ColumnDefinition>
                                 <ColumnDefinition Width="70"></ColumnDefinition>
                             </Grid.ColumnDefinitions>
-                            <Label Content="Latency alarm treshold: "></Label>
+                            <Label Content="Latency alarm threshold: "></Label>
                             <xctk:DoubleUpDown x:Name="avgYpercPing" Grid.Column="1" HorizontalAlignment="Right" FormatString="P2" Value="0.01" Increment=".001" Minimum="0.001" Maximum="10.00"  Width="100"/>
                         </Grid>
                     </StackPanel>
                 </ScrollViewer>
             </TabItem>
             <TabItem Header="Retro-Time Analyser">
-                
+                <StackPanel Orientation="Vertical">
+                    <Grid Margin="0,3,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition></ColumnDefinition>
+                            <ColumnDefinition></ColumnDefinition>
+                            <ColumnDefinition Width="70"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        <Label Content="Alarm threshold: "></Label>
+                        <xctk:DoubleUpDown x:Name="timePerc" Grid.Column="1" HorizontalAlignment="Right" FormatString="P2" Value="1.10" Increment=".001" Minimum="0.001" Maximum="10.00"  Width="100"/>
+                    </Grid>
+                    <Grid Margin="0,3,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="220"></ColumnDefinition>
+                            <ColumnDefinition></ColumnDefinition>
+                            <ColumnDefinition Width="70"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        <Label Content="Maximum age of compared values: "></Label>
+                        <xctk:DoubleUpDown x:Name="timeBackDaysCount" Grid.Column="1" HorizontalAlignment="Right" FormatString="F0" Value="7" Increment="1"  Minimum="1" Maximum="30" Width="100"/>
+                        <Label Content="days" Grid.Column="2"></Label>
+                    </Grid>
+                </StackPanel>
             </TabItem>
             <TabItem Header="Periodicity Analyser">
-                
+                <StackPanel Orientation="Vertical">
+                    <Grid Margin="0,3,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition></ColumnDefinition>
+                            <ColumnDefinition></ColumnDefinition>
+                            <ColumnDefinition Width="70"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        <Label Content="Register threshold: "></Label>
+                        <xctk:DoubleUpDown x:Name="periodPerc" Grid.Column="1" HorizontalAlignment="Right" FormatString="P2" Value="0.03" Increment=".001" Minimum="0.001" Maximum="10.00"  Width="100"/>
+                    </Grid>
+                    <Grid Margin="0,3,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition></ColumnDefinition>
+                            <ColumnDefinition></ColumnDefinition>
+                            <ColumnDefinition Width="70"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        <Label Content="Tolerance: "></Label>
+                        <xctk:DoubleUpDown x:Name="periodTolerance" Grid.Column="1" HorizontalAlignment="Right" FormatString="P2" Value="0.01" Increment=".001" Minimum="0.001" Maximum="10.00"  Width="100"/>
+                    </Grid>
+                    <Grid Margin="0,3,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="220"></ColumnDefinition>
+                            <ColumnDefinition></ColumnDefinition>
+                            <ColumnDefinition Width="70"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        <Label Content="Compare window length: "></Label>
+                        <xctk:DoubleUpDown x:Name="periodBackDaysCount" Grid.Column="1" HorizontalAlignment="Right" FormatString="F0" Value="3" Increment="1"  Minimum="1" Maximum="30" Width="100"/>
+                        <Label Content="days" Grid.Column="2"></Label>
+                    </Grid>
+                </StackPanel>
             </TabItem>
             <TabItem Header="Temperature Analyser">
                 <StackPanel Orientation="Vertical">
@@ -207,7 +256,7 @@
                             <ColumnDefinition></ColumnDefinition>
                             <ColumnDefinition Width="70"></ColumnDefinition>
                         </Grid.ColumnDefinitions>
-                        <Label Content="Alarm treshold: "></Label>
+                        <Label Content="Alarm threshold: "></Label>
                         <xctk:DoubleUpDown x:Name="temperPerc" Grid.Column="1" HorizontalAlignment="Right" FormatString="P2" Value="0.40" Increment=".001" Minimum="0.001" Maximum="10.00"  Width="100"/>
                     </Grid>
                     <Grid Margin="0,3,0,0">
