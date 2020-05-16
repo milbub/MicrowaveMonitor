@@ -5,10 +5,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         mc:Ignorable="d"
-        Title="Settings" Height="620" Width="500"
+        Title="Settings" Height="635" Width="500"
         ResizeMode="NoResize" WindowStartupLocation="CenterScreen">
     <StackPanel Orientation="Vertical" Background="Silver">
-        <TabControl Height="520" Margin="5" Background="LightGray">
+        <TabControl Height="535" Margin="5" Background="LightGray">
             <TabItem Header="Average Analyser">
                 <ScrollViewer>
                     <StackPanel Orientation="Vertical">
@@ -18,10 +18,17 @@
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition></ColumnDefinition>
                                 <ColumnDefinition></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <CheckBox x:Name="avgXEnabled" IsChecked="True" Content="Enabled" Grid.ColumnSpan="2" VerticalAlignment="Center" HorizontalAlignment="Center"></CheckBox>
+                        </Grid>
+                        <Grid Margin="0,3,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition></ColumnDefinition>
+                                <ColumnDefinition></ColumnDefinition>
                                 <ColumnDefinition Width="70"></ColumnDefinition>
                             </Grid.ColumnDefinitions>
                             <Label Content="Base average refresh interval: "></Label>
-                            <xctk:DoubleUpDown x:Name="avgXbaseRefresh" Grid.Column="1" HorizontalAlignment="Right" FormatString="F1" Value="1.0" Increment="1.0"  Minimum="1.0" Maximum="10080.0" Width="100"/>
+                            <xctk:DoubleUpDown x:Name="avgXbaseRefresh" IsEnabled="{Binding ElementName=avgXEnabled, Path=IsChecked}" Grid.Column="1" HorizontalAlignment="Right" FormatString="F1" Value="1.0" Increment="1.0"  Minimum="1.0" Maximum="10080.0" Width="100"/>
                             <Label Content="minutes" Grid.Column="2"></Label>
                         </Grid>
                         <Grid Margin="0,3,0,0">
@@ -31,7 +38,7 @@
                                 <ColumnDefinition Width="70"></ColumnDefinition>
                             </Grid.ColumnDefinitions>
                             <Label Content="Compare refresh interval: "></Label>
-                            <xctk:DoubleUpDown x:Name="avgXcompareRefresh" Grid.Column="1" HorizontalAlignment="Right" FormatString="F1" Value="1.0" Increment="1.0"  Minimum="1.0" Maximum="1440.0" Width="100"/>
+                            <xctk:DoubleUpDown x:Name="avgXcompareRefresh" IsEnabled="{Binding ElementName=avgXEnabled, Path=IsChecked}" Grid.Column="1" HorizontalAlignment="Right" FormatString="F1" Value="1.0" Increment="1.0"  Minimum="1.0" Maximum="1440.0" Width="100"/>
                             <Label Content="minutes" Grid.Column="2"></Label>
                         </Grid>
                         <Grid Margin="0,3,0,0">
@@ -41,7 +48,7 @@
                                 <ColumnDefinition Width="70"></ColumnDefinition>
                             </Grid.ColumnDefinitions>
                             <Label Content="Bottom time limit: "></Label>
-                            <xctk:DoubleUpDown x:Name="avgXlongLimit" Grid.Column="1" HorizontalAlignment="Right" FormatString="F1" Value="10.0" Increment="1.0"  Minimum="10.0" Maximum="43200.0" Width="100"/>
+                            <xctk:DoubleUpDown x:Name="avgXlongLimit"  IsEnabled="{Binding ElementName=avgXEnabled, Path=IsChecked}" Grid.Column="1" HorizontalAlignment="Right" FormatString="F1" Value="10.0" Increment="1.0"  Minimum="10.0" Maximum="43200.0" Width="100"/>
                             <Label Content="minutes" Grid.Column="2"></Label>
                         </Grid>
                         <Grid Margin="0,3,0,0">
@@ -51,7 +58,7 @@
                                 <ColumnDefinition Width="70"></ColumnDefinition>
                             </Grid.ColumnDefinitions>
                             <Label Content="Upper time limit: "></Label>
-                            <xctk:DoubleUpDown x:Name="avgXshortLimit" Grid.Column="1" HorizontalAlignment="Right" FormatString="F1" Value="1.0" Increment="1.0"  Minimum="1.0" Maximum="10080.0" Width="100"/>
+                            <xctk:DoubleUpDown x:Name="avgXshortLimit"  IsEnabled="{Binding ElementName=avgXEnabled, Path=IsChecked}" Grid.Column="1" HorizontalAlignment="Right" FormatString="F1" Value="1.0" Increment="1.0"  Minimum="1.0" Maximum="10080.0" Width="100"/>
                             <Label Content="minutes" Grid.Column="2"></Label>
                         </Grid>
                         <Grid Margin="0,3,0,0">
@@ -61,7 +68,7 @@
                                 <ColumnDefinition Width="70"></ColumnDefinition>
                             </Grid.ColumnDefinitions>
                             <Label Content="Signal Strenght alarm threshold: "></Label>
-                            <xctk:DoubleUpDown x:Name="avgXpercSignal" Grid.Column="1" HorizontalAlignment="Right" FormatString="P2" Value="0.01" Increment=".001" Minimum="0.001" Maximum="10.00"  Width="100"/>
+                            <xctk:DoubleUpDown x:Name="avgXpercSignal" IsEnabled="{Binding ElementName=avgXEnabled, Path=IsChecked}" Grid.Column="1" HorizontalAlignment="Right" FormatString="P2" Value="0.01" Increment=".001" Minimum="0.001" Maximum="10.00"  Width="100"/>
                         </Grid>
                         <Grid Margin="0,3,0,0">
                             <Grid.ColumnDefinitions>
@@ -70,7 +77,7 @@
                                 <ColumnDefinition Width="70"></ColumnDefinition>
                             </Grid.ColumnDefinitions>
                             <Label Content="Signal Quality alarm threshold: "></Label>
-                            <xctk:DoubleUpDown x:Name="avgXpercSignalQ" Grid.Column="1" HorizontalAlignment="Right" FormatString="P2" Value="0.01" Increment=".001" Minimum="0.001" Maximum="10.00"  Width="100"/>
+                            <xctk:DoubleUpDown x:Name="avgXpercSignalQ" IsEnabled="{Binding ElementName=avgXEnabled, Path=IsChecked}" Grid.Column="1" HorizontalAlignment="Right" FormatString="P2" Value="0.01" Increment=".001" Minimum="0.001" Maximum="10.00"  Width="100"/>
                         </Grid>
                         <Grid Margin="0,3,0,0">
                             <Grid.ColumnDefinitions>
@@ -79,7 +86,7 @@
                                 <ColumnDefinition Width="70"></ColumnDefinition>
                             </Grid.ColumnDefinitions>
                             <Label Content="IDU Temperature alarm threshold: "></Label>
-                            <xctk:DoubleUpDown x:Name="avgXpercTempIdu" Grid.Column="1" HorizontalAlignment="Right" FormatString="P2" Value="0.01" Increment=".001" Minimum="0.001" Maximum="10.00"  Width="100"/>
+                            <xctk:DoubleUpDown x:Name="avgXpercTempIdu" IsEnabled="{Binding ElementName=avgXEnabled, Path=IsChecked}" Grid.Column="1" HorizontalAlignment="Right" FormatString="P2" Value="0.01" Increment=".001" Minimum="0.001" Maximum="10.00"  Width="100"/>
                         </Grid>
                         <Grid Margin="0,3,0,0">
                             <Grid.ColumnDefinitions>
@@ -88,7 +95,7 @@
                                 <ColumnDefinition Width="70"></ColumnDefinition>
                             </Grid.ColumnDefinitions>
                             <Label Content="Voltage alarm threshold: "></Label>
-                            <xctk:DoubleUpDown x:Name="avgXpercVolt" Grid.Column="1" HorizontalAlignment="Right" FormatString="P2" Value="0.01" Increment=".001" Minimum="0.001" Maximum="10.00"  Width="100"/>
+                            <xctk:DoubleUpDown x:Name="avgXpercVolt" IsEnabled="{Binding ElementName=avgXEnabled, Path=IsChecked}" Grid.Column="1" HorizontalAlignment="Right" FormatString="P2" Value="0.01" Increment=".001" Minimum="0.001" Maximum="10.00"  Width="100"/>
                         </Grid>
                         <Grid Margin="0,3,0,0">
                             <Grid.ColumnDefinitions>
@@ -97,7 +104,7 @@
                                 <ColumnDefinition Width="70"></ColumnDefinition>
                             </Grid.ColumnDefinitions>
                             <Label Content="Latency alarm threshold: "></Label>
-                            <xctk:DoubleUpDown x:Name="avgXpercPing" Grid.Column="1" HorizontalAlignment="Right" FormatString="P2" Value="0.01" Increment=".001" Minimum="0.001" Maximum="10.00"  Width="100"/>
+                            <xctk:DoubleUpDown x:Name="avgXpercPing" IsEnabled="{Binding ElementName=avgXEnabled, Path=IsChecked}" Grid.Column="1" HorizontalAlignment="Right" FormatString="P2" Value="0.01" Increment=".001" Minimum="0.001" Maximum="10.00"  Width="100"/>
                         </Grid>
 
                         <Separator Margin="5"></Separator>
@@ -108,10 +115,17 @@
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition></ColumnDefinition>
                                 <ColumnDefinition></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <CheckBox x:Name="avgYEnabled" IsChecked="True" Content="Enabled" Grid.ColumnSpan="2" VerticalAlignment="Center" HorizontalAlignment="Center"></CheckBox>
+                        </Grid>
+                        <Grid Margin="0,3,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition></ColumnDefinition>
+                                <ColumnDefinition></ColumnDefinition>
                                 <ColumnDefinition Width="70"></ColumnDefinition>
                             </Grid.ColumnDefinitions>
                             <Label Content="Base average refresh interval: "></Label>
-                            <xctk:DoubleUpDown x:Name="avgYbaseRefresh" Grid.Column="1" HorizontalAlignment="Right" FormatString="F1" Value="1.0" Increment="1.0"  Minimum="1.0" Maximum="10080.0" Width="100"/>
+                            <xctk:DoubleUpDown x:Name="avgYbaseRefresh" IsEnabled="{Binding ElementName=avgYEnabled, Path=IsChecked}" Grid.Column="1" HorizontalAlignment="Right" FormatString="F1" Value="1.0" Increment="1.0"  Minimum="1.0" Maximum="10080.0" Width="100"/>
                             <Label Content="minutes" Grid.Column="2"></Label>
                         </Grid>
                         <Grid Margin="0,3,0,0">
@@ -121,7 +135,7 @@
                                 <ColumnDefinition Width="70"></ColumnDefinition>
                             </Grid.ColumnDefinitions>
                             <Label Content="Compare refresh interval: "></Label>
-                            <xctk:DoubleUpDown x:Name="avgYcompareRefresh" Grid.Column="1" HorizontalAlignment="Right" FormatString="F1" Value="1.0" Increment="1.0"  Minimum="1.0" Maximum="1440.0" Width="100"/>
+                            <xctk:DoubleUpDown x:Name="avgYcompareRefresh" IsEnabled="{Binding ElementName=avgYEnabled, Path=IsChecked}" Grid.Column="1" HorizontalAlignment="Right" FormatString="F1" Value="1.0" Increment="1.0"  Minimum="1.0" Maximum="1440.0" Width="100"/>
                             <Label Content="minutes" Grid.Column="2"></Label>
                         </Grid>
                         <Grid Margin="0,3,0,0">
@@ -131,7 +145,7 @@
                                 <ColumnDefinition Width="70"></ColumnDefinition>
                             </Grid.ColumnDefinitions>
                             <Label Content="Bottom time limit: "></Label>
-                            <xctk:DoubleUpDown x:Name="avgYlongLimit" Grid.Column="1" HorizontalAlignment="Right" FormatString="F1" Value="10.0" Increment="1.0"  Minimum="10.0" Maximum="302400.0" Width="100"/>
+                            <xctk:DoubleUpDown x:Name="avgYlongLimit" IsEnabled="{Binding ElementName=avgYEnabled, Path=IsChecked}" Grid.Column="1" HorizontalAlignment="Right" FormatString="F1" Value="10.0" Increment="1.0"  Minimum="10.0" Maximum="302400.0" Width="100"/>
                             <Label Content="minutes" Grid.Column="2"></Label>
                         </Grid>
                         <Grid Margin="0,3,0,0">
@@ -141,7 +155,7 @@
                                 <ColumnDefinition Width="70"></ColumnDefinition>
                             </Grid.ColumnDefinitions>
                             <Label Content="Upper time limit: "></Label>
-                            <xctk:DoubleUpDown x:Name="avgYshortLimit" Grid.Column="1" HorizontalAlignment="Right" FormatString="F1" Value="1.0" Increment="1.0"  Minimum="1.0" Maximum="10080.0" Width="100"/>
+                            <xctk:DoubleUpDown x:Name="avgYshortLimit" IsEnabled="{Binding ElementName=avgYEnabled, Path=IsChecked}" Grid.Column="1" HorizontalAlignment="Right" FormatString="F1" Value="1.0" Increment="1.0"  Minimum="1.0" Maximum="10080.0" Width="100"/>
                             <Label Content="minutes" Grid.Column="2"></Label>
                         </Grid>
                         <Grid Margin="0,3,0,0">
@@ -151,7 +165,7 @@
                                 <ColumnDefinition Width="70"></ColumnDefinition>
                             </Grid.ColumnDefinitions>
                             <Label Content="Signal Strenght alarm threshold: "></Label>
-                            <xctk:DoubleUpDown x:Name="avgYpercSignal" Grid.Column="1" HorizontalAlignment="Right" FormatString="P2" Value="0.01" Increment=".001" Minimum="0.001" Maximum="10.00"  Width="100"/>
+                            <xctk:DoubleUpDown x:Name="avgYpercSignal" IsEnabled="{Binding ElementName=avgYEnabled, Path=IsChecked}" Grid.Column="1" HorizontalAlignment="Right" FormatString="P2" Value="0.01" Increment=".001" Minimum="0.001" Maximum="10.00"  Width="100"/>
                         </Grid>
                         <Grid Margin="0,3,0,0">
                             <Grid.ColumnDefinitions>
@@ -160,7 +174,7 @@
                                 <ColumnDefinition Width="70"></ColumnDefinition>
                             </Grid.ColumnDefinitions>
                             <Label Content="Signal Quality alarm threshold: "></Label>
-                            <xctk:DoubleUpDown x:Name="avgYpercSignalQ" Grid.Column="1" HorizontalAlignment="Right" FormatString="P2" Value="0.01" Increment=".001" Minimum="0.001" Maximum="10.00"  Width="100"/>
+                            <xctk:DoubleUpDown x:Name="avgYpercSignalQ" IsEnabled="{Binding ElementName=avgYEnabled, Path=IsChecked}" Grid.Column="1" HorizontalAlignment="Right" FormatString="P2" Value="0.01" Increment=".001" Minimum="0.001" Maximum="10.00"  Width="100"/>
                         </Grid>
                         <Grid Margin="0,3,0,0">
                             <Grid.ColumnDefinitions>
@@ -169,7 +183,7 @@
                                 <ColumnDefinition Width="70"></ColumnDefinition>
                             </Grid.ColumnDefinitions>
                             <Label Content="IDU Temperature alarm threshold: "></Label>
-                            <xctk:DoubleUpDown x:Name="avgYpercTempIdu" Grid.Column="1" HorizontalAlignment="Right" FormatString="P2" Value="0.01" Increment=".001" Minimum="0.001" Maximum="10.00"  Width="100"/>
+                            <xctk:DoubleUpDown x:Name="avgYpercTempIdu" IsEnabled="{Binding ElementName=avgYEnabled, Path=IsChecked}" Grid.Column="1" HorizontalAlignment="Right" FormatString="P2" Value="0.01" Increment=".001" Minimum="0.001" Maximum="10.00"  Width="100"/>
                         </Grid>
                         <Grid Margin="0,3,0,0">
                             <Grid.ColumnDefinitions>
@@ -178,22 +192,30 @@
                                 <ColumnDefinition Width="70"></ColumnDefinition>
                             </Grid.ColumnDefinitions>
                             <Label Content="Voltage alarm threshold: "></Label>
-                            <xctk:DoubleUpDown x:Name="avgYpercVolt" Grid.Column="1" HorizontalAlignment="Right" FormatString="P2" Value="0.01" Increment=".001" Minimum="0.001" Maximum="10.00"  Width="100"/>
+                            <xctk:DoubleUpDown x:Name="avgYpercVolt" IsEnabled="{Binding ElementName=avgYEnabled, Path=IsChecked}" Grid.Column="1" HorizontalAlignment="Right" FormatString="P2" Value="0.01" Increment=".001" Minimum="0.001" Maximum="10.00"  Width="100"/>
                         </Grid>
-                        <Grid Margin="0,3,0,0">
+                        <Grid Margin="0,3,0,3">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition></ColumnDefinition>
                                 <ColumnDefinition></ColumnDefinition>
                                 <ColumnDefinition Width="70"></ColumnDefinition>
                             </Grid.ColumnDefinitions>
                             <Label Content="Latency alarm threshold: "></Label>
-                            <xctk:DoubleUpDown x:Name="avgYpercPing" Grid.Column="1" HorizontalAlignment="Right" FormatString="P2" Value="0.01" Increment=".001" Minimum="0.001" Maximum="10.00"  Width="100"/>
+                            <xctk:DoubleUpDown x:Name="avgYpercPing" IsEnabled="{Binding ElementName=avgYEnabled, Path=IsChecked}" Grid.Column="1" HorizontalAlignment="Right" FormatString="P2" Value="0.01" Increment=".001" Minimum="0.001" Maximum="10.00"  Width="100"/>
                         </Grid>
                     </StackPanel>
                 </ScrollViewer>
             </TabItem>
             <TabItem Header="Retro-Time Analyser">
                 <StackPanel Orientation="Vertical">
+                    <Button Click="LoadDefaultTimeFired" Content="Load Defaults" Margin="5"></Button>
+                    <Grid Margin="0,3,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition></ColumnDefinition>
+                            <ColumnDefinition></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        <CheckBox x:Name="timeEnabled" IsChecked="True" Content="Enabled" Grid.ColumnSpan="2" VerticalAlignment="Center" HorizontalAlignment="Center"></CheckBox>
+                    </Grid>
                     <Grid Margin="0,3,0,0">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition></ColumnDefinition>
@@ -201,7 +223,7 @@
                             <ColumnDefinition Width="70"></ColumnDefinition>
                         </Grid.ColumnDefinitions>
                         <Label Content="Alarm threshold: "></Label>
-                        <xctk:DoubleUpDown x:Name="timePerc" Grid.Column="1" HorizontalAlignment="Right" FormatString="P2" Value="1.10" Increment=".001" Minimum="0.001" Maximum="10.00"  Width="100"/>
+                        <xctk:DoubleUpDown x:Name="timePerc" IsEnabled="{Binding ElementName=timeEnabled, Path=IsChecked}" Grid.Column="1" HorizontalAlignment="Right" FormatString="P2" Value="1.10" Increment=".001" Minimum="0.001" Maximum="10.00"  Width="100"/>
                     </Grid>
                     <Grid Margin="0,3,0,0">
                         <Grid.ColumnDefinitions>
@@ -210,13 +232,21 @@
                             <ColumnDefinition Width="70"></ColumnDefinition>
                         </Grid.ColumnDefinitions>
                         <Label Content="Maximum age of compared values: "></Label>
-                        <xctk:DoubleUpDown x:Name="timeBackDaysCount" Grid.Column="1" HorizontalAlignment="Right" FormatString="F0" Value="7" Increment="1"  Minimum="1" Maximum="30" Width="100"/>
+                        <xctk:DoubleUpDown x:Name="timeBackDaysCount" IsEnabled="{Binding ElementName=timeEnabled, Path=IsChecked}" Grid.Column="1" HorizontalAlignment="Right" FormatString="F0" Value="7" Increment="1"  Minimum="1" Maximum="30" Width="100"/>
                         <Label Content="days" Grid.Column="2"></Label>
                     </Grid>
                 </StackPanel>
             </TabItem>
             <TabItem Header="Periodicity Analyser">
                 <StackPanel Orientation="Vertical">
+                    <Button Click="LoadDefaultPeriodFired" Content="Load Defaults" Margin="5"></Button>
+                    <Grid Margin="0,3,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition></ColumnDefinition>
+                            <ColumnDefinition></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        <CheckBox x:Name="periodEnabled" IsChecked="True" Content="Enabled" Grid.ColumnSpan="2" VerticalAlignment="Center" HorizontalAlignment="Center"></CheckBox>
+                    </Grid>
                     <Grid Margin="0,3,0,0">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition></ColumnDefinition>
@@ -224,7 +254,7 @@
                             <ColumnDefinition Width="70"></ColumnDefinition>
                         </Grid.ColumnDefinitions>
                         <Label Content="Register threshold: "></Label>
-                        <xctk:DoubleUpDown x:Name="periodPerc" Grid.Column="1" HorizontalAlignment="Right" FormatString="P2" Value="0.03" Increment=".001" Minimum="0.001" Maximum="10.00"  Width="100"/>
+                        <xctk:DoubleUpDown x:Name="periodPerc" IsEnabled="{Binding ElementName=periodEnabled, Path=IsChecked}" Grid.Column="1" HorizontalAlignment="Right" FormatString="P2" Value="0.03" Increment=".001" Minimum="0.001" Maximum="10.00"  Width="100"/>
                     </Grid>
                     <Grid Margin="0,3,0,0">
                         <Grid.ColumnDefinitions>
@@ -233,7 +263,7 @@
                             <ColumnDefinition Width="70"></ColumnDefinition>
                         </Grid.ColumnDefinitions>
                         <Label Content="Tolerance: "></Label>
-                        <xctk:DoubleUpDown x:Name="periodTolerance" Grid.Column="1" HorizontalAlignment="Right" FormatString="P2" Value="0.01" Increment=".001" Minimum="0.001" Maximum="10.00"  Width="100"/>
+                        <xctk:DoubleUpDown x:Name="periodTolerance" IsEnabled="{Binding ElementName=periodEnabled, Path=IsChecked}" Grid.Column="1" HorizontalAlignment="Right" FormatString="P2" Value="0.01" Increment=".001" Minimum="0.001" Maximum="10.00"  Width="100"/>
                     </Grid>
                     <Grid Margin="0,3,0,0">
                         <Grid.ColumnDefinitions>
@@ -242,7 +272,7 @@
                             <ColumnDefinition Width="70"></ColumnDefinition>
                         </Grid.ColumnDefinitions>
                         <Label Content="Compare window length: "></Label>
-                        <xctk:DoubleUpDown x:Name="periodBackDaysCount" Grid.Column="1" HorizontalAlignment="Right" FormatString="F0" Value="3" Increment="1"  Minimum="1" Maximum="30" Width="100"/>
+                        <xctk:DoubleUpDown x:Name="periodBackDaysCount" IsEnabled="{Binding ElementName=periodEnabled, Path=IsChecked}" Grid.Column="1" HorizontalAlignment="Right" FormatString="F0" Value="3" Increment="1"  Minimum="1" Maximum="30" Width="100"/>
                         <Label Content="days" Grid.Column="2"></Label>
                     </Grid>
                 </StackPanel>
@@ -254,10 +284,17 @@
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition></ColumnDefinition>
                             <ColumnDefinition></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        <CheckBox x:Name="temperEnabled" IsChecked="True" Content="Enabled" Grid.ColumnSpan="2" VerticalAlignment="Center" HorizontalAlignment="Center"></CheckBox>
+                    </Grid>
+                    <Grid Margin="0,3,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition></ColumnDefinition>
+                            <ColumnDefinition></ColumnDefinition>
                             <ColumnDefinition Width="70"></ColumnDefinition>
                         </Grid.ColumnDefinitions>
                         <Label Content="Alarm threshold: "></Label>
-                        <xctk:DoubleUpDown x:Name="temperPerc" Grid.Column="1" HorizontalAlignment="Right" FormatString="P2" Value="0.40" Increment=".001" Minimum="0.001" Maximum="10.00"  Width="100"/>
+                        <xctk:DoubleUpDown x:Name="temperPerc" IsEnabled="{Binding ElementName=temperEnabled, Path=IsChecked}" Grid.Column="1" HorizontalAlignment="Right" FormatString="P2" Value="0.40" Increment=".001" Minimum="0.001" Maximum="10.00"  Width="100"/>
                     </Grid>
                     <Grid Margin="0,3,0,0">
                         <Grid.ColumnDefinitions>
@@ -266,7 +303,7 @@
                             <ColumnDefinition Width="70"></ColumnDefinition>
                         </Grid.ColumnDefinitions>
                         <Label Content="°C per wind m/s: "></Label>
-                        <xctk:DoubleUpDown x:Name="temperDegreesWind" Grid.Column="1" HorizontalAlignment="Right" FormatString="F3" Value="0.2" Increment="0.1"  Minimum="0.001" Maximum="1" Width="100"/>
+                        <xctk:DoubleUpDown x:Name="temperDegreesWind" IsEnabled="{Binding ElementName=temperEnabled, Path=IsChecked}" Grid.Column="1" HorizontalAlignment="Right" FormatString="F3" Value="0.2" Increment="0.1"  Minimum="0.001" Maximum="1" Width="100"/>
                         <Label Content="degrees" Grid.Column="2"></Label>
                     </Grid>
                     <Grid Margin="0,3,0,0">
@@ -276,7 +313,7 @@
                             <ColumnDefinition Width="70"></ColumnDefinition>
                         </Grid.ColumnDefinitions>
                         <Label Content="Maximum daytime difference of compared weather: "></Label>
-                        <xctk:DoubleUpDown x:Name="temperMaxAge" Grid.Column="1" HorizontalAlignment="Right" FormatString="F1" Value="30.0" Increment="1.0"  Minimum="1.0" Maximum="720.0" Width="100"/>
+                        <xctk:DoubleUpDown x:Name="temperMaxAge" IsEnabled="{Binding ElementName=temperEnabled, Path=IsChecked}" Grid.Column="1" HorizontalAlignment="Right" FormatString="F1" Value="30.0" Increment="1.0"  Minimum="1.0" Maximum="720.0" Width="100"/>
                         <Label Content="minutes" Grid.Column="2"></Label>
                     </Grid>
                     <Grid Margin="0,3,0,0">
@@ -286,7 +323,7 @@
                             <ColumnDefinition Width="70"></ColumnDefinition>
                         </Grid.ColumnDefinitions>
                         <Label Content="Maximum age of compared weather: "></Label>
-                        <xctk:DoubleUpDown x:Name="temperBackDaysCount" Grid.Column="1" HorizontalAlignment="Right" FormatString="F0" Value="25" Increment="1"  Minimum="1" Maximum="30" Width="100"/>
+                        <xctk:DoubleUpDown x:Name="temperBackDaysCount" IsEnabled="{Binding ElementName=temperEnabled, Path=IsChecked}" Grid.Column="1" HorizontalAlignment="Right" FormatString="F0" Value="25" Increment="1"  Minimum="1" Maximum="30" Width="100"/>
                         <Label Content="days" Grid.Column="2"></Label>
                     </Grid>
                     <Grid Margin="0,3,0,0">
@@ -296,7 +333,7 @@
                             <ColumnDefinition Width="70"></ColumnDefinition>
                         </Grid.ColumnDefinitions>
                         <Label Content="Skip most recent days: "></Label>
-                        <xctk:DoubleUpDown x:Name="temperSkippedDays" Grid.Column="1" HorizontalAlignment="Right" FormatString="F0" Value="2" Increment="1"  Minimum="0" Maximum="29" Width="100"/>
+                        <xctk:DoubleUpDown x:Name="temperSkippedDays" IsEnabled="{Binding ElementName=temperEnabled, Path=IsChecked}" Grid.Column="1" HorizontalAlignment="Right" FormatString="F0" Value="2" Increment="1"  Minimum="0" Maximum="29" Width="100"/>
                         <Label Content="days" Grid.Column="2"></Label>
                     </Grid>
                     <Grid Margin="0,3,0,0">
@@ -306,7 +343,7 @@
                             <ColumnDefinition Width="70"></ColumnDefinition>
                         </Grid.ColumnDefinitions>
                         <Label Content="Number of days forming mean ratio:"></Label>
-                        <xctk:DoubleUpDown x:Name="temperAvgDayCount" Grid.Column="1" HorizontalAlignment="Right" FormatString="F0" Value="7" Increment="1"  Minimum="0" Maximum="29" Width="100"/>
+                        <xctk:DoubleUpDown x:Name="temperAvgDayCount" IsEnabled="{Binding ElementName=temperEnabled, Path=IsChecked}" Grid.Column="1" HorizontalAlignment="Right" FormatString="F0" Value="7" Increment="1"  Minimum="0" Maximum="29" Width="100"/>
                         <Label Content="days" Grid.Column="2"></Label>
                     </Grid>
 
@@ -329,7 +366,7 @@
                         </Grid.ColumnDefinitions>
                         <Label Content="Clear sky coefficient: "></Label>
                         <xctk:DoubleUpDown x:Name="temperCoeffClear_Clear" IsEnabled="False" Grid.Column="1" HorizontalAlignment="Center" FormatString="P2" Value="1.000" Increment="0.001"  Minimum="0.0001" Maximum="10.000" Width="100"/>
-                        <xctk:DoubleUpDown x:Name="temperCoeffClear_Clouds" Grid.Column="2" HorizontalAlignment="Center" FormatString="P2" Value="1.020" Increment="0.001"  Minimum="0.001" Maximum="10.000" Width="100"/>
+                        <xctk:DoubleUpDown x:Name="temperCoeffClear_Clouds" IsEnabled="{Binding ElementName=temperEnabled, Path=IsChecked}" Grid.Column="2" HorizontalAlignment="Center" FormatString="P2" Value="1.020" Increment="0.001"  Minimum="0.001" Maximum="10.000" Width="100"/>
                     </Grid>
                     <Grid Margin="0,3,0,0">
                         <Grid.ColumnDefinitions>
@@ -338,7 +375,7 @@
                             <ColumnDefinition></ColumnDefinition>
                         </Grid.ColumnDefinitions>
                         <Label Content="Clouds coefficient: "></Label>
-                        <xctk:DoubleUpDown x:Name="temperCoeffClouds_Clear" Grid.Column="1" HorizontalAlignment="Center" FormatString="P2" Value="0.980" Increment="0.001"  Minimum="0.0001" Maximum="10.000" Width="100"/>
+                        <xctk:DoubleUpDown x:Name="temperCoeffClouds_Clear" IsEnabled="{Binding ElementName=temperEnabled, Path=IsChecked}" Grid.Column="1" HorizontalAlignment="Center" FormatString="P2" Value="0.980" Increment="0.001"  Minimum="0.0001" Maximum="10.000" Width="100"/>
                         <xctk:DoubleUpDown x:Name="temperCoeffClouds_Clouds" Grid.Column="2" IsEnabled="False" HorizontalAlignment="Center" FormatString="P2" Value="1.000" Increment="0.001"  Minimum="0.001" Maximum="10.000" Width="100"/>
                     </Grid>
                     <Grid Margin="0,3,0,0">
@@ -348,8 +385,8 @@
                             <ColumnDefinition></ColumnDefinition>
                         </Grid.ColumnDefinitions>
                         <Label Content="Fog/mist/misc. coefficient: "></Label>
-                        <xctk:DoubleUpDown x:Name="temperCoeffAtmo_Clear" Grid.Column="1" HorizontalAlignment="Center" FormatString="P2" Value="0.980" Increment="0.001"  Minimum="0.0001" Maximum="10.000" Width="100"/>
-                        <xctk:DoubleUpDown x:Name="temperCoeffAtmo_Clouds" Grid.Column="2" HorizontalAlignment="Center" FormatString="P2" Value="0.990" Increment="0.001"  Minimum="0.001" Maximum="10.000" Width="100"/>
+                        <xctk:DoubleUpDown x:Name="temperCoeffAtmo_Clear" IsEnabled="{Binding ElementName=temperEnabled, Path=IsChecked}" Grid.Column="1" HorizontalAlignment="Center" FormatString="P2" Value="0.980" Increment="0.001"  Minimum="0.0001" Maximum="10.000" Width="100"/>
+                        <xctk:DoubleUpDown x:Name="temperCoeffAtmo_Clouds" IsEnabled="{Binding ElementName=temperEnabled, Path=IsChecked}" Grid.Column="2" HorizontalAlignment="Center" FormatString="P2" Value="0.990" Increment="0.001"  Minimum="0.001" Maximum="10.000" Width="100"/>
                     </Grid>
                     <Grid Margin="0,3,0,0">
                         <Grid.ColumnDefinitions>
@@ -358,8 +395,8 @@
                             <ColumnDefinition></ColumnDefinition>
                         </Grid.ColumnDefinitions>
                         <Label Content="Snow coefficient: "></Label>
-                        <xctk:DoubleUpDown x:Name="temperCoeffSnow_Clear" Grid.Column="1" HorizontalAlignment="Center" FormatString="P2" Value="0.940" Increment="0.001"  Minimum="0.0001" Maximum="10.000" Width="100"/>
-                        <xctk:DoubleUpDown x:Name="temperCoeffSnow_Clouds" Grid.Column="2" HorizontalAlignment="Center" FormatString="P2" Value="0.950" Increment="0.001"  Minimum="0.001" Maximum="10.000" Width="100"/>
+                        <xctk:DoubleUpDown x:Name="temperCoeffSnow_Clear" IsEnabled="{Binding ElementName=temperEnabled, Path=IsChecked}" Grid.Column="1" HorizontalAlignment="Center" FormatString="P2" Value="0.940" Increment="0.001"  Minimum="0.0001" Maximum="10.000" Width="100"/>
+                        <xctk:DoubleUpDown x:Name="temperCoeffSnow_Clouds" IsEnabled="{Binding ElementName=temperEnabled, Path=IsChecked}" Grid.Column="2" HorizontalAlignment="Center" FormatString="P2" Value="0.950" Increment="0.001"  Minimum="0.001" Maximum="10.000" Width="100"/>
                     </Grid>
                     <Grid Margin="0,3,0,0">
                         <Grid.ColumnDefinitions>
@@ -368,8 +405,8 @@
                             <ColumnDefinition></ColumnDefinition>
                         </Grid.ColumnDefinitions>
                         <Label Content="Rain coefficient: "></Label>
-                        <xctk:DoubleUpDown x:Name="temperCoeffRain_Clear" Grid.Column="1" HorizontalAlignment="Center" FormatString="P2" Value="0.960" Increment="0.001"  Minimum="0.0001" Maximum="10.000" Width="100"/>
-                        <xctk:DoubleUpDown x:Name="temperCoeffRain_Clouds" Grid.Column="2" HorizontalAlignment="Center" FormatString="P2" Value="0.980" Increment="0.001"  Minimum="0.001" Maximum="10.000" Width="100"/>
+                        <xctk:DoubleUpDown x:Name="temperCoeffRain_Clear" IsEnabled="{Binding ElementName=temperEnabled, Path=IsChecked}" Grid.Column="1" HorizontalAlignment="Center" FormatString="P2" Value="0.960" Increment="0.001"  Minimum="0.0001" Maximum="10.000" Width="100"/>
+                        <xctk:DoubleUpDown x:Name="temperCoeffRain_Clouds" IsEnabled="{Binding ElementName=temperEnabled, Path=IsChecked}" Grid.Column="2" HorizontalAlignment="Center" FormatString="P2" Value="0.980" Increment="0.001"  Minimum="0.001" Maximum="10.000" Width="100"/>
                     </Grid>
                     <Grid Margin="0,3,0,0">
                         <Grid.ColumnDefinitions>
@@ -378,8 +415,8 @@
                             <ColumnDefinition></ColumnDefinition>
                         </Grid.ColumnDefinitions>
                         <Label Content="Drizzle coefficient: "></Label>
-                        <xctk:DoubleUpDown x:Name="temperCoeffDrizzle_Clear" Grid.Column="1" HorizontalAlignment="Center" FormatString="P2" Value="0.970" Increment="0.001"  Minimum="0.0001" Maximum="10.000" Width="100"/>
-                        <xctk:DoubleUpDown x:Name="temperCoeffDrizzle_Clouds" Grid.Column="2" HorizontalAlignment="Center" FormatString="P2" Value="0.990" Increment="0.001"  Minimum="0.001" Maximum="10.000" Width="100"/>
+                        <xctk:DoubleUpDown x:Name="temperCoeffDrizzle_Clear" IsEnabled="{Binding ElementName=temperEnabled, Path=IsChecked}" Grid.Column="1" HorizontalAlignment="Center" FormatString="P2" Value="0.970" Increment="0.001"  Minimum="0.0001" Maximum="10.000" Width="100"/>
+                        <xctk:DoubleUpDown x:Name="temperCoeffDrizzle_Clouds" IsEnabled="{Binding ElementName=temperEnabled, Path=IsChecked}" Grid.Column="2" HorizontalAlignment="Center" FormatString="P2" Value="0.990" Increment="0.001"  Minimum="0.001" Maximum="10.000" Width="100"/>
                     </Grid>
                     <Grid Margin="0,3,0,0">
                         <Grid.ColumnDefinitions>
@@ -388,8 +425,8 @@
                             <ColumnDefinition></ColumnDefinition>
                         </Grid.ColumnDefinitions>
                         <Label Content="Thunderstorm coefficient: "></Label>
-                        <xctk:DoubleUpDown x:Name="temperCoeffStorm_Clear" Grid.Column="1" HorizontalAlignment="Center" FormatString="P2" Value="0.960" Increment="0.001"  Minimum="0.0001" Maximum="10.000" Width="100"/>
-                        <xctk:DoubleUpDown x:Name="temperCoeffStorm_Clouds" Grid.Column="2" HorizontalAlignment="Center" FormatString="P2" Value="0.980" Increment="0.001"  Minimum="0.001" Maximum="10.000" Width="100"/>
+                        <xctk:DoubleUpDown x:Name="temperCoeffStorm_Clear" IsEnabled="{Binding ElementName=temperEnabled, Path=IsChecked}" Grid.Column="1" HorizontalAlignment="Center" FormatString="P2" Value="0.960" Increment="0.001"  Minimum="0.0001" Maximum="10.000" Width="100"/>
+                        <xctk:DoubleUpDown x:Name="temperCoeffStorm_Clouds" IsEnabled="{Binding ElementName=temperEnabled, Path=IsChecked}" Grid.Column="2" HorizontalAlignment="Center" FormatString="P2" Value="0.980" Increment="0.001"  Minimum="0.001" Maximum="10.000" Width="100"/>
                     </Grid>
                     
                     <Separator Margin="5"></Separator>
@@ -400,7 +437,7 @@
                             <ColumnDefinition></ColumnDefinition>
                         </Grid.ColumnDefinitions>
                         <Label Content="Debug mode: "></Label>
-                        <CheckBox x:Name="temperDebug" Grid.Column="1" Content="Enabled" VerticalAlignment="Center" HorizontalAlignment="Center"></CheckBox>
+                        <CheckBox x:Name="temperDebug" IsEnabled="{Binding ElementName=temperEnabled, Path=IsChecked}" Grid.Column="1" Content="Enabled" VerticalAlignment="Center" HorizontalAlignment="Center"></CheckBox>
                     </Grid>
                 </StackPanel>
             </TabItem>

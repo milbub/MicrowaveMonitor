@@ -64,9 +64,12 @@ namespace MicrowaveMonitor.Managers
             get => _isRunning;
             set
             {
-                _isRunning = value;
-                if (value)
-                    StartDatabaseWriter();
+                if (value != _isRunning)
+                {
+                    _isRunning = value;
+                    if (value)
+                        StartDatabaseWriter();
+                }
             }
         }
 

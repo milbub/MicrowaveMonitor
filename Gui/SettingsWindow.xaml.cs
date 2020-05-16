@@ -20,12 +20,14 @@ namespace MicrowaveMonitor.Gui
 
         private void FillBoxes()
         {
+            avgXEnabled.IsChecked = Settings.Default.a_enable_longavg;
             avgXpercSignal.Value = Settings.Default.a_longavg_percDiff_sig;
             avgXpercSignalQ.Value = Settings.Default.a_longavg_percDiff_sigQ;
             avgXpercTempIdu.Value = Settings.Default.a_longavg_percDiff_TmpI;
             avgXpercVolt.Value = Settings.Default.a_longavg_percDiff_volt;
             avgXpercPing.Value = Settings.Default.a_longavg_percDiff_late;
 
+            avgYEnabled.IsChecked = Settings.Default.a_enable_shortavg;
             avgYpercSignal.Value = Settings.Default.a_shortavg_percDiff_sig;
             avgYpercSignalQ.Value = Settings.Default.a_shortavg_percDiff_sigQ;
             avgYpercTempIdu.Value = Settings.Default.a_shortavg_percDiff_TmpI;
@@ -42,6 +44,7 @@ namespace MicrowaveMonitor.Gui
             avgYlongLimit.Value = Settings.Default.a_shortavg_longLimit.TotalMinutes;
             avgYshortLimit.Value = Settings.Default.a_shortavg_shortLimit.TotalMinutes;
 
+            temperEnabled.IsChecked = Settings.Default.a_enable_temper;
             temperCoeffClear_Clear.Value = Settings.Default.a_temper_coeff_clear_clear;
             temperCoeffClouds_Clear.Value = Settings.Default.a_temper_coeff_clear_cloud;
             temperCoeffAtmo_Clear.Value = Settings.Default.a_temper_coeff_clear_atmos;
@@ -69,12 +72,14 @@ namespace MicrowaveMonitor.Gui
 
         private void SaveFired(object sender, RoutedEventArgs e)
         {
+            Settings.Default.a_enable_longavg = (bool)avgXEnabled.IsChecked;
             Settings.Default.a_longavg_percDiff_sig = (float)avgXpercSignal.Value;
             Settings.Default.a_longavg_percDiff_sigQ = (float)avgXpercSignalQ.Value;
             Settings.Default.a_longavg_percDiff_TmpI = (float)avgXpercTempIdu.Value;
             Settings.Default.a_longavg_percDiff_volt = (float)avgXpercVolt.Value;
             Settings.Default.a_longavg_percDiff_late = (float)avgXpercPing.Value;
 
+            Settings.Default.a_enable_shortavg = (bool)avgYEnabled.IsChecked;
             Settings.Default.a_shortavg_percDiff_sig = (float)avgYpercSignal.Value;
             Settings.Default.a_shortavg_percDiff_sigQ = (float)avgYpercSignalQ.Value;
             Settings.Default.a_shortavg_percDiff_TmpI = (float)avgYpercTempIdu.Value;
@@ -91,6 +96,7 @@ namespace MicrowaveMonitor.Gui
             Settings.Default.a_shortavg_longLimit = TimeSpan.FromMinutes((double)avgYlongLimit.Value);
             Settings.Default.a_shortavg_shortLimit = TimeSpan.FromMinutes((double)avgYshortLimit.Value);
 
+            Settings.Default.a_enable_temper = (bool)temperEnabled.IsChecked;
             Settings.Default.a_temper_coeff_clear_clear = (float)temperCoeffClear_Clear.Value;
             Settings.Default.a_temper_coeff_clear_cloud = (float)temperCoeffClouds_Clear.Value;
             Settings.Default.a_temper_coeff_clear_atmos = (float)temperCoeffAtmo_Clear.Value;
@@ -130,6 +136,7 @@ namespace MicrowaveMonitor.Gui
 
         private void LoadDefaultLongAvgFired(object sender, RoutedEventArgs e)
         {
+            avgXEnabled.IsChecked = Boolean.Parse((string)Settings.Default.Properties["a_enable_longavg"].DefaultValue);
             avgXpercSignal.Value = Double.Parse((string)Settings.Default.Properties["a_longavg_percDiff_sig"].DefaultValue, CultureInfo.InvariantCulture);
             avgXpercSignalQ.Value = Double.Parse((string)Settings.Default.Properties["a_longavg_percDiff_sigQ"].DefaultValue, CultureInfo.InvariantCulture);
             avgXpercTempIdu.Value = Double.Parse((string)Settings.Default.Properties["a_longavg_percDiff_TmpI"].DefaultValue, CultureInfo.InvariantCulture);
@@ -144,6 +151,7 @@ namespace MicrowaveMonitor.Gui
 
         private void LoadDefaultShortAvgFired(object sender, RoutedEventArgs e)
         {
+            avgYEnabled.IsChecked = Boolean.Parse((string)Settings.Default.Properties["a_enable_shortavg"].DefaultValue);
             avgYpercSignal.Value = Double.Parse((string)Settings.Default.Properties["a_shortavg_percDiff_sig"].DefaultValue, CultureInfo.InvariantCulture);
             avgYpercSignalQ.Value = Double.Parse((string)Settings.Default.Properties["a_shortavg_percDiff_sigQ"].DefaultValue, CultureInfo.InvariantCulture);
             avgYpercTempIdu.Value = Double.Parse((string)Settings.Default.Properties["a_shortavg_percDiff_TmpI"].DefaultValue, CultureInfo.InvariantCulture);
@@ -158,6 +166,7 @@ namespace MicrowaveMonitor.Gui
 
         private void LoadDefaultTemperFired(object sender, RoutedEventArgs e)
         {
+            temperEnabled.IsChecked = Boolean.Parse((string)Settings.Default.Properties["a_enable_temper"].DefaultValue);
             temperCoeffClear_Clear.Value = Double.Parse((string)Settings.Default.Properties["a_temper_coeff_clear_clear"].DefaultValue, CultureInfo.InvariantCulture);
             temperCoeffClouds_Clear.Value = Double.Parse((string)Settings.Default.Properties["a_temper_coeff_clear_cloud"].DefaultValue, CultureInfo.InvariantCulture);
             temperCoeffAtmo_Clear.Value = Double.Parse((string)Settings.Default.Properties["a_temper_coeff_clear_atmos"].DefaultValue, CultureInfo.InvariantCulture);
@@ -181,6 +190,16 @@ namespace MicrowaveMonitor.Gui
             temperBackDaysCount.Value = Double.Parse((string)Settings.Default.Properties["a_temper_backDays"].DefaultValue, CultureInfo.InvariantCulture);
             temperSkippedDays.Value = Double.Parse((string)Settings.Default.Properties["a_temper_skippedDays"].DefaultValue, CultureInfo.InvariantCulture);
             temperAvgDayCount.Value = Double.Parse((string)Settings.Default.Properties["a_temper_averageDays"].DefaultValue, CultureInfo.InvariantCulture);
+        }
+
+        private void LoadDefaultTimeFired(object sender, RoutedEventArgs e)
+        {
+            
+        }
+
+        private void LoadDefaultPeriodFired(object sender, RoutedEventArgs e)
+        {
+            
         }
     }
 }

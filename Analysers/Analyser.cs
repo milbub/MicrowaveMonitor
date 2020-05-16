@@ -13,14 +13,17 @@ namespace MicrowaveMonitor.Analysers
             get => _isRunning;
             set
             {
-                _isRunning = value;
-                if (value)
+                if (value != _isRunning)
                 {
-                    Start();
-                }
-                else
-                {
-                    Stop();
+                    _isRunning = value;
+                    if (value)
+                    {
+                        Start();
+                    }
+                    else
+                    {
+                        Stop();
+                    }
                 }
             }
         }

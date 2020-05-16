@@ -58,13 +58,17 @@ namespace MicrowaveMonitor.Managers
                 _isRunning = value;
                 if (value)
                 {
-                    longAverage.IsRunning = true;
-                    shortAverage.IsRunning = true;
+                    if (Settings.Default.a_enable_longavg)
+                        longAverage.IsRunning = true;
+                    if (Settings.Default.a_enable_shortavg)
+                        shortAverage.IsRunning = true;
                 }
                 else
                 {
-                    longAverage.IsRunning = false;
-                    shortAverage.IsRunning = false;
+                    if (Settings.Default.a_enable_longavg)
+                        longAverage.IsRunning = false;
+                    if (Settings.Default.a_enable_shortavg)
+                        shortAverage.IsRunning = false;
                 }
             }
         }
@@ -190,6 +194,12 @@ namespace MicrowaveMonitor.Managers
                 Settings.Default.a_temper_backDays,
                 Settings.Default.a_temper_skippedDays,
                 Settings.Default.a_temper_averageDays);
+
+            if (IsRunning)
+            {
+                longAverage.IsRunning = Settings.Default.a_enable_longavg;
+                shortAverage.IsRunning = Settings.Default.a_enable_shortavg;
+            }
         }
 
         private void DataChanged(object sender, PropertyChangedEventArgs e)
@@ -199,65 +209,46 @@ namespace MicrowaveMonitor.Managers
             switch (e.PropertyName)
             {
                 case "DataTempOdu":
-                    if (disp.WeatherTemp is null || disp.WeatherId is null || disp.WeatherWind is null)
-                        break;
-                    double la;
-                    if (!double.TryParse(WeatherCollector.DeviceLatitude[disp.Id], NumberStyles.Float, CultureInfo.InvariantCulture.NumberFormat, out la))
-                        break;
-                    double lo;
-                    if (!double.TryParse(WeatherCollector.DeviceLongitude[disp.Id], NumberStyles.Float, CultureInfo.InvariantCulture.NumberFormat, out lo))
-                        break;
-                    OduTemperAna.Compare(disp.Id, disp.DataTempOdu.Data, (float)disp.WeatherTemp, (int)disp.WeatherId, (double)disp.WeatherWind, la, lo);
+                    if (Settings.Default.a_enable_temper)
+                    {
+                        if (disp.WeatherTemp is null || disp.WeatherId is null || disp.WeatherWind is null)
+                            break;
+                        if (!double.TryParse(WeatherCollector.DeviceLatitude[disp.Id], NumberStyles.Float, CultureInfo.InvariantCulture.NumberFormat, out double la))
+                            break;
+                        if (!double.TryParse(WeatherCollector.DeviceLongitude[disp.Id], NumberStyles.Float, CultureInfo.InvariantCulture.NumberFormat, out double lo))
+                            break;
+                        OduTemperAna.Compare(disp.Id, disp.DataTempOdu.Data, (float)disp.WeatherTemp, (int)disp.WeatherId, (double)disp.WeatherWind, la, lo);
+                    }
                     break;
                 case "DataTempIdu":
-                    if (disp.WeatherTemp is null || disp.WeatherId is null || disp.WeatherWind is null)
-                        break;
-                    double lat;
-                    if (!double.TryParse(WeatherCollector.DeviceLatitude[disp.Id], NumberStyles.Float, CultureInfo.InvariantCulture.NumberFormat, out lat))
-                        break;
-                    double lon;
-                    if (!double.TryParse(WeatherCollector.DeviceLongitude[disp.Id], NumberStyles.Float, CultureInfo.InvariantCulture.NumberFormat, out lon))
-                        break;
-                    IduTemperAna.Compare(disp.Id, disp.DataTempIdu.Data, (float)disp.WeatherTemp, (int)disp.WeatherId, (double)disp.WeatherWind, lat, lon);
+                    if (Settings.Default.a_enable_temper)
+                    {
+                        if (disp.WeatherTemp is null || disp.WeatherId is null || disp.WeatherWind is null)
+                            break;
+                        if (!double.TryParse(WeatherCollector.DeviceLatitude[disp.Id], NumberStyles.Float, CultureInfo.InvariantCulture.NumberFormat, out double lat))
+                            break;
+                        if (!double.TryParse(WeatherCollector.DeviceLongitude[disp.Id], NumberStyles.Float, CultureInfo.InvariantCulture.NumberFormat, out double lon))
+                            break;
+                        IduTemperAna.Compare(disp.Id, disp.DataTempIdu.Data, (float)disp.WeatherTemp, (int)disp.WeatherId, (double)disp.WeatherWind, lat, lon);
+                    }
                     break;
                 case "WeatherId":
-                    if (disp.WeatherTemp is null || disp.WeatherId is null || disp.WeatherWind is null)
-                        break;
-                    double lati;
-                    if (!double.TryParse(WeatherCollector.DeviceLatitude[disp.Id], NumberStyles.Float, CultureInfo.InvariantCulture.NumberFormat, out lati))
-                        break;
-                    double longi;
-                    if (!double.TryParse(WeatherCollector.DeviceLongitude[disp.Id], NumberStyles.Float, CultureInfo.InvariantCulture.NumberFormat, out longi))
-                        break;
-                    OduTemperAna.WeatherChanged(disp.Id, (int)disp.WeatherId, (double)disp.WeatherWind, lati, longi);
-                    IduTemperAna.WeatherChanged(disp.Id, (int)disp.WeatherId, (double)disp.WeatherWind, lati, longi);
+                    if (Settings.Default.a_enable_temper)
+                    {
+                        if (disp.WeatherTemp is null || disp.WeatherId is null || disp.WeatherWind is null)
+                            break;
+                        if (!double.TryParse(WeatherCollector.DeviceLatitude[disp.Id], NumberStyles.Float, CultureInfo.InvariantCulture.NumberFormat, out double lati))
+                            break;
+                        if (!double.TryParse(WeatherCollector.DeviceLongitude[disp.Id], NumberStyles.Float, CultureInfo.InvariantCulture.NumberFormat, out double longi))
+                            break;
+                        OduTemperAna.WeatherChanged(disp.Id, (int)disp.WeatherId, (double)disp.WeatherWind, lati, longi);
+                        IduTemperAna.WeatherChanged(disp.Id, (int)disp.WeatherId, (double)disp.WeatherWind, lati, longi);
+                    }
                     break;
                 default:
                     return;
             }
         }
-
-        /*public int GenerateAlarmDispatched(int deviceId, AlarmRank rank, Measurement measure, AlarmType method, bool trend, double measValue)
-        {
-            int? id = null;
-
-            App.Current.Dispatcher.Invoke(delegate
-            {
-                return id = GenerateAlarm(deviceId, rank, measure, method, trend, measValue);
-            });
-
-            if (id == null)
-                return 0;
-            return (int)id;
-        }
-
-        public void SettleAlarmDispatched(int alarmId, double settledValue, bool stopping)
-        {
-            App.Current.Dispatcher.Invoke(delegate
-            {
-                SettleAlarm(alarmId, settledValue, stopping);
-            });
-        }*/
 
         public int GenerateAlarm(int deviceId, AlarmRank rank, Measurement measure, AlarmType method, bool trend, double measValue)
         {

@@ -490,5 +490,65 @@ namespace MicrowaveMonitor.Properties {
                 this["a_temper_averageDays"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool a_enable_longavg {
+            get {
+                return ((bool)(this["a_enable_longavg"]));
+            }
+            set {
+                this["a_enable_longavg"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool a_enable_shortavg {
+            get {
+                return ((bool)(this["a_enable_shortavg"]));
+            }
+            set {
+                this["a_enable_shortavg"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool a_enable_temper {
+            get {
+                return ((bool)(this["a_enable_temper"]));
+            }
+            set {
+                this["a_enable_temper"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool a_enable_bytime {
+            get {
+                return ((bool)(this["a_enable_bytime"]));
+            }
+            set {
+                this["a_enable_bytime"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool a_enable_periodic {
+            get {
+                return ((bool)(this["a_enable_periodic"]));
+            }
+            set {
+                this["a_enable_periodic"] = value;
+            }
+        }
     }
 }
