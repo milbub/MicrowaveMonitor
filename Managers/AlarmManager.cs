@@ -9,6 +9,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace MicrowaveMonitor.Managers
 {
@@ -631,7 +632,7 @@ namespace MicrowaveMonitor.Managers
             shortAverage.DeviceStopped(id);
         }
 
-        public void SetHide(int id, bool ack)
+        public void HideAlarm(int id, bool ack)
         {
             if (ack)
             {
@@ -653,6 +654,33 @@ namespace MicrowaveMonitor.Managers
             Alarm alarm = linkM.GetAlarm(id);
             alarm.IsShowed = false;
             linkM.UpdateAlarm(alarm);
+        }
+
+        public void HideAll(bool ack)
+        {
+            Task.Run(() =>
+            {
+                ObservableCollection<AlarmDisplay> alarms;
+                if (ack)
+                    alarms = alarmsSettledAck;
+                else
+                    alarms = alarmsSettledUnack;
+
+                lock (alarms)
+                {
+                    foreach (AlarmDisplay disp in alarms)
+                    {
+                        Alarm alarm = linkM.GetAlarm(disp.Id);
+                        alarm.IsShowed = false;
+                        linkM.UpdateAlarm(alarm);
+                    }
+
+                    App.Current.Dispatcher.BeginInvoke(new Action(() =>
+                    {
+                        alarms.Clear();
+                    }));
+                }
+            });
         }
 
         public void SetAck(int id, bool active)

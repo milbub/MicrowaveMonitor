@@ -90,6 +90,11 @@
                 <ListView.View>
                     <GridView>
                         <GridViewColumn Width="27">
+                            <GridViewColumnHeader>
+                                <Button ToolTip="Hide All" Name="bAcAll" Click="HideAllButtonFired" Width="15" VerticalAlignment="Center">
+                                    <Image Source="/Gui/Icons/clear.png"></Image>
+                                </Button>
+                            </GridViewColumnHeader>
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
                                     <Button ToolTip="Hide Alarm" Click="HideButtonFired" Name="bAc" Tag="{Binding Id}" VerticalAlignment="Center">
@@ -141,6 +146,11 @@
                 <ListView.View>
                     <GridView>
                         <GridViewColumn Width="27">
+                            <GridViewColumnHeader>
+                                <Button ToolTip="Hide All" Name="bUnAll" Click="HideAllButtonFired" Width="15" VerticalAlignment="Center">
+                                    <Image Source="/Gui/Icons/clear.png"></Image>
+                                </Button>
+                            </GridViewColumnHeader>
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
                                     <Button ToolTip="Hide Alarm" Click="HideButtonFired" Name="bUn" Tag="{Binding Id}" VerticalAlignment="Center">
