@@ -1,4 +1,5 @@
 ﻿using MicrowaveMonitor.Managers;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -7,19 +8,23 @@ namespace MicrowaveMonitor.Gui
     public partial class AlarmListPane : UserControl
     {
         private AlarmManager alarmM;
+        private LinkManager linkM;
+        private MonitoringWindow window;
 
         public AlarmListPane()
         {
             InitializeComponent();
         }
 
-        public void SetItemsSource(AlarmManager alarmM)
+        public void SetItemsSource(AlarmManager alarmM, LinkManager linkM, MonitoringWindow window)
         {
             viewCurrent.ItemsSource = alarmM.alarmsCurrent;
             viewAck.ItemsSource = alarmM.alarmsAck;
             viewSettledAck.ItemsSource = alarmM.alarmsSettledAck;
             viewSettledUnack.ItemsSource = alarmM.alarmsSettledUnack;
             this.alarmM = alarmM;
+            this.linkM = linkM;
+            this.window = window;
         }
 
         private void AckCheckFired(object sender, RoutedEventArgs e)
@@ -62,6 +67,12 @@ namespace MicrowaveMonitor.Gui
                 alarmM.HideAll(false);
             else
                 alarmM.HideAll(true);
+        }
+
+        private void AlarmRowSelected(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            AlarmManager.AlarmDisplay disp = (AlarmManager.AlarmDisplay)((ListViewItem)sender).Content;
+            window.ChangeLink(linkM.GetLink(linkM.LinkNames.FirstOrDefault(x => x.Value == disp.Link).Key), disp.Device);
         }
     }
 }

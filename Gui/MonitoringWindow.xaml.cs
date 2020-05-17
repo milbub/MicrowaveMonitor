@@ -17,8 +17,6 @@ namespace MicrowaveMonitor.Gui
 {
     public partial class MonitoringWindow : Window
     {
-        public enum DeviceType { Base, End, R1, R2, R3, R4 };
-
         private readonly LinkManager linkM;
         private readonly WorkerManager workerM;
         private readonly AlarmManager alarmM;
@@ -38,7 +36,7 @@ namespace MicrowaveMonitor.Gui
 
             InitializeComponent();
             RegisterCharts();
-            alarmListPane.SetItemsSource(alarmManager);
+            alarmListPane.SetItemsSource(alarmManager, linkManager, this);
             ChangeLink(linkManager.GetLink(linkManager.LinkNames.First().Key));
 
             foreach (string name in linkManager.LinkNames.Values)
@@ -64,60 +62,94 @@ namespace MicrowaveMonitor.Gui
             latency.chart.axisY.MinValue = 0;
         }
 
-        public void ChangeLink(Link viewedLink)
+        public void ChangeLink(Link link)
         {
-            this.viewedLink = viewedLink;
-            linkCaption.Content = viewedLink.Name;
+            ChangeLink(link, "A");
+        }
+
+        public void ChangeLink(Link link, string deviceLabel)
+        {
+            viewedLink = link;
+            linkCaption.Content = link.Name;
             FillSettings();
             deviceTabs.SelectedIndex = 0;
 
-            if (siteA.IsChecked == true)
-                ChangeDevice("A");
-            else
-                siteA.IsChecked = true;
+            ChangeDevice(deviceLabel);
         }
 
         public void ChangeDevice(string deviceLabel)
         {
+            int newDeviceId;
+            RadioButton checkedRb;
+
+            switch (deviceLabel)
+            {
+                case "A":
+                    newDeviceId = viewedLink.DeviceBaseId;
+                    checkedRb = siteA;
+                    break;
+                case "R1":
+                    newDeviceId = viewedLink.DeviceR1Id;
+                    checkedRb = siteR1;
+                    break;
+                case "R2":
+                    newDeviceId = viewedLink.DeviceR2Id;
+                    checkedRb = siteR2;
+                    break;
+                case "R3":
+                    newDeviceId = viewedLink.DeviceR3Id;
+                    checkedRb = siteR3;
+                    break;
+                case "R4":
+                    newDeviceId = viewedLink.DeviceR4Id;
+                    checkedRb = siteR4;
+                    break;
+                case "B":
+                    newDeviceId = viewedLink.DeviceEndId;
+                    checkedRb = siteB;
+                    break;
+                default:
+                    throw new NotSupportedException();
+            }
+
+            if (newDeviceId == 0)
+            {
+                if (deviceLabel != "A" && viewedLink.DeviceBaseId > 0)
+                {
+                    newDeviceId = viewedLink.DeviceBaseId;
+                    checkedRb = siteA;
+                }
+                else
+                    return;
+            }
+
+            if (newDeviceId == viewedDeviceId)
+                return;
+
             if (viewedDeviceId != 0)
             {
                 ResetView();
                 devicesDisplays[viewedDeviceId].PropertyChanged -= DataChangedDispatch;
             }
 
-            switch (deviceLabel)
+            viewedDeviceId = newDeviceId;
+
+            if (checkedRb.IsChecked == false)
             {
-                case "A":
-                    viewedDeviceId = viewedLink.DeviceBaseId;
-                    break;
-                case "R1":
-                    viewedDeviceId = viewedLink.DeviceR1Id;
-                    break;
-                case "R2":
-                    viewedDeviceId = viewedLink.DeviceR2Id;
-                    break;
-                case "R3":
-                    viewedDeviceId = viewedLink.DeviceR3Id;
-                    break;
-                case "R4":
-                    viewedDeviceId = viewedLink.DeviceR4Id;
-                    break;
-                case "B":
-                    viewedDeviceId = viewedLink.DeviceEndId;
-                    break;
-                default:
-                    throw new NotSupportedException();
+                checkedRb.Checked -= SiteChoosed;
+                checkedRb.IsChecked = true;
+                checkedRb.Checked += SiteChoosed;
             }
 
-            Device device = linkM.GetDevice(viewedDeviceId);
-            ChartsChangeDevice(viewedDeviceId, device);
+            Device device = linkM.GetDevice(newDeviceId);
+            ChartsChangeDevice(newDeviceId, device);
 
             ContextChanged();
             ShowStatics(device);
             if (monitorTabControl.SelectedIndex == 5)
-                alarmM.FillDeviceAlarms(viewedDeviceId);
+                alarmM.FillDeviceAlarms(newDeviceId);
 
-            devicesDisplays[viewedDeviceId].PropertyChanged += DataChangedDispatch;
+            devicesDisplays[newDeviceId].PropertyChanged += DataChangedDispatch;
         }
 
         private void ContextChanged()

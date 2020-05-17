@@ -41,6 +41,7 @@
                                 <Setter Property="Background" Value="Peru"></Setter>
                             </DataTrigger>
                         </Style.Triggers>
+                        <EventSetter Event="MouseDoubleClick" Handler="AlarmRowSelected"></EventSetter>
                     </Style>
                 </ListView.ItemContainerStyle>
             </ListView>
@@ -81,6 +82,7 @@
                                 <Setter Property="Background" Value="Peru"></Setter>
                             </DataTrigger>
                         </Style.Triggers>
+                        <EventSetter Event="MouseDoubleClick" Handler="AlarmRowSelected"></EventSetter>
                     </Style>
                 </ListView.ItemContainerStyle>
             </ListView>
@@ -137,6 +139,7 @@
                                 <Setter Property="Background" Value="Peru"></Setter>
                             </DataTrigger>
                         </Style.Triggers>
+                        <EventSetter Event="MouseDoubleClick" Handler="AlarmRowSelected"></EventSetter>
                     </Style>
                 </ListView.ItemContainerStyle>
             </ListView>
@@ -193,6 +196,7 @@
                                 <Setter Property="Background" Value="Peru"></Setter>
                             </DataTrigger>
                         </Style.Triggers>
+                        <EventSetter Event="MouseDoubleClick" Handler="AlarmRowSelected"></EventSetter>
                     </Style>
                 </ListView.ItemContainerStyle>
             </ListView>
