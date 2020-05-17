@@ -45,10 +45,11 @@ namespace MicrowaveMonitor.Analysers
         public DefaultWeatherCoeffs CoeffsClear { get; set; }
         public DefaultWeatherCoeffs CoeffsClouds { get; set; }
         public int AvgDaysCount { get; set; }
+        public double UnknownSubstituteCoeff { get; set; } = 1.3;
 
         private readonly string measureName;
 
-        private readonly Dictionary<int, double> deviceCoefficients = new Dictionary<int, double>();
+        private readonly Dictionary<int, double> deviceDifferences = new Dictionary<int, double>();
         private readonly Dictionary<int, double> deviceWinds = new Dictionary<int, double>();
         private readonly Dictionary<int, DateTime> lastUpdate = new Dictionary<int, DateTime>();
         private readonly object coefficientsLocker = new object();
@@ -99,14 +100,14 @@ namespace MicrowaveMonitor.Analysers
 
         public void Compare(int devId, double temperature, double airTemp, int weatherId, double wind, double latitude, double longitude)
         {
-            double coefficient;
+            double diff;
             double recordedWind;
             DateTime last;
 
             lock (coefficientsLocker)
-                if (deviceCoefficients.ContainsKey(devId))
+                if (deviceDifferences.ContainsKey(devId))
                 {
-                    coefficient = deviceCoefficients[devId];
+                    diff = deviceDifferences[devId];
                     recordedWind = deviceWinds[devId];
                     last = lastUpdate[devId];
                 }
@@ -128,7 +129,7 @@ namespace MicrowaveMonitor.Analysers
                 update.Wait();
             }
 
-            double upperLimit = (airTemp * coefficient - WindTempCorrection(wind, recordedWind)) * TolerancePerc;
+            double upperLimit = (airTemp + diff - WindTempCorrection(wind, recordedWind)) * TolerancePerc;
 
             if (temperature > upperLimit)
             {
@@ -138,7 +139,7 @@ namespace MicrowaveMonitor.Analysers
                         int alarm = alarmMan.GenerateAlarm(devId, AlarmRank.Critical, Measure, AlarmType.TempCorrel, true, temperature);
                         ids.Add(devId, alarm);
                         if (DebugActive)
-                            Console.WriteLine("7TA trigger " + measureName + " dev: " + devId + " temper: " + temperature + " tresh: " + upperLimit);
+                            Console.WriteLine($"7TA gener_a {measureName} dev: {devId} temper: {temperature:0.00000} tresh: {upperLimit:0.00000}");
                     }
             }
             else if (temperature < airTemp / TolerancePerc)
@@ -149,7 +150,7 @@ namespace MicrowaveMonitor.Analysers
                         int alarm = alarmMan.GenerateAlarm(devId, AlarmRank.Critical, Measure, AlarmType.TempCorrel, false, temperature);
                         ids.Add(devId, alarm);
                         if (DebugActive)
-                            Console.WriteLine("7TA trigger " + measureName + " dev: " + devId + " temper: " + temperature + " tresh: " + upperLimit);
+                            Console.WriteLine($"7TA gener_a {measureName} dev: {devId} temper: {temperature:0.00000} tresh: {upperLimit:0.00000}");
                     }
             }
             else
@@ -160,156 +161,195 @@ namespace MicrowaveMonitor.Analysers
                         alarmMan.SettleAlarm(ids[devId], temperature, false);
                         ids.Remove(devId);
                         if (DebugActive)
-                            Console.WriteLine("7TA settle " + measureName + " dev: " + devId + " temper: " + temperature + " tresh: " + upperLimit);
+                            Console.WriteLine($"7TA settle_a {measureName} dev: {devId} temper: {temperature:0.00000} tresh: {upperLimit:0.00000}");
                     }
             }
         }
 
         private async Task WeatherUpdate(int devId, int weatherId, double wind, double latitude, double longitude)
         {
-            int originalWeather = weatherId;
+            DateTime searchedTime = DateTime.Now;
 
-            List<TimeWind> selection = await GetBestDays(devId, weatherId, wind, DateTime.Now.TimeOfDay);
+            int[] ws;                           // array of substitute weathers
+            double alternateWeatherCoeff = 1;   // coefficient of weather substitute against original weather
 
-            if (selection == null && (originalWeather < 801 || originalWeather == 803))
-            {
-                weatherId = 804;
-                selection = await GetBestDays(devId, weatherId, wind, DateTime.Now.TimeOfDay);
-            }
+            List<TimeWind> selection = await GetBestDays(devId, weatherId, wind, searchedTime.TimeOfDay);
 
-            if (selection == null && originalWeather != 800)
-            {
-                weatherId = 800;
-                selection = await GetBestDays(devId, weatherId, wind, DateTime.Now.TimeOfDay);
-            }
-
-            if (selection == null && !(originalWeather < 801 || originalWeather == 803) && originalWeather != 804)
-            {
-                weatherId = 804;
-                selection = await GetBestDays(devId, weatherId, wind, DateTime.Now.TimeOfDay);
-            }
-
-            if (selection == null)
-                selection = await GetBestDays(devId, 0, wind, DateTime.Now.TimeOfDay);
-
-            if (selection == null)
-                return;                             // no comparable data exists, abort
-
-            double alternateWeatherCoeff = 1;
-
-            if (originalWeather != weatherId)       // try to compute difference coefficient of alternate weather in other time (if available)
-            {
-                bool failed = true;                 // if this procedure fails, static coefficients are selected in switch below
-
-                string query = $@"SELECT mean(""{DataManager.meanWindName}"") AS ""{DataManager.meanWindName}"" FROM ""{DataManager.databaseName}"".""{DataManager.retentionMonth}"".""{DataManager.measWeath}"" WHERE time > now() - {BackDaysCount * millisOfDay}ms AND time < now() - {SkippedDaysCount * millisOfDay}ms AND ""device""='{devId}' AND ""{DataManager.medianCondiName}""={originalWeather} GROUP BY time(10m) FILL(none)";
-
-                List<DynamicInfluxRow> results = await dataMan.QueryRows(query);
-
-                Coordinate coord = new Coordinate(latitude, longitude, DateTime.Now);
-                bool isSunUp = coord.CelestialInfo.IsSunUp;
-
-                if (results != null)
+            if (selection == null)              // if searched weather is not recently recorded, will try to find similar weather substitution
+                switch (weatherId)
                 {
-                    if (results.Count > 0)
+                    case int n when (n <= 802 && n >= 800): // CLEAR SKY
+                        ws = new int[] { 800, 801, 802 };
+                        selection = await GetBestDays(devId, ws, wind, searchedTime.TimeOfDay);
+                        if (selection != null)
+                            break;
+
+                        ws = new int[] { 803, 804 };
+                        selection = await GetBestDays(devId, ws, wind, searchedTime.TimeOfDay);
+                        alternateWeatherCoeff = CoeffsClouds.clear;
+                        break;
+                    case int n when (n >= 803):             // CLOUDS
+                        ws = new int[] { 803, 804 };
+                        selection = await GetBestDays(devId, ws, wind, searchedTime.TimeOfDay);
+                        if (selection != null)
+                            break;
+
+                        ws = new int[] { 800, 801, 802 };
+                        selection = await GetBestDays(devId, ws, wind, searchedTime.TimeOfDay);
+                        alternateWeatherCoeff = CoeffsClear.clouds;
+                        break;
+                    case int n when (n < 800 && n >= 700):  // MISCELLANEOUS
+                        ws = new int[] { 701, 711, 721, 731, 741, 751, 761, 762, 771, 781 };
+                        selection = await GetBestDays(devId, ws, wind, searchedTime.TimeOfDay);
+                        break;
+                    case int n when (n < 700 && n >= 600):  // SNOW
+                        ws = new int[] { 600, 601, 602, 611, 612, 613, 615, 616, 620, 621, 622 };
+                        selection = await GetBestDays(devId, ws, wind, searchedTime.TimeOfDay);
+                        break;
+                    case int n when (n < 600 && n >= 500):  // RAIN
+                        ws = new int[] { 500, 501, 502, 503, 504, 511, 520, 521, 522, 531 };
+                        selection = await GetBestDays(devId, ws, wind, searchedTime.TimeOfDay);
+                        break;
+                    case int n when (n < 400 && n >= 300):  // DRIZZLE
+                        ws = new int[] { 300, 301, 302, 310, 311, 312, 313, 314, 321 };
+                        selection = await GetBestDays(devId, ws, wind, searchedTime.TimeOfDay);
+                        break;
+                    case int n when (n < 300 && n >= 200):  // THUNDERSTORM
+                        ws = new int[] { 200, 201, 202, 210, 211, 212, 221, 230, 231, 232 };
+                        selection = await GetBestDays(devId, ws, wind, searchedTime.TimeOfDay);
+                        break;
+                    default:
+                        break;
+                }
+
+            if (selection == null && weatherId < 800)   // if still not successful, try to substitute bad weather (below 800) with clouds or clear sky, then try to compute weather substitution coefficient
+            {
+                ws = new int[] { 803, 804 };
+                selection = await GetBestDays(devId, ws, wind, searchedTime.TimeOfDay);
+
+                if (selection == null)
+                {
+                    ws = new int[] { 800, 801, 802 };
+                    selection = await GetBestDays(devId, ws, wind, searchedTime.TimeOfDay);
+                }
+
+                if (selection != null)                  // try to compute the coefficient of the weather substitution in some other time (if available)
+                {
+                    bool failed = true;                 // if this procedure fails, static coefficients are selected in switch below
+
+                    string query = $@"SELECT mean(""{DataManager.meanWindName}"") AS ""{DataManager.meanWindName}"" FROM ""{DataManager.databaseName}"".""{DataManager.retentionMonth}"".""{DataManager.measWeath}"" WHERE time > now() - {BackDaysCount * millisOfDay}ms AND time < now() - {SkippedDaysCount * millisOfDay}ms AND ""device""='{devId}' AND ""{DataManager.medianCondiName}""={weatherId} GROUP BY time(10m) FILL(none)";
+
+                    List<DynamicInfluxRow> results = await dataMan.QueryRows(query);
+
+                    Coordinate coord = new Coordinate(latitude, longitude, searchedTime);
+                    bool isSunUp = coord.CelestialInfo.IsSunUp;
+
+                    if (results != null)
                     {
-                        for (int i = results.Count - 1; i >= 0; i--)
-                        {
-                            if (results[i].Timestamp != null)
-                            {
-                                Coordinate testedCoord = new Coordinate(latitude, longitude, (DateTime)results[i].Timestamp);
-
-                                if (testedCoord.CelestialInfo.IsSunUp == isSunUp)
-                                    continue;
-                            }
-
-                            results.RemoveAt(i);
-                        }
-
                         if (results.Count > 0)
                         {
-                            DynamicInfluxRow best = results.OrderBy(w => Math.Abs(Convert.ToDouble(w.Fields.First().Value) - wind)).First();
-
-                            TimeWind compareX = new TimeWind { dateTime = (DateTime)best.Timestamp, wind = Convert.ToDouble(best.Fields.Values.First()) };
-                            List<TimeWind> compareYs = await GetBestDays(devId, weatherId, (double)compareX.wind, ((DateTime)compareX.dateTime).TimeOfDay);
-
-                            if (compareYs != null)
+                            for (int i = results.Count - 1; i >= 0; i--)
                             {
-                                if (compareYs.Count > 0)
+                                if (results[i].Timestamp != null)
                                 {
-                                    double ratioX = await GetTemperaturesRatio(devId, (DateTime)compareX.dateTime, 0);
-                                    double ratioYsAvg = 0;
+                                    Coordinate testedCoord = new Coordinate(latitude, longitude, (DateTime)results[i].Timestamp);
 
-                                    List<double> ratioYs = new List<double>();
-                                    foreach (TimeWind day in compareYs)
+                                    if (testedCoord.CelestialInfo.IsSunUp == isSunUp)
+                                        continue;
+                                }
+
+                                results.RemoveAt(i);
+                            }
+
+                            if (results.Count > 0)
+                            {
+                                DynamicInfluxRow best = results.OrderBy(w => Math.Abs(Convert.ToDouble(w.Fields.First().Value) - wind)).First();
+
+                                TimeWind compareX = new TimeWind { dateTime = (DateTime)best.Timestamp, wind = Convert.ToDouble(best.Fields.Values.First()) };
+                                List<TimeWind> compareYs = await GetBestDays(devId, ws, (double)compareX.wind, ((DateTime)compareX.dateTime).TimeOfDay);
+
+                                if (compareYs != null)
+                                {
+                                    if (compareYs.Count > 0)
                                     {
-                                        ratioYs.Add(await GetTemperaturesRatio(devId, (DateTime)day.dateTime, WindTempCorrection(compareX.wind, day.wind)));
-                                    }
+                                        double diffX = await GetTemperaturesDiff(devId, (DateTime)compareX.dateTime, 0);
+                                        double diffYsAvg = 0;
 
-                                    if (ratioYs.Count > 0)
-                                        ratioYsAvg = ratioYs.Average();
+                                        List<double> diffYs = new List<double>();
+                                        foreach (TimeWind day in compareYs)
+                                        {
+                                            diffYs.Add(await GetTemperaturesDiff(devId, (DateTime)day.dateTime, WindTempCorrection(compareX.wind, day.wind)));
+                                        }
 
-                                    if (ratioX > 0 && ratioYsAvg > 0)
-                                    {
-                                        alternateWeatherCoeff += ratioX - ratioYsAvg;
-                                        failed = false;
+                                        if (diffYs.Count > 0)
+                                            diffYsAvg = diffYs.Average();
+
+                                        if (Math.Abs(diffX) > 0 && Math.Abs(diffYsAvg) > 0)
+                                        {
+                                            alternateWeatherCoeff = diffX / diffYsAvg;
+                                            failed = false;
+                                        }
                                     }
                                 }
                             }
                         }
                     }
-                }
 
-                if (failed)
-                {
-                    DefaultWeatherCoeffs coeffs;
-
-                    if (weatherId == 800)
-                        coeffs = CoeffsClear;
-                    else
-                        coeffs = CoeffsClouds;
-
-                    switch (originalWeather)
+                    if (failed)
                     {
-                        case 800:
-                            alternateWeatherCoeff = coeffs.clear;
-                            break;
-                        case int n when (n > 800):
-                            alternateWeatherCoeff = coeffs.clouds;
-                            break;
-                        case int n when (n < 800 && n >= 700):
-                            alternateWeatherCoeff = coeffs.atmosphere;
-                            break;
-                        case int n when (n < 700 && n >= 600):
-                            alternateWeatherCoeff = coeffs.snow;
-                            break;
-                        case int n when (n < 600 && n >= 500):
-                            alternateWeatherCoeff = coeffs.rain;
-                            break;
-                        case int n when (n < 400 && n >= 300):
-                            alternateWeatherCoeff = coeffs.drizzle;
-                            break;
-                        case int n when (n < 300 && n >= 200):
-                            alternateWeatherCoeff = coeffs.storm;
-                            break;
-                        default:
-                            break;
+                        DefaultWeatherCoeffs coeffs;
+
+                        if (ws[0] == 800)
+                            coeffs = CoeffsClear;
+                        else
+                            coeffs = CoeffsClouds;
+
+                        switch (weatherId)
+                        {
+                            case int n when (n < 800 && n >= 700):
+                                alternateWeatherCoeff = coeffs.atmosphere;
+                                break;
+                            case int n when (n < 700 && n >= 600):
+                                alternateWeatherCoeff = coeffs.snow;
+                                break;
+                            case int n when (n < 600 && n >= 500):
+                                alternateWeatherCoeff = coeffs.rain;
+                                break;
+                            case int n when (n < 400 && n >= 300):
+                                alternateWeatherCoeff = coeffs.drizzle;
+                                break;
+                            case int n when (n < 300 && n >= 200):
+                                alternateWeatherCoeff = coeffs.storm;
+                                break;
+                            default:
+                                break;
+                        }
                     }
                 }
             }
 
-            List<double> ratios = new List<double>();
+            if (selection == null)                  // all attempts failed, try to get anything
+            {
+                selection = await GetBestDays(devId, 0, wind, DateTime.Now.TimeOfDay);
+                alternateWeatherCoeff = UnknownSubstituteCoeff;
+            }
+
+            if (selection == null)
+                return;                             // no comparable data exists, abort
+
+            List<double> diffs = new List<double>();
             List<double> winds = new List<double>();
 
             foreach (TimeWind day in selection)
             {
-                ratios.Add(await GetTemperaturesRatio(devId, (DateTime)day.dateTime, WindTempCorrection(wind, day.wind)));
+                diffs.Add(await GetTemperaturesDiff(devId, (DateTime)day.dateTime, WindTempCorrection(wind, day.wind)));
                 if (day.wind != null)
                     winds.Add((double)day.wind);
             }
 
-            double ratioAvg;
-            if (ratios.Count > 0)
-                ratioAvg = ratios.Average() * alternateWeatherCoeff;
+            double diffAvg;
+            if (diffs.Count > 0)
+                diffAvg = diffs.Average() * alternateWeatherCoeff;
             else
                 return;
 
@@ -320,30 +360,49 @@ namespace MicrowaveMonitor.Analysers
                 windAvg = 0;
 
             lock (coefficientsLocker)
-                if (deviceCoefficients.ContainsKey(devId))
+                if (deviceDifferences.ContainsKey(devId))
                 {
-                    deviceCoefficients[devId] = ratioAvg;
+                    deviceDifferences[devId] = diffAvg;
                     deviceWinds[devId] = windAvg;
                     lastUpdate[devId] = DateTime.Now;
                 }
                 else
                 {
-                    deviceCoefficients.Add(devId, ratioAvg);
+                    deviceDifferences.Add(devId, diffAvg);
                     deviceWinds.Add(devId, windAvg);
                     lastUpdate.Add(devId, DateTime.Now);
                 }
 
             if (DebugActive)
-                Console.WriteLine("7TA " + measureName + " dev: " + devId + " ratio: " + ratioAvg + " wind: " + windAvg + " alter: " + alternateWeatherCoeff);
+                Console.WriteLine($"7TA {measureName} dev: {devId} diff: {diffAvg:0.00000} wind: {windAvg:0.00} alter: {alternateWeatherCoeff:0.00000}");
         }
 
         private async Task<List<TimeWind>> GetBestDays(int devId, int weatherId, double wind, TimeSpan searchedTimeOfDay)
         {
+            return await GetBestDays(devId, new int[] { weatherId }, wind, searchedTimeOfDay);
+        }
+
+        private async Task<List<TimeWind>> GetBestDays(int devId, int[] weatherIds, double wind, TimeSpan searchedTimeOfDay)
+        {
+            if (weatherIds is null)
+                return null;
+            if (weatherIds.Length == 0)
+                return null;
+
             List<DynamicInfluxRow> days = new List<DynamicInfluxRow>();
 
             string weatherClause = String.Empty;
-            if (weatherId != 0)
-                weatherClause = $@"AND ""{DataManager.medianCondiName}""={weatherId} ";
+            if (weatherIds[0] != 0)
+            {
+                weatherClause = $@"AND (""{DataManager.medianCondiName}""={weatherIds[0]}";
+
+                for (int i = 1; i < weatherIds.Length; i++)
+                {
+                    weatherClause += $@" OR ""{DataManager.medianCondiName}""={weatherIds[i]}";
+                }
+
+                weatherClause += ") ";
+            }
 
             DateTime searchedTime = DateTime.Today + searchedTimeOfDay;
 
@@ -378,7 +437,7 @@ namespace MicrowaveMonitor.Analysers
                 return null;
         }
 
-        private async Task<double> GetTemperaturesRatio(int devId, DateTime searchedTime, double measTempOffset)
+        private async Task<double> GetTemperaturesDiff(int devId, DateTime searchedTime, double measTempNegativeOffset)
         {
             string query = $@"SELECT mean(""{DataManager.meanValueName}"") AS ""{DataManager.meanValueName}"" FROM ""{DataManager.databaseName}"".""{DataManager.retentionMonth}"".""{DataManager.measTmpA}"" WHERE time > {DataManager.TimeToInfluxTime(searchedTime - TimeSpan.FromMinutes(5))} AND time < {DataManager.TimeToInfluxTime(searchedTime + TimeSpan.FromMinutes(5))} AND ""device""='{devId}' FILL(linear)";
 
@@ -398,14 +457,8 @@ namespace MicrowaveMonitor.Analysers
                 if (row.Fields.Count > 0)
                 {
                     double x = Convert.ToDouble(row.Fields.First().Value);
-
-                    if (valueAir > 0)
-                    {
-                        if (x - measTempOffset > valueAir)
-                            x -= measTempOffset;
-
-                        return x / valueAir;
-                    }
+                    
+                    return x - measTempNegativeOffset - valueAir;
                 }
             }
 
