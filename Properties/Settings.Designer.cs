@@ -241,7 +241,7 @@ namespace MicrowaveMonitor.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("1.5")]
+        [global::System.Configuration.DefaultSettingValueAttribute("0.3")]
         public float a_temper_percDiff {
             get {
                 return ((float)(this["a_temper_percDiff"]));
@@ -253,7 +253,7 @@ namespace MicrowaveMonitor.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("0.2")]
+        [global::System.Configuration.DefaultSettingValueAttribute("0.3")]
         public float a_temper_degreesWind {
             get {
                 return ((float)(this["a_temper_degreesWind"]));

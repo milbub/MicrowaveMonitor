@@ -57,10 +57,10 @@
       <Value Profile="(Default)">3</Value>
     </Setting>
     <Setting Name="a_temper_percDiff" Type="System.Single" Scope="User">
-      <Value Profile="(Default)">1.5</Value>
+      <Value Profile="(Default)">0.3</Value>
     </Setting>
     <Setting Name="a_temper_degreesWind" Type="System.Single" Scope="User">
-      <Value Profile="(Default)">0.2</Value>
+      <Value Profile="(Default)">0.3</Value>
     </Setting>
     <Setting Name="a_temper_maxAge" Type="System.TimeSpan" Scope="User">
       <Value Profile="(Default)">00:45:00</Value>

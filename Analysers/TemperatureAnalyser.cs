@@ -73,7 +73,7 @@ namespace MicrowaveMonitor.Analysers
         public void LoadSettings(DefaultWeatherCoeffs coeffsClear, DefaultWeatherCoeffs coeffsClouds, bool debug, double percentDiff, double degreesPerWindMeter, TimeSpan maxAge, int backDaysCount, int skippedDaysCount, int averageDaysCount)
         {
             DebugActive = debug;
-            TolerancePerc = percentDiff;
+            TolerancePerc = percentDiff + 1;
             DegreesPerWindMeter = degreesPerWindMeter;
             MaxAge = maxAge;
             BackDaysCount = backDaysCount;
