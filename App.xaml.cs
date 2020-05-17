@@ -3,6 +3,7 @@ using MicrowaveMonitor.Gui;
 using MicrowaveMonitor.Managers;
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Windows;
 
 namespace MicrowaveMonitor
@@ -16,6 +17,8 @@ namespace MicrowaveMonitor
         private readonly LogManager logManager;
 
         private readonly Dictionary<int, DeviceDisplay> deviceDisplays;
+
+        private static readonly string appGuid = "a6c1a2ee-9836-01ea-bb37-0242ac130002";
 
         public App()
         {
@@ -48,6 +51,25 @@ namespace MicrowaveMonitor
             logManager.IsExiting = true;
             dataManager.IsRunning = false;
             alarmManager.IsRunning = false;
+        }
+
+        [STAThread]
+        public static void Main()
+        {
+            using (Mutex mutex = new Mutex(true, appGuid, out bool isNotRunning))
+            {
+                if (isNotRunning)
+                {
+                    App application = new App();
+                    application.InitializeComponent();
+                    application.Run();
+                }
+                else
+                {
+                    MessageBox.Show("Microwave Monitor is already running.", "Startup Error");
+                    return;
+                }
+            }
         }
     }
 }
