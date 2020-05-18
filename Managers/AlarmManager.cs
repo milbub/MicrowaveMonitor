@@ -32,8 +32,8 @@ namespace MicrowaveMonitor.Managers
         {
             public int Id { get; set; }
             public string Rank { get; set; }
-            public string Timestamp { get; set; }
-            public string EndTimestamp { get; set; }
+            public DateTime Timestamp { get; set; }
+            public DateTime EndTimestamp { get; set; }
             public string Link { get; set; }
             public string Device { get; set; }
             public string Measurement { get; set; }
@@ -115,6 +115,12 @@ namespace MicrowaveMonitor.Managers
             dataM = dataManager;
             displays = deviceDisplays;
 
+            SetCollectionViewSort(alarmsCurrent, "Timestamp", ListSortDirection.Descending);
+            SetCollectionViewSort(alarmsAck, "Timestamp", ListSortDirection.Descending);
+            SetCollectionViewSort(alarmsSettledAck, "EndTimestamp", ListSortDirection.Descending);
+            SetCollectionViewSort(alarmsSettledUnack, "EndTimestamp", ListSortDirection.Descending);
+            SetCollectionViewSort(deviceAlarms, "Timestamp", ListSortDirection.Descending);
+
             LoadAlarmsOnStart();
 
             longAverage = new AverageAnalyser(this, dataM, linkM, AlarmType.AvgLong);
@@ -123,16 +129,10 @@ namespace MicrowaveMonitor.Managers
             OduTemperAna = new TemperatureAnalyser(this, dataM, Analyser.WatchTempOdu, Measurement.TempODU);
             IduTemperAna = new TemperatureAnalyser(this, dataM, Analyser.WatchTempIduOut, Measurement.TempIDU);
 
-            SetCollectionViewSort(alarmsCurrent, "Timestamp", ListSortDirection.Descending);
-            SetCollectionViewSort(alarmsAck, "Timestamp", ListSortDirection.Descending);
-            SetCollectionViewSort(alarmsSettledAck, "EndTimestamp", ListSortDirection.Descending);
-            SetCollectionViewSort(alarmsSettledUnack, "EndTimestamp", ListSortDirection.Descending);
-            SetCollectionViewSort(deviceAlarms, "Timestamp", ListSortDirection.Descending);
-
             LoadSettings();
         }
 
-        private void SetCollectionViewSort(IEnumerable collection, string propertyName, ListSortDirection direction)
+        private void SetCollectionViewSort(ObservableCollection<AlarmDisplay> collection, string propertyName, ListSortDirection direction)
         {
             ICollectionView dataView = CollectionViewSource.GetDefaultView(collection);
             dataView.SortDescriptions.Clear();
@@ -301,7 +301,7 @@ namespace MicrowaveMonitor.Managers
                 disp.Value = measValue.ToString("0.00");
             disp.Id = alarm.Id;
             disp.Rank = rank.ToString();
-            disp.Timestamp = alarm.GenerTime.ToString("dd.MM.yyyy HH:mm:ss");
+            disp.Timestamp = alarm.GenerTime;
             disp.Link = linkName;
             disp.Device = deviceType;
             disp.Measurement = measure.ToString();
@@ -371,7 +371,7 @@ namespace MicrowaveMonitor.Managers
                     display.SettledValue = "-";
                 else
                     display.SettledValue = settledValue.ToString("0.00");
-                display.EndTimestamp = alarm.SettledTime.ToString("dd.MM.yyyy HH:mm:ss");
+                display.EndTimestamp = alarm.SettledTime;
 
                 lock (destination)
                     destination.Add(display);
@@ -504,17 +504,17 @@ namespace MicrowaveMonitor.Managers
 
             if (alarm.IsActive)
             {
-                disp.EndTimestamp = "ACTIVE";
+                disp.EndTimestamp = DateTime.MinValue;
                 disp.SettledValue = "ACTIVE";
             }
             else
             {
-                disp.EndTimestamp = alarm.SettledTime.ToString("dd.MM.yyyy HH:mm:ss");
+                disp.EndTimestamp = alarm.SettledTime;
             }
 
             disp.Id = alarm.Id;
             disp.Rank = alarm.Rank.ToString();
-            disp.Timestamp = alarm.GenerTime.ToString("dd.MM.yyyy HH:mm:ss");
+            disp.Timestamp = alarm.GenerTime;
             disp.Link = linkM.LinkNames[alarm.LinkId];
             disp.Device = alarm.DeviceType;
             disp.Measurement = alarm.Measure.ToString();
@@ -700,18 +700,35 @@ namespace MicrowaveMonitor.Managers
             });
         }
 
-        public void SetAck(int id, bool active)
+        public void SetAck(int id, bool active, bool ack)
         {
             ObservableCollection<AlarmDisplay> now, intended;
-            if (active)
+
+            if (ack)
             {
-                now = alarmsCurrent;
-                intended = alarmsAck;
+                if (active)
+                {
+                    now = alarmsCurrent;
+                    intended = alarmsAck;
+                }
+                else
+                {
+                    now = alarmsSettledUnack;
+                    intended = alarmsSettledAck;
+                }
             }
             else
             {
-                now = alarmsSettledUnack;
-                intended = alarmsSettledAck;
+                if (active)
+                {
+                    now = alarmsAck;
+                    intended = alarmsCurrent;
+                }
+                else
+                {
+                    now = alarmsSettledAck;
+                    intended = alarmsSettledUnack;
+                }
             }
 
             AlarmDisplay display;
@@ -720,47 +737,17 @@ namespace MicrowaveMonitor.Managers
             {
                 display = now.First(v => (v.Id == id));
                 now.Remove(display);
+                ICollectionView dv = CollectionViewSource.GetDefaultView(now);
+                dv.Refresh();
             }
 
-            display.Ack = true;
+            display.Ack = !display.Ack;
 
             lock (intended)
                 intended.Add(display);
 
             Alarm alarm = linkM.GetAlarm(id);
-            alarm.IsAck = true;
-            linkM.UpdateAlarm(alarm);
-        }
-
-        public void UnsetAck(int id, bool active)
-        {
-            ObservableCollection<AlarmDisplay> now, intended;
-            if (active)
-            {
-                now = alarmsAck;
-                intended = alarmsCurrent;
-            }
-            else
-            {
-                now = alarmsSettledAck;
-                intended = alarmsSettledUnack;
-            }
-
-            AlarmDisplay display;
-
-            lock (now)
-            {
-                display = now.First(v => (v.Id == id));
-                now.Remove(display);
-            }
-
-            display.Ack = false;
-
-            lock (intended)
-                intended.Add(display);
-
-            Alarm alarm = linkM.GetAlarm(id);
-            alarm.IsAck = false;
+            alarm.IsAck = !alarm.IsAck;
             linkM.UpdateAlarm(alarm);
         }
 

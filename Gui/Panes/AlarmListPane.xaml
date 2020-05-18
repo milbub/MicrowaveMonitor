@@ -2,8 +2,12 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:MicrowaveMonitor.Gui.Converters"
              mc:Ignorable="d">
+    <UserControl.Resources>
+        <local:TimestampConverter x:Key="TimeConverter"></local:TimestampConverter>
+    </UserControl.Resources>
     <TabControl x:Name="warningsTabControl" Background="LightGray" Margin="5" Padding="2">
         <TabItem Header="Current">
             <ListView x:Name="viewCurrent" Margin="0" Background="LightGray" Focusable="False">
@@ -17,7 +21,7 @@
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
                         <GridViewColumn Header="Rank" Width="65" DisplayMemberBinding="{Binding Rank}"></GridViewColumn>
-                        <GridViewColumn Header="Timestamp" Width="117" DisplayMemberBinding="{Binding Timestamp}"></GridViewColumn>
+                        <GridViewColumn Header="Timestamp" Width="117" DisplayMemberBinding="{Binding Timestamp, Converter={StaticResource TimeConverter}}"></GridViewColumn>
                         <GridViewColumn Header="Link" Width="170" DisplayMemberBinding="{Binding Link}"></GridViewColumn>
                         <GridViewColumn Header="Site" Width="50" DisplayMemberBinding="{Binding Device}"></GridViewColumn>
                         <GridViewColumn Header="Measurement" Width="87" DisplayMemberBinding="{Binding Measurement}"></GridViewColumn>
@@ -58,7 +62,7 @@
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
                         <GridViewColumn Header="Rank" Width="65" DisplayMemberBinding="{Binding Rank}"></GridViewColumn>
-                        <GridViewColumn Header="Timestamp" Width="117" DisplayMemberBinding="{Binding Timestamp}"></GridViewColumn>
+                        <GridViewColumn Header="Timestamp" Width="117" DisplayMemberBinding="{Binding Timestamp, Converter={StaticResource TimeConverter}}"></GridViewColumn>
                         <GridViewColumn Header="Link" Width="170" DisplayMemberBinding="{Binding Link}"></GridViewColumn>
                         <GridViewColumn Header="Site" Width="50" DisplayMemberBinding="{Binding Device}"></GridViewColumn>
                         <GridViewColumn Header="Measurement" Width="87" DisplayMemberBinding="{Binding Measurement}"></GridViewColumn>
@@ -113,8 +117,8 @@
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
                         <GridViewColumn Header="Rank" Width="65" DisplayMemberBinding="{Binding Rank}"></GridViewColumn>
-                        <GridViewColumn Header="Beginning Timestamp" Width="127" DisplayMemberBinding="{Binding Timestamp}"></GridViewColumn>
-                        <GridViewColumn Header="End Timestamp" Width="127" DisplayMemberBinding="{Binding EndTimestamp}"></GridViewColumn>
+                        <GridViewColumn Header="Beginning Timestamp" Width="127" DisplayMemberBinding="{Binding Timestamp, Converter={StaticResource TimeConverter}}"></GridViewColumn>
+                        <GridViewColumn Header="End Timestamp" Width="127" DisplayMemberBinding="{Binding EndTimestamp, Converter={StaticResource TimeConverter}}"></GridViewColumn>
                         <GridViewColumn Header="Link" Width="230" DisplayMemberBinding="{Binding Link}"></GridViewColumn>
                         <GridViewColumn Header="Site" Width="50" DisplayMemberBinding="{Binding Device}"></GridViewColumn>
                         <GridViewColumn Header="Measurement" Width="87" DisplayMemberBinding="{Binding Measurement}"></GridViewColumn>
@@ -170,8 +174,8 @@
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
                         <GridViewColumn Header="Rank" Width="65" DisplayMemberBinding="{Binding Rank}"></GridViewColumn>
-                        <GridViewColumn Header="Begin Timestamp" Width="127" DisplayMemberBinding="{Binding Timestamp}"></GridViewColumn>
-                        <GridViewColumn Header="End Timestamp" Width="127" DisplayMemberBinding="{Binding EndTimestamp}"></GridViewColumn>
+                        <GridViewColumn Header="Begin Timestamp" Width="127" DisplayMemberBinding="{Binding Timestamp, Converter={StaticResource TimeConverter}}"></GridViewColumn>
+                        <GridViewColumn Header="End Timestamp" Width="127" DisplayMemberBinding="{Binding EndTimestamp, Converter={StaticResource TimeConverter}}"></GridViewColumn>
                         <GridViewColumn Header="Link" Width="230" DisplayMemberBinding="{Binding Link}"></GridViewColumn>
                         <GridViewColumn Header="Site" Width="50" DisplayMemberBinding="{Binding Device}"></GridViewColumn>
                         <GridViewColumn Header="Measurement" Width="87" DisplayMemberBinding="{Binding Measurement}"></GridViewColumn>

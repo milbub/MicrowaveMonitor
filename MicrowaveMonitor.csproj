@@ -87,6 +87,7 @@
       <DependentUpon>AboutWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Converters\IduLabelConverter.cs" />
+    <Compile Include="Gui\Converters\TimestampConverter.cs" />
     <Compile Include="Gui\DeleteWindow.xaml.cs">
       <DependentUpon>DeleteWindow.xaml</DependentUpon>
     </Compile>
