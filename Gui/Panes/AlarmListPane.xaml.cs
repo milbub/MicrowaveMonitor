@@ -73,6 +73,7 @@ namespace MicrowaveMonitor.Gui
         {
             AlarmManager.AlarmDisplay disp = (AlarmManager.AlarmDisplay)((ListViewItem)sender).Content;
             window.ChangeLink(linkM.GetLink(linkM.LinkNames.FirstOrDefault(x => x.Value == disp.Link).Key), disp.Device);
+            window.SelectNameInLinksList();
         }
     }
 }

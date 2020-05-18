@@ -603,7 +603,6 @@ namespace MicrowaveMonitor.Gui
             alarmM.FillDeviceAlarms(viewedDeviceId);
         }
 
-
         private void ListBoxMouseWheel(object sender, MouseWheelEventArgs e)
         {
             if (e.Delta < 0)
@@ -614,6 +613,13 @@ namespace MicrowaveMonitor.Gui
             {
                 linksScroll.LineUp();
             }
+        }
+
+        public void SelectNameInLinksList()
+        {
+            LinksList.SelectionChanged -= LinkChoosed;
+            LinksList.SelectedItem = viewedLink.Name;
+            LinksList.SelectionChanged += LinkChoosed;
         }
 
         public static BitmapImage BitmapToImageSource(Bitmap bitmap)
