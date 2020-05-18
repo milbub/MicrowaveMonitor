@@ -152,7 +152,7 @@ namespace MicrowaveMonitor.Managers
 
             lock (AlarmDatabase)
             {
-                query = AlarmDatabase.Table<Alarm>().Where(v => v.DeviceId == devId).OrderByDescending(x => x.GenerTime).Take(limit);
+                query = AlarmDatabase.Table<Alarm>().Where(v => v.DeviceId == devId).Take(limit);
             }
 
             return query;

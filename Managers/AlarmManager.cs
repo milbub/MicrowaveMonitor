@@ -4,12 +4,14 @@ using MicrowaveMonitor.Properties;
 using MicrowaveMonitor.Workers;
 using SQLite;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows.Data;
 
 namespace MicrowaveMonitor.Managers
 {
@@ -121,7 +123,22 @@ namespace MicrowaveMonitor.Managers
             OduTemperAna = new TemperatureAnalyser(this, dataM, Analyser.WatchTempOdu, Measurement.TempODU);
             IduTemperAna = new TemperatureAnalyser(this, dataM, Analyser.WatchTempIduOut, Measurement.TempIDU);
 
+            SetCollectionViewSort(alarmsCurrent, "Timestamp", ListSortDirection.Descending);
+            SetCollectionViewSort(alarmsAck, "Timestamp", ListSortDirection.Descending);
+            SetCollectionViewSort(alarmsSettledAck, "EndTimestamp", ListSortDirection.Descending);
+            SetCollectionViewSort(alarmsSettledUnack, "EndTimestamp", ListSortDirection.Descending);
+            SetCollectionViewSort(deviceAlarms, "Timestamp", ListSortDirection.Descending);
+
             LoadSettings();
+        }
+
+        private void SetCollectionViewSort(IEnumerable collection, string propertyName, ListSortDirection direction)
+        {
+            ICollectionView dataView = CollectionViewSource.GetDefaultView(collection);
+            dataView.SortDescriptions.Clear();
+            SortDescription sd = new SortDescription(propertyName, direction);
+            dataView.SortDescriptions.Add(sd);
+            dataView.Refresh();
         }
 
         public void LoadSettings()
@@ -306,7 +323,7 @@ namespace MicrowaveMonitor.Managers
 
                 if (viewedDevice == deviceId)
                     lock (deviceAlarmsLocker)
-                        deviceAlarms.Insert(0, MakeAlarmDisplay(alarm));
+                        deviceAlarms.Add(MakeAlarmDisplay(alarm));
             }));
 
             return alarm.Id;
