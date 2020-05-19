@@ -16,10 +16,10 @@ namespace MicrowaveMonitor.Gui
         private double _axisMin;
         private double _axisStep;
         private double _axisUnit;
+        private Func<double, string> _dateTimeFormatter;
         private bool _disableAnimations;
 
         public ChartValues<Record<double>> ChartValues { get; set; }
-        public Func<double, string> DateTimeFormatter { get; set; }
         public bool IsReading { get; set; }
         public int Span { get; private set; }
         public int DevId { get; private set; }
@@ -37,7 +37,7 @@ namespace MicrowaveMonitor.Gui
             ChartValues = new ChartValues<Record<double>>();
             DateTimeFormatter = value => new DateTime((long)value).ToString("HH:mm:ss");
 
-            SetAxisGrid(TimeSpan.FromSeconds(60).Ticks, TimeSpan.TicksPerSecond);
+            SetAxisGrid(60, 1);
             SetAxisLimits(DateTime.Now, 600);
             DisableAnimations = true;
 
@@ -77,12 +77,33 @@ namespace MicrowaveMonitor.Gui
         {
             AxisMax = timestamp.Ticks + TimeSpan.FromSeconds(1).Ticks;          // axis ahead
             AxisMin = timestamp.Ticks - TimeSpan.FromSeconds(span - 1).Ticks;   // axis behind
+
+            OnPropertyChanged("AxisUnit");
+            OnPropertyChanged("AxisStep");
         }
 
-        public void SetAxisGrid(long step, long unit)
+        public void SetAxisGrid(int step, int unit)
         {
-            AxisStep = step;
-            AxisUnit = unit;
+            AxisStep = TimeSpan.FromSeconds(step).Ticks;
+            AxisUnit = TimeSpan.FromSeconds(unit).Ticks;
+
+            switch (step)
+            {
+                case int n when (n < 300):
+                    DateTimeFormatter = value => new DateTime((long)value).ToString("HH:mm:ss");
+                    break;
+                case int n when (n <= 7200 && n >= 300):
+                    DateTimeFormatter = value => new DateTime((long)value).ToString("HH:mm");
+                    break;
+                case int n when (n <= 50400 && n > 7200):
+                    DateTimeFormatter = value => new DateTime((long)value).ToString("dd.MM HH:mm");
+                    break;
+                case int n when (n >= 50400):
+                    DateTimeFormatter = value => new DateTime((long)value).ToString("dd.MM");
+                    break;
+                default:
+                    break;
+            }
         }
 
         public double AxisMax
@@ -107,19 +128,21 @@ namespace MicrowaveMonitor.Gui
         public double AxisStep
         {
             get { return _axisStep; }
-            set
-            {
-                _axisStep = value;
-                OnPropertyChanged("AxisStep");
-            }
+            set { _axisStep = value; }      // notification is done after axis limits change
         }
         public double AxisUnit
         {
             get { return _axisUnit; }
+            set { _axisUnit = value; }      // notification is done after axis limits change
+        }
+
+        public Func<double, string> DateTimeFormatter
+        { 
+            get { return _dateTimeFormatter; }
             set
             {
-                _axisUnit = value;
-                OnPropertyChanged("AxisUnit");
+                _dateTimeFormatter = value;
+                OnPropertyChanged("DateTimeFormatter");
             }
         }
 

@@ -17,11 +17,12 @@
         <ComboBox x:Name="history" SelectionChanged="HistoryChanged" Width="90" Height="21" HorizontalAlignment="Left" Margin="180,0,0,0">
             <ComboBoxItem Content="1 minute"></ComboBoxItem>
             <ComboBoxItem Content="10 minutes" IsSelected="True"></ComboBoxItem>
-            <ComboBoxItem Content="1 hour" IsEnabled="False"></ComboBoxItem>
-            <ComboBoxItem Content="6 hours" IsEnabled="False"></ComboBoxItem>
-            <ComboBoxItem Content="1 day" IsEnabled="False"></ComboBoxItem>
-            <ComboBoxItem Content="7 days" IsEnabled="False"></ComboBoxItem>
-            <ComboBoxItem Content="30 days" IsEnabled="False"></ComboBoxItem>
+            <ComboBoxItem Content="1 hour"></ComboBoxItem>
+            <ComboBoxItem Content="6 hours"></ComboBoxItem>
+            <ComboBoxItem Content="1 day"></ComboBoxItem>
+            <ComboBoxItem Content="7 days"></ComboBoxItem>
+            <ComboBoxItem Content="30 days"></ComboBoxItem>
+            <ComboBoxItem Content="1 year"></ComboBoxItem>
         </ComboBox>
         <Label Content="AVG:" FontWeight="Bold" Margin="450,0,0,0"/>
         <Label x:Name="avg" Margin="485,0,0,0"/>
