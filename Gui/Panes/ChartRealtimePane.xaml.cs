@@ -5,7 +5,9 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using Microsoft.CSharp.RuntimeBinder;
 using Vibrant.InfluxDB.Client.Rows;
+using Itenso.TimePeriod;
 
 namespace MicrowaveMonitor.Gui
 {
@@ -47,6 +49,7 @@ namespace MicrowaveMonitor.Gui
 
         private bool isFilled = false;
         private int writesCount = 0;
+        private double valueSum = 0;
         private DateTime lastUpdate;
 
         public ChartRealtimePane()
@@ -136,19 +139,34 @@ namespace MicrowaveMonitor.Gui
 
             if (record != null && DeviceId == chart.DevId)
             {
-                DateTime now = DateTime.Now;
+                if (chartUpdateInterval.TotalSeconds > 1)
+                {
+                    valueSum += record.Data;
+                    writesCount++;
 
-                if (now - lastUpdate > chartUpdateInterval)
+                    if (DateTime.Now - lastUpdate > chartUpdateInterval)
+                    {
+                        Record<double> newRecord = new Record<double>(record.TimeMark, valueSum / writesCount);
+
+                        chart.Read(newRecord, resolution, span);
+                        await UpdateAvg(query);
+                        UpdateDiff(record.Data);
+
+                        lastUpdate = record.TimeMark;
+                        valueSum = 0;
+                        writesCount = 0;
+                    }
+                }
+                else
                 {
                     chart.Read(record, resolution, span);
-                    lastUpdate = now;
+                    writesCount++;
+
+                    if (++writesCount % avgUpdateTrigger == 0)
+                        await UpdateAvg(query);
+
+                    UpdateDiff(record.Data);
                 }
-
-                if (++writesCount % avgUpdateTrigger == 0)
-                    await UpdateAvg(query);
-
-                Diff = record.Data - Avg;
-                diff.Content = String.Format("{0} {1}", Diff.ToString("+0.00;−0.00"), Unit);
             }
             else if (manyRecords != null)
             {
@@ -168,6 +186,12 @@ namespace MicrowaveMonitor.Gui
                 avg.Content = String.Format("{0:0.00} {1}", row.mean, Unit);
                 Avg = row.mean;
             }
+        }
+
+        private void UpdateDiff(double value)
+        {
+            Diff = value - Avg;
+            diff.Content = String.Format("{0} {1}", Diff.ToString("+0.00;−0.00"), Unit);
         }
 
         public async void HistoryChanged(object sender, SelectionChangedEventArgs e)
@@ -248,21 +272,50 @@ namespace MicrowaveMonitor.Gui
 
             try
             {
-                foreach (dynamic row in pending)
+                if (unit > 1)
                 {
-                    if (row.device == DeviceId.ToString())
+                    double sum = 0;
+                    int count = 0;
+                    DateTime time = DateTime.Now;
+
+                    foreach (dynamic row in pending)
                     {
-                        DateTime timestamp = row.Timestamp;
-                        records.Add(new Record<double>(timestamp.ToLocalTime(), row.value));
+                        if (row.device == DeviceId.ToString())
+                        {
+                            sum += row.value;
+
+                            if (count++ == 0)
+                                time = row.Timestamp.ToLocalTime();
+
+                            if ((row.Timestamp.ToLocalTime() - time).TotalSeconds > unit)
+                            {
+                                records.Add(new Record<double>(row.Timestamp.ToLocalTime(), sum / count));
+                                sum = 0;
+                                count = 0;
+                                time = row.Timestamp.ToLocalTime();
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    foreach (dynamic row in pending)
+                    {
+                        if (row.device == DeviceId.ToString())
+                        {
+                            DateTime timestamp = row.Timestamp;
+                            records.Add(new Record<double>(timestamp.ToLocalTime(), row.value));
+                        }
                     }
                 }
             }
-            catch (Microsoft.CSharp.RuntimeBinder.RuntimeBinderException ex)
+            catch (RuntimeBinderException ex)
             {
                 Console.WriteLine(ex.Message);
             }
 
             writesCount = 0;
+            valueSum = 0;
             await GraphUpdate(null, records);
         }
     }
