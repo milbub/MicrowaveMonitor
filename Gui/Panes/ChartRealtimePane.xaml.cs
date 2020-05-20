@@ -7,18 +7,68 @@ using System.Windows;
 using System.Windows.Controls;
 using Microsoft.CSharp.RuntimeBinder;
 using Vibrant.InfluxDB.Client.Rows;
-using Itenso.TimePeriod;
 
 namespace MicrowaveMonitor.Gui
 {
     public partial class ChartRealtimePane : UserControl
     {
-        private int _deviceId;
+        private struct QueryParams
+        {
+            public string valueName;
+            public string retention;
+            public string bottomTime;
+        }
 
-        public string ChartName { get; set; }
-        public string Unit { get; set; }
-        public string AxisUnit { get; set; }
-        public string Measurement { get; set; }
+        QueryParams queryOneMin = new QueryParams()
+        {
+            valueName = DataManager.defaultValueName,
+            retention = DataManager.retentionWeek,
+            bottomTime = "1m"
+        };
+        QueryParams queryTenMin = new QueryParams()
+        {
+            valueName = DataManager.defaultValueName,
+            retention = DataManager.retentionWeek,
+            bottomTime = "10m"
+        };
+        QueryParams queryOneHour = new QueryParams()
+        {
+            valueName = DataManager.defaultValueName,
+            retention = DataManager.retentionWeek,
+            bottomTime = "1h"
+        };
+        QueryParams querySixHours = new QueryParams()
+        {
+            valueName = DataManager.defaultValueName,
+            retention = DataManager.retentionWeek,
+            bottomTime = "6h"
+        };
+        QueryParams queryOneDay = new QueryParams()
+        {
+            valueName = DataManager.defaultValueName,
+            retention = DataManager.retentionWeek,
+            bottomTime = "1d"
+        };
+        QueryParams queryOneWeek = new QueryParams()
+        {
+            valueName = DataManager.meanValueName,
+            retention = DataManager.retentionMonth,
+            bottomTime = "1w"
+        };
+        QueryParams queryOneMonth = new QueryParams()
+        {
+            valueName = DataManager.meanValueName,
+            retention = DataManager.retentionYear,
+            bottomTime = "30d"
+        };
+        QueryParams queryOneYear = new QueryParams()
+        {
+            valueName = DataManager.meanValueName,
+            retention = DataManager.retentionYear,
+            bottomTime = "365d"
+        };
+
+        private int _deviceId;
         public int DeviceId
         {
             get => _deviceId;
@@ -42,6 +92,10 @@ namespace MicrowaveMonitor.Gui
                 }
             }
         }
+        public string ChartName { get; set; }
+        public string Unit { get; set; }
+        public string AxisUnit { get; set; }
+        public string Measurement { get; set; }
         public Queue<DynamicInfluxRow> Transactions { get; set; }
         public DataManager DataM { get; set; }
         public double Avg { get; set; }
@@ -78,7 +132,7 @@ namespace MicrowaveMonitor.Gui
 
             int resolution;     // chart's samples count
             int span;           // chart's timespan (s)
-            string query;
+            QueryParams avgQueryParams;
 
             const int avgUpdateTrigger = 10;
             TimeSpan chartUpdateInterval;
@@ -88,49 +142,49 @@ namespace MicrowaveMonitor.Gui
                 case 0:         // 1 m
                     resolution = 60;
                     span = 60;
-                    query = $@"SELECT mean(""value"") FROM ""{DataManager.databaseName}"".""{DataManager.retentionWeek}"".""{Measurement}"" WHERE time > now() - 1m AND time < now() AND ""device""='{DeviceId}'";
+                    avgQueryParams = queryOneMin;
                     chartUpdateInterval = TimeSpan.FromSeconds(1);
                     break;
                 case 1:         // 10 m
                     resolution = 600;
                     span = 600;
-                    query = $@"SELECT mean(""value"") FROM ""{DataManager.databaseName}"".""{DataManager.retentionWeek}"".""{Measurement}"" WHERE time > now() - 10m AND time < now() AND ""device""='{DeviceId}'";
+                    avgQueryParams = queryTenMin;
                     chartUpdateInterval = TimeSpan.FromSeconds(1);
                     break;
                 case 2:         // 1 h
                     resolution = 600;
                     span = 3600;
-                    query = $@"SELECT mean(""value"") FROM ""{DataManager.databaseName}"".""{DataManager.retentionWeek}"".""{Measurement}"" WHERE time > now() - 1h AND time < now() AND ""device""='{DeviceId}'";
+                    avgQueryParams = queryOneHour;
                     chartUpdateInterval = TimeSpan.FromSeconds(6);
                     break;
                 case 3:         // 6 h
                     resolution = 600;
                     span = 21600;
-                    query = $@"SELECT mean(""value"") FROM ""{DataManager.databaseName}"".""{DataManager.retentionWeek}"".""{Measurement}"" WHERE time > now() - 6h AND time < now() AND ""device""='{DeviceId}'";
+                    avgQueryParams = querySixHours;
                     chartUpdateInterval = TimeSpan.FromSeconds(36);
                     break;
                 case 4:         // 1 d
                     resolution = 600;
                     span = 86400;
-                    query = $@"SELECT mean(""value"") FROM ""{DataManager.databaseName}"".""{DataManager.retentionWeek}"".""{Measurement}"" WHERE time > now() - 1d AND time < now() AND ""device""='{DeviceId}'";
+                    avgQueryParams = queryOneDay;
                     chartUpdateInterval = TimeSpan.FromSeconds(144);
                     break;
                 case 5:         // 1 w
                     resolution = 600;
                     span = 604800;
-                    query = $@"SELECT mean(""value"") FROM ""{DataManager.databaseName}"".""{DataManager.retentionWeek}"".""{Measurement}"" WHERE time > now() - 1w AND time < now() AND ""device""='{DeviceId}'";
+                    avgQueryParams = queryOneWeek;
                     chartUpdateInterval = TimeSpan.FromSeconds(1008);
                     break;
                 case 6:         // 30 d
                     resolution = 600;
                     span = 2592000;
-                    query = $@"SELECT mean(""mean_value"") FROM ""{DataManager.databaseName}"".""{DataManager.retentionMonth}"".""{Measurement}"" WHERE time > now() - 30d AND time < now() AND ""device""='{DeviceId}'";
+                    avgQueryParams = queryOneMonth;
                     chartUpdateInterval = TimeSpan.FromSeconds(4320);
                     break;
                 case 7:         // 365 d
                     resolution = 600;
                     span = 31536000;
-                    query = $@"SELECT mean(""mean_value"") FROM ""{DataManager.databaseName}"".""{DataManager.retentionYear}"".""{Measurement}"" WHERE time > now() - 365d AND time < now() AND ""device""='{DeviceId}'";
+                    avgQueryParams = queryOneYear;
                     chartUpdateInterval = TimeSpan.FromSeconds(4320);
                     break;
                 default:
@@ -149,7 +203,7 @@ namespace MicrowaveMonitor.Gui
                         Record<double> newRecord = new Record<double>(record.TimeMark, valueSum / writesCount);
 
                         chart.Read(newRecord, resolution, span);
-                        await UpdateAvg(query);
+                        await UpdateAvg(avgQueryParams);
                         UpdateDiff(record.Data);
 
                         lastUpdate = record.TimeMark;
@@ -163,7 +217,7 @@ namespace MicrowaveMonitor.Gui
                     writesCount++;
 
                     if (++writesCount % avgUpdateTrigger == 0)
-                        await UpdateAvg(query);
+                        await UpdateAvg(avgQueryParams);
 
                     UpdateDiff(record.Data);
                 }
@@ -172,14 +226,16 @@ namespace MicrowaveMonitor.Gui
             {
                 chart.ReadMany(manyRecords, resolution, span, DeviceId);
                 isFilled = true;
-                await UpdateAvg(query);
+                await UpdateAvg(avgQueryParams);
             }
             else
                 chart.SetAxisLimits(DateTime.Now, span);
         }
 
-        private async Task UpdateAvg(string query)
+        private async Task UpdateAvg(QueryParams parameters)
         {
+            string query = $@"SELECT mean(""{parameters.valueName}"") FROM ""{DataManager.databaseName}"".""{parameters.retention}"".""{Measurement}"" WHERE time > now() - {parameters.bottomTime} AND time < now() AND ""device""='{DeviceId}'";
+
             dynamic row = await DataM.QueryValue(query);
             if (row != null)
             {
@@ -206,49 +262,49 @@ namespace MicrowaveMonitor.Gui
 
             int step;
             int unit;
-            string query;
+            QueryParams histQueryParams;
 
             switch (history.SelectedIndex)
             {
                 case 0:         // 1 m
                     step = 5;
                     unit = 1;
-                    query = $@"SELECT mean(""value"") FROM ""{DataManager.databaseName}"".""{DataManager.retentionWeek}"".""{Measurement}"" WHERE time > now() - 1m AND time < now() AND ""device""='{DeviceId}' GROUP BY time(1s) FILL(none)";
+                    histQueryParams = queryOneMin;
                     break;
                 case 1:         // 10 m
                     step = 50;
                     unit = 1;
-                    query = $@"SELECT mean(""value"") FROM ""{DataManager.databaseName}"".""{DataManager.retentionWeek}"".""{Measurement}"" WHERE time > now() - 10m AND time < now() AND ""device""='{DeviceId}' GROUP BY time(1s) FILL(none)";
+                    histQueryParams = queryTenMin;
                     break;
                 case 2:         // 1 h
                     step = 300;
                     unit = 6;
-                    query = $@"SELECT mean(""value"") FROM ""{DataManager.databaseName}"".""{DataManager.retentionWeek}"".""{Measurement}"" WHERE time > now() - 1h AND time < now() AND ""device""='{DeviceId}' GROUP BY time(6s) FILL(none)";
+                    histQueryParams = queryOneHour;
                     break;
                 case 3:         // 6 h
                     step = 1800;
                     unit = 36;
-                    query = $@"SELECT mean(""value"") FROM ""{DataManager.databaseName}"".""{DataManager.retentionWeek}"".""{Measurement}"" WHERE time > now() - 6h AND time < now() AND ""device""='{DeviceId}' GROUP BY time(36s) FILL(none)";
+                    histQueryParams = querySixHours;
                     break;
                 case 4:         // 1 d
                     step = 7200;
                     unit = 144;
-                    query = $@"SELECT mean(""value"") FROM ""{DataManager.databaseName}"".""{DataManager.retentionWeek}"".""{Measurement}"" WHERE time > now() - 1d AND time < now() AND ""device""='{DeviceId}' GROUP BY time(144s) FILL(none)";
+                    histQueryParams = queryOneDay;
                     break;
                 case 5:         // 1 w
                     step = 50400;
                     unit = 1008;
-                    query = $@"SELECT mean(""value"") FROM ""{DataManager.databaseName}"".""{DataManager.retentionWeek}"".""{Measurement}"" WHERE time > now() - 1w AND time < now() AND ""device""='{DeviceId}' GROUP BY time(1008s) FILL(none)";
+                    histQueryParams = queryOneWeek;
                     break;
                 case 6:         // 30 d
                     step = 216000;
                     unit = 4320;
-                    query = $@"SELECT mean(""mean_value"") FROM ""{DataManager.databaseName}"".""{DataManager.retentionMonth}"".""{Measurement}"" WHERE time > now() - 30d AND time < now() AND ""device""='{DeviceId}' GROUP BY time(4320s) FILL(none)";
+                    histQueryParams = queryOneMonth;
                     break;
                 case 7:         // 365 d
                     step = 2628000;
                     unit = 52560;
-                    query = $@"SELECT mean(""mean_value"") FROM ""{DataManager.databaseName}"".""{DataManager.retentionYear}"".""{Measurement}"" WHERE time > now() - 365d AND time < now() AND ""device""='{DeviceId}' GROUP BY time(52560s) FILL(none)";
+                    histQueryParams = queryOneYear;
                     break;
                 default:
                     return;
@@ -262,6 +318,7 @@ namespace MicrowaveMonitor.Gui
 
             List<Record<double>> records = new List<Record<double>>();
 
+            string query = $@"SELECT mean(""{histQueryParams.valueName}"") FROM ""{DataManager.databaseName}"".""{histQueryParams.retention}"".""{Measurement}"" WHERE time > now() - {histQueryParams.bottomTime} AND time < now() AND ""device""='{DeviceId}' GROUP BY time({unit}s) FILL(none)";
             List<DynamicInfluxRow> rows = await DataM.QueryRows(query);
 
             if (rows != null)
