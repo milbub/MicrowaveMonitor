@@ -12,6 +12,7 @@ using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Data;
+using System.Windows.Forms;
 
 namespace MicrowaveMonitor.Managers
 {
@@ -384,20 +385,32 @@ namespace MicrowaveMonitor.Managers
 
             Console.WriteLine(6.ToString() + " Link: " + linkName + "; Device: " + alarm.DeviceType + "; Measure: " + alarm.Measure.ToString() + ".");
 
-            /* TODO REWRITE !!! */
-            lock (downTriggers)
-                if (downTriggers.ContainsKey(alarm.DeviceId))
-                    lock (displays)
-                        displays[alarm.DeviceId].State = DeviceDisplay.LinkState.AlarmDown;
-                else if (tresholdIds.ContainsKey(alarm.DeviceId))
-                {
-                    if (tresholdIds[alarm.DeviceId].count > 0)
-                        lock (displays)
-                            displays[alarm.DeviceId].State = DeviceDisplay.LinkState.AlarmCritical;
-                }
-                else
-                    lock (displays)
-                        displays[alarm.DeviceId].State = DeviceDisplay.LinkState.Running;
+            DeviceDisplay.LinkState state = DeviceDisplay.LinkState.Running;
+            IEnumerable<AlarmDisplay> activeCurrAlarms = alarmsCurrent.Where(a => a.Link == linkName && a.Device == alarm.DeviceType);
+            IEnumerable<AlarmDisplay> activeAckAlarms = alarmsAck.Where(a => a.Link == linkName && a.Device == alarm.DeviceType);
+
+            foreach (AlarmDisplay a in activeCurrAlarms)
+            {
+                if (a.Id == alarm.Id)
+                    continue;
+
+                int ar = (int)(TypeDescriptor.GetConverter(alarm.Rank).ConvertFrom(a.Rank));
+                if (ar > (int)state)
+                    state = (DeviceDisplay.LinkState)ar;
+            }
+
+            foreach (AlarmDisplay a in activeAckAlarms)
+            {
+                if (a.Id == alarm.Id)
+                    continue;
+
+                int ar = (int)(TypeDescriptor.GetConverter(alarm.Rank).ConvertFrom(a.Rank));
+                if (ar > (int)state)
+                    state = (DeviceDisplay.LinkState)ar;
+            }
+
+            lock (displays)
+                displays[alarm.DeviceId].State = state;
         }
 
         private string TextFiller(AlarmType method, bool trend)
@@ -647,6 +660,8 @@ namespace MicrowaveMonitor.Managers
 
             longAverage.DeviceStopped(id);
             shortAverage.DeviceStopped(id);
+            IduTemperAna.DeviceStopped(id);
+            OduTemperAna.DeviceStopped(id);
         }
 
         public void HideAlarm(int id, bool ack)

@@ -12,20 +12,9 @@ namespace MicrowaveMonitor.Analysers
 {
     public class AverageAnalyser : Analyser
     {
-        public struct PercentDiff
-        {
-            public double Signal { get; set; }
-            public double SignalQ { get; set; }
-            public double TempIdu { get; set; }
-            public double Voltage { get; set; }
-            public double Latency { get; set; }
-        }
-
-        public override TimeSpan RefreshInterval { get; set; }
         public TimeSpan CompareInterval { get; set; }
         public TimeSpan LongLimit { get; set; }
         public TimeSpan ShortLimit { get; set; }
-        public PercentDiff Percentages { get; set; }
 
         private readonly Dictionary<int, double> dataSignalAvg = new Dictionary<int, double>();
         private readonly Dictionary<int, double> dataSignalQAvg = new Dictionary<int, double>();
@@ -33,13 +22,6 @@ namespace MicrowaveMonitor.Analysers
         private readonly Dictionary<int, double> dataVoltageAvg = new Dictionary<int, double>();
         private readonly Dictionary<int, double> dataPingAvg = new Dictionary<int, double>();
         private readonly object dataLocker = new object();
-
-        private readonly Dictionary<int, int> idsSignal = new Dictionary<int, int>();
-        private readonly Dictionary<int, int> idsSignalQ = new Dictionary<int, int>();
-        private readonly Dictionary<int, int> idsTempIdu = new Dictionary<int, int>();
-        private readonly Dictionary<int, int> idsVoltage = new Dictionary<int, int>();
-        private readonly Dictionary<int, int> idsPing = new Dictionary<int, int>();
-        private readonly object idsLocker = new object();
 
         private static readonly Dictionary<int, bool> isIndicatedSignal = new Dictionary<int, bool>();
         private static readonly Dictionary<int, bool> isIndicatedSignalQ = new Dictionary<int, bool>();
@@ -404,7 +386,7 @@ namespace MicrowaveMonitor.Analysers
             alarmMan.SettleAlarm(alarmId, value, stopping);
         }
 
-        public void DeviceStopped(int devId)
+        public override void DeviceStopped(int devId)
         {
             TrySettle(devId, idsSignal, 0, isIndicatedSignal, true);
             TrySettle(devId, idsSignalQ, 0, isIndicatedSignalQ, true);

@@ -166,6 +166,16 @@ namespace MicrowaveMonitor.Analysers
             }
         }
 
+        public void DeviceStopped(int devId)
+        {
+            lock (idsLocker)
+                if (ids.ContainsKey(devId))
+                {
+                    alarmMan.SettleAlarm(ids[devId], 0, true);
+                    ids.Remove(devId);
+                }
+        }
+
         private async Task WeatherUpdate(int devId, int weatherId, double wind, double latitude, double longitude)
         {
             DateTime searchedTime = DateTime.Now;
