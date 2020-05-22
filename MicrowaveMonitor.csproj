@@ -68,6 +68,7 @@
     <Reference Include="System.Design" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Net" />
+    <Reference Include="System.Numerics" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xaml" />
     <Reference Include="WindowsBase" />
@@ -79,6 +80,7 @@
     </Page>
     <Compile Include="Analysers\Analyser.cs" />
     <Compile Include="Analysers\AverageAnalyser.cs" />
+    <Compile Include="Analysers\PeriodicityAnalyser.cs" />
     <Compile Include="Analysers\TemperatureAnalyser.cs" />
     <Compile Include="Database\Alarm.cs" />
     <Compile Include="Database\DeviceDisplay.cs" />
@@ -122,21 +124,22 @@
     <Compile Include="Gui\SettingsWindow.xaml.cs">
       <DependentUpon>SettingsWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Libs\DSPLib-1.03.1\DSPLib.cs" />
     <Compile Include="Managers\AlarmManager.cs" />
     <Compile Include="Managers\DataManager.cs" />
     <Compile Include="Managers\LinkManager.cs" />
     <Compile Include="Managers\LogManager.cs" />
     <Compile Include="Managers\WorkerManager.cs" />
-    <Compile Include="Weather\Clouds.cs" />
-    <Compile Include="Weather\Coord.cs" />
-    <Compile Include="Weather\Main.cs" />
-    <Compile Include="Weather\OpenWeather.cs" />
-    <Compile Include="Weather\Query.cs" />
-    <Compile Include="Weather\Rain.cs" />
-    <Compile Include="Weather\Snow.cs" />
-    <Compile Include="Weather\Sys.cs" />
-    <Compile Include="Weather\Weather.cs" />
-    <Compile Include="Weather\Wind.cs" />
+    <Compile Include="Libs\OpenWeatherMap-API-CSharp-01c2474\Clouds.cs" />
+    <Compile Include="Libs\OpenWeatherMap-API-CSharp-01c2474\Coord.cs" />
+    <Compile Include="Libs\OpenWeatherMap-API-CSharp-01c2474\Main.cs" />
+    <Compile Include="Libs\OpenWeatherMap-API-CSharp-01c2474\OpenWeather.cs" />
+    <Compile Include="Libs\OpenWeatherMap-API-CSharp-01c2474\Query.cs" />
+    <Compile Include="Libs\OpenWeatherMap-API-CSharp-01c2474\Rain.cs" />
+    <Compile Include="Libs\OpenWeatherMap-API-CSharp-01c2474\Snow.cs" />
+    <Compile Include="Libs\OpenWeatherMap-API-CSharp-01c2474\Sys.cs" />
+    <Compile Include="Libs\OpenWeatherMap-API-CSharp-01c2474\Weather.cs" />
+    <Compile Include="Libs\OpenWeatherMap-API-CSharp-01c2474\Wind.cs" />
     <Compile Include="Workers\Collector.cs" />
     <Compile Include="Workers\PingCollector.cs" />
     <Compile Include="Workers\SnmpCollector.cs" />
