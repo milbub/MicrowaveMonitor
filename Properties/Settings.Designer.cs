@@ -530,24 +530,60 @@ namespace MicrowaveMonitor.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool a_enable_bytime {
-            get {
-                return ((bool)(this["a_enable_bytime"]));
-            }
-            set {
-                this["a_enable_bytime"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool a_enable_periodic {
             get {
                 return ((bool)(this["a_enable_periodic"]));
             }
             set {
                 this["a_enable_periodic"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0.05")]
+        public float a_periodic_percDiff_sig {
+            get {
+                return ((float)(this["a_periodic_percDiff_sig"]));
+            }
+            set {
+                this["a_periodic_percDiff_sig"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0.05")]
+        public float a_periodic_percDiff_sigQ {
+            get {
+                return ((float)(this["a_periodic_percDiff_sigQ"]));
+            }
+            set {
+                this["a_periodic_percDiff_sigQ"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0.05")]
+        public float a_periodic_percDiff_volt {
+            get {
+                return ((float)(this["a_periodic_percDiff_volt"]));
+            }
+            set {
+                this["a_periodic_percDiff_volt"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool a_periodic_debug {
+            get {
+                return ((bool)(this["a_periodic_debug"]));
+            }
+            set {
+                this["a_periodic_debug"] = value;
             }
         }
     }

@@ -4,7 +4,6 @@ using MicrowaveMonitor.Properties;
 using MicrowaveMonitor.Workers;
 using SQLite;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -12,7 +11,6 @@ using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Data;
-using System.Windows.Forms;
 
 namespace MicrowaveMonitor.Managers
 {
@@ -66,6 +64,8 @@ namespace MicrowaveMonitor.Managers
                         longAverage.IsRunning = true;
                     if (Settings.Default.a_enable_shortavg)
                         shortAverage.IsRunning = true;
+                    if (Settings.Default.a_enable_periodic)
+                        periodicityAna.IsRunning = true;
                 }
                 else
                 {
@@ -73,6 +73,8 @@ namespace MicrowaveMonitor.Managers
                         longAverage.IsRunning = false;
                     if (Settings.Default.a_enable_shortavg)
                         shortAverage.IsRunning = false;
+                    if (Settings.Default.a_enable_periodic)
+                        periodicityAna.IsRunning = false;
                 }
             }
         }
@@ -107,8 +109,11 @@ namespace MicrowaveMonitor.Managers
         private readonly AverageAnalyser shortAverage;
 
         /*** Temperature weather-based analysers ***/
-        private readonly TemperatureAnalyser OduTemperAna;
-        private readonly TemperatureAnalyser IduTemperAna;
+        private readonly TemperatureAnalyser oduTemperAna;
+        private readonly TemperatureAnalyser iduTemperAna;
+
+        /*** Periodicity analyser ***/
+        private readonly PeriodicityAnalyser periodicityAna;
 
         public AlarmManager(DataManager dataManager, LinkManager linkManager, Dictionary<int, DeviceDisplay> deviceDisplays)
         {
@@ -127,8 +132,10 @@ namespace MicrowaveMonitor.Managers
             longAverage = new AverageAnalyser(this, dataM, linkM, AlarmType.AvgLong);
             shortAverage = new AverageAnalyser(this, dataM, linkM, AlarmType.AvgShort);
 
-            OduTemperAna = new TemperatureAnalyser(this, dataM, Analyser.WatchTempOdu, Measurement.TempODU);
-            IduTemperAna = new TemperatureAnalyser(this, dataM, Analyser.WatchTempIduOut, Measurement.TempIDU);
+            oduTemperAna = new TemperatureAnalyser(this, dataM, Analyser.WatchTempOdu, Measurement.TempODU);
+            iduTemperAna = new TemperatureAnalyser(this, dataM, Analyser.WatchTempIduOut, Measurement.TempIDU);
+
+            periodicityAna = new PeriodicityAnalyser(this, dataM);
 
             LoadSettings();
         }
@@ -196,7 +203,7 @@ namespace MicrowaveMonitor.Managers
                 storm = Settings.Default.a_temper_coeff_cloud_storm
             };
 
-            OduTemperAna.LoadSettings(coeffsClear, coeffsClouds,
+            oduTemperAna.LoadSettings(coeffsClear, coeffsClouds,
                 Settings.Default.a_temper_debug,
                 Settings.Default.a_temper_percDiff,
                 Settings.Default.a_temper_degreesWind,
@@ -205,7 +212,7 @@ namespace MicrowaveMonitor.Managers
                 Settings.Default.a_temper_skippedDays,
                 Settings.Default.a_temper_averageDays);
 
-            IduTemperAna.LoadSettings(coeffsClear, coeffsClouds,
+            iduTemperAna.LoadSettings(coeffsClear, coeffsClouds,
                 Settings.Default.a_temper_debug,
                 Settings.Default.a_temper_percDiff,
                 Settings.Default.a_temper_degreesWind,
@@ -213,11 +220,22 @@ namespace MicrowaveMonitor.Managers
                 Settings.Default.a_temper_backDays,
                 Settings.Default.a_temper_skippedDays,
                 Settings.Default.a_temper_averageDays);
+
+            PeriodicityAnalyser.PercentDiff PeriodicityPercentDiff = new Analyser.PercentDiff()
+            {
+                Signal = Settings.Default.a_periodic_percDiff_sig,
+                SignalQ = Settings.Default.a_periodic_percDiff_sigQ,
+                Voltage = Settings.Default.a_periodic_percDiff_volt
+            };
+
+            periodicityAna.LoadSettings(PeriodicityPercentDiff,
+                Settings.Default.a_periodic_debug);
 
             if (IsRunning)
             {
                 longAverage.IsRunning = Settings.Default.a_enable_longavg;
                 shortAverage.IsRunning = Settings.Default.a_enable_shortavg;
+                periodicityAna.IsRunning = Settings.Default.a_enable_periodic;
             }
         }
 
@@ -236,7 +254,7 @@ namespace MicrowaveMonitor.Managers
                             break;
                         if (!double.TryParse(WeatherCollector.DeviceLongitude[disp.Id], NumberStyles.Float, CultureInfo.InvariantCulture.NumberFormat, out double lo))
                             break;
-                        OduTemperAna.Compare(disp.Id, disp.DataTempOdu.Data, (float)disp.WeatherTemp, (int)disp.WeatherId, (double)disp.WeatherWind, la, lo);
+                        oduTemperAna.Compare(disp.Id, disp.DataTempOdu.Data, (float)disp.WeatherTemp, (int)disp.WeatherId, (double)disp.WeatherWind, la, lo);
                     }
                     break;
                 case "DataTempIdu":
@@ -248,7 +266,7 @@ namespace MicrowaveMonitor.Managers
                             break;
                         if (!double.TryParse(WeatherCollector.DeviceLongitude[disp.Id], NumberStyles.Float, CultureInfo.InvariantCulture.NumberFormat, out double lon))
                             break;
-                        IduTemperAna.Compare(disp.Id, disp.DataTempIdu.Data, (float)disp.WeatherTemp, (int)disp.WeatherId, (double)disp.WeatherWind, lat, lon);
+                        iduTemperAna.Compare(disp.Id, disp.DataTempIdu.Data, (float)disp.WeatherTemp, (int)disp.WeatherId, (double)disp.WeatherWind, lat, lon);
                     }
                     break;
                 case "WeatherId":
@@ -260,8 +278,8 @@ namespace MicrowaveMonitor.Managers
                             break;
                         if (!double.TryParse(WeatherCollector.DeviceLongitude[disp.Id], NumberStyles.Float, CultureInfo.InvariantCulture.NumberFormat, out double longi))
                             break;
-                        OduTemperAna.WeatherChanged(disp.Id, (int)disp.WeatherId, (double)disp.WeatherWind, lati, longi);
-                        IduTemperAna.WeatherChanged(disp.Id, (int)disp.WeatherId, (double)disp.WeatherWind, lati, longi);
+                        oduTemperAna.WeatherChanged(disp.Id, (int)disp.WeatherId, (double)disp.WeatherWind, lati, longi);
+                        iduTemperAna.WeatherChanged(disp.Id, (int)disp.WeatherId, (double)disp.WeatherWind, lati, longi);
                     }
                     break;
                 default:
@@ -293,10 +311,10 @@ namespace MicrowaveMonitor.Managers
 
             linkM.AddAlarm(alarm);
 
-            string text = TextFiller(method, trend);
+            string text = TextFiller(method, trend, measValue);
 
             AlarmDisplay disp = new AlarmDisplay();
-            if (method == AlarmType.Down)
+            if (method == AlarmType.Down || method == AlarmType.Repetition)
                 disp.Value = "-";
             else
                 disp.Value = measValue.ToString("0.00");
@@ -368,7 +386,7 @@ namespace MicrowaveMonitor.Managers
 
                 if (stopping)
                     display.SettledValue = "Stopped.";
-                else if (alarm.Type == AlarmType.Down)
+                else if (alarm.Type == AlarmType.Down || alarm.Type == AlarmType.Repetition)
                     display.SettledValue = "-";
                 else
                     display.SettledValue = settledValue.ToString("0.00");
@@ -413,7 +431,7 @@ namespace MicrowaveMonitor.Managers
                 displays[alarm.DeviceId].State = state;
         }
 
-        private string TextFiller(AlarmType method, bool trend)
+        private string TextFiller(AlarmType method, bool trend, double value)
         {
             string text = string.Empty;
 
@@ -440,17 +458,8 @@ namespace MicrowaveMonitor.Managers
                     else
                         text = "Value dropped below shortterm average.";
                     break;
-                case AlarmType.Retrospecitve:
-                    if (trend)
-                        text = "Value significantly exceeded values from the last days.";
-                    else
-                        text = "Value significantly dropped below values from the last days.";
-                    break;
                 case AlarmType.Repetition:
-                    if (trend)
-                        text = "Values are peaking on a regular basis.";
-                    else
-                        text = "Values ​​are dropping on a regular basis.";
+                    text = $"Values have repetitive character with period of {value:0.00} minutes.";
                     break;
                 case AlarmType.TempCorrel:
                     if (trend)
@@ -500,7 +509,7 @@ namespace MicrowaveMonitor.Managers
 
         private AlarmDisplay MakeAlarmDisplay(Alarm alarm)
         {
-            string text = TextFiller(alarm.Type, alarm.Trend);
+            string text = TextFiller(alarm.Type, alarm.Trend, alarm.GenerValue);
 
             AlarmDisplay disp = new AlarmDisplay();
 
@@ -660,8 +669,8 @@ namespace MicrowaveMonitor.Managers
 
             longAverage.DeviceStopped(id);
             shortAverage.DeviceStopped(id);
-            IduTemperAna.DeviceStopped(id);
-            OduTemperAna.DeviceStopped(id);
+            iduTemperAna.DeviceStopped(id);
+            oduTemperAna.DeviceStopped(id);
         }
 
         public void HideAlarm(int id, bool ack)

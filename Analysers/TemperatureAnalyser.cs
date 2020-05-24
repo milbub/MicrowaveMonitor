@@ -34,7 +34,7 @@ namespace MicrowaveMonitor.Analysers
 
         private const int millisOfDay = 86400000;
 
-        public static bool DebugActive { get; set; }
+        public static bool DebugIsActive { get; set; }
 
         public double TolerancePerc { get; set; }
         public double DegreesPerWindMeter { get; set; }
@@ -72,7 +72,7 @@ namespace MicrowaveMonitor.Analysers
 
         public void LoadSettings(DefaultWeatherCoeffs coeffsClear, DefaultWeatherCoeffs coeffsClouds, bool debug, double percentDiff, double degreesPerWindMeter, TimeSpan maxAge, int backDaysCount, int skippedDaysCount, int averageDaysCount)
         {
-            DebugActive = debug;
+            DebugIsActive = debug;
             TolerancePerc = percentDiff + 1;
             DegreesPerWindMeter = degreesPerWindMeter;
             MaxAge = maxAge;
@@ -138,7 +138,7 @@ namespace MicrowaveMonitor.Analysers
                     {
                         int alarm = alarmMan.GenerateAlarm(devId, AlarmRank.Critical, Measure, AlarmType.TempCorrel, true, temperature);
                         ids.Add(devId, alarm);
-                        if (DebugActive)
+                        if (DebugIsActive)
                             Console.WriteLine($"7TA gener_a {measureName} dev: {devId} temper: {temperature:0.00000} tresh: {upperLimit:0.00000}");
                     }
             }
@@ -149,7 +149,7 @@ namespace MicrowaveMonitor.Analysers
                     {
                         int alarm = alarmMan.GenerateAlarm(devId, AlarmRank.Critical, Measure, AlarmType.TempCorrel, false, temperature);
                         ids.Add(devId, alarm);
-                        if (DebugActive)
+                        if (DebugIsActive)
                             Console.WriteLine($"7TA gener_a {measureName} dev: {devId} temper: {temperature:0.00000} tresh: {upperLimit:0.00000}");
                     }
             }
@@ -160,7 +160,7 @@ namespace MicrowaveMonitor.Analysers
                     {
                         alarmMan.SettleAlarm(ids[devId], temperature, false);
                         ids.Remove(devId);
-                        if (DebugActive)
+                        if (DebugIsActive)
                             Console.WriteLine($"7TA settle_a {measureName} dev: {devId} temper: {temperature:0.00000} tresh: {upperLimit:0.00000}");
                     }
             }
@@ -383,7 +383,7 @@ namespace MicrowaveMonitor.Analysers
                     lastUpdate.Add(devId, DateTime.Now);
                 }
 
-            if (DebugActive)
+            if (DebugIsActive)
                 Console.WriteLine($"7TA {measureName} dev: {devId} diff: {diffAvg:0.00000} wind: {windAvg:0.00} alter: {alternateWeatherCoeff:0.00000}");
         }
 

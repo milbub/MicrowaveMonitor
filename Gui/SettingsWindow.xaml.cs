@@ -68,6 +68,12 @@ namespace MicrowaveMonitor.Gui
             temperBackDaysCount.Value = Settings.Default.a_temper_backDays;
             temperSkippedDays.Value = Settings.Default.a_temper_skippedDays;
             temperAvgDayCount.Value = Settings.Default.a_temper_averageDays;
+
+            periodEnabled.IsChecked = Settings.Default.a_enable_periodic;
+            periodPercSignal.Value = Settings.Default.a_periodic_percDiff_sig;
+            periodPercSignalQ.Value = Settings.Default.a_periodic_percDiff_sigQ;
+            periodPercVoltage.Value = Settings.Default.a_periodic_percDiff_volt;
+            periodDebug.IsChecked = Settings.Default.a_periodic_debug;
         }
 
         private void SaveFired(object sender, RoutedEventArgs e)
@@ -120,6 +126,12 @@ namespace MicrowaveMonitor.Gui
             Settings.Default.a_temper_backDays = (int)temperBackDaysCount.Value;
             Settings.Default.a_temper_skippedDays = (int)temperSkippedDays.Value;
             Settings.Default.a_temper_averageDays = (int)temperAvgDayCount.Value;
+
+            Settings.Default.a_enable_periodic = (bool)periodEnabled.IsChecked;
+            Settings.Default.a_periodic_percDiff_sig = (float)periodPercSignal.Value;
+            Settings.Default.a_periodic_percDiff_sigQ = (float)periodPercSignalQ.Value;
+            Settings.Default.a_periodic_percDiff_volt = (float)periodPercVoltage.Value;
+            Settings.Default.a_periodic_debug = (bool)periodDebug.IsChecked;
 
             Settings.Default.Save();
             alarmMan.LoadSettings();
@@ -192,14 +204,13 @@ namespace MicrowaveMonitor.Gui
             temperAvgDayCount.Value = Double.Parse((string)Settings.Default.Properties["a_temper_averageDays"].DefaultValue, CultureInfo.InvariantCulture);
         }
 
-        private void LoadDefaultTimeFired(object sender, RoutedEventArgs e)
-        {
-            
-        }
-
         private void LoadDefaultPeriodFired(object sender, RoutedEventArgs e)
         {
-            
+            periodEnabled.IsChecked = Boolean.Parse((string)Settings.Default.Properties["a_enable_periodic"].DefaultValue);
+            periodPercSignal.Value = Double.Parse((string)Settings.Default.Properties["a_periodic_percDiff_sig"].DefaultValue, CultureInfo.InvariantCulture);
+            periodPercSignalQ.Value = Double.Parse((string)Settings.Default.Properties["a_periodic_percDiff_sigQ"].DefaultValue, CultureInfo.InvariantCulture);
+            periodPercVoltage.Value = Double.Parse((string)Settings.Default.Properties["a_periodic_percDiff_volt"].DefaultValue, CultureInfo.InvariantCulture);
+            periodDebug.IsChecked = Boolean.Parse((string)Settings.Default.Properties["a_periodic_debug"].DefaultValue);
         }
     }
 }
