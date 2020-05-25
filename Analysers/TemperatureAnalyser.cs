@@ -45,7 +45,8 @@ namespace MicrowaveMonitor.Analysers
         public DefaultWeatherCoeffs CoeffsClear { get; set; }
         public DefaultWeatherCoeffs CoeffsClouds { get; set; }
         public int AvgDaysCount { get; set; }
-        public double UnknownSubstituteCoeff { get; set; } = 1.3;
+        public double UncertainDataCoeff { get; set; } = 1.3;
+        public double MinimumDiff { get; set; } = 10;
 
         private readonly string measureName;
 
@@ -139,7 +140,7 @@ namespace MicrowaveMonitor.Analysers
                         int alarm = alarmMan.GenerateAlarm(devId, AlarmRank.Critical, Measure, AlarmType.TempCorrel, true, temperature);
                         ids.Add(devId, alarm);
                         if (DebugIsActive)
-                            Console.WriteLine($"7TA gener_a {measureName} dev: {devId} temper: {temperature:0.00000} tresh: {upperLimit:0.00000}");
+                            Console.WriteLine($"8TA gener_a {measureName} dev: {devId} temper: {temperature:0.00000} tresh: {upperLimit:0.00000}");
                     }
             }
             else if (temperature < airTemp / TolerancePerc)
@@ -150,7 +151,7 @@ namespace MicrowaveMonitor.Analysers
                         int alarm = alarmMan.GenerateAlarm(devId, AlarmRank.Critical, Measure, AlarmType.TempCorrel, false, temperature);
                         ids.Add(devId, alarm);
                         if (DebugIsActive)
-                            Console.WriteLine($"7TA gener_a {measureName} dev: {devId} temper: {temperature:0.00000} tresh: {upperLimit:0.00000}");
+                            Console.WriteLine($"8TA gener_a {measureName} dev: {devId} temper: {temperature:0.00000} tresh: {upperLimit:0.00000}");
                     }
             }
             else
@@ -161,7 +162,7 @@ namespace MicrowaveMonitor.Analysers
                         alarmMan.SettleAlarm(ids[devId], temperature, false);
                         ids.Remove(devId);
                         if (DebugIsActive)
-                            Console.WriteLine($"7TA settle_a {measureName} dev: {devId} temper: {temperature:0.00000} tresh: {upperLimit:0.00000}");
+                            Console.WriteLine($"8TA settle_a {measureName} dev: {devId} temper: {temperature:0.00000} tresh: {upperLimit:0.00000}");
                     }
             }
         }
@@ -341,7 +342,7 @@ namespace MicrowaveMonitor.Analysers
             if (selection == null)                  // all attempts failed, try to get anything
             {
                 selection = await GetBestDays(devId, 0, wind, DateTime.Now.TimeOfDay);
-                alternateWeatherCoeff = UnknownSubstituteCoeff;
+                alternateWeatherCoeff = UncertainDataCoeff;
             }
 
             if (selection == null)
@@ -358,10 +359,15 @@ namespace MicrowaveMonitor.Analysers
             }
 
             double diffAvg;
-            if (diffs.Count > 0)
+            if (diffs.Count > AvgDaysCount / 4)
                 diffAvg = diffs.Average() * alternateWeatherCoeff;
+            else if (diffs.Count > 0)
+                diffAvg = diffs.Average() * ((AvgDaysCount / 4) * 0.02 + 1) * alternateWeatherCoeff;
             else
                 return;
+
+            if (diffAvg < MinimumDiff)
+                diffAvg = MinimumDiff;
 
             double windAvg;
             if (winds.Count > 0)
@@ -384,7 +390,7 @@ namespace MicrowaveMonitor.Analysers
                 }
 
             if (DebugIsActive)
-                Console.WriteLine($"7TA {measureName} dev: {devId} diff: {diffAvg:0.00000} wind: {windAvg:0.00} alter: {alternateWeatherCoeff:0.00000}");
+                Console.WriteLine($"8TA {measureName} dev: {devId} diff: {diffAvg:0.00000} wind: {windAvg:0.00} alter: {alternateWeatherCoeff:0.00000}");
         }
 
         private async Task<List<TimeWind>> GetBestDays(int devId, int weatherId, double wind, TimeSpan searchedTimeOfDay)

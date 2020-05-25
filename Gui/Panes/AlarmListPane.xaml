@@ -33,7 +33,7 @@
                     <Style TargetType="ListViewItem">
                         <Style.Triggers>
                             <DataTrigger Binding="{Binding Rank}" Value="Info">
-                                <Setter Property="Background" Value="Aqua"></Setter>
+                                <Setter Property="Background" Value="PaleTurquoise"></Setter>
                             </DataTrigger>
                             <DataTrigger Binding="{Binding Rank}" Value="Warning">
                                 <Setter Property="Background" Value="Wheat"></Setter>
@@ -74,7 +74,7 @@
                     <Style TargetType="ListViewItem">
                         <Style.Triggers>
                             <DataTrigger Binding="{Binding Rank}" Value="Info">
-                                <Setter Property="Background" Value="Aqua"></Setter>
+                                <Setter Property="Background" Value="PaleTurquoise"></Setter>
                             </DataTrigger>
                             <DataTrigger Binding="{Binding Rank}" Value="Warning">
                                 <Setter Property="Background" Value="Wheat"></Setter>
@@ -131,7 +131,7 @@
                     <Style TargetType="ListViewItem">
                         <Style.Triggers>
                             <DataTrigger Binding="{Binding Rank}" Value="Info">
-                                <Setter Property="Background" Value="Aqua"></Setter>
+                                <Setter Property="Background" Value="PaleTurquoise"></Setter>
                             </DataTrigger>
                             <DataTrigger Binding="{Binding Rank}" Value="Warning">
                                 <Setter Property="Background" Value="Wheat"></Setter>
@@ -188,7 +188,7 @@
                     <Style TargetType="ListViewItem">
                         <Style.Triggers>
                             <DataTrigger Binding="{Binding Rank}" Value="Info">
-                                <Setter Property="Background" Value="Aqua"></Setter>
+                                <Setter Property="Background" Value="PaleTurquoise"></Setter>
                             </DataTrigger>
                             <DataTrigger Binding="{Binding Rank}" Value="Warning">
                                 <Setter Property="Background" Value="Wheat"></Setter>

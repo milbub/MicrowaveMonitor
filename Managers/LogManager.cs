@@ -74,21 +74,25 @@ public class LogManager : TextWriter
                     break;
                 case '3':
                     levelColor = Brushes.DarkOrchid;
-                    level = " <ALARM> [WARNING] ";
+                    level = " <ALARM> [INFO] ";
                     break;
                 case '4':
+                    levelColor = Brushes.DarkOrchid;
+                    level = " <ALARM> [WARNING] ";
+                    break;
+                case '5':
                     levelColor = Brushes.Purple;
                     level = " <ALARM> [CRITICAL] ";
                     break;
-                case '5':
+                case '6':
                     levelColor = Brushes.DarkRed;
                     level = " <ALARM> [DEVICE DOWN] ";
                     break;
-                case '6':
+                case '7':
                     levelColor = Brushes.Green;
                     level = " <ALARM> [SETTLE UP]";
                     break;
-                case '7':
+                case '8':
                     levelColor = Brushes.Blue;
                     level = " <DEBUG> ";
                     break;

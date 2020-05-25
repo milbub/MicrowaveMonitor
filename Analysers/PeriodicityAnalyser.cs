@@ -98,7 +98,7 @@ namespace MicrowaveMonitor.Analysers
 
             if (series != null)
             {
-                string message = $"7Begin FFT meas: {measDb} time: {idType}";
+                string message = $"8Begin FFT meas: {measDb} time: {idType}";
                 if (series.Count > 0)
                     if (series.First().Rows != null)
                         message += Environment.NewLine + $"query rows: {series.First().Rows.Count}";

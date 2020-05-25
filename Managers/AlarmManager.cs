@@ -333,7 +333,7 @@ namespace MicrowaveMonitor.Managers
                     displays[deviceId].State = (DeviceDisplay.LinkState)(int)rank;
             }
 
-            Console.WriteLine(((int)rank + 1).ToString() + " Link: " + linkName + "; Device: " + deviceType + "; Measure: " + measure.ToString() + ". " + text);
+            Console.WriteLine(((int)rank + 2).ToString() + " Link: " + linkName + "; Device: " + deviceType + "; Measure: " + measure.ToString() + ". " + text);
 
             App.Current.Dispatcher.BeginInvoke(new Action(() =>
             {
@@ -355,6 +355,10 @@ namespace MicrowaveMonitor.Managers
 
             Alarm alarm = linkM.GetAlarm(alarmId);
             string linkName = linkM.LinkNames[alarm.LinkId];
+
+            alarm.IsActive = false;
+            alarm.SettledTime = DateTime.Now;
+            alarm.SettledValue = settledValue;
 
             App.Current.Dispatcher.BeginInvoke(new Action(() =>
             {
@@ -380,10 +384,6 @@ namespace MicrowaveMonitor.Managers
                     destination = alarmsSettledUnack;
                 }
 
-                alarm.IsActive = false;
-                alarm.SettledTime = DateTime.Now;
-                alarm.SettledValue = settledValue;
-
                 if (stopping)
                     display.SettledValue = "Stopped.";
                 else if (alarm.Type == AlarmType.Down || alarm.Type == AlarmType.Repetition)
@@ -401,7 +401,7 @@ namespace MicrowaveMonitor.Managers
             if (stopping)
                 return;
 
-            Console.WriteLine(6.ToString() + " Link: " + linkName + "; Device: " + alarm.DeviceType + "; Measure: " + alarm.Measure.ToString() + ".");
+            Console.WriteLine(7 + " Link: " + linkName + "; Device: " + alarm.DeviceType + "; Measure: " + alarm.Measure.ToString() + ".");
 
             DeviceDisplay.LinkState state = DeviceDisplay.LinkState.Running;
             IEnumerable<AlarmDisplay> activeCurrAlarms = alarmsCurrent.Where(a => a.Link == linkName && a.Device == alarm.DeviceType);
