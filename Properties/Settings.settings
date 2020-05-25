@@ -143,5 +143,8 @@
     <Setting Name="a_periodic_debug" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
+    <Setting Name="a_temper_minDiff" Type="System.Single" Scope="User">
+      <Value Profile="(Default)">10</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

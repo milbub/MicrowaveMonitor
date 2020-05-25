@@ -73,7 +73,7 @@ public class LogManager : TextWriter
                     level = " <ERROR> ";
                     break;
                 case '3':
-                    levelColor = Brushes.DarkOrchid;
+                    levelColor = Brushes.Blue;
                     level = " <ALARM> [INFO] ";
                     break;
                 case '4':

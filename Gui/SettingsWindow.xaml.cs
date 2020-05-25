@@ -68,6 +68,7 @@ namespace MicrowaveMonitor.Gui
             temperBackDaysCount.Value = Settings.Default.a_temper_backDays;
             temperSkippedDays.Value = Settings.Default.a_temper_skippedDays;
             temperAvgDayCount.Value = Settings.Default.a_temper_averageDays;
+            temperMinDiff.Value = Settings.Default.a_temper_minDiff;
 
             periodEnabled.IsChecked = Settings.Default.a_enable_periodic;
             periodPercSignal.Value = Settings.Default.a_periodic_percDiff_sig;
@@ -126,6 +127,7 @@ namespace MicrowaveMonitor.Gui
             Settings.Default.a_temper_backDays = (int)temperBackDaysCount.Value;
             Settings.Default.a_temper_skippedDays = (int)temperSkippedDays.Value;
             Settings.Default.a_temper_averageDays = (int)temperAvgDayCount.Value;
+            Settings.Default.a_temper_minDiff = (float)temperMinDiff.Value;
 
             Settings.Default.a_enable_periodic = (bool)periodEnabled.IsChecked;
             Settings.Default.a_periodic_percDiff_sig = (float)periodPercSignal.Value;
@@ -202,6 +204,7 @@ namespace MicrowaveMonitor.Gui
             temperBackDaysCount.Value = Double.Parse((string)Settings.Default.Properties["a_temper_backDays"].DefaultValue, CultureInfo.InvariantCulture);
             temperSkippedDays.Value = Double.Parse((string)Settings.Default.Properties["a_temper_skippedDays"].DefaultValue, CultureInfo.InvariantCulture);
             temperAvgDayCount.Value = Double.Parse((string)Settings.Default.Properties["a_temper_averageDays"].DefaultValue, CultureInfo.InvariantCulture);
+            temperMinDiff.Value = Double.Parse((string)Settings.Default.Properties["a_temper_minDiff"].DefaultValue, CultureInfo.InvariantCulture);
         }
 
         private void LoadDefaultPeriodFired(object sender, RoutedEventArgs e)

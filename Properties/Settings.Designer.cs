@@ -586,5 +586,17 @@ namespace MicrowaveMonitor.Properties {
                 this["a_periodic_debug"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("10")]
+        public float a_temper_minDiff {
+            get {
+                return ((float)(this["a_temper_minDiff"]));
+            }
+            set {
+                this["a_temper_minDiff"] = value;
+            }
+        }
     }
 }

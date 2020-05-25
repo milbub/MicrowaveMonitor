@@ -210,7 +210,8 @@ namespace MicrowaveMonitor.Managers
                 Settings.Default.a_temper_maxAge,
                 Settings.Default.a_temper_backDays,
                 Settings.Default.a_temper_skippedDays,
-                Settings.Default.a_temper_averageDays);
+                Settings.Default.a_temper_averageDays,
+                Settings.Default.a_temper_minDiff);
 
             iduTemperAna.LoadSettings(coeffsClear, coeffsClouds,
                 Settings.Default.a_temper_debug,
@@ -219,7 +220,8 @@ namespace MicrowaveMonitor.Managers
                 Settings.Default.a_temper_maxAge,
                 Settings.Default.a_temper_backDays,
                 Settings.Default.a_temper_skippedDays,
-                Settings.Default.a_temper_averageDays);
+                Settings.Default.a_temper_averageDays,
+                Settings.Default.a_temper_minDiff);
 
             PeriodicityAnalyser.PercentDiff PeriodicityPercentDiff = new Analyser.PercentDiff()
             {

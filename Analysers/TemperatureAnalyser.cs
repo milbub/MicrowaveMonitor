@@ -46,7 +46,7 @@ namespace MicrowaveMonitor.Analysers
         public DefaultWeatherCoeffs CoeffsClouds { get; set; }
         public int AvgDaysCount { get; set; }
         public double UncertainDataCoeff { get; set; } = 1.3;
-        public double MinimumDiff { get; set; } = 10;
+        public double MinimumDiff { get; set; }
 
         private readonly string measureName;
 
@@ -71,7 +71,7 @@ namespace MicrowaveMonitor.Analysers
                 measureName = DataManager.measTmpO;
         }
 
-        public void LoadSettings(DefaultWeatherCoeffs coeffsClear, DefaultWeatherCoeffs coeffsClouds, bool debug, double percentDiff, double degreesPerWindMeter, TimeSpan maxAge, int backDaysCount, int skippedDaysCount, int averageDaysCount)
+        public void LoadSettings(DefaultWeatherCoeffs coeffsClear, DefaultWeatherCoeffs coeffsClouds, bool debug, double percentDiff, double degreesPerWindMeter, TimeSpan maxAge, int backDaysCount, int skippedDaysCount, int averageDaysCount, double minimumDiff)
         {
             DebugIsActive = debug;
             TolerancePerc = percentDiff + 1;
@@ -82,6 +82,7 @@ namespace MicrowaveMonitor.Analysers
             CoeffsClear = coeffsClear;
             CoeffsClouds = coeffsClouds;
             AvgDaysCount = averageDaysCount;
+            MinimumDiff = minimumDiff;
         }
 
         public void WeatherChanged(int devId, int weatherId, double wind, double latitude, double longitude)
@@ -131,6 +132,7 @@ namespace MicrowaveMonitor.Analysers
             }
 
             double upperLimit = (airTemp + diff - WindTempCorrection(wind, recordedWind)) * TolerancePerc;
+            // Console.WriteLine($"8 dev:{devId} {airTemp:0.00} {diff:0.00} {WindTempCorrection(wind, recordedWind):0.00} ... {upperLimit:0.00}");
 
             if (temperature > upperLimit)
             {
@@ -140,7 +142,7 @@ namespace MicrowaveMonitor.Analysers
                         int alarm = alarmMan.GenerateAlarm(devId, AlarmRank.Critical, Measure, AlarmType.TempCorrel, true, temperature);
                         ids.Add(devId, alarm);
                         if (DebugIsActive)
-                            Console.WriteLine($"8TA gener_a {measureName} dev: {devId} temper: {temperature:0.00000} tresh: {upperLimit:0.00000}");
+                            Console.WriteLine($"8TA gener_a {measureName} dev: {devId} temper: {temperature:0.00000} thresh: {upperLimit:0.00000} diff:{diff:0.000}");
                     }
             }
             else if (temperature < airTemp / TolerancePerc)
@@ -151,7 +153,7 @@ namespace MicrowaveMonitor.Analysers
                         int alarm = alarmMan.GenerateAlarm(devId, AlarmRank.Critical, Measure, AlarmType.TempCorrel, false, temperature);
                         ids.Add(devId, alarm);
                         if (DebugIsActive)
-                            Console.WriteLine($"8TA gener_a {measureName} dev: {devId} temper: {temperature:0.00000} tresh: {upperLimit:0.00000}");
+                            Console.WriteLine($"8TA gener_a {measureName} dev: {devId} temper: {temperature:0.00000} thresh: {upperLimit:0.00000} diff:{diff:0.000}");
                     }
             }
             else
@@ -162,7 +164,7 @@ namespace MicrowaveMonitor.Analysers
                         alarmMan.SettleAlarm(ids[devId], temperature, false);
                         ids.Remove(devId);
                         if (DebugIsActive)
-                            Console.WriteLine($"8TA settle_a {measureName} dev: {devId} temper: {temperature:0.00000} tresh: {upperLimit:0.00000}");
+                            Console.WriteLine($"8TA settle_a {measureName} dev: {devId} temper: {temperature:0.00000} thresh: {upperLimit:0.00000} diff:{diff:0.000}");
                     }
             }
         }
@@ -283,21 +285,24 @@ namespace MicrowaveMonitor.Analysers
                                 {
                                     if (compareYs.Count > 0)
                                     {
-                                        double diffX = await GetTemperaturesDiff(devId, (DateTime)compareX.dateTime, 0);
+                                        double? diffX = await GetTemperaturesDiff(devId, (DateTime)compareX.dateTime, 0);
                                         double diffYsAvg = 0;
 
                                         List<double> diffYs = new List<double>();
                                         foreach (TimeWind day in compareYs)
                                         {
-                                            diffYs.Add(await GetTemperaturesDiff(devId, (DateTime)day.dateTime, WindTempCorrection(compareX.wind, day.wind)));
+                                            double? diff = await GetTemperaturesDiff(devId, (DateTime)day.dateTime, WindTempCorrection(compareX.wind, day.wind));
+                                            
+                                            if (diff != null)
+                                                diffYs.Add((double)diff);
                                         }
 
                                         if (diffYs.Count > 0)
                                             diffYsAvg = diffYs.Average();
 
-                                        if (Math.Abs(diffX) > 0 && Math.Abs(diffYsAvg) > 0)
+                                        if (diffX != null && Math.Abs(diffYsAvg) > 0)
                                         {
-                                            alternateWeatherCoeff = diffX / diffYsAvg;
+                                            alternateWeatherCoeff = (double)diffX / diffYsAvg;
                                             failed = false;
                                         }
                                     }
@@ -353,16 +358,21 @@ namespace MicrowaveMonitor.Analysers
 
             foreach (TimeWind day in selection)
             {
-                diffs.Add(await GetTemperaturesDiff(devId, (DateTime)day.dateTime, WindTempCorrection(wind, day.wind)));
-                if (day.wind != null)
-                    winds.Add((double)day.wind);
+                double? diff = await GetTemperaturesDiff(devId, (DateTime)day.dateTime, WindTempCorrection(wind, day.wind));
+
+                if (diff != null)
+                {
+                    diffs.Add((double)diff);
+                    if (day.wind != null)
+                        winds.Add((double)day.wind);
+                }
             }
 
             double diffAvg;
-            if (diffs.Count > AvgDaysCount / 4)
+            if (diffs.Count > AvgDaysCount / 2)
                 diffAvg = diffs.Average() * alternateWeatherCoeff;
             else if (diffs.Count > 0)
-                diffAvg = diffs.Average() * ((AvgDaysCount / 4) * 0.02 + 1) * alternateWeatherCoeff;
+                diffAvg = diffs.Average() * (((AvgDaysCount / 2) - diffs.Count) * 0.01 + 1) * alternateWeatherCoeff;
             else
                 return;
 
@@ -390,7 +400,7 @@ namespace MicrowaveMonitor.Analysers
                 }
 
             if (DebugIsActive)
-                Console.WriteLine($"8TA {measureName} dev: {devId} diff: {diffAvg:0.00000} wind: {windAvg:0.00} alter: {alternateWeatherCoeff:0.00000}");
+                Console.WriteLine($"8TA {measureName} dev: {devId} diff: {diffAvg:0.000} cnt: {diffs.Count} wind: {windAvg:0.00} alter: {alternateWeatherCoeff:0.000}");
         }
 
         private async Task<List<TimeWind>> GetBestDays(int devId, int weatherId, double wind, TimeSpan searchedTimeOfDay)
@@ -453,7 +463,7 @@ namespace MicrowaveMonitor.Analysers
                 return null;
         }
 
-        private async Task<double> GetTemperaturesDiff(int devId, DateTime searchedTime, double measTempNegativeOffset)
+        private async Task<double?> GetTemperaturesDiff(int devId, DateTime searchedTime, double measTempNegativeOffset)
         {
             string query = $@"SELECT mean(""{DataManager.meanValueName}"") AS ""{DataManager.meanValueName}"" FROM ""{DataManager.databaseName}"".""{DataManager.retentionMonth}"".""{DataManager.measTmpA}"" WHERE time > {DataManager.TimeToInfluxTime(searchedTime - TimeSpan.FromMinutes(5))} AND time < {DataManager.TimeToInfluxTime(searchedTime + TimeSpan.FromMinutes(5))} AND ""device""='{devId}' FILL(linear)";
 
@@ -468,17 +478,16 @@ namespace MicrowaveMonitor.Analysers
                 row = await dataMan.QueryValue(query);
 
                 if (row is null)
-                    return 0;
+                    return null;
 
                 if (row.Fields.Count > 0)
                 {
-                    double x = Convert.ToDouble(row.Fields.First().Value);
-                    
+                    double x = Convert.ToDouble(row.Fields.First().Value);                   
                     return x - measTempNegativeOffset - valueAir;
                 }
             }
 
-            return 0;
+            return null;
         }
 
         private double WindTempCorrection(double? originalWind, double? newWind)

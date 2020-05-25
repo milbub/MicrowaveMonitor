@@ -5,10 +5,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         mc:Ignorable="d"
-        Title="Settings" Height="635" Width="500"
+        Title="Settings" Height="665" Width="500"
         ResizeMode="NoResize" WindowStartupLocation="CenterScreen">
     <StackPanel Orientation="Vertical" Background="Silver">
-        <TabControl Height="535" Margin="5" Background="LightGray">
+        <TabControl Height="565" Margin="5" Background="LightGray">
             <TabItem Header="Average Analyser">
                 <ScrollViewer>
                     <StackPanel Orientation="Vertical">
@@ -326,8 +326,19 @@
                         <xctk:DoubleUpDown x:Name="temperAvgDayCount" IsEnabled="{Binding ElementName=temperEnabled, Path=IsChecked}" Grid.Column="1" HorizontalAlignment="Right" FormatString="F0" Value="7" Increment="1"  Minimum="0" Maximum="29" Width="100"/>
                         <Label Content="days" Grid.Column="2"></Label>
                     </Grid>
+                    <Grid Margin="0,3,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition></ColumnDefinition>
+                            <ColumnDefinition></ColumnDefinition>
+                            <ColumnDefinition Width="70"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        <Label Content="Minimum size of difference in °C:"></Label>
+                        <xctk:DoubleUpDown x:Name="temperMinDiff" IsEnabled="{Binding ElementName=temperEnabled, Path=IsChecked}" Grid.Column="1" HorizontalAlignment="Right" FormatString="F2" Value="5" Increment="0.1"  Minimum="0.01" Maximum="100" Width="100"/>
+                        <Label Content="degrees" Grid.Column="2"></Label>
+                    </Grid>
 
                     <Separator Margin="5"></Separator>
+                    
                     <Grid Margin="0,3,0,0">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition></ColumnDefinition>

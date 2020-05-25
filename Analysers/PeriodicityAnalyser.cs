@@ -25,7 +25,9 @@ namespace MicrowaveMonitor.Analysers
         private DateTime LastCalcHour = DateTime.MinValue;
         private DateTime LastCalcDay = DateTime.MinValue;
 
-        private readonly Dictionary<int, byte> idsType = new Dictionary<int, byte>();
+        private readonly Dictionary<int, byte> idsTypeSignal = new Dictionary<int, byte>();
+        private readonly Dictionary<int, byte> idsTypeSignalQ = new Dictionary<int, byte>();
+        private readonly Dictionary<int, byte> idsTypeVoltage = new Dictionary<int, byte>();
 
         private const int fftElementCount = 128;    // count of series elements (rows) of which FFT is calculated, must be 2^n
 
@@ -52,10 +54,11 @@ namespace MicrowaveMonitor.Analysers
             {
                 DateTime start = DateTime.Now;
 
-                if (DateTime.Now - CalcTenMinInterval > LastCalcTenMin)
+                if (DateTime.Now - CalcDayInterval > LastCalcDay)
                 {
-                    await Caller(CalcTenMinInterval, DataManager.defaultValueName, DataManager.retentionWeek, 1);
-                    LastCalcTenMin = start;
+                    await Caller(CalcWeekInterval, DataManager.meanValueName, DataManager.retentionYear, 4);
+                    await Caller(CalcDayInterval, DataManager.meanValueName, DataManager.retentionMonth, 3);
+                    LastCalcDay = start;
                 }
 
                 if (DateTime.Now - CalcHourInterval > LastCalcHour)
@@ -64,11 +67,10 @@ namespace MicrowaveMonitor.Analysers
                     LastCalcHour = start;
                 }
 
-                if (DateTime.Now - CalcDayInterval > LastCalcDay)
+                if (DateTime.Now - CalcTenMinInterval > LastCalcTenMin)
                 {
-                    await Caller(CalcDayInterval, DataManager.meanValueName, DataManager.retentionMonth, 3);
-                    await Caller(CalcWeekInterval, DataManager.meanValueName, DataManager.retentionYear, 4);
-                    LastCalcDay = start;
+                    await Caller(CalcTenMinInterval, DataManager.defaultValueName, DataManager.retentionWeek, 1);
+                    LastCalcTenMin = start;
                 }
 
                 TimeSpan diff = DateTime.Now - start;
@@ -78,12 +80,12 @@ namespace MicrowaveMonitor.Analysers
 
         private async Task Caller(TimeSpan queryTimeSpan, string valueName, string retention, byte idType)
         {
-            await Query(DataManager.measSig, Measurement.Strength, WatchSignal, idsSignal, queryTimeSpan, valueName, retention, Percentages.Signal, idType);
-            await Query(DataManager.measSigQ, Measurement.Quality, WatchSignalQ, idsSignalQ, queryTimeSpan, valueName, retention, Percentages.SignalQ, idType);
-            await Query(DataManager.measVolt, Measurement.Voltage, WatchVoltage, idsVoltage, queryTimeSpan, valueName, retention, Percentages.Voltage, idType);
+            await Query(DataManager.measSig, Measurement.Strength, WatchSignal, idsSignal, queryTimeSpan, valueName, retention, Percentages.Signal, idsTypeSignal, idType);
+            await Query(DataManager.measSigQ, Measurement.Quality, WatchSignalQ, idsSignalQ, queryTimeSpan, valueName, retention, Percentages.SignalQ, idsTypeSignalQ, idType);
+            await Query(DataManager.measVolt, Measurement.Voltage, WatchVoltage, idsVoltage, queryTimeSpan, valueName, retention, Percentages.Voltage, idsTypeVoltage, idType);
         }
 
-        private async Task Query(string measDb, Measurement measurement, Dictionary<int, bool> watchInfo, Dictionary<int, int> ids, TimeSpan queryTimeSpan, string valueName, string retention, double percentLimit, byte idType)
+        private async Task Query(string measDb, Measurement measurement, Dictionary<int, bool> watchInfo, Dictionary<int, int> ids, TimeSpan queryTimeSpan, string valueName, string retention, double percentLimit, Dictionary<int, byte>idsType, byte idType)
         {
             string except = String.Empty;
 
@@ -160,7 +162,7 @@ namespace MicrowaveMonitor.Analysers
                     double[] result = Calc(values, samplingRate);
 
                     if (DebugIsActive)
-                        message += Environment.NewLine + $"FFT dev: {devId} meas: {measDb} time: {idType} {result[0]:0.000}/{result[1]:0.000}/{result[2]:0.00000} Hz";
+                        message += Environment.NewLine + $"FFT dev: {devId} meas: {measDb} time: {idType} {result[0]:0.000}/{result[1]:0.000}/{(result[2] * 1000):0.00000} mHz";
 
                     if (result[0] * percentLimit < result[1])                                     // DC bin * percentage threshold check
                     {
@@ -176,7 +178,7 @@ namespace MicrowaveMonitor.Analysers
                     }
                     else
                     {
-                        TrySettle(devId, ids, false, idType);
+                        TrySettle(devId, ids, false, idsType, idType);
                     }
                 }
 
@@ -211,17 +213,17 @@ namespace MicrowaveMonitor.Analysers
 
         public override void DeviceStopped(int devId)
         {
-            TrySettle(devId, idsSignal, true, 0);
-            TrySettle(devId, idsSignalQ, true, 0);
-            TrySettle(devId, idsVoltage, true, 0);
+            TrySettle(devId, idsSignal, true, idsTypeSignal, 0);
+            TrySettle(devId, idsSignalQ, true, idsTypeSignalQ, 0);
+            TrySettle(devId, idsVoltage, true, idsTypeVoltage, 0);
         }
 
-        private void TrySettle(int devId, Dictionary<int, int> ids, bool stopping, byte idType)
+        private void TrySettle(int devId, Dictionary<int, int> ids, bool stopping, Dictionary<int, byte>idsType, byte idType)
         {
             lock (idsLocker)
                 if (ids.ContainsKey(devId))
                 {
-                    if (idsType[devId] == idType || idsType[devId] == 0)
+                    if (idsType[devId] == idType || idType == 0)
                     {
                         alarmMan.SettleAlarm(ids[devId], 0, stopping);
                         ids.Remove(devId);
