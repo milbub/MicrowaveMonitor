@@ -95,7 +95,7 @@ namespace MicrowaveMonitor.Analysers
                     linkDowns[downTime.linkId].Add(new TimeRange(downTime.start, downTime.end));
             }
 
-            Dictionary<int, TimePeriodCollection> devices = new Dictionary<int, TimePeriodCollection>();
+            Dictionary<int, TimePeriodCollection> deviceCorrectTimes = new Dictionary<int, TimePeriodCollection>();
             TimeGapCalculator<TimeRange> gapCalculator = new TimeGapCalculator<TimeRange>();
             CalendarTimeRange limit;
             if (shortCompare)
@@ -110,20 +110,20 @@ namespace MicrowaveMonitor.Analysers
                 Link link = linkMan.GetLink(linkDownsPair.Key);
 
                 if (link.DeviceBaseId > 0)
-                    devices.Add(link.DeviceBaseId, linkCorrectTimes);
+                    deviceCorrectTimes.Add(link.DeviceBaseId, linkCorrectTimes);
                 if (link.DeviceEndId > 0)
-                    devices.Add(link.DeviceEndId, linkCorrectTimes);
+                    deviceCorrectTimes.Add(link.DeviceEndId, linkCorrectTimes);
                 if (link.DeviceR1Id > 0)
-                    devices.Add(link.DeviceR1Id, linkCorrectTimes);
+                    deviceCorrectTimes.Add(link.DeviceR1Id, linkCorrectTimes);
                 if (link.DeviceR2Id > 0)
-                    devices.Add(link.DeviceR2Id, linkCorrectTimes);
+                    deviceCorrectTimes.Add(link.DeviceR2Id, linkCorrectTimes);
                 if (link.DeviceR3Id > 0)
-                    devices.Add(link.DeviceR3Id, linkCorrectTimes);
+                    deviceCorrectTimes.Add(link.DeviceR3Id, linkCorrectTimes);
                 if (link.DeviceR4Id > 0)
-                    devices.Add(link.DeviceR4Id, linkCorrectTimes);
+                    deviceCorrectTimes.Add(link.DeviceR4Id, linkCorrectTimes);
             }
 
-            return devices;
+            return deviceCorrectTimes;
         }
 
         private void LongAverage()

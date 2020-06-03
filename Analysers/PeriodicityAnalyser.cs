@@ -80,12 +80,12 @@ namespace MicrowaveMonitor.Analysers
 
         private async Task Caller(TimeSpan queryTimeSpan, string valueName, string retention, byte idType)
         {
-            await Query(DataManager.measSig, Measurement.Strength, WatchSignal, idsSignal, queryTimeSpan, valueName, retention, Percentages.Signal, idsTypeSignal, idType);
-            await Query(DataManager.measSigQ, Measurement.Quality, WatchSignalQ, idsSignalQ, queryTimeSpan, valueName, retention, Percentages.SignalQ, idsTypeSignalQ, idType);
-            await Query(DataManager.measVolt, Measurement.Voltage, WatchVoltage, idsVoltage, queryTimeSpan, valueName, retention, Percentages.Voltage, idsTypeVoltage, idType);
+            await Analyse(DataManager.measSig, Measurement.Strength, WatchSignal, idsSignal, queryTimeSpan, valueName, retention, Percentages.Signal, idsTypeSignal, idType);
+            await Analyse(DataManager.measSigQ, Measurement.Quality, WatchSignalQ, idsSignalQ, queryTimeSpan, valueName, retention, Percentages.SignalQ, idsTypeSignalQ, idType);
+            await Analyse(DataManager.measVolt, Measurement.Voltage, WatchVoltage, idsVoltage, queryTimeSpan, valueName, retention, Percentages.Voltage, idsTypeVoltage, idType);
         }
 
-        private async Task Query(string measDb, Measurement measurement, Dictionary<int, bool> watchInfo, Dictionary<int, int> ids, TimeSpan queryTimeSpan, string valueName, string retention, double percentLimit, Dictionary<int, byte>idsType, byte idType)
+        private async Task Analyse(string measDb, Measurement measurement, Dictionary<int, bool> watchInfo, Dictionary<int, int> ids, TimeSpan queryTimeSpan, string valueName, string retention, double percentLimit, Dictionary<int, byte>idsType, byte idType)
         {
             string except = String.Empty;
 
@@ -197,9 +197,9 @@ namespace MicrowaveMonitor.Analysers
 
             double[] freqSpan = fft.FrequencySpan(samplingRate);                // get spectrum frequency span
 
-            int maxIndex = 3;                                                   // get the highest freq bin. Bin 0 is DC and it's omitted, low freqs bin 1 and bin 2 are omitted too for better results.
+            int maxIndex = 1;                                                   // get the highest freq bin. Bin 0 is DC and it's omitted, low freqs bin 1 and bin 2 are omitted too for better results.
             double maxVal = rSpectrum[maxIndex];
-            for (int i = 4; i < rSpectrum.Length; i++)
+            for (int i = 2; i < rSpectrum.Length; i++)
             {
                 if (rSpectrum[i] > maxVal)
                 {

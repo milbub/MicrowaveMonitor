@@ -184,7 +184,7 @@ namespace MicrowaveMonitor.Analysers
             DateTime searchedTime = DateTime.Now;
 
             int[] ws;                           // array of substitute weathers
-            double alternateWeatherCoeff = 1;   // coefficient of weather substitute against original weather
+            double substitutionWeatherCoeff = 1;   // coefficient of weather substitute against original weather
 
             List<TimeWind> selection = await GetBestDays(devId, weatherId, wind, searchedTime.TimeOfDay);
 
@@ -199,7 +199,7 @@ namespace MicrowaveMonitor.Analysers
 
                         ws = new int[] { 803, 804 };
                         selection = await GetBestDays(devId, ws, wind, searchedTime.TimeOfDay);
-                        alternateWeatherCoeff = CoeffsClouds.clear;
+                        substitutionWeatherCoeff = CoeffsClouds.clear;
                         break;
                     case int n when (n >= 803):             // CLOUDS
                         ws = new int[] { 803, 804 };
@@ -209,7 +209,7 @@ namespace MicrowaveMonitor.Analysers
 
                         ws = new int[] { 800, 801, 802 };
                         selection = await GetBestDays(devId, ws, wind, searchedTime.TimeOfDay);
-                        alternateWeatherCoeff = CoeffsClear.clouds;
+                        substitutionWeatherCoeff = CoeffsClear.clouds;
                         break;
                     case int n when (n < 800 && n >= 700):  // MISCELLANEOUS
                         ws = new int[] { 701, 711, 721, 731, 741, 751, 761, 762, 771, 781 };
@@ -302,7 +302,7 @@ namespace MicrowaveMonitor.Analysers
 
                                         if (diffX != null && Math.Abs(diffYsAvg) > 0)
                                         {
-                                            alternateWeatherCoeff = (double)diffX / diffYsAvg;
+                                            substitutionWeatherCoeff = (double)diffX / diffYsAvg;
                                             failed = false;
                                         }
                                     }
@@ -323,19 +323,19 @@ namespace MicrowaveMonitor.Analysers
                         switch (weatherId)
                         {
                             case int n when (n < 800 && n >= 700):
-                                alternateWeatherCoeff = coeffs.atmosphere;
+                                substitutionWeatherCoeff = coeffs.atmosphere;
                                 break;
                             case int n when (n < 700 && n >= 600):
-                                alternateWeatherCoeff = coeffs.snow;
+                                substitutionWeatherCoeff = coeffs.snow;
                                 break;
                             case int n when (n < 600 && n >= 500):
-                                alternateWeatherCoeff = coeffs.rain;
+                                substitutionWeatherCoeff = coeffs.rain;
                                 break;
                             case int n when (n < 400 && n >= 300):
-                                alternateWeatherCoeff = coeffs.drizzle;
+                                substitutionWeatherCoeff = coeffs.drizzle;
                                 break;
                             case int n when (n < 300 && n >= 200):
-                                alternateWeatherCoeff = coeffs.storm;
+                                substitutionWeatherCoeff = coeffs.storm;
                                 break;
                             default:
                                 break;
@@ -347,7 +347,7 @@ namespace MicrowaveMonitor.Analysers
             if (selection == null)                  // all attempts failed, try to get anything
             {
                 selection = await GetBestDays(devId, 0, wind, DateTime.Now.TimeOfDay);
-                alternateWeatherCoeff = UncertainDataCoeff;
+                substitutionWeatherCoeff = UncertainDataCoeff;
             }
 
             if (selection == null)
@@ -370,9 +370,9 @@ namespace MicrowaveMonitor.Analysers
 
             double diffAvg;
             if (diffs.Count > AvgDaysCount / 2)
-                diffAvg = diffs.Average() * alternateWeatherCoeff;
+                diffAvg = diffs.Average() * substitutionWeatherCoeff;
             else if (diffs.Count > 0)
-                diffAvg = diffs.Average() * (((AvgDaysCount / 2) - diffs.Count) * 0.01 + 1) * alternateWeatherCoeff;
+                diffAvg = diffs.Average() * (((AvgDaysCount / 2) - diffs.Count) * 0.01 + 1) * substitutionWeatherCoeff;
             else
                 return;
 
@@ -400,7 +400,7 @@ namespace MicrowaveMonitor.Analysers
                 }
 
             if (DebugIsActive)
-                Console.WriteLine($"8TA {measureName} dev: {devId} diff: {diffAvg:0.000} cnt: {diffs.Count} wind: {windAvg:0.00} alter: {alternateWeatherCoeff:0.000}");
+                Console.WriteLine($"8TA {measureName} dev: {devId} diff: {diffAvg:0.000} cnt: {diffs.Count} wind: {windAvg:0.00} alter: {substitutionWeatherCoeff:0.000}");
         }
 
         private async Task<List<TimeWind>> GetBestDays(int devId, int weatherId, double wind, TimeSpan searchedTimeOfDay)
