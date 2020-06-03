@@ -673,6 +673,7 @@ namespace MicrowaveMonitor.Managers
             shortAverage.DeviceStopped(id);
             iduTemperAna.DeviceStopped(id);
             oduTemperAna.DeviceStopped(id);
+            periodicityAna.DeviceStopped(id);
         }
 
         public void HideAlarm(int id, bool ack)

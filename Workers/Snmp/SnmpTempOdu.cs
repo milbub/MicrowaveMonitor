@@ -32,5 +32,40 @@ namespace MicrowaveMonitor.Workers
             lock (database)
                 database.Enqueue(row);
         }
+
+        protected override void TresholdCheck(double value)
+        {
+            if (checkTresh && Display.WeatherTemp != null)
+            {
+                if (treshActive)
+                {
+                    if ((Display.WeatherTemp - trDown) < value && !treshOver)
+                    {
+                        alarmMan.TreshSettTrigger(DeviceId, MeasureType, value, false);
+                        treshActive = false;
+                    }
+                    else if ((Display.WeatherTemp + trUp) > value && treshOver)
+                    {
+                        alarmMan.TreshSettTrigger(DeviceId, MeasureType, value, false);
+                        treshActive = false;
+                    }
+
+                    return;
+                }
+
+                if (value < (Display.WeatherTemp - trDown))
+                {
+                    alarmMan.TreshExcTrigger(DeviceId, MeasureType, value, false);
+                    treshActive = true;
+                    treshOver = false;
+                }
+                else if (value > (Display.WeatherTemp + trUp))
+                {
+                    alarmMan.TreshExcTrigger(DeviceId, MeasureType, value, true);
+                    treshActive = true;
+                    treshOver = true;
+                }
+            }
+        }
     }
 }
