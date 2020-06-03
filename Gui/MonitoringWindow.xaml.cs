@@ -1,4 +1,6 @@
-﻿using MicrowaveMonitor.Database;
+﻿using CefSharp;
+using CefSharp.Wpf;
+using MicrowaveMonitor.Database;
 using MicrowaveMonitor.Managers;
 using System;
 using System.Collections.Generic;
@@ -25,6 +27,7 @@ namespace MicrowaveMonitor.Gui
         private readonly Dictionary<int, DeviceDisplay> devicesDisplays;
         private Link viewedLink;
         private int viewedDeviceId = 0;
+        private bool isMapInitialized = false;
 
         public MonitoringWindow(LinkManager linkManager, WorkerManager workerManager, AlarmManager alarmManager, DataManager dataManager)
         {
@@ -334,18 +337,19 @@ namespace MicrowaveMonitor.Gui
         }
 
         private void MapButtonFired(object sender, RoutedEventArgs e)
-        {
+        {   
             Device a = linkM.GetDevice(viewedLink.DeviceBaseId);
             MapWindow map;
 
             if (viewedLink.HopCount < 1)
-                map = new MapWindow(a.Latitude, a.Longitude);
+                map = new MapWindow(a.Latitude, a.Longitude, isMapInitialized);
             else
             {
                 Device b = linkM.GetDevice(viewedLink.DeviceEndId);
-                map = new MapWindow(a.Latitude, a.Longitude, b.Latitude, b.Longitude);
+                map = new MapWindow(a.Latitude, a.Longitude, b.Latitude, b.Longitude, isMapInitialized);
             }
 
+            isMapInitialized = true;
             map.Show();
         }
 

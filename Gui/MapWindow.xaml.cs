@@ -13,10 +13,13 @@ namespace MicrowaveMonitor.Gui
         private readonly string longitudeB;
         private readonly bool dual = false;
 
-        public MapWindow(string latitude, string longitude)
+        public MapWindow(string latitude, string longitude, bool isMapInitialized)
         {
-            CefSettings settings = new CefSettings { LogSeverity = LogSeverity.Disable };
-            Cef.Initialize(settings);
+            if (!isMapInitialized)
+            {
+                CefSettings settings = new CefSettings { LogSeverity = LogSeverity.Disable };
+                Cef.Initialize(settings);
+            }
 
             InitializeComponent();
 
@@ -26,7 +29,7 @@ namespace MicrowaveMonitor.Gui
             mapBrowser.IsBrowserInitializedChanged += MapBrowserInit;
         }
 
-        public MapWindow(string latitudeA, string longitudeA, string latitudeB, string longitudeB) : this(latitudeA, longitudeA)
+        public MapWindow(string latitudeA, string longitudeA, string latitudeB, string longitudeB, bool isMapInitialized) : this(latitudeA, longitudeA, isMapInitialized)
         {
             this.latitudeB = latitudeB;
             this.longitudeB = longitudeB;
