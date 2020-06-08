@@ -4,3 +4,4 @@
 **Author:** Milan Bubniak, FEEC BUT, xbubni03@vutbr.cz
 
 Project can be opened in Visual Studio 2019 or newer.
+Please use InfluxDB version 1.x.
