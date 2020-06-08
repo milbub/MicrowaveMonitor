@@ -46,7 +46,7 @@ namespace Lextm.SharpSnmpLib
         public const int MaxMessageSize = 0xFFE3;
 
         private Header() : this(null, DefaultMaxMessageSize, 0)
-        {            
+        {
         }
 
         /// <summary>
@@ -96,15 +96,15 @@ namespace Lextm.SharpSnmpLib
             _flags = new OctetString(SecurityLevel);
             _securityModel = DefaultSecurityModel;
         }
-        
+
         /// <summary>
         /// Empty header.
         /// </summary>
         public static Header Empty
         {
             get { return EmptyHeader; }
-        }        
-        
+        }
+
         /// <summary>
         /// Security flags.
         /// </summary>

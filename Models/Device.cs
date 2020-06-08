@@ -1,6 +1,6 @@
 ﻿using SQLite;
 
-namespace MicrowaveMonitor.Database
+namespace MicrowaveMonitor.Models
 {
     public class Device
     {

@@ -49,7 +49,7 @@ namespace Lextm.SharpSnmpLib
         /// </summary>
         /// <param name="stream">The stream.</param>
         void AppendBytesTo(Stream stream);
-        
+
         /// <summary>
         /// Returns a <see cref="String"/> that represents this object.
         /// </summary>

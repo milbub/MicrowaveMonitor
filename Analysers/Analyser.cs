@@ -54,7 +54,7 @@ namespace MicrowaveMonitor.Analysers
         protected readonly Dictionary<int, int> idsVoltage = new Dictionary<int, int>();
         protected readonly Dictionary<int, int> idsPing = new Dictionary<int, int>();
         protected readonly object idsLocker = new object();
-        
+
         protected readonly AlarmManager alarmMan;
         protected readonly DataManager dataMan;
         protected Thread tQueryer;

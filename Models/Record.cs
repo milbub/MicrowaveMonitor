@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace MicrowaveMonitor.Database
+namespace MicrowaveMonitor.Models
 {
     public class Record<T>
     {

@@ -85,7 +85,7 @@ namespace Lextm.SharpSnmpLib
             {
                 throw new ArgumentNullException(nameof(stream));
             }
-            
+
             RequestId = (Integer32)DataFactory.CreateSnmpData(stream); // request
 #pragma warning disable 168
             var temp1 = (Integer32)DataFactory.CreateSnmpData(stream); // 0
@@ -141,7 +141,7 @@ namespace Lextm.SharpSnmpLib
         {
             get { return SnmpType.TrapV2Pdu; }
         }
-        
+
         /// <summary>
         /// Appends the bytes to <see cref="Stream"/>.
         /// </summary>
@@ -152,7 +152,7 @@ namespace Lextm.SharpSnmpLib
             {
                 throw new ArgumentNullException(nameof(stream));
             }
-            
+
             if (_raw == null)
             {
                 _raw = ByteTool.ParseItems(RequestId, Integer32.Zero, Integer32.Zero, _varbindSection);
@@ -187,8 +187,8 @@ namespace Lextm.SharpSnmpLib
             return string.Format(
                 CultureInfo.InvariantCulture,
                 "TRAP v2 PDU: request ID: {3}; enterprise: {0}; time stamp: {1}; variable count: {2}",
-                Enterprise, 
-                _time, 
+                Enterprise,
+                _time,
                 Variables.Count.ToString(CultureInfo.InvariantCulture),
                 RequestId);
         }

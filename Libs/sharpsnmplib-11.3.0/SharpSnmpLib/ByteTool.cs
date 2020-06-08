@@ -52,7 +52,7 @@ namespace Lextm.SharpSnmpLib
             {
                 throw new ArgumentNullException(nameof(description));
             }
-            
+
             var result = new List<byte>();
             var content = description.Trim().Split(new[] { ' ' });
             foreach (var part in content)
@@ -88,7 +88,7 @@ namespace Lextm.SharpSnmpLib
                 {
                     throw new ArgumentException("Illegal character found.", nameof(description));
                 }
-                
+
                 buffer.Append(c);
                 if (buffer.Length != 2)
                 {
@@ -102,12 +102,12 @@ namespace Lextm.SharpSnmpLib
 
                 buffer.Length = 0;
             }
-            
+
             if (buffer.Length != 0)
             {
                 throw new ArgumentException("Not a complete byte string.", nameof(description));
             }
-            
+
             return result.ToArray();
         }
 
@@ -145,7 +145,7 @@ namespace Lextm.SharpSnmpLib
 
                     item.AppendBytesTo(result);
                 }
-                
+
                 return result.ToArray();
             }
         }
@@ -163,7 +163,7 @@ namespace Lextm.SharpSnmpLib
                 {
                     item.AppendBytesTo(result);
                 }
-                
+
                 return result.ToArray();
             }
         }
@@ -237,7 +237,7 @@ namespace Lextm.SharpSnmpLib
                 throw new ArgumentNullException(nameof(data));
             }
 
-            var items = new[] 
+            var items = new[]
             {
                 new Integer32((int)version),
                 header.GetData(version),
@@ -261,7 +261,7 @@ namespace Lextm.SharpSnmpLib
                 stream.WriteByte((byte)length);
                 return stream.ToArray();
             }
-            
+
             var c = new byte[16];
             var j = 0;
             while (length > 0)
@@ -269,7 +269,7 @@ namespace Lextm.SharpSnmpLib
                 c[j++] = (byte)(length & 0xff);
                 length = length >> 8;
             }
-            
+
             stream.WriteByte((byte)(0x80 | j));
             while (j > 0)
             {

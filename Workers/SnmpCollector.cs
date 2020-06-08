@@ -1,7 +1,7 @@
 ﻿using Lextm.SharpSnmpLib;
 using Lextm.SharpSnmpLib.Messaging;
-using MicrowaveMonitor.Database;
 using MicrowaveMonitor.Managers;
+using MicrowaveMonitor.Models;
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -66,14 +66,14 @@ namespace MicrowaveMonitor.Workers
                             if (result == null)
                             {
                                 TimeoutCounter();
-                                HasResponded(false);
+                                // HasResponded(false);
                                 continue;
                             }
 
                             finishTime = DateTime.Now;
 
                             RecordData(result, finishTime);
-                            HasResponded(true);
+                            // HasResponded(true);
 
                             diffTime = finishTime - beginTime;
                             if (diffTime.TotalMilliseconds < RefreshInterval)

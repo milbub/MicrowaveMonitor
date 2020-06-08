@@ -1,6 +1,6 @@
 ﻿using Itenso.TimePeriod;
-using MicrowaveMonitor.Database;
 using MicrowaveMonitor.Managers;
+using MicrowaveMonitor.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;

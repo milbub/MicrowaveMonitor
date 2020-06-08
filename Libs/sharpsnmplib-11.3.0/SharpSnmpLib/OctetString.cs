@@ -48,8 +48,8 @@ namespace Lextm.SharpSnmpLib
     public sealed class OctetString // This namespace has its own concept of string
         : ISnmpData, IEquatable<OctetString>
     {
-        private static readonly OctetString EmptyString = new OctetString(string.Empty, Encoding.GetEncoding("ASCII")); 
-        
+        private static readonly OctetString EmptyString = new OctetString(string.Empty, Encoding.GetEncoding("ASCII"));
+
         // IMPORTANT: use GetEncoding because of CF.
         private static Encoding _defaultEncoding = Encoding.GetEncoding("ASCII");
         private readonly byte[] _raw;
@@ -77,7 +77,7 @@ namespace Lextm.SharpSnmpLib
             Encoding = DefaultEncoding;
             _length = length.Item2;
         }
-        
+
         /// <summary>
         /// Creates an <see cref="OctetString"/> from raw bytes.
         /// </summary>
@@ -88,12 +88,12 @@ namespace Lextm.SharpSnmpLib
             {
                 throw new ArgumentNullException(nameof(raw));
             }
-            
+
             _raw = new byte[raw.Length];
             Buffer.BlockCopy(raw, 0, _raw, 0, raw.Length);
             Encoding = DefaultEncoding;
         }
-        
+
         /// <summary>
         /// Creates an <see cref="OctetString"/> with a specific <see cref="String"/>. This string is treated in specific <see cref="Encoding"/>.
         /// </summary>
@@ -104,7 +104,7 @@ namespace Lextm.SharpSnmpLib
             Encoding = encoding;
             _raw = Encoding.GetBytes(content);
         }
-        
+
         /// <summary>
         /// Creates an <see cref="OctetString"/> with a specific <see cref="String"/>. This string is treated as UTF-16.
         /// </summary>
@@ -113,13 +113,13 @@ namespace Lextm.SharpSnmpLib
             : this(content, DefaultEncoding)
         {
         }
-        
+
         /// <summary>
         /// Creates an <see cref="OctetString"/> with a specific <see cref="Levels"/>.
         /// </summary>
         /// <param name="level"></param>
         public OctetString(Levels level) : this(new[] { (byte)level })
-        {            
+        {
         }
 
         /// <summary>
@@ -135,7 +135,7 @@ namespace Lextm.SharpSnmpLib
         {
             return _raw;
         }
-        
+
         /// <summary>
         /// Gets the empty string.
         /// </summary>
@@ -144,13 +144,13 @@ namespace Lextm.SharpSnmpLib
         {
             get { return EmptyString; }
         }
-               
+
         /// <summary>
         /// Returns a <see cref="Levels"/> that represents this <see cref="OctetString"/>.
         /// </summary>
         /// <returns></returns>
         public Levels ToLevels()
-        {          
+        {
             var bytes = GetRaw();
             if (bytes.Length > 1)
             {
@@ -159,7 +159,7 @@ namespace Lextm.SharpSnmpLib
 
             return (Levels)(bytes[0] & 7);
         }
-        
+
         /// <summary>
         /// Returns a <see cref="String"/> in a hex form that represents this <see cref="OctetString"/>.
         /// </summary>
@@ -171,10 +171,10 @@ namespace Lextm.SharpSnmpLib
             {
                 result.Append(b.ToString("X2", CultureInfo.InvariantCulture));
             }
-            
+
             return result.ToString();
         }
-        
+
         /// <summary>
         /// Returns a <see cref="String"/> in a specific <see cref="Encoding"/> that represents this <see cref="OctetString"/>.
         /// </summary>
@@ -198,7 +198,7 @@ namespace Lextm.SharpSnmpLib
         {
             return ToString(Encoding);
         }
-        
+
         /// <summary>
         /// Type code.
         /// </summary>
@@ -234,7 +234,7 @@ namespace Lextm.SharpSnmpLib
         {
             return Equals(this, other);
         }
-        
+
         /// <summary>
         /// Determines whether the specified <see cref="Object"/> is equal to the current <see cref="OctetString"/>.
         /// </summary>
@@ -245,7 +245,7 @@ namespace Lextm.SharpSnmpLib
         {
             return Equals(this, obj as OctetString);
         }
-        
+
         /// <summary>
         /// Serves as a hash function for a particular type.
         /// </summary>
@@ -254,7 +254,7 @@ namespace Lextm.SharpSnmpLib
         {
             return ToString(Encoding.Unicode).GetHashCode();
         }
-        
+
         /// <summary>
         /// The equality operator.
         /// </summary>
@@ -266,7 +266,7 @@ namespace Lextm.SharpSnmpLib
         {
             return Equals(left, right);
         }
-        
+
         /// <summary>
         /// The inequality operator.
         /// </summary>
@@ -303,7 +303,7 @@ namespace Lextm.SharpSnmpLib
             get { return _defaultEncoding; }
             set { _defaultEncoding = value; }
         }
-        
+
         /// <summary>
         /// The comparison.
         /// </summary>
@@ -325,7 +325,7 @@ namespace Lextm.SharpSnmpLib
                 return false;
             }
 
-            return left._raw.SequenceEqual(right._raw); 
+            return left._raw.SequenceEqual(right._raw);
         }
 
         internal byte[] GetLengthBytes()
@@ -358,6 +358,6 @@ namespace Lextm.SharpSnmpLib
             return false;
         }
     }
-    
+
     // all references here are to ITU-X.690-12/97
 }

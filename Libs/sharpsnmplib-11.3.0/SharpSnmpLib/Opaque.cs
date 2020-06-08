@@ -77,7 +77,7 @@ namespace Lextm.SharpSnmpLib
             stream.Read(_raw, 0, length.Item1);
             _length = length.Item2;
         }
-        
+
         /// <summary>
         /// Returns a <see cref="String"/> that represents this <see cref="Opaque"/>.
         /// </summary>
@@ -108,7 +108,7 @@ namespace Lextm.SharpSnmpLib
             {
                 throw new ArgumentNullException(nameof(stream));
             }
-            
+
             stream.AppendBytes(TypeCode, _length, GetRaw());
         }
 
@@ -131,7 +131,7 @@ namespace Lextm.SharpSnmpLib
         {
             return Equals(this, other);
         }
-        
+
         /// <summary>
         /// Determines whether the specified <see cref="Object"/> is equal to the current <see cref="Opaque"/>.
         /// </summary>
@@ -142,7 +142,7 @@ namespace Lextm.SharpSnmpLib
         {
             return Equals(this, obj as Opaque);
         }
-        
+
         /// <summary>
         /// Serves as a hash function for a particular type.
         /// </summary>
@@ -151,7 +151,7 @@ namespace Lextm.SharpSnmpLib
         {
             return ToString().GetHashCode();
         }
-        
+
         /// <summary>
         /// The equality operator.
         /// </summary>
@@ -163,7 +163,7 @@ namespace Lextm.SharpSnmpLib
         {
             return Equals(left, right);
         }
-        
+
         /// <summary>
         /// The inequality operator.
         /// </summary>
@@ -175,7 +175,7 @@ namespace Lextm.SharpSnmpLib
         {
             return !(left == right);
         }
-        
+
         /// <summary>
         /// The comparison.
         /// </summary>
@@ -197,9 +197,9 @@ namespace Lextm.SharpSnmpLib
                 return false;
             }
 
-            return left._raw.SequenceEqual(right._raw); 
+            return left._raw.SequenceEqual(right._raw);
         }
     }
-    
+
     // all references here are to ITU-X.690-12/97
 }

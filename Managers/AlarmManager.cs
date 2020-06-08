@@ -1,5 +1,5 @@
 ﻿using MicrowaveMonitor.Analysers;
-using MicrowaveMonitor.Database;
+using MicrowaveMonitor.Models;
 using MicrowaveMonitor.Properties;
 using MicrowaveMonitor.Workers;
 using SQLite;
@@ -102,7 +102,7 @@ namespace MicrowaveMonitor.Managers
         private readonly object downLocker = new object();
 
         /** Treshold exceed detection **/
-        private readonly Dictionary<int, AlarmIdAssign> tresholdIds = new Dictionary<int, AlarmIdAssign>();
+        private readonly Dictionary<int, AlarmIdAssign> thresholdIds = new Dictionary<int, AlarmIdAssign>();
 
         /*** Average exceed analysers ***/
         private readonly AverageAnalyser longAverage;
@@ -615,7 +615,8 @@ namespace MicrowaveMonitor.Managers
 
         public void UnregisterListener(Device device)
         {
-            displays[device.Id].PropertyChanged -= DataChanged;
+            if (displays.ContainsKey(device.Id))
+                displays[device.Id].PropertyChanged -= DataChanged;
 
             lock (Analyser.watchLocker)
             {
@@ -838,12 +839,12 @@ namespace MicrowaveMonitor.Managers
         {
             int alarmId = GenerateAlarm(deviceId, AlarmRank.Critical, measurement, AlarmType.Treshold, trend, value);
 
-            lock (tresholdIds)
+            lock (thresholdIds)
             {
-                if (!tresholdIds.ContainsKey(deviceId))
-                    tresholdIds.Add(deviceId, new AlarmIdAssign() { });
+                if (!thresholdIds.ContainsKey(deviceId))
+                    thresholdIds.Add(deviceId, new AlarmIdAssign() { });
 
-                AlarmIdAssign ids = tresholdIds[deviceId];
+                AlarmIdAssign ids = thresholdIds[deviceId];
 
                 switch (measurement)
                 {
@@ -870,7 +871,7 @@ namespace MicrowaveMonitor.Managers
                 }
 
                 ids.count++;
-                tresholdIds[deviceId] = ids;
+                thresholdIds[deviceId] = ids;
             }
         }
 
@@ -879,11 +880,11 @@ namespace MicrowaveMonitor.Managers
             int alarmId = 0;
             AlarmIdAssign ids;
 
-            lock (tresholdIds)
+            lock (thresholdIds)
             {
-                if (tresholdIds.ContainsKey(deviceId))
+                if (thresholdIds.ContainsKey(deviceId))
                 {
-                    ids = tresholdIds[deviceId];
+                    ids = thresholdIds[deviceId];
                     switch (measurement)
                     {
                         case Measurement.Latency:
@@ -918,9 +919,9 @@ namespace MicrowaveMonitor.Managers
                         ids.count--;
 
                     if (ids.count == 0)
-                        tresholdIds.Remove(deviceId);
+                        thresholdIds.Remove(deviceId);
                     else
-                        tresholdIds[deviceId] = ids;
+                        thresholdIds[deviceId] = ids;
                 }
             }
 

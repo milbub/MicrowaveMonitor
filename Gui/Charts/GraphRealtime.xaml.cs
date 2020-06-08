@@ -1,6 +1,6 @@
 ﻿using LiveCharts;
 using LiveCharts.Configurations;
-using MicrowaveMonitor.Database;
+using MicrowaveMonitor.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -137,7 +137,7 @@ namespace MicrowaveMonitor.Gui
         }
 
         public Func<double, string> DateTimeFormatter
-        { 
+        {
             get { return _dateTimeFormatter; }
             set
             {

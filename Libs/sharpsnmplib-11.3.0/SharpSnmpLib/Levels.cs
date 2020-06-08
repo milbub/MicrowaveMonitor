@@ -28,17 +28,17 @@ namespace Lextm.SharpSnmpLib
     [Flags]
     [DataContract]
     public enum Levels
-    {      
+    {
         /// <summary>
         /// Authentication flag.
         /// </summary>
-        Authentication = 1, 
-        
+        Authentication = 1,
+
         /// <summary>
         /// Privacy flag.
         /// </summary>
         Privacy = 2,
-        
+
         /// <summary>
         /// Reportable flag.
         /// </summary>

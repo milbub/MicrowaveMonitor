@@ -206,7 +206,7 @@ namespace Lextm.SharpSnmpLib
         {
             return string.Format("{0}.{1}.{2}.{3}", _ip[0], _ip[1], _ip[2], _ip[3]);
         }
-        
+
         /// <summary>
         /// Type code.
         /// </summary>
@@ -228,7 +228,7 @@ namespace Lextm.SharpSnmpLib
             {
                 throw new ArgumentNullException(nameof(stream));
             }
-            
+
             stream.AppendBytes(TypeCode, _length, _ip);
         }
 
@@ -242,7 +242,7 @@ namespace Lextm.SharpSnmpLib
         {
             return Equals(this, obj as IP);
         }
-        
+
         /// <summary>
         /// Indicates whether the current object is equal to another object of the same type.
         /// </summary>
@@ -253,7 +253,7 @@ namespace Lextm.SharpSnmpLib
         {
             return Equals(this, other);
         }
-        
+
         /// <summary>
         /// Serves as a hash function for a particular type.
         /// </summary>
@@ -262,7 +262,7 @@ namespace Lextm.SharpSnmpLib
         {
             return _ip.GetHashCode();
         }
-        
+
         /// <summary>
         /// The equality operator.
         /// </summary>
@@ -274,7 +274,7 @@ namespace Lextm.SharpSnmpLib
         {
             return Equals(left, right);
         }
-        
+
         /// <summary>
         /// The inequality operator.
         /// </summary>
@@ -286,7 +286,7 @@ namespace Lextm.SharpSnmpLib
         {
             return !(left == right);
         }
-        
+
         /// <summary>
         /// The comparison.
         /// </summary>
@@ -308,7 +308,7 @@ namespace Lextm.SharpSnmpLib
                 return false;
             }
 
-            return left._ip.SequenceEqual(right._ip);           
+            return left._ip.SequenceEqual(right._ip);
         }
     }
 }

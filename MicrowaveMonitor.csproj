@@ -82,9 +82,9 @@
     <Compile Include="Analysers\AverageAnalyser.cs" />
     <Compile Include="Analysers\PeriodicityAnalyser.cs" />
     <Compile Include="Analysers\TemperatureAnalyser.cs" />
-    <Compile Include="Database\Alarm.cs" />
-    <Compile Include="Database\DeviceDisplay.cs" />
-    <Compile Include="Database\Record.cs" />
+    <Compile Include="Models\Alarm.cs" />
+    <Compile Include="Models\DeviceDisplay.cs" />
+    <Compile Include="Models\Record.cs" />
     <Compile Include="Gui\AboutWindow.xaml.cs">
       <DependentUpon>AboutWindow.xaml</DependentUpon>
     </Compile>
@@ -201,8 +201,8 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Database\Link.cs" />
-    <Compile Include="Database\Device.cs" />
+    <Compile Include="Models\Link.cs" />
+    <Compile Include="Models\Device.cs" />
     <Compile Include="Gui\MonitoringWindow.xaml.cs">
       <DependentUpon>MonitoringWindow.xaml</DependentUpon>
       <SubType>Code</SubType>

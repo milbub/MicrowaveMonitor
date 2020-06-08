@@ -48,9 +48,9 @@ namespace Lextm.SharpSnmpLib
         /// <summary>
         /// Variable bindings.
         /// </summary>
-        IList<Variable> Variables 
-        { 
-            get; 
+        IList<Variable> Variables
+        {
+            get;
         }
     }
 }

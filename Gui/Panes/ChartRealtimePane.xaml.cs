@@ -1,11 +1,11 @@
-﻿using MicrowaveMonitor.Database;
+﻿using Microsoft.CSharp.RuntimeBinder;
 using MicrowaveMonitor.Managers;
+using MicrowaveMonitor.Models;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using Microsoft.CSharp.RuntimeBinder;
 using Vibrant.InfluxDB.Client.Rows;
 
 namespace MicrowaveMonitor.Gui

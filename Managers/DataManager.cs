@@ -133,7 +133,8 @@ namespace MicrowaveMonitor.Managers
                             Console.WriteLine(e.Message);
                     }
                 }
-            }) { Name = "influxWriter", Priority = ThreadPriority.AboveNormal };
+            })
+            { Name = "influxWriter", Priority = ThreadPriority.AboveNormal };
             writer.Start();
         }
 

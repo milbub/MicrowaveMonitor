@@ -137,7 +137,7 @@ namespace Lextm.SharpSnmpLib
         {
             get { return _list[index]; }
         }
-        
+
         /// <summary>
         /// Type code.
         /// </summary>
@@ -176,7 +176,7 @@ namespace Lextm.SharpSnmpLib
             {
                 result.Append(item).Append("; ");
             }
-            
+
             return result.ToString();
         }
 

@@ -1,4 +1,4 @@
-﻿using MicrowaveMonitor.Database;
+﻿using MicrowaveMonitor.Models;
 using MicrowaveMonitor.Workers;
 using SQLite;
 using System.Collections.Generic;

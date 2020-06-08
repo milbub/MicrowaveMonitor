@@ -1,7 +1,7 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Numerics;
 using System.Threading.Tasks;
-using System.Diagnostics;
 
 
 // =====[ Revision History ]==========================================
@@ -66,7 +66,7 @@ namespace DSPLib
         private double[,] mSinTerm;      // on smaller DFT's
         private bool mOutOfMemory;       // True = Caching ran out of memory.
 
-        
+
         /// <summary>
         /// Read only Boolean property. True meas the currently defined DFT is using cached memory to speed up calculations.
         /// </summary>
@@ -402,11 +402,11 @@ namespace DSPLib
             }
 
             // If zero padded, clean the 2nd half of the linked list from previous results
-            if( mN != mLengthTotal)
+            if (mN != mLengthTotal)
             {
                 for (UInt32 i = mN; i < mLengthTotal; i++)
                 {
-                    x.re = 0.0; 
+                    x.re = 0.0;
                     x.im = 0.0;
                     x = x.next;
                 }
@@ -936,7 +936,7 @@ namespace DSPLib
                         break;
 
                     case Window.Type.BH92: // Also known as: Blackman-Harris
-                                 //wc = (0.35875 - 0.48829*cos(z) + 0.14128*cos(2*z) - 0.01168*cos(3*z));
+                                           //wc = (0.35875 - 0.48829*cos(z) + 0.14128*cos(2*z) - 0.01168*cos(3*z));
                         winCoeffs = SineExpansion(points, 0.35875, -0.48829, 0.14128, -0.01168);
                         break;
 
@@ -1153,7 +1153,7 @@ namespace DSPLib
                 for (UInt32 i = 0; i < np; i++)
                 {
                     double magVal = magnitude[i];
-                    if(magVal <= 0.0)
+                    if (magVal <= 0.0)
                         magVal = double.Epsilon;
 
                     magDBV[i] = 20 * System.Math.Log10(magVal);

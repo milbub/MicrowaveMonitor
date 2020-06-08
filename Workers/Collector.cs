@@ -1,5 +1,5 @@
-﻿using MicrowaveMonitor.Database;
-using MicrowaveMonitor.Managers;
+﻿using MicrowaveMonitor.Managers;
+using MicrowaveMonitor.Models;
 using System.Net;
 using System.Threading;
 
@@ -83,7 +83,7 @@ namespace MicrowaveMonitor.Workers
             }
         }
 
-        protected virtual void TresholdCheck(double value)
+        protected virtual void ThresholdCheck(double value)
         {
             if (checkTresh)
             {

@@ -1,7 +1,5 @@
-﻿using CefSharp;
-using CefSharp.Wpf;
-using MicrowaveMonitor.Database;
-using MicrowaveMonitor.Managers;
+﻿using MicrowaveMonitor.Managers;
+using MicrowaveMonitor.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -40,14 +38,19 @@ namespace MicrowaveMonitor.Gui
             InitializeComponent();
             RegisterCharts();
             alarmListPane.SetItemsSource(alarmManager, linkManager, this);
-            ChangeLink(linkManager.GetLink(linkManager.LinkNames.First().Key));
 
-            foreach (string name in linkManager.LinkNames.Values)
+            if (linkManager.LinkNames.Count > 0)
             {
-                LinksList.Items.Add(name);
+                ChangeLink(linkManager.GetLink(linkManager.LinkNames.First().Key));
+
+                foreach (string name in linkManager.LinkNames.Values)
+                {
+                    LinksList.Items.Add(name);
+                }
+
+                LinksList.SelectedItem = linkManager.LinkNames.First().Value;
             }
 
-            LinksList.SelectedItem = linkManager.LinkNames.First().Value;
             LinksList.SelectionChanged += LinkChoosed;
 
             deviceAlarms.SetItemsSource(alarmM.deviceAlarms);
@@ -333,11 +336,21 @@ namespace MicrowaveMonitor.Gui
 
         private void LinkChoosed(object sender, SelectionChangedEventArgs e)
         {
-            ChangeLink(linkM.GetLink(linkM.LinkNames.FirstOrDefault(x => x.Value == (string)e.AddedItems[0]).Key));
+            try
+            {
+                ChangeLink(linkM.GetLink(linkM.LinkNames.FirstOrDefault(x => x.Value == (string)e.AddedItems[0]).Key));
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
         }
 
         private void MapButtonFired(object sender, RoutedEventArgs e)
-        {   
+        {
+            if (viewedDeviceId == 0)
+                return;
+
             Device a = linkM.GetDevice(viewedLink.DeviceBaseId);
             MapWindow map;
 
@@ -355,6 +368,9 @@ namespace MicrowaveMonitor.Gui
 
         private void ElevationButtonFired(object sender, RoutedEventArgs e)
         {
+            if (viewedDeviceId == 0)
+                return;
+
             ElevationWindow elevation;
             if (viewedLink.HopCount > 0)
             {
@@ -369,6 +385,9 @@ namespace MicrowaveMonitor.Gui
 
         private void StartButtonFired(object sender, RoutedEventArgs e)
         {
+            if (viewedDeviceId == 0)
+                return;
+
             workerM.StartDevice(linkM.GetDevice(viewedDeviceId));
             ChartsChangeDevice(viewedDeviceId, linkM.GetDevice(viewedDeviceId));
             ContextChanged();
@@ -376,6 +395,9 @@ namespace MicrowaveMonitor.Gui
 
         private void StopButtonFired(object sender, RoutedEventArgs e)
         {
+            if (viewedDeviceId == 0)
+                return;
+
             workerM.StopDevice(linkM.GetDevice(viewedDeviceId));
             ChartsChangeDevice(viewedDeviceId, linkM.GetDevice(viewedDeviceId));
         }
@@ -396,13 +418,16 @@ namespace MicrowaveMonitor.Gui
 
                 LinksList.Items.Add(newLink.Name);
                 LinksList.SelectedItem = newLink.Name;
-                monitorTabControl.SelectedIndex = 6;
+                monitorTabControl.SelectedIndex = 7;
                 linksScroll.ScrollToBottom();
             }
         }
 
         private void DeleteButtonFired(object sender, RoutedEventArgs e)
         {
+            if (viewedDeviceId == 0)
+                return;
+
             DeleteWindow deleteWindow = new DeleteWindow();
             if (deleteWindow.ShowDialog() == true)
             {
@@ -446,7 +471,8 @@ namespace MicrowaveMonitor.Gui
 
                 string removing = viewedLink.Name;
                 viewedDeviceId = 0;
-                LinksList.SelectedItem = linkM.LinkNames.First().Value;
+                if (linkM.LinkNames.Count > 0)
+                    LinksList.SelectedItem = linkM.LinkNames.First().Value;
                 LinksList.Items.Remove(removing);
                 linksScroll.ScrollToTop();
             }

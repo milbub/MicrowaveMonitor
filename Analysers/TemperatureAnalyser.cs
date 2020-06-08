@@ -1,6 +1,6 @@
 ﻿using CoordinateSharp;
-using MicrowaveMonitor.Database;
 using MicrowaveMonitor.Managers;
+using MicrowaveMonitor.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -292,7 +292,7 @@ namespace MicrowaveMonitor.Analysers
                                         foreach (TimeWind day in compareYs)
                                         {
                                             double? diff = await GetTemperaturesDiff(devId, (DateTime)day.dateTime, WindTempCorrection(compareX.wind, day.wind));
-                                            
+
                                             if (diff != null)
                                                 diffYs.Add((double)diff);
                                         }
@@ -482,7 +482,7 @@ namespace MicrowaveMonitor.Analysers
 
                 if (row.Fields.Count > 0)
                 {
-                    double x = Convert.ToDouble(row.Fields.First().Value);                   
+                    double x = Convert.ToDouble(row.Fields.First().Value);
                     return x - measTempNegativeOffset - valueAir;
                 }
             }
@@ -490,10 +490,10 @@ namespace MicrowaveMonitor.Analysers
             return null;
         }
 
-        private double WindTempCorrection(double? originalWind, double? newWind)
+        private double WindTempCorrection(double? searchedWind, double? foundWind)
         {
-            if (originalWind != null || newWind != null)
-                return (double)(originalWind - newWind) * DegreesPerWindMeter;
+            if (searchedWind != null || foundWind != null)
+                return (double)(searchedWind - foundWind) * DegreesPerWindMeter;
             else
                 return 0;
         }

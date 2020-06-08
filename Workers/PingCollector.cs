@@ -1,5 +1,5 @@
-﻿using MicrowaveMonitor.Database;
-using MicrowaveMonitor.Managers;
+﻿using MicrowaveMonitor.Managers;
+using MicrowaveMonitor.Models;
 using System;
 using System.Collections.Generic;
 using System.Net.NetworkInformation;
@@ -42,7 +42,7 @@ namespace MicrowaveMonitor.Workers
                     while (IsRunning)
                     {
                         beginTime = DateTime.Now;
-                        PingReply reply = pingSender.Send(Address, 1000);
+                        PingReply reply = pingSender.Send(Address, RefreshInterval);
                         finishTime = DateTime.Now;
 
                         if (reply.Status == IPStatus.Success)
@@ -68,7 +68,7 @@ namespace MicrowaveMonitor.Workers
         protected virtual void RecordData(PingReply result)
         {
             Display.DataPing = new Record<double>(DateTime.Now, result.RoundtripTime);
-            TresholdCheck(result.RoundtripTime);
+            ThresholdCheck(result.RoundtripTime);
             DynamicInfluxRow row = new DynamicInfluxRow { Timestamp = DateTime.Now.ToUniversalTime() };
             row.Fields.Add("value", result.RoundtripTime);
             row.Tags.Add("device", DeviceId.ToString());

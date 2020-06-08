@@ -73,10 +73,10 @@ namespace Lextm.SharpSnmpLib
                 {
                 }
             }
-    
+
             return base.ConvertFrom(context, culture, value);
         }
-    
+
         /// <summary>
         /// Converts the given value object to the specified type, using the arguments.
         /// </summary>
@@ -92,7 +92,7 @@ namespace Lextm.SharpSnmpLib
             {
                 return oid.ToString(); // GetTextual(null);
             }
-    
+
             return base.ConvertTo(context, culture, value, destinationType);
         }
 

@@ -35,7 +35,7 @@ namespace Lextm.SharpSnmpLib
     [TypeConverter(typeof(ObjectIdentifierConverter))]
 #endif
     [DataContract]
-    public sealed class ObjectIdentifier : 
+    public sealed class ObjectIdentifier :
         ISnmpData, IEquatable<ObjectIdentifier>, IComparable<ObjectIdentifier>, IComparable
     {
         private readonly uint[] _oid;
@@ -70,7 +70,7 @@ namespace Lextm.SharpSnmpLib
             if (id.Length == 0)
             {
                 // IMPORTANT: convert to zeroDotZero.
-                id = new[] {0U, 0U};
+                id = new[] { 0U, 0U };
             }
 
             if (id.Length < 2)
@@ -182,7 +182,7 @@ namespace Lextm.SharpSnmpLib
         {
             return _oid;
         }
-        
+
         /// <summary>
         /// Compares the current object with another object of the same type.
         /// </summary>
@@ -232,7 +232,7 @@ namespace Lextm.SharpSnmpLib
                 {
                     return 1;
                 }
-                
+
                 if (_oid[i] < other._oid[i])
                 {
                     return -1;
@@ -431,7 +431,7 @@ namespace Lextm.SharpSnmpLib
         {
             return Equals(left, right);
         }
-        
+
         /// <summary>
         /// The inequality operator.
         /// </summary>
@@ -465,7 +465,7 @@ namespace Lextm.SharpSnmpLib
         {
             return left.CompareTo(right) < 0;
         }
-        
+
         /// <summary>
         /// The comparison.
         /// </summary>
@@ -503,17 +503,17 @@ namespace Lextm.SharpSnmpLib
             {
                 throw new ArgumentNullException(nameof(numerical));
             }
-            
+
             return new ObjectIdentifier(AppendTo(numerical, extra));
-        }        
-          
+        }
+
         /// <summary>
         /// Appends an extra number to the array.
         /// </summary>
         /// <param name="original">The original array.</param>
         /// <param name="extra">The extra.</param>
         /// <returns></returns>       
-        [CLSCompliant(false)]                   
+        [CLSCompliant(false)]
         public static uint[] AppendTo(uint[] original, uint extra)
         {
             if (original == null)

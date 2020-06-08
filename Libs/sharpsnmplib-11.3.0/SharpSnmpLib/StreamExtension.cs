@@ -44,7 +44,7 @@ namespace Lextm.SharpSnmpLib
             }
 
             list.Add(firstByte);
-            
+
             var result = 0;
             var octets = firstByte & 0x7f;
             for (var j = 0; j < octets; j++)
@@ -59,7 +59,7 @@ namespace Lextm.SharpSnmpLib
                 result = (result << 8) + nextByte;
                 list.Add(nextByte);
             }
-            
+
             return new Tuple<int, byte[]>(result, list.ToArray());
         }
 

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 
-namespace MicrowaveMonitor.Database
+namespace MicrowaveMonitor.Models
 {
     public class DeviceDisplay : INotifyPropertyChanged
     {

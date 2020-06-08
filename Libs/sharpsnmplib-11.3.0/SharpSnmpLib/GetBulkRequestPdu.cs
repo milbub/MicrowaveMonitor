@@ -130,7 +130,7 @@ namespace Lextm.SharpSnmpLib
             {
                 throw new ArgumentNullException(nameof(stream));
             }
-            
+
             if (_raw == null)
             {
                 _raw = ByteTool.ParseItems(RequestId, ErrorStatus, ErrorIndex, _varbindSection);
@@ -140,7 +140,7 @@ namespace Lextm.SharpSnmpLib
         }
 
         #endregion
-        
+
         /// <summary>
         /// Returns a <see cref="string"/> that represents this <see cref="GetBulkRequestPdu"/>.
         /// </summary>
@@ -150,9 +150,9 @@ namespace Lextm.SharpSnmpLib
             return string.Format(
                 CultureInfo.InvariantCulture,
                 "GET BULK request PDU: seq: {0}; non-repeaters: {1}; max-repetitions: {2}; variable count: {3}",
-                RequestId, 
-                ErrorStatus, 
-                ErrorIndex, 
+                RequestId,
+                ErrorStatus,
+                ErrorIndex,
                 Variables.Count.ToString(CultureInfo.InvariantCulture));
         }
     }

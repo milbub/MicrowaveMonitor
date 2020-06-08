@@ -1,6 +1,6 @@
 ﻿using Lextm.SharpSnmpLib;
-using MicrowaveMonitor.Database;
 using MicrowaveMonitor.Managers;
+using MicrowaveMonitor.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,7 +23,7 @@ namespace MicrowaveMonitor.Workers
         protected override void RecordData(IList<Variable> result, DateTime resultTime)
         {
             double resval = double.Parse(result.First().Data.ToString());
-            TresholdCheck(resval);
+            ThresholdCheck(resval);
             Display.DataVoltage = new Record<double>(resultTime, resval);
             DynamicInfluxRow row = new DynamicInfluxRow { Timestamp = resultTime.ToUniversalTime() };
             row.Fields.Add("value", resval);

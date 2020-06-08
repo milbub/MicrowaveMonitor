@@ -1,4 +1,4 @@
-﻿using MicrowaveMonitor.Database;
+﻿using MicrowaveMonitor.Models;
 using OpenWeatherApi;
 using System;
 using System.Collections.Generic;

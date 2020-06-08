@@ -1,7 +1,7 @@
 ﻿using SQLite;
 using System;
 
-namespace MicrowaveMonitor.Database
+namespace MicrowaveMonitor.Models
 {
     public enum AlarmRank
     {

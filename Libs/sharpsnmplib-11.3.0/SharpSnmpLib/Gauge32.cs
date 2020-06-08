@@ -29,7 +29,7 @@ namespace Lextm.SharpSnmpLib
     public sealed class Gauge32 : ISnmpData, IEquatable<Gauge32>
     {
         private readonly Counter32 _count;
-        
+
         /// <summary>
         /// Creates a <see cref="Gauge32"/> instance from raw bytes.
         /// </summary>
@@ -38,7 +38,7 @@ namespace Lextm.SharpSnmpLib
         {
             // IMPORTANT: for test project only.
         }
-        
+
         /// <summary>
         /// Creates a <see cref="Gauge32"/> with a specific <see cref="UInt32"/>.
         /// </summary>
@@ -74,7 +74,7 @@ namespace Lextm.SharpSnmpLib
             {
                 throw new ArgumentNullException(nameof(stream));
             }
-            
+
             _count = new Counter32(length, stream);
         }
 
@@ -97,7 +97,7 @@ namespace Lextm.SharpSnmpLib
             {
                 throw new ArgumentNullException(nameof(stream));
             }
-            
+
             stream.AppendBytes(TypeCode, _count.GetLengthBytes(), _count.GetRaw());
         }
 
@@ -111,7 +111,7 @@ namespace Lextm.SharpSnmpLib
         {
             return _count.ToUInt32();
         }
-        
+
         /// <summary>
         /// Returns a <see cref="String"/> that represents this <see cref="Gauge32"/>.
         /// </summary>
@@ -120,7 +120,7 @@ namespace Lextm.SharpSnmpLib
         {
             return ToUInt32().ToString(CultureInfo.InvariantCulture);
         }
-        
+
         /// <summary>
         /// Indicates whether the current object is equal to another object of the same type.
         /// </summary>
@@ -131,7 +131,7 @@ namespace Lextm.SharpSnmpLib
         {
             return Equals(this, other);
         }
-        
+
         /// <summary>
         /// Determines whether the specified <see cref="Object"/> is equal to the current <see cref="Gauge32"/>.
         /// </summary>
@@ -142,7 +142,7 @@ namespace Lextm.SharpSnmpLib
         {
             return Equals(this, obj as Gauge32);
         }
-        
+
         /// <summary>
         /// Serves as a hash function for a particular type.
         /// </summary>
@@ -151,7 +151,7 @@ namespace Lextm.SharpSnmpLib
         {
             return ToUInt32().GetHashCode();
         }
-        
+
         /// <summary>
         /// The equality operator.
         /// </summary>
@@ -163,7 +163,7 @@ namespace Lextm.SharpSnmpLib
         {
             return Equals(left, right);
         }
-        
+
         /// <summary>
         /// The inequality operator.
         /// </summary>
@@ -175,7 +175,7 @@ namespace Lextm.SharpSnmpLib
         {
             return !(left == right);
         }
-        
+
         /// <summary>
         /// The comparison.
         /// </summary>
@@ -196,7 +196,7 @@ namespace Lextm.SharpSnmpLib
             {
                 return false;
             }
-            
+
             return left.ToUInt32() == right.ToUInt32();
         }
     }

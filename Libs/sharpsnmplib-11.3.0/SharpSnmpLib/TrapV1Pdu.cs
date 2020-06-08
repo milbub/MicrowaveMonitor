@@ -56,10 +56,10 @@ namespace Lextm.SharpSnmpLib
         /// <param name="variables">Variable binds</param>
         [CLSCompliant(false)]
         public TrapV1Pdu(uint[] enterprise, IP agent, Integer32 generic, Integer32 specific, TimeTicks timestamp, IList<Variable> variables)
-            : this(new ObjectIdentifier(enterprise), agent, generic, specific, timestamp, variables) 
+            : this(new ObjectIdentifier(enterprise), agent, generic, specific, timestamp, variables)
         {
         }
-        
+
         /// <summary>
         /// Creates a <see cref="TrapV1Pdu"/> instance with PDU elements.
         /// </summary>
@@ -122,11 +122,11 @@ namespace Lextm.SharpSnmpLib
                 throw new ArgumentNullException(nameof(length));
             }
 
-            if (stream == null) 
+            if (stream == null)
             {
                 throw new ArgumentNullException(nameof(stream));
             }
-            
+
             Enterprise = (ObjectIdentifier)DataFactory.CreateSnmpData(stream);
             AgentAddress = (IP)DataFactory.CreateSnmpData(stream);
             _generic = (Integer32)DataFactory.CreateSnmpData(stream);
@@ -167,9 +167,9 @@ namespace Lextm.SharpSnmpLib
         /// <summary>
         /// Type code.
         /// </summary>
-        public SnmpType TypeCode 
+        public SnmpType TypeCode
         {
-            get 
+            get
             {
                 return SnmpType.TrapV1Pdu;
             }
@@ -211,11 +211,11 @@ namespace Lextm.SharpSnmpLib
         {
             get { return (GenericCode)_generic.ToInt32(); }
         }
-        
+
         /// <summary>
         /// Specific trap type.
         /// </summary>
-        public int Specific 
+        public int Specific
         {
             get { return _specific.ToInt32(); }
         }

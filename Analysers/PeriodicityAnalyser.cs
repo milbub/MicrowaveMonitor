@@ -1,14 +1,14 @@
-﻿using MicrowaveMonitor.Managers;
-using MicrowaveMonitor.Database;
+﻿using DSPLib;
+using MicrowaveMonitor.Managers;
+using MicrowaveMonitor.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Threading;
 using System.Threading.Tasks;
 using Vibrant.InfluxDB.Client;
 using Vibrant.InfluxDB.Client.Rows;
-using DSPLib;
-using System.Numerics;
 
 namespace MicrowaveMonitor.Analysers
 {
@@ -85,7 +85,7 @@ namespace MicrowaveMonitor.Analysers
             await Analyse(DataManager.measVolt, Measurement.Voltage, WatchVoltage, idsVoltage, queryTimeSpan, valueName, retention, Percentages.Voltage, idsTypeVoltage, idType);
         }
 
-        private async Task Analyse(string measDb, Measurement measurement, Dictionary<int, bool> watchInfo, Dictionary<int, int> ids, TimeSpan queryTimeSpan, string valueName, string retention, double percentLimit, Dictionary<int, byte>idsType, byte idType)
+        private async Task Analyse(string measDb, Measurement measurement, Dictionary<int, bool> watchInfo, Dictionary<int, int> ids, TimeSpan queryTimeSpan, string valueName, string retention, double percentLimit, Dictionary<int, byte> idsType, byte idType)
         {
             string except = String.Empty;
 
@@ -191,7 +191,7 @@ namespace MicrowaveMonitor.Analysers
         {
             FFT fft = new FFT();
             fft.Initialize((uint)values.Length);
-            
+
             Complex[] cSpectrum = fft.Execute(values);                          // call the DFT and get the scaled spectrum back
             double[] rSpectrum = DSP.ConvertComplex.ToMagnitude(cSpectrum);     // convert the complex spectrum to real magnitude
 
@@ -207,7 +207,7 @@ namespace MicrowaveMonitor.Analysers
                     maxIndex = i;
                 }
             }
-                     // RETURN:     0:DC bin       1:highest bin     2:highest bin's freq
+            // RETURN:     0:DC bin       1:highest bin     2:highest bin's freq
             return new double[] { rSpectrum[0], rSpectrum[maxIndex], freqSpan[maxIndex] };
         }
 
@@ -218,7 +218,7 @@ namespace MicrowaveMonitor.Analysers
             TrySettle(devId, idsVoltage, true, idsTypeVoltage, 0);
         }
 
-        private void TrySettle(int devId, Dictionary<int, int> ids, bool stopping, Dictionary<int, byte>idsType, byte idType)
+        private void TrySettle(int devId, Dictionary<int, int> ids, bool stopping, Dictionary<int, byte> idsType, byte idType)
         {
             lock (idsLocker)
                 if (ids.ContainsKey(devId))

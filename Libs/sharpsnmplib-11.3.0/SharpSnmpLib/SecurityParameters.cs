@@ -73,7 +73,7 @@ namespace Lextm.SharpSnmpLib
             {
                 return _authenticationParameters;
             }
-            
+
             set
             {
                 if (_authenticationParameters == null)
@@ -114,7 +114,7 @@ namespace Lextm.SharpSnmpLib
             {
                 throw new ArgumentNullException(nameof(parameters));
             }
-            
+
             var container = (Sequence)DataFactory.CreateSnmpData(parameters.GetRaw());
             EngineId = (OctetString)container[0];
             EngineBoots = (Integer32)container[1];
@@ -149,7 +149,7 @@ namespace Lextm.SharpSnmpLib
             AuthenticationParameters = authenticationParameters;
             PrivacyParameters = privacyParameters;
         }
-        
+
         /// <summary>
         /// Creates an instance of <see cref="SecurityParameters"/>.
         /// </summary>

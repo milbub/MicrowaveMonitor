@@ -33,7 +33,7 @@ namespace Lextm.SharpSnmpLib
         private readonly Sequence _varbindSection;
         private readonly byte[] _length;
         private byte[] _raw;
-      
+
         /// <summary>
         /// Creates a <see cref="GetRequestPdu"/> with all contents.
         /// </summary>
@@ -120,7 +120,7 @@ namespace Lextm.SharpSnmpLib
             {
                 throw new ArgumentNullException(nameof(stream));
             }
-            
+
             if (_raw == null)
             {
                 _raw = ByteTool.ParseItems(RequestId, ErrorStatus, ErrorIndex, _varbindSection);
@@ -130,7 +130,7 @@ namespace Lextm.SharpSnmpLib
         }
 
         #endregion
-        
+
         /// <summary>
         /// Returns a <see cref="string"/> that represents this <see cref="GetRequestPdu"/>.
         /// </summary>
@@ -140,9 +140,9 @@ namespace Lextm.SharpSnmpLib
             return string.Format(
                 CultureInfo.InvariantCulture,
                 "GET request PDU: seq: {0}; status: {1}; index: {2}; variable count: {3}",
-                RequestId, 
-                ErrorStatus, 
-                ErrorIndex, 
+                RequestId,
+                ErrorStatus,
+                ErrorIndex,
                 Variables.Count.ToString(CultureInfo.InvariantCulture));
         }
     }

@@ -47,7 +47,7 @@ namespace Lextm.SharpSnmpLib
     {
         private readonly int _int;
         private readonly byte[] _length;
-        
+
         /// <summary>
         /// Zero.
         /// </summary>
@@ -64,7 +64,7 @@ namespace Lextm.SharpSnmpLib
         {
             // IMPORTANT: for test project only.
         }
-        
+
         /// <summary>
         /// Creates an <see cref="Integer32"/> instance with a specific <see cref="Int32"/>.
         /// </summary>
@@ -143,7 +143,7 @@ namespace Lextm.SharpSnmpLib
         {
             return _int.ToString(CultureInfo.InvariantCulture);
         }
-        
+
         /// <summary>
         /// Type code.
         /// </summary>
@@ -165,7 +165,7 @@ namespace Lextm.SharpSnmpLib
             {
                 throw new ArgumentNullException(nameof(stream));
             }
-            
+
             stream.AppendBytes(TypeCode, _length, _raw ?? (_raw = ByteTool.GetRawBytes(BitConverter.GetBytes(_int), _int < 0)));
         }
 
@@ -177,7 +177,7 @@ namespace Lextm.SharpSnmpLib
         {
             return ToInt32().GetHashCode();
         }
-        
+
         /// <summary>
         /// Determines whether the specified <see cref="Object"/> is equal to the current <see cref="Integer32"/>.
         /// </summary>
@@ -188,7 +188,7 @@ namespace Lextm.SharpSnmpLib
         {
             return Equals(this, obj as Integer32);
         }
-        
+
         /// <summary>
         /// Indicates whether the current object is equal to another object of the same type.
         /// </summary>
@@ -199,7 +199,7 @@ namespace Lextm.SharpSnmpLib
         {
             return Equals(this, other);
         }
-        
+
         /// <summary>
         /// The equality operator.
         /// </summary>
@@ -211,7 +211,7 @@ namespace Lextm.SharpSnmpLib
         {
             return Equals(left, right);
         }
-        
+
         /// <summary>
         /// The inequality operator.
         /// </summary>
@@ -223,7 +223,7 @@ namespace Lextm.SharpSnmpLib
         {
             return !(left == right);
         }
-        
+
         /// <summary>
         /// The comparison.
         /// </summary>
@@ -244,10 +244,10 @@ namespace Lextm.SharpSnmpLib
             {
                 return false;
             }
-            
+
             return left.ToInt32() == right.ToInt32();
         }
     }
-    
+
     // all references here are to ITU-X.690-12/97
 }

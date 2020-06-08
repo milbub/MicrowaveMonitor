@@ -42,7 +42,7 @@ namespace Lextm.SharpSnmpLib
         private readonly uint[] _enterpriseId = new uint[] { 1, 3, 6, 1, 6, 3, 1, 1, 4, 1, 0 };
         private readonly Sequence _varbindSection;
         private readonly TimeTicks _time;
-        private readonly byte[] _length; 
+        private readonly byte[] _length;
         private byte[] _raw;
 
         /// <summary>
@@ -157,7 +157,7 @@ namespace Lextm.SharpSnmpLib
         {
             get { throw new NotSupportedException(); }
         }
-        
+
         /// <summary>
         /// Variables.
         /// </summary>
@@ -199,17 +199,17 @@ namespace Lextm.SharpSnmpLib
             {
                 throw new ArgumentNullException(nameof(stream));
             }
-            
+
             if (_raw == null)
             {
                 _raw = ByteTool.ParseItems(RequestId, Integer32.Zero, Integer32.Zero, _varbindSection);
             }
 
-            stream.AppendBytes(TypeCode, _length, _raw);            
+            stream.AppendBytes(TypeCode, _length, _raw);
         }
 
         #endregion
-        
+
         /// <summary>
         /// Returns a <see cref="string"/> that represents this <see cref="InformRequestPdu"/>.
         /// </summary>

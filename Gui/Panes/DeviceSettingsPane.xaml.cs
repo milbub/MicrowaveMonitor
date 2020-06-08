@@ -1,4 +1,4 @@
-﻿using MicrowaveMonitor.Database;
+﻿using MicrowaveMonitor.Models;
 using System.Globalization;
 using System.Windows.Controls;
 
@@ -114,11 +114,11 @@ namespace MicrowaveMonitor.Gui
             if (boxLatitude.Text == string.Empty)
                 device.Latitude = "0";
             else
-                device.Latitude = boxLatitude.Text;
+                device.Latitude = ParseFloat(boxLatitude.Text).ToString(CultureInfo.InvariantCulture);
             if (boxLongitude.Text == string.Empty)
                 device.Longitude = "0";
             else
-                device.Longitude = boxLongitude.Text;
+                device.Longitude = ParseFloat(boxLongitude.Text).ToString(CultureInfo.InvariantCulture);
 
             device.IsWatchedPing = (bool)monPing_A.IsChecked;
             device.RefreshPing = (int)(ParseFloat(refPing_A.Text) * 1000);

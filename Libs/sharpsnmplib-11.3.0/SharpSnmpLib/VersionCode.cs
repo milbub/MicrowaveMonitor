@@ -21,7 +21,7 @@ namespace Lextm.SharpSnmpLib
 {
     using System;
     using System.Runtime.Serialization;
-    
+
     /// <summary>
     /// Protocol version code.
     /// </summary>
@@ -32,12 +32,12 @@ namespace Lextm.SharpSnmpLib
         /// SNMP v1.
         /// </summary>
         V1 = 0,
-        
+
         /// <summary>
         /// SNMP v2 classic.
         /// </summary>
         V2 = 1,
-        
+
         /// <summary>
         /// SNMP v2u is obsolete.
         /// </summary>

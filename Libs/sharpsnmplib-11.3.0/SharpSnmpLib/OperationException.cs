@@ -49,7 +49,7 @@ namespace Lextm.SharpSnmpLib
         public OperationException()
         {
         }
-        
+
         /// <summary>
         /// Creates a <see cref="OperationException"/> instance with a specific <see cref="string"/>.
         /// </summary>
@@ -57,14 +57,14 @@ namespace Lextm.SharpSnmpLib
         public OperationException(string message) : base(message)
         {
         }
-        
+
         /// <summary>
         /// Creates a <see cref="OperationException"/> instance with a specific <see cref="string"/> and an <see cref="Exception"/>.
         /// </summary>
         /// <param name="message"></param>
         /// <param name="inner"></param>
-        public OperationException(string message, Exception inner) : base(message, inner) 
-        { 
+        public OperationException(string message, Exception inner) : base(message, inner)
+        {
         }
 
         /// <summary>
@@ -77,7 +77,7 @@ namespace Lextm.SharpSnmpLib
                 return string.Format(CultureInfo.InvariantCulture, "{0}. Agent: {1}", Message, Agent);
             }
         }
-     
+
         /// <summary>
         /// Creates a <see cref="OperationException"/> with a specific <see cref="IPAddress"/>.
         /// </summary>

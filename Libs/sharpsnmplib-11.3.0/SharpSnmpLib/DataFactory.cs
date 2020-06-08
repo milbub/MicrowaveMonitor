@@ -51,7 +51,7 @@ namespace Lextm.SharpSnmpLib
 
             return CreateSnmpData(buffer, 0, buffer.Length);
         }
-        
+
         /// <summary>
         /// Creates an <see cref="ISnmpData"/> instance from stream.
         /// </summary>
@@ -64,7 +64,7 @@ namespace Lextm.SharpSnmpLib
             {
                 throw new ArgumentNullException(nameof(stream));
             }
-            
+
             var length = stream.ReadPayloadLength();
             try
             {
@@ -149,13 +149,13 @@ namespace Lextm.SharpSnmpLib
             {
                 throw new ArgumentNullException(nameof(buffer));
             }
-            
+
             using (var m = new MemoryStream(buffer, index, count, false))
             {
                 return CreateSnmpData(m);
             }
         }
-        
+
         /// <summary>
         /// Creates an <see cref="ISnmpData"/> instance from stream.
         /// </summary>
