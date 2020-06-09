@@ -523,6 +523,9 @@ namespace MicrowaveMonitor.Gui
 
         private void SearchButtonFired(object sender, RoutedEventArgs e)
         {
+            if (viewedDeviceId == 0)
+                return;
+
             LinksList.SelectionChanged -= LinkChoosed;
             LinksList.Items.Clear();
 
@@ -539,6 +542,9 @@ namespace MicrowaveMonitor.Gui
 
         private void ClearSearchButtonFired(object sender, RoutedEventArgs e)
         {
+            if (viewedDeviceId == 0)
+                return;
+
             searchBox.Text = string.Empty;
             LinksList.SelectionChanged -= LinkChoosed;
             LinksList.Items.Clear();
