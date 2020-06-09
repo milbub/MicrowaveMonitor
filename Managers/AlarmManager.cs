@@ -355,8 +355,18 @@ namespace MicrowaveMonitor.Managers
             if (alarmId == 0)
                 return;
 
+            string linkName;
+
             Alarm alarm = linkM.GetAlarm(alarmId);
-            string linkName = linkM.LinkNames[alarm.LinkId];
+            try
+            {
+                linkName = linkM.LinkNames[alarm.LinkId];
+            }
+            catch (KeyNotFoundException e)
+            {
+                return;
+            }
+
 
             alarm.IsActive = false;
             alarm.SettledTime = DateTime.Now;
@@ -494,14 +504,21 @@ namespace MicrowaveMonitor.Managers
             {
                 if (alarm.IsShowed)
                 {
-                    AlarmDisplay disp = MakeAlarmDisplay(alarm);
+                    try
+                    {
+                        AlarmDisplay disp = MakeAlarmDisplay(alarm);
 
-                    if (alarm.IsAck)
-                        lock (alarmsSettledAck)
-                            alarmsSettledAck.Add(disp);
-                    else
-                        lock (alarmsSettledUnack)
-                            alarmsSettledUnack.Add(disp);
+                        if (alarm.IsAck)
+                            lock (alarmsSettledAck)
+                                alarmsSettledAck.Add(disp);
+                        else
+                            lock (alarmsSettledUnack)
+                                alarmsSettledUnack.Add(disp);
+                    }
+                    catch (KeyNotFoundException e)
+                    {
+                        continue;
+                    }
                 }
 
                 if (alarm.Type == AlarmType.Down && alarm.GenerTime > limit)

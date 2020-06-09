@@ -26,6 +26,7 @@ namespace MicrowaveMonitor.Gui
         private Link viewedLink;
         private int viewedDeviceId = 0;
         private bool isMapInitialized = false;
+        private bool settingsChanged = false;
 
         public MonitoringWindow(LinkManager linkManager, WorkerManager workerManager, AlarmManager alarmManager, DataManager dataManager)
         {
@@ -129,8 +130,9 @@ namespace MicrowaveMonitor.Gui
                     return;
             }
 
-            if (newDeviceId == viewedDeviceId)
+            if (newDeviceId == viewedDeviceId && settingsChanged == false)
                 return;
+            settingsChanged = false;
 
             if (viewedDeviceId != 0)
             {
@@ -492,6 +494,9 @@ namespace MicrowaveMonitor.Gui
 
         private void SaveButtonFired(object sender, RoutedEventArgs e)
         {
+            if (viewedDeviceId == 0)
+                return;
+
             Device basedev = settingsA.SaveBoxes(linkM.GetDevice(viewedLink.DeviceBaseId));
             linkM.UpdateDevice(basedev);
             workerM.RestartDevice(basedev);
@@ -507,6 +512,7 @@ namespace MicrowaveMonitor.Gui
                 LinksList.SelectedItem = boxLinkName.Text;
                 LinksList.SelectionChanged += LinkChoosed;
             }
+
             viewedLink.Note = boxNote.Text;
 
             viewedLink.DeviceEndId = UpdateDeviceSettings(viewedLink.DeviceEndId, checkB, settingsB, 1, ref hopCount);
@@ -517,6 +523,7 @@ namespace MicrowaveMonitor.Gui
             viewedLink.HopCount = hopCount;
 
             linkM.UpdateLink(viewedLink);
+            settingsChanged = true;
             ChangeLink(viewedLink);
             Console.WriteLine("0Configuration saved. Link monitoring restarted.");
         }
