@@ -362,7 +362,7 @@ namespace MicrowaveMonitor.Managers
             {
                 linkName = linkM.LinkNames[alarm.LinkId];
             }
-            catch (KeyNotFoundException e)
+            catch (KeyNotFoundException)
             {
                 return;
             }
@@ -515,7 +515,7 @@ namespace MicrowaveMonitor.Managers
                             lock (alarmsSettledUnack)
                                 alarmsSettledUnack.Add(disp);
                     }
-                    catch (KeyNotFoundException e)
+                    catch (KeyNotFoundException)
                     {
                         continue;
                     }
