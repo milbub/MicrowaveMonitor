@@ -320,7 +320,7 @@ namespace MicrowaveMonitor.Analysers
                 double diff = data[devId] - value;
                 double maxDiff = data[devId] * percentage;
 
-                if (Math.Abs(diff) > maxDiff)
+                if (Math.Abs(diff) > Math.Abs(maxDiff))
                 {
                     lock (idsLocker)
                         if (!ids.ContainsKey(devId))

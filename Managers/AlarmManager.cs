@@ -498,7 +498,7 @@ namespace MicrowaveMonitor.Managers
                 linkM.UpdateAlarm(alarm);
             }
 
-            DateTime limit = DateTime.Now - Properties.Settings.Default.a_longavg_longLimit;
+            DateTime limit = DateTime.Now - Settings.Default.a_longavg_longLimit;
 
             foreach (Alarm alarm in alarms)
             {
