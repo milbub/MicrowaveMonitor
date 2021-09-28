@@ -315,7 +315,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="CefSharp.Wpf">
-      <Version>79.1.360</Version>
+      <Version>86.0.241</Version>
     </PackageReference>
     <PackageReference Include="CoordinateSharp">
       <Version>2.5.2.1</Version>
